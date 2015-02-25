@@ -1,0 +1,230 @@
+//
+//  JoinRoomViewController.m
+//  Realay
+//
+//  Created by Michel on 23.09.13.
+//  Copyright (c) 2013 Michel Sievers. All rights reserved.
+//
+
+#import "ETRMapViewController.h"
+
+#import "ETRPasswordViewController.h"
+#import "ETRRoomDetailsViewController.h"
+#import "ETRAlertViewBuilder.h"
+
+#import <GoogleMaps/GoogleMaps.h>
+
+#define kMapCloseZoom   16
+#define kMapWideZoom    11
+
+#define kSegueToNext    @"mapToPasswordSegue"
+#define kSegueToDetails @"mapToDetailsSegue"
+
+@implementation ETRMapViewController {
+    GMSMapView *_mapView;   // Google Maps SDK Object
+}
+
+#pragma mark - UIViewController
+
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    NSInteger myControllerIndex;
+    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
+    [[ETRSession sharedSession] setMapControllerIndex:myControllerIndex];
+    
+    // Make sure the room manager meets the requirements for this view controller.
+    if (![[ETRSession sharedSession] room]) {
+        [[self navigationController] popViewControllerAnimated:NO];
+        NSLog(@"ERROR: No room set in manager.");
+        return;
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    // Basic GUI setup:
+    [self setTitle:[[[ETRSession sharedSession] room] title]];
+    [[self navigationController] setToolbarHidden:NO animated:YES];
+    
+    // Hide the join button if the user is already in this room.
+    if ([[ETRSession sharedSession] didBeginSession]) {
+        [[self navigationItem] setRightBarButtonItem:nil];
+        [self setDirectionsButton:nil];
+    } else {
+        [[self navigationItem] setRightBarButtonItem:[self joinButton]];
+    }
+    
+    // Send a notification when the device is rotated.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(orientationChanged:)
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
+    
+    // Set up the map.
+//    _mapView = [GMSMapView mapWithFrame:[[self mapSubView] bounds]
+//                                 camera:[self adjustedCamera]];
+    
+    _mapView = [[GMSMapView alloc] init];
+    [_mapView setFrame:[[self mapSubView] bounds]];
+    
+    [_mapView setCamera:[self adjustedCamera]];
+    
+    // Other map settings:
+    [_mapView setMyLocationEnabled:YES];
+    [[_mapView settings] setMyLocationButton:YES];
+    [[_mapView settings] setIndoorPicker:YES];
+    [[self mapSubView] addSubview:_mapView];
+    
+    // Create the room marker.
+    // TODO: Create custom markers for each room.
+    GMSMarker *marker = [[GMSMarker alloc] init];
+    ETRRoom *room = [[ETRSession sharedSession] room];
+    [marker setPosition:[[room location] coordinate]];
+    [marker setMap:_mapView];
+    _mapView.selectedMarker = marker;
+    
+    // Add a radius circle to the marker.
+    GMSCircle *circle = [[GMSCircle alloc] init];
+    [circle setRadius:[room radius]];
+    [circle setFillColor:[UIColor colorWithRed:50.0f green:50.0f blue:50.0f alpha:.5f]];
+    [circle setStrokeColor:[UIColor lightGrayColor]];
+    [circle setPosition:[marker position]];
+    [circle setMap:_mapView];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [super viewWillDisappear:animated];
+    
+    // Remove the orientation obsever.
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIDeviceOrientationDidChangeNotification
+                                                  object:nil];
+    
+    // Remove the map.
+    _mapView = nil;
+    
+    // Check if the back button was pressed.
+    NSInteger myNavIndex = [[[self navigationController] viewControllers] indexOfObject:self];
+    if (myNavIndex == NSNotFound) {
+        
+        // If we didn't join this room, discard it.
+        if (![[ETRSession sharedSession] didBeginSession]) {
+            [[ETRSession sharedSession] endSession];
+#ifdef DEBUG
+            NSLog(@"INFO: Manager Room object reset.");
+#endif
+        }
+    }
+}
+
+// Readjust the frame of the map when the device is rotated.
+- (void)orientationChanged:(NSNotification *)notification
+{
+#ifdef DEBUG
+    NSLog(@"INFO: Orientation changed on MapVC.");
+#endif
+    
+    [_mapView setFrame:[[self mapSubView] bounds]];
+}
+
+
+#pragma mark - Google Maps
+
+- (GMSCameraPosition *)adjustedCamera {
+    
+    // Get data from the session manager.
+    CLLocationManager *locMan = [[ETRSession sharedSession] locationManager];
+    ETRRoom *room = [[ETRSession sharedSession] room];
+    
+    // Decide which camera to show.
+    if ([locMan location]) {
+        
+        if ([[ETRSession sharedSession] isInRegion]) {
+            // Zoom in on the region, not the user, if the user is inside.
+            
+            // TODO: Determine a useful zoom level for different region radii.
+            CGFloat zoom = kMapCloseZoom;
+//            if ([room radius] < 250) zoom = 16;
+            
+            return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
+                                                    zoom:zoom];
+        } else {
+            // The map should include the device position, as well as the room's location.
+            GMSCoordinateBounds *bounds;
+            
+            bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:[[locMan location] coordinate]
+                                                          coordinate:[[room location] coordinate]];
+            return [_mapView cameraForBounds:bounds insets:UIEdgeInsetsMake(70, 70, 70, 70)];
+        }
+    } else {
+        // Just show where approximately the region is if the device location is unknown.
+        //TODO: Use different zoom levels depending on the size of the radius.
+        return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
+                                              zoom:kMapWideZoom];
+    }
+}
+
+#pragma mark - Toolbar Buttons
+
+- (IBAction)mapTypeSegmentChanged:(id)sender {
+    if ([[self mapTypeSegmentedControl] selectedSegmentIndex] == 0) {
+        [_mapView setMapType:kGMSTypeNormal];
+    } else {
+        [_mapView setMapType:kGMSTypeSatellite];
+    }
+}
+
+#pragma mark - Navigation
+
+- (IBAction)navigateButtonPressed:(id)sender {
+    NSString *URLString;
+    CLLocationCoordinate2D destinationCoordinate;
+    destinationCoordinate = ETRSession.sharedSession.room.location.coordinate;
+    
+    // Try to open the navigation in Google Maps.
+    NSURL *gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
+    if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
+        
+        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%f,%f",
+               destinationCoordinate.latitude, destinationCoordinate.longitude];
+        
+    } else {
+        // No app was found that opens Google Maps URLs.
+#ifdef DEBUG
+        NSLog(@"INFO: Can not use comgooglemaps://.");
+#endif
+        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%f,%f",
+               destinationCoordinate.latitude, destinationCoordinate.longitude];
+    }
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
+}
+
+- (IBAction)detailsButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:kSegueToDetails sender:self];
+}
+
+- (IBAction)joinButtonPressed:(id)sender {
+    
+    // Only perform a join action, if the user did not join yet.
+    if (![[ETRSession sharedSession] didBeginSession]) {
+        
+        if ([[ETRSession sharedSession] isInRegion]) {
+            // Show the password prompt, if the device location is inside the region.
+            [self performSegueWithIdentifier:kSegueToNext sender:self];
+        } else if ([[ETRSession sharedSession] locationUpdateFails]){
+            // The user's location is unknown.
+            [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:0];
+        } else {
+            // The user is outside of the radius.
+            [ETRAlertViewBuilder showOutsideRegionAlertView];
+        }
+    }
+}
+
+@end

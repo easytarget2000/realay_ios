@@ -1,0 +1,132 @@
+
+/* Class = "IBUIBarButtonItem"; title = "Users"; ObjectID = "0gQ-VN-Wsd"; */
+"0gQ-VN-Wsd.title" = "Benutzer";
+
+/* Class = "IBUITextField"; text = "EditAttributeValue"; ObjectID = "1JL-2b-TDY"; */
+"1JL-2b-TDY.text" = "EditAttributeValue";
+
+/* Class = "IBUIButton"; normalTitle = "Edit"; ObjectID = "6gO-ve-03d"; */
+"6gO-ve-03d.normalTitle" = "Ändern";
+
+/* Class = "IBUILabel"; text = "Please provide a user name:"; ObjectID = "8U0-zT-d8Z"; */
+"8U0-zT-d8Z.text" = "Bitte wähle einen Benutzernamen:";
+
+/* Class = "IBUINavigationItem"; title = "Edit"; ObjectID = "99N-Hz-oO7"; */
+"99N-Hz-oO7.title" = "Ändern";
+
+/* Class = "IBUILabel"; text = "Name"; ObjectID = "A1v-mz-5xV"; */
+"A1v-mz-5xV.text" = "Name";
+
+/* Class = "IBUILabel"; text = "Name"; ObjectID = "Bfz-GR-gGk"; */
+"Bfz-GR-gGk.text" = "Name";
+
+/* Class = "IBUILabel"; text = "UserStatus"; ObjectID = "EKo-se-qac"; */
+"EKo-se-qac.text" = "UserStatus";
+
+/* Class = "IBUITextView"; text = "Realay is a unique way to meet new people. It merges real social settings with the anonymity of a chat room. We call these rooms “Realays”. When you join one of these rooms, you can chat exclusively with people who are actually around you at that moment. A Realay always represents an actual place, such as a party, a concert or any place of interest."; ObjectID = "F1M-2c-Z9E"; */
+"F1M-2c-Z9E.text" = "Mit Realay kannst Du neue Leute auf einzigartige Art und Weise kennenlernen. Es vereint echte, soziale Situationen mit der Anonimität eines Chatrooms. Wir nennen diese Räume “Realays”. Wenn Du einen dieser Räume betrittst, schreibst Du ausschließlich mit Leuten, die auch tatsächlich in dem Moment in Deiner Nähe sind. Ein Realay ist immer ein Abbild eines echten Ortes, wie z.B. eine Party, ein Konzert oder eine Sehenswürdigkeit.";
+
+/* Class = "IBUIBarButtonItem"; title = "Users"; ObjectID = "G39-6s-HYc"; */
+"G39-6s-HYc.title" = "Users";
+
+/* Class = "IBUILabel"; text = "00:00"; ObjectID = "Hla-wX-cdc"; */
+"Hla-wX-cdc.text" = "00:00";
+
+/* Class = "IBUISegmentedControl"; L85-sg-jfZ.segmentTitles[0] = "Realay"; ObjectID = "L85-sg-jfZ"; */
+"L85-sg-jfZ.segmentTitles[0]" = "Realay";
+
+/* Class = "IBUISegmentedControl"; L85-sg-jfZ.segmentTitles[1] = "You"; ObjectID = "L85-sg-jfZ"; */
+"L85-sg-jfZ.segmentTitles[1]" = "Du";
+
+/* Class = "IBUILabel"; text = "RealayDescription"; ObjectID = "Mbp-Xa-5Vh"; */
+"Mbp-Xa-5Vh.text" = "RealayDescription";
+
+/* Class = "IBUILabel"; text = "Text"; ObjectID = "N43-vK-dJF"; */
+"N43-vK-dJF.text" = "Text";
+
+/* Class = "IBUILabel"; text = "RealayTitle"; ObjectID = "O32-H7-kEr"; */
+"O32-H7-kEr.text" = "RealayTitle";
+
+/* Class = "IBUIBarButtonItem"; title = "Back"; ObjectID = "P1u-dI-KY6"; */
+"P1u-dI-KY6.title" = "Zurück";
+
+/* Class = "IBUIBarButtonItem"; title = "Leave"; ObjectID = "Pb8-Fg-0R7"; */
+"Pb8-Fg-0R7.title" = "Verlassen";
+
+/* Class = "IBUIBarButtonItem"; title = "Save"; ObjectID = "Ph4-G0-Tmg"; */
+"Ph4-G0-Tmg.title" = "Speichern";
+
+/* Class = "IBUINavigationItem"; title = "User List"; ObjectID = "S9C-Gy-Qbp"; */
+"S9C-Gy-Qbp.title" = "User List";
+
+/* Class = "IBUIButton"; normalTitle = "Send"; ObjectID = "SEg-Wj-FFH"; */
+"SEg-Wj-FFH.normalTitle" = "Send";
+
+/* Class = "IBUISegmentedControl"; U2i-Xi-gUI.segmentTitles[0] = "Satellite"; ObjectID = "U2i-Xi-gUI"; */
+"U2i-Xi-gUI.segmentTitles[0]" = "Satellite";
+
+/* Class = "IBUISegmentedControl"; U2i-Xi-gUI.segmentTitles[1] = "Map"; ObjectID = "U2i-Xi-gUI"; */
+"U2i-Xi-gUI.segmentTitles[1]" = "Map";
+
+/* Class = "IBUINavigationItem"; title = "Nearby Realays"; ObjectID = "bX7-Ub-NGs"; */
+"bX7-Ub-NGs.title" = "Nearby Realays";
+
+/* Class = "IBUIBarButtonItem"; title = "Join"; ObjectID = "e0x-Bc-xkn"; */
+"e0x-Bc-xkn.title" = "Join";
+
+/* Class = "IBUITextView"; text = "Lorem"; ObjectID = "fHo-Wh-VvF"; */
+"fHo-Wh-VvF.text" = "Lorem";
+
+/* Class = "IBUIBarButtonItem"; title = "My Profile"; ObjectID = "gBT-0H-1uo"; */
+"gBT-0H-1uo.title" = "Mein Profil";
+
+/* Class = "IBUINavigationItem"; title = "Create Profile"; ObjectID = "gwV-Mx-W2m"; */
+"gwV-Mx-W2m.title" = "Profil erstellen";
+
+/* Class = "IBUIBarButtonItem"; title = "Public Chat"; ObjectID = "ha7-Rz-puE"; */
+"ha7-Rz-puE.title" = "Öffentlicher Chat";
+
+/* Class = "IBUIBarButtonItem"; title = "Save"; ObjectID = "iDN-qx-3xv"; */
+"iDN-qx-3xv.title" = "Save";
+
+/* Class = "IBUILabel"; text = "You will also be able to provide a status message and a profile picture later."; ObjectID = "ibL-A5-DjH"; */
+"ibL-A5-DjH.text" = "You will also be able to provide a status message and a profile picture later.";
+
+/* Class = "IBUIBarButtonItem"; title = "My Profile"; ObjectID = "iqz-iG-4i0"; */
+"iqz-iG-4i0.title" = "My Profile";
+
+/* Class = "IBUILabel"; text = "Status"; ObjectID = "jqN-H2-pFi"; */
+"jqN-H2-pFi.text" = "Status";
+
+/* Class = "IBUINavigationItem"; title = "Chat"; ObjectID = "lLZ-jZ-B97"; */
+"lLZ-jZ-B97.title" = "Chat";
+
+/* Class = "IBUINavigationItem"; title = "Welcome"; ObjectID = "mNy-R1-UcG"; */
+"mNy-R1-UcG.title" = "Willkommen";
+
+/* Class = "IBUINavigationItem"; title = "Realay Details"; ObjectID = "nFu-ue-Thf"; */
+"nFu-ue-Thf.title" = "Realay Details";
+
+/* Class = "IBUIBarButtonItem"; title = "Details"; ObjectID = "oK0-DJ-vKr"; */
+"oK0-DJ-vKr.title" = "Details";
+
+/* Class = "IBUILabel"; text = "EditAttribute"; ObjectID = "pQ6-30-eGy"; */
+"pQ6-30-eGy.text" = "EditAttribute";
+
+/* Class = "IBUILabel"; text = "UserName"; ObjectID = "rSI-Ke-OIG"; */
+"rSI-Ke-OIG.text" = "UserName";
+
+/* Class = "IBUIBarButtonItem"; title = "Go"; ObjectID = "u1l-9C-M8Q"; */
+"u1l-9C-M8Q.title" = "Weiter";
+
+/* Class = "IBUIBarButtonItem"; title = "Cancel"; ObjectID = "uCl-Vg-Ty7"; */
+"uCl-Vg-Ty7.title" = "Cancel";
+
+/* Class = "IBUILabel"; text = "dist"; ObjectID = "w7f-5N-sIJ"; */
+"w7f-5N-sIJ.text" = "dist";
+
+/* Class = "IBUIButton"; normalTitle = "Edit"; ObjectID = "yfT-Nd-XkG"; */
+"yfT-Nd-XkG.normalTitle" = "Edit";
+
+/* Class = "IBUINavigationItem"; title = "Profile"; ObjectID = "yuz-Ob-90B"; */
+"yuz-Ob-90B.title" = "Profil";
