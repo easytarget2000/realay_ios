@@ -12,7 +12,6 @@
 #import "ETRAlertViewBuilder.h"
 #import "ETREditFieldViewController.h"
 #import "ETRHTTPHandler.h"
-#import "ETRImageViewController.h"
 #import "ETRSession.h"
 
 #import "SharedMacros.h"
@@ -99,19 +98,9 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
     if ([[segue identifier] isEqualToString:kSegueToEditField]) {
-
         ETREditFieldViewController *destination = [segue destinationViewController];
         [destination setAttributeKey:sender];
-
-    } else if ([[segue identifier] isEqualToString:kSegueToViewImage]) {
-        
-        ETRImageViewController *destination = [segue destinationViewController];
-        
-        [destination setImage:[[self user] image]];
-        [destination setIsEditable:[self showMyProfile]];
-        [destination setTitle:[[self user] name]];
     }
 }
 

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import "ETRChatMessage.h"
+#import "ETRAction.h"
 
 #import "ETRHTTPHandler.h"
 #import "ETRSession.h"
@@ -14,12 +14,12 @@
 #import "SharedMacros.h"
 #define kInfoMsgSenderId -10
 
-@implementation ETRChatMessage
+@implementation ETRAction
 
 #pragma mark - Factory Methods
 
-+ (ETRChatMessage *)messageFromJSONDictionary:(NSDictionary *)JSONDict {
-    ETRChatMessage *message = [[ETRChatMessage alloc] init];
++ (ETRAction *)messageFromJSONDictionary:(NSDictionary *)JSONDict {
+    ETRAction *message = [[ETRAction alloc] init];
     
     // Get the message data from the JSON key array.
     NSString *senderKey = [JSONDict objectForKey:@"user_id"];
@@ -44,10 +44,10 @@
     return message;
 }
 
-+ (ETRChatMessage *)outgoingMessage:(NSString *)messageString
++ (ETRAction *)outgoingMessage:(NSString *)messageString
                              inChat:(NSInteger)chatID {
     
-    ETRChatMessage *message = [[ETRChatMessage alloc] init];
+    ETRAction *message = [[ETRAction alloc] init];
     
     [message setMessageID:-1];
     [message setMessageString:messageString];
@@ -104,7 +104,7 @@
     // Put the message into HTTP body data.
     NSString *bodyString;
     bodyString = [NSString stringWithFormat:@"room_id=%ld&user_id=%ld&chat_id=%ld&code=MSG&message=%@",
-                  [[[ETRSession sharedSession] room] roomID],
+                  [[[ETRSession sharedSession] room] iden],
                   [[ETRLocalUser sharedLocalUser] userID],
                   [self chatID],
                   [self messageString]];

@@ -17,54 +17,20 @@
 
 @implementation ETRLocationManager
 
-- (CGFloat)distanceToRoom:(ETRRoom *)room {
-    CGFloat value = [[self location] distanceFromLocation:[room location]];
+/*
+ Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
+ and the current device location;
+ values below 10 are handled as 0 to avoid unnecessary precision
+ */
+- (NSInteger)distanceToRoom:(ETRRoom *)room {
+    NSInteger value = [[self location] distanceFromLocation:[room location]];
     value -= [room radius];
-    if (value < 0) return 0;
+    if (value < 10) return 0;
     else return value;
 }
 
 - (NSString *)readableDistanceToRoom:(ETRRoom *)room {
-    return [self readableLength:[self distanceToRoom:room]];
-}
-
-- (NSString *)readableLength:(CGFloat)length {
-    
-    // Return something other than 0, if length is 0.
-    if (length <= 0) {
-        return @"\u2713";
-    }
-    
-    // Return the appropriate string depending on locale settings and distance.
-    if ([[[NSLocale currentLocale] objectForKey:NSLocaleUsesMetricSystem] boolValue]) {
-        // Above 2000m show as km.
-        if (length > 2000) {
-            length /= 1000;
-            return [NSString stringWithFormat:@"%.1f km", length];
-        } else {
-            return [NSString stringWithFormat:@"%d m", (int) length];
-        }
-    } else {
-        //TODO: Figure out useful value at which feet are used instead of miles.
-        if (length > 20) {
-            length /= 1609;
-            return [NSString stringWithFormat:@"%.2f mi", length];
-        } else {
-            length *= 3.281;
-            return [NSString stringWithFormat:@"%d ft", (int) length];
-        }
-    }
-    
-}
-
-- (NSString *)readableLocationAccuracy {
-    CGFloat value = [[self location] horizontalAccuracy];
-    return [self readableLength:value];
-}
-
-- (NSString *)readableRadiusOfSessionRoom {
-    CGFloat value = [[[ETRSession sharedSession] room] radius];
-    return [self readableLength:value];
+    return [ETRChatObject lengthFromMetres:[self distanceToRoom:room]];
 }
 
 #pragma mark - StartUpdating overrides
@@ -80,7 +46,7 @@
 }
 
 - (void)verifyLocationAuthorization {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized) {
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
         [super startUpdatingLocation];
         return;
     }

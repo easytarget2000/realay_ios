@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRInformationViewCell : UITableViewCell
+@interface ETRInformationCell : UITableViewCell
+
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 
 @end

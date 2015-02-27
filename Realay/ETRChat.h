@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ETRUser.h"
-#import "ETRChatMessage.h"
+#import "ETRAction.h"
 
 @interface ETRChat : NSObject
 

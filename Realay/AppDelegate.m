@@ -28,7 +28,7 @@
     // Make the main manager initialize all preference variables.
     [[ETRSession sharedSession] refreshGUIAttributes];
     
-//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
     // Cancel all notifications.
     UILocalNotification *localNotif;

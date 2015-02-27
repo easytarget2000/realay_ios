@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ETRImageConnectionHandler : NSObject
+#import "ETRImageLoader.h"
+
+@interface ETRImageConnectionHandler : NSObject <NSURLConnectionDataDelegate>
+
++ (void)loadForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
 
 @end

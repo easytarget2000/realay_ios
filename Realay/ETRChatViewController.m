@@ -12,7 +12,7 @@
 #import "ETRUserListViewController.h"
 #import "ETRAlertViewBuilder.h"
 #import "ETRViewProfileViewController.h"
-#import "ETRChatMessage.h"
+#import "ETRAction.h"
 
 #define kIdentLeftMsgCell   @"strangeMsgCell"
 #define kIdentMsgCell       @"myMsgCell"
@@ -100,7 +100,7 @@
     
     // Prepare the appropriate back button TO this view controller.
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle
-                                                                   style:UIBarButtonItemStyleBordered
+                                                                   style:UIBarButtonItemStylePlain
                                                                   target:nil
                                                                   action:nil];
     [[self navigationItem] setBackBarButtonItem:backButton];
@@ -123,7 +123,7 @@
     
 #ifdef DEBUG
     NSLog(@"\nINFO: ETRChatViewController viewDidAppear %ld, %ld",
-          [[[ETRSession sharedSession] room] roomID], [[self chat] chatID]);
+          [[[ETRSession sharedSession] room] iden], [[self chat] chatID]);
 #endif
     
 }
@@ -176,7 +176,7 @@
         
 #ifdef DEBUG 
         NSLog(@"INFO: New messages arrived in %@, %ld.",
-              chatKey, [[[ETRSession sharedSession] room] roomID]);
+              chatKey, [[[ETRSession sharedSession] room] iden]);
 #endif
     }
 
@@ -194,7 +194,7 @@
                              [NSCharacterSet whitespaceCharacterSet]];
     
     if ([typedString length] > 0) {
-        ETRChatMessage *newMessage = [ETRChatMessage outgoingMessage:typedString
+        ETRAction *newMessage = [ETRAction outgoingMessage:typedString
                                                               inChat:[[self chat] chatID]];
         [newMessage insertMessageIntoDB];
     }
@@ -225,7 +225,7 @@
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     // Get the message for this particular cell.
-    ETRChatMessage *currentMsg = [[[self chat] messages] objectAtIndex:[indexPath row]];
+    ETRAction *currentMsg = [[[self chat] messages] objectAtIndex:[indexPath row]];
     
     // Check if this is one of my sent messages.
     BOOL isMyMessage;
@@ -256,7 +256,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    ETRChatMessage *currentMsg = [[[self chat] messages] objectAtIndex:[indexPath row]];
+    ETRAction *currentMsg = [[[self chat] messages] objectAtIndex:[indexPath row]];
     if (currentMsg) {
         // Decide if this message needs a name label or not.
         BOOL hasNameLabel = [self isPublic]

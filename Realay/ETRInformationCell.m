@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import "ETRInformationViewCell.h"
+#import "ETRInformationCell.h"
 
-@implementation ETRInformationViewCell
+@implementation ETRInformationCell
 
 - (void)awakeFromNib {
     // Initialization code

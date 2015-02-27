@@ -21,7 +21,7 @@
     ETRRoom *room = [[ETRRoom alloc] init];
     
     // Get the room information from the JSON key array.
-    [room setRoomID:[[JSONDict objectForKey:@"r"] integerValue]];
+    [room setIden:[[JSONDict objectForKey:@"r"] integerValue]];
     [room setTitle:[JSONDict objectForKey:@"tt"]];
     [room setInfo:[JSONDict objectForKey:@"ds"]];
     [room setPassword:[JSONDict objectForKey:@"pw"]];
@@ -43,85 +43,50 @@
     }
     
     // We query the database with km values.
-    CGFloat distance = [[JSONDict objectForKey:@"distance"] doubleValue] * 1000.0;
+    CGFloat distance = [[JSONDict objectForKey:@"dst"] doubleValue] * 1000.0;
     [room setQueryDistance:distance];
     
     // Get the room's position from the JSON data.
-    CGFloat latitude = [[JSONDict objectForKey:@"latitude"] floatValue];
-    CGFloat longitude = [[JSONDict objectForKey:@"longitude"] floatValue];
+    CGFloat latitude = [[JSONDict objectForKey:@"lat"] floatValue];
+    CGFloat longitude = [[JSONDict objectForKey:@"lng"] floatValue];
     CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
     [room setLocation:location];
     
 #ifdef DEBUG
     NSLog(@"INFO: Added room to return array: %ld, Distance: %f",
-          [room roomID], [room queryDistance]);
+          [room iden], [room queryDistance]);
 #endif
     
     return room;
 }
 
-# pragma mark - Instance Methods
-
-//- (void)setStartTimeFromSQLString:(NSString *)dateString {
-//    NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
-//    [timeFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-//    
-//    [self setBeginDateTime:[timeFormat dateFromString:dateString]];
-//}
-//
-//- (void)setEndTimeFromSQLString:(NSString *)dateString {
-//    NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
-//    [timeFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-//    
-//    [self setEndDateTime:[timeFormat dateFromString:dateString]];
-//}
-
-#pragma mark - String Builders
-- (NSString *)timeSpanString {
+- (NSString *)timeSpan {
     // TODO: Localization
-    NSString *untilString = @"until";
+    NSString *ongoing = @"Ongoing";
     
-    return [NSString stringWithFormat:@"%@ %@ %@",
-            [self readableStringForDate:[self startDate]],
-            untilString,
-            [self readableStringForDate:[self endDate]]];
-}
-
-- (NSString *)readableStringForDate:(NSDate *)date {
-    NSMutableString *returnString = [NSMutableString stringWithFormat:@""];
-    
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    // Split the current datetime into its components.
-    NSDate *currentDate = [NSDate date];
-    NSDateComponents *currentCompontents;
-    currentCompontents = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit
-                                     fromDate:currentDate];
-    
-    // Split the given datetime into its components.
-    NSDateComponents *givenComponents;
-    givenComponents = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit
-                                  fromDate:date];
-    NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
-    
-    // Display the year if it is not the current year.
-    if ([givenComponents year] != [currentCompontents year]) {
-        [timeFormat setDateFormat:@"dd MMM YYYY HH:mm"];
+    NSString *start;
+    if (![self startDate]) {
+        start = ongoing;
     } else {
-        // Write "today" if it is the current date.
-        if ([givenComponents month] == [currentCompontents month]
-            && [givenComponents day] == [currentCompontents day]) {
-            //TODO: Localization
-            [returnString appendString:@"Today "];
-            [timeFormat setDateFormat:@"HH:mm"];
+        if ([[self startDate] compare:[NSDate date]] > 0) {
+            start = [ETRChatObject readableStringForDate:[self startDate]];
         } else {
-            // The DEFAULT format is 01 Jan 12:59.
-            [timeFormat setDateFormat:@"dd MMM HH:mm"];
+            start = ongoing;
         }
     }
-    [returnString appendString:[timeFormat stringFromDate:date]];
     
-    return returnString;
+    
+    if (![self endDate]) {
+        return start;
+    } else {
+        NSString *until = @"until";
+        NSString *end = [ETRChatObject readableStringForDate:[self endDate]];
+        return [NSString stringWithFormat:@"%@ %@ %@", start, until, end];
+    }
+}
+
+- (NSString *)size {
+    return [ETRChatObject lengthFromMetres:[self radius]];
 }
 
 - (NSString *)coordinateString {

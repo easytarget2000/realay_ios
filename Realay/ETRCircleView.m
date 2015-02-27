@@ -8,14 +8,17 @@
 
 #import "ETRCircleView.h"
 
+// #FF9800
+#define kAccentColor colorWithRed:(0xFF/255.0f) green:(0x98/255.0f) blue:(0x00/255.0f) alpha:1.0f
+
 @implementation ETRCircleView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
-    // Drawing code
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextClearRect(context, rect);
+    CGContextAddEllipseInRect(context, rect);
+    CGContextSetFillColor(context, CGColorGetComponents([[UIColor kAccentColor] CGColor]));
+    CGContextFillPath(context);
 }
-*/
 
 @end

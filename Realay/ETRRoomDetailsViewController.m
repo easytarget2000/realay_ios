@@ -8,7 +8,6 @@
 
 #import "ETRRoomDetailsViewController.h"
 
-#import "ETRImageViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRAlertViewBuilder.h"
 
@@ -28,7 +27,7 @@
     room = [[ETRSession sharedSession] room];
     
     // Initialise the GUI elements.
-    [[self imageButton] setImage:[room smallImage] forState:UIControlStateNormal];
+    [[self imageButton] setImage:[room lowResImage] forState:UIControlStateNormal];
     [[self titleLabel] setText:[room title]];
 
     // Just in case there is a toolbar wanting to be displayed:
@@ -39,7 +38,7 @@
     }
     
     // Set the description labels.
-    [[self timeLabel] setText:[room timeSpanString]];
+    [[self timeLabel] setText:[room timeSpan]];
 
     // If the room has no address, display the coordinates in a smaller font.
     if ([room address]) {
@@ -90,8 +89,8 @@
     // Apply the current values to the labels.
     [[self distanceLabel] setText:distanceLabel];
     [[self distanceValueLabel] setText:distanceValue];
-    [[self accuracyLabel] setText:[manager readableLocationAccuracy]];
-    [[self radiusLabel] setText:[manager readableRadiusOfSessionRoom]];
+//    [[self accuracyLabel] setText:[manager readableLocationAccuracy]];
+//    [[self radiusLabel] setText:[manager readableRadiusOfSessionRoom]];
     
 //    [[self tableView] reloadData];
 }
@@ -113,15 +112,6 @@
         } else {
             [ETRAlertViewBuilder showOutsideRegionAlertView];
         }
-    }
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
-    if ([[segue identifier] isEqualToString:kSegueToImage]) {
-        ETRImageViewController *destination = [segue destinationViewController];
-        
-        [destination setIsEditable:NO];
     }
 }
 

@@ -9,7 +9,7 @@
 #import "ETRUser.h"
 
 #import "ETRHTTPHandler.h"
-#import "ETRIconDownloader.h"
+#import "ETRImageLoader.h"
 #import "ETRLocalUser.h"
 #import "ETRSession.h"
 

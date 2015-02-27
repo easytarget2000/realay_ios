@@ -56,7 +56,7 @@
     return self;
 }
 
-- (void)applyMessage:(ETRChatMessage *)message
+- (void)applyMessage:(ETRAction *)message
            fitsWidth:(CGFloat)width
             sentByMe:(BOOL)sentByMe
          showsSender:(BOOL)showsSender {

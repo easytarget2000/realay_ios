@@ -19,10 +19,9 @@
 #define kMarginInner            4
 #define kMarginInnerBottom      12
 
-#define kHTTPTimeout            20
+#define kHTTPTimeout            10
 
 #define kPHPInsertAction        @"insert_action.php"
-#define kPHPKey                 @"etr_key=90859347043da799"
 
 #define kPHPDownloadImage       @"download_image.php"
 #define kPHPUploadImage         @"upload_image.php"

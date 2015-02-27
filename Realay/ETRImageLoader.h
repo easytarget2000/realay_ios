@@ -9,13 +9,18 @@
 #import "ETRRoom.h"
 #import "ETRUser.h"
 
-@interface ETRIconDownloader : NSObject <NSURLConnectionDataDelegate>
+@interface ETRImageLoader : NSObject
 
-@property (strong, nonatomic) void (^completionHandler)(void);
+@property (strong, nonatomic, readonly) void (^completionHandler)(void);
+@property (strong, nonatomic, readonly) ETRChatObject *chatObject;
+@property (weak, nonatomic, readonly) UIImageView *targetImageView;
 
-- initWithRoom:(ETRRoom *)room;
++ (void)loadImageForObject:(ETRChatObject *)chatObject doLoadHiRes:(BOOL)doLoadHiRes;
 
-- (void)startDownload;
-- (void)cancelDownload;
++ (void)loadImageForObject:(ETRChatObject *)chatObject intoView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doShowHiRes;
+
+- (NSString *)imagefilePath:(BOOL)doLoadHiRes;
+
+- (void)startLoading;
 
 @end

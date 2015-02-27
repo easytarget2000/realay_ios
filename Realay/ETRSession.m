@@ -80,7 +80,7 @@ static ETRSession *sharedInstance = nil;
     // Insert into user_in_room table.
     NSString *bodyString = [NSString stringWithFormat:@"user_id=%ld&room_id=%ld",
                             [[ETRLocalUser sharedLocalUser] userID],
-                            [[self room] roomID]];
+                            [[self room] iden]];
     
     // Get the JSON data and parse it.
     NSDictionary *jsonDict = [ETRHTTPHandler JSONDictionaryFromPHPScript:kPHPInsertUserInRoom
@@ -97,7 +97,7 @@ static ETRSession *sharedInstance = nil;
     
 #ifdef DEBUG
     NSLog(@"INFO: User %ld became member of %ld.",
-          [[ETRLocalUser sharedLocalUser] userID], [[self room] roomID]);
+          [[ETRLocalUser sharedLocalUser] userID], [[self room] iden]);
 #endif
     
     // Prepare the invocation for the timer that queries new actions from the DB.
@@ -180,7 +180,7 @@ static ETRSession *sharedInstance = nil;
     
 #ifdef DEBUG
     NSLog(@"INFO: Manager got new room %ld, %ld.",
-          [room roomID], [[self users] count]);
+          [room iden], [[self users] count]);
 #endif
 
 }
@@ -268,12 +268,12 @@ static ETRSession *sharedInstance = nil;
  */
 - (void)queryUserList {
 #ifdef DEBUG
-    NSLog(@"INFO: %ld.queryUserList", [[self room] roomID]);
+    NSLog(@"INFO: %ld.queryUserList", [[self room] iden]);
 #endif
     
     // Prepare the query.
     NSString *bodyString;
-    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld", [[self room] roomID]];
+    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld", [[self room] iden]];
     
     // Request the JSON update data.
     NSDictionary *requestJSON = [ETRHTTPHandler JSONDictionaryFromPHPScript:kPHPSelectUserList
@@ -394,12 +394,12 @@ static ETRSession *sharedInstance = nil;
      Query the database for all new actions.
      */
 #ifdef DEBUG
-    NSLog(@"INFO: Asking for new actions. %ld, %ld", [[self room] roomID], _lastActionID);
+    NSLog(@"INFO: Asking for new actions. %ld, %ld", [[self room] iden], _lastActionID);
 #endif
     // Prepare the query.
     NSString *bodyString;
     bodyString = [NSMutableString stringWithFormat:@"room_id=%ld&user_id=%ld&last_action_id=%ld",
-                  [[self room] roomID],
+                  [[self room] iden],
                   [[ETRLocalUser sharedLocalUser] userID],
                   _lastActionID];
     
@@ -442,7 +442,7 @@ static ETRSession *sharedInstance = nil;
         } else if ([actionCode isEqualToString:@"MSG"]) {
             // Action Type: MESSAGE
             
-            ETRChatMessage *message = [ETRChatMessage messageFromJSONDictionary:action];
+            ETRAction *message = [ETRAction messageFromJSONDictionary:action];
             
             // Do no process messages any further if they have been sent by a blocked user.
             if (![_blockedUsers containsObject:[message sender]]) {

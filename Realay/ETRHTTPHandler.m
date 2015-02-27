@@ -28,7 +28,7 @@
     
     // Build the POST request.
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *bodyString = [NSString stringWithFormat:@"image_id=%@&%@", imageID, kPHPKey];
+    NSString *bodyString = [NSString stringWithFormat:@"image_id=%@", imageID];
     [request setHTTPBody:[bodyString dataUsingEncoding:NSASCIIStringEncoding]];
     [request setHTTPMethod:@"POST"];
     [request setTimeoutInterval:kHTTPTimeout];
@@ -80,14 +80,14 @@
     // Prepare the POST request with the given data string.
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:url];
-    bodyString = [NSString stringWithFormat:@"%@&%@", bodyString, kPHPKey];
+    bodyString = [NSString stringWithFormat:@"%@", bodyString];
     [request setHTTPBody:[bodyString dataUsingEncoding:NSUTF8StringEncoding
                                   allowLossyConversion:YES]];
     [request setHTTPMethod:@"POST"];
     [request setTimeoutInterval:kHTTPTimeout];
     
 #ifdef DEBUG
-    NSLog(@"INFO: Request URL: %@", url);
+    NSLog(@"INFO: Request: %@ with %@", url, bodyString);
 #endif
     
     NSDictionary __block *JSONDict;

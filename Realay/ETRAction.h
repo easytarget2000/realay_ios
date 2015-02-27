@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "ETRChatObject.h"
 #import "ETRUser.h"
 
-@interface ETRChatMessage : NSObject
+@interface ETRAction : ETRChatObject
 
 @property (nonatomic)                   NSInteger   messageID;
 @property (nonatomic)                   NSInteger   chatID;
@@ -17,8 +19,8 @@
 @property (strong, nonatomic, readonly) NSDate      *sentDate;
 @property (strong, nonatomic)           NSString    *messageString;
 
-+ (ETRChatMessage *)messageFromJSONDictionary:(NSDictionary *)JSONDict;
-+ (ETRChatMessage *)outgoingMessage:(NSString *)messageString
++ (ETRAction *)messageFromJSONDictionary:(NSDictionary *)JSONDict;
++ (ETRAction *)outgoingMessage:(NSString *)messageString
                              inChat:(NSInteger)chatID;
 
 - (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;

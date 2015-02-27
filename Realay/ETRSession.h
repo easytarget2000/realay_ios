@@ -13,7 +13,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ETRChatMessage.h"
+#import "ETRAction.h"
 #import "ETRChat.h"
 #import "ETRLocalUser.h"
 #import "ETRLocationManager.h"

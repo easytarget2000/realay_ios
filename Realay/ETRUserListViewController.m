@@ -11,7 +11,7 @@
 #import "ETRChatViewController.h"
 #import "ETRUser.h"
 #import "ETRChat.h"
-#import "ETRChatMessage.h"
+#import "ETRAction.h"
 #import "ETRViewProfileViewController.h"
 
 #define kSegueToChat            @"userListToChatSegue"
@@ -115,7 +115,7 @@
             
             // Get the last message of this chat.
             NSInteger lastMsgIndex = [[chat messages] count] - 1;
-            ETRChatMessage *lastMsg = [[chat messages] objectAtIndex:lastMsgIndex];
+            ETRAction *lastMsg = [[chat messages] objectAtIndex:lastMsgIndex];
             [[cell detailTextLabel] setText:[lastMsg messageString]];
         }
     } else {
