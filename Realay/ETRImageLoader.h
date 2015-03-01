@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Michel Sievers. All rights reserved.
 //
 
-#import "ETRRoom.h"
-#import "ETRUser.h"
+#import "ETRChatObject.h"
 
 @interface ETRImageLoader : NSObject
 

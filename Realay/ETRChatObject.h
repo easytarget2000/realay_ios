@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
-@interface ETRChatObject : NSObject
+@interface ETRChatObject : NSManagedObject
 
-@property (nonatomic) long iden;
-@property (nonatomic) long imageID;
+@property (nonatomic, retain) NSNumber * remoteID;
+@property (nonatomic, retain) NSNumber * imageID;
 @property (strong, nonatomic) UIImage *lowResImage;
 
 + (NSString *)readableStringForDate:(NSDate *)date;

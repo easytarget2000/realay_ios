@@ -8,32 +8,17 @@
 
 #import "ETREditFieldViewController.h"
 
-#import "ETRLocalUser.h"
+#import "ETRLocalUserManager.h"
 #import "ETRAlertViewBuilder.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 
 @implementation ETREditFieldViewController
 
 #pragma mark - UIViewController
 
 - (void)viewWillAppear:(BOOL)animated {
-    
-    NSString *attribute, *value;
-    
-    if ([[self attributeKey] isEqualToString:kUserDefsUserName]) {
-        //TODO: Localization
-        attribute = @"Name:";
-        value = [[ETRLocalUser sharedLocalUser] name];
-        
-    } else if ([[self attributeKey] isEqualToString:kUserDefsUserStatus]) {
-        attribute = @"Status:";
-        value = [[ETRLocalUser sharedLocalUser] status];
-    }
-    
-    [[self editAttributeLabel] setText:attribute];
-    [[self editTextField] setText:value];
-
+    [super viewWillAppear:animated];
 }
 
 #pragma mark - IBAction
@@ -46,27 +31,14 @@
 
     [queryListIndicator startAnimating];
     
-    NSString *typedValue = [[[self editTextField] text]
-                             stringByTrimmingCharactersInSet:
-                             [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    
-    if ([[self attributeKey] isEqualToString:kUserDefsUserName]) {
-        // User wants to edit the name.
-        // Check the length first.
-        if ([typedValue length] > 2) {
-            [[ETRLocalUser sharedLocalUser] setName:typedValue];
-        }
-        else {
-            [queryListIndicator stopAnimating];
-            [ETRAlertViewBuilder showTypedNameTooShortAlert];
-            return;
-        }
-    } else if ([[self attributeKey] isEqualToString:kUserDefsUserStatus]) {
-        [[ETRLocalUser sharedLocalUser] setStatus:typedValue];
-    }
+//    NSString *typedValue = [[[self editTextField] text]
+//                             stringByTrimmingCharactersInSet:
+//                             [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+//    
+
     
 
-    [[ETRLocalUser sharedLocalUser] wasAbleToUpdateUser];
+    [[ETRLocalUserManager sharedManager] storeData];
     [queryListIndicator stopAnimating];
     [[self navigationController] popViewControllerAnimated:YES];
 }

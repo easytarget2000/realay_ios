@@ -9,10 +9,11 @@
 #import "ETRCreateProfileViewController.h"
 
 #import "ETRViewProfileViewController.h"
-#import "ETRLocalUser.h"
+#import "ETRSession.h"
 #import "ETRAlertViewBuilder.h"
+#import "ETRServerAPIHelper.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 
 #define kSegueToChat        @"createProfileToChatSegue"
 #define kSegueToViewProfile @"createProfileToViewProfileSegue"
@@ -38,10 +39,10 @@
     [super viewWillAppear:animated];
     
     // Directly pop the controller if there is already a valid local user stored.
-    if ([[ETRLocalUser sharedLocalUser] userID]) {
+    if ([[ETRLocalUserManager sharedManager] user]) {
 #ifdef DEBUG
         NSLog(@"INFO: Skipping Create Profile. Local user is %@.",
-              [[ETRLocalUser sharedLocalUser] name]);
+              [[[ETRLocalUserManager sharedManager] user] name]);
 #endif
         [[self navigationController] popViewControllerAnimated:NO];
     }
@@ -65,14 +66,13 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:kSegueToViewProfile]) {
         ETRViewProfileViewController *destination = [segue destinationViewController];
-        [destination setShowMyProfile:YES];
+        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
     }
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
-    NSString *typedName = [[[self nameTextField] text]
-                           stringByTrimmingCharactersInSet:
-                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString *typedName;
+    typedName = [[_nameTextField text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if([typedName length] < 2) {
         [ETRAlertViewBuilder showTypedNameTooShortAlert];
@@ -87,25 +87,32 @@
         // Hide the keyboard.
         [[self nameTextField] resignFirstResponder];
         
-        // Rewrite the local user singleton and insert its values into DBs and UserDefs.
-        if ([[ETRLocalUser sharedLocalUser] insertNewLocalUserWithName:typedName]) {
+        [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(User *localUser) {
+            if (!localUser) {
+                [_activityIndicator stopAnimating];
+                // TODO: Display login error.
+                return;
+            }
+            
+            [[ETRLocalUserManager sharedManager] setUser:localUser];
+            [_activityIndicator stopAnimating];
+            
             if ([self goToOnFinish] == kEnumGoToChat){
-
+                
                 // Attempt joining the room.
-                [[ETRSession sharedSession] beginSession];
+                [[ETRSession sharedManager] beginSession];
                 
                 // If we are about to join a room, we want to see the chat now.
-                if ([[ETRSession sharedSession] didBeginSession]) {
+                if ([[ETRSession sharedManager] didBeginSession]) {
                     [self performSegueWithIdentifier:kSegueToChat sender:self];
                 }
             } else {
                 // If we are coming from the room list, we want to see our profile now.
                 [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
             }
-        }
+        }];
     }
     
-    [_activityIndicator stopAnimating];
 }
 
 @end

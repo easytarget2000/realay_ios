@@ -9,17 +9,18 @@
 #import "ETRUserListViewController.h"
 
 #import "ETRChatViewController.h"
-#import "ETRUser.h"
-#import "ETRChat.h"
+#import "User.h"
 #import "ETRAction.h"
 #import "ETRViewProfileViewController.h"
+#import "ETRImageLoader.h"
+#import "ETRConversation.h"
 
-#define kSegueToChat            @"userListToChatSegue"
-#define kSegueToMap             @"userListToMapSegue"
-#define kSegueToProfile         @"userListToViewProfileSegue"
-#define kCellIdentifierConvo    @"conversationCell"
-#define kCellIdentifierUser     @"userCell"
-#define kCellIdentifierInfo     @"infoCell"
+#define kSegueToConversation        @"userListToConversationSegue"
+#define kSegueToMap                 @"userListToMapSegue"
+#define kSegueToProfile             @"userListToViewProfileSegue"
+#define kCellIdentifierConvo        @"conversationCell"
+#define kCellIdentifierUser         @"userCell"
+#define kCellIdentifierInfo         @"infoCell"
 
 @implementation ETRUserListViewController
 
@@ -28,14 +29,14 @@
     
     NSInteger myControllerIndex;
     myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedSession] setUserListControllerIndex:myControllerIndex];
+    [[ETRSession sharedManager] setUserListControllerIndex:myControllerIndex];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     // Navigation Bar:
-    [self setTitle:[[[ETRSession sharedSession] room] title]];
+    [self setTitle:[[[ETRSession sharedManager] room] title]];
     
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
@@ -49,8 +50,8 @@
     [super viewWillAppear:animated];
 
 //    [[ETRSession sessionManager] setSessionDelegate:self];
-    [[ETRSession sharedSession] setChatDelegate:self];
-    [[ETRSession sharedSession] setUserListDelegate:self];
+    [[ETRSession sharedManager] setChatDelegate:self];
+    [[ETRSession sharedManager] setUserListDelegate:self];
     
     [[self navigationController] setToolbarHidden:NO animated:YES];
     
@@ -86,12 +87,12 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:kCellIdentifierInfo];
     };
-    ETRUser *user;
+    User *user;
     
     if ([indexPath section] == 0) {
         // Section 0 contains the conversations.
         
-        if ([[[ETRSession sharedSession] sortedChatKeys] count] < 1) {
+        if ([[[ETRSession sharedManager] sortedChatKeys] count] < 1) {
             // No conversation started yet.
             
             //TODO: Localization
@@ -105,37 +106,15 @@
         } else {
             // Give me a regular conversation cell if we have at least one conversation open.
             
-            // Get the chat for this cell from the array of chats through the array of sorted chats.
-            NSString *chatKey = [[[ETRSession sharedSession] sortedChatKeys] objectAtIndex:row];
-            ETRChat *chat = [[ETRSession sharedSession] chatForKey:chatKey];
-            
-            // Get the chat partner in this chat.
-            NSString *userKey = [[chat partner] userKey];
-            user = [[[ETRSession sharedSession] users] objectForKey:userKey];
-            
-            // Get the last message of this chat.
-            NSInteger lastMsgIndex = [[chat messages] count] - 1;
-            ETRAction *lastMsg = [[chat messages] objectAtIndex:lastMsgIndex];
-            [[cell detailTextLabel] setText:[lastMsg messageString]];
         }
     } else {
         // Section 1 contains the user cells.
         
-        // Get the user for this cell from the user array through the array of sorted keys.
-        NSArray *sortedUserKeys = [[ETRSession sharedSession] sortedUserKeys];
-        NSString *userKey = [sortedUserKeys objectAtIndex:row];
-        user = [[[ETRSession sharedSession] users] objectForKey:userKey];
-        
-        [[cell detailTextLabel] setText:[user status]];
     }
     
     
     [[cell textLabel] setText:[user name]];
-    if (user.smallImage.size.height > 64) {
-        [[cell imageView] setImage:[user smallImage]];
-    } else {
-        [[cell imageView] setImage:[UIImage imageNamed:@"empty.jpg"]];
-    }
+    [ETRImageLoader loadImageForObject:user intoView:[cell imageView] doLoadHiRes:NO];
     
     return cell;
 }
@@ -144,11 +123,11 @@
     
     switch (section) {
         case 0:     // Conversation section:
-            if ([[[ETRSession sharedSession] sortedChatKeys] count] < 2) return 1;
-            else return [[[ETRSession sharedSession] sortedChatKeys] count];
+            if ([[[ETRSession sharedManager] sortedChatKeys] count] < 2) return 1;
+            else return [[[ETRSession sharedManager] sortedChatKeys] count];
             break;
         case 1:     // User section
-            return [[[ETRSession sharedSession] sortedUserKeys] count];
+            return [[[ETRSession sharedManager] sortedUserKeys] count];
         default:
             return 0;
             break;
@@ -190,26 +169,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    ETRChat *selectedChat;
-    NSInteger row = [indexPath row];
-    
-    if ([indexPath section] == 0) {
-        NSArray *sortedChatKeys = [[ETRSession sharedSession] sortedChatKeys];
-        if ([sortedChatKeys count] > 0) {
-            NSString *rowChatKey = [sortedChatKeys objectAtIndex:row];
-            selectedChat = [[ETRSession sharedSession] chatForKey:rowChatKey];
-        }
-    } else {
-        NSArray *sortedUserKeys = [[ETRSession sharedSession] sortedUserKeys];
-        NSString *userKey = [sortedUserKeys objectAtIndex:row];
-        ETRUser *user = [[[ETRSession sharedSession] users] objectForKey:userKey];
-        
-        selectedChat = [ETRChat unknownIDChatWithPartner:user];
-    }
-    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self performSegueWithIdentifier:kSegueToChat sender:selectedChat];
-    
+    ETRConversation *selectedConversation;
+    [self performSegueWithIdentifier:kSegueToConversation sender:selectedConversation];
 }
 
 - (IBAction)mapButtonPressed:(id)sender {
@@ -234,24 +196,19 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    if ([[segue identifier] isEqualToString:kSegueToChat]) {
-        
+    if ([[segue identifier] isEqualToString:kSegueToConversation]) {
         ETRChatViewController *destination = [segue destinationViewController];
-        if ([sender isMemberOfClass:[ETRChat class]]) {
-            [destination setChat:sender];
-        }
-        
+        long conversationID = [sender tag];
+        [destination setConversationID:conversationID];
     } else if([[segue identifier] isEqualToString:kSegueToProfile]) {
         // Just show my own user profile.
         
         ETRViewProfileViewController *destination = [segue destinationViewController];
         
-        if ([sender isMemberOfClass:[ETRUser class]]) {
-            ETRUser *user = (ETRUser *)sender;
-            [destination setShowMyProfile:NO];
-            [destination setUser:user];
+        if ([sender isMemberOfClass:[User class]]) {
+            [destination setUser:(User *)sender];
         } else {
-            [destination setShowMyProfile:YES];
+            
         }
         
     }

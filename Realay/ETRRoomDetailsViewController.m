@@ -10,13 +10,18 @@
 
 #import "ETRLocationManager.h"
 #import "ETRAlertViewBuilder.h"
+#import "ETRRoom.h"
 
 #define kSegueToImage   @"roomDetailsToViewImageSegue"
 #define kSegueToNext    @"roomDetailsToPasswordSegue"
 
-@implementation ETRRoomDetailsViewController {
-    ETRRoom *room;
-}
+@interface ETRRoomDetailsViewController()
+
+@property (strong, nonatomic) ETRRoom * room;
+
+@end
+
+@implementation ETRRoomDetailsViewController
 
 #pragma mark - UIViewController
 
@@ -24,44 +29,40 @@
     [super viewWillAppear:animated];
     
     // Get the room object from the manager.
-    room = [[ETRSession sharedSession] room];
+    _room = [[ETRSession sharedManager] room];
+    if (!_room) {
+        NSLog(@"ERROR: Cannot find Session room.");
+    }
     
     // Initialise the GUI elements.
-    [[self imageButton] setImage:[room lowResImage] forState:UIControlStateNormal];
-    [[self titleLabel] setText:[room title]];
+    [_imageButton setImage:[_room lowResImage] forState:UIControlStateNormal];
+    [_titleLabel setText:[_room title]];
 
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
     
-    if ([[ETRSession sharedSession] didBeginSession]) {
+    if ([[ETRSession sharedManager] didBeginSession]) {
         [[self navigationItem] setRightBarButtonItem:nil];
     }
     
     // Set the description labels.
-    [[self timeLabel] setText:[room timeSpan]];
-
-    // If the room has no address, display the coordinates in a smaller font.
-    if ([room address]) {
-        [[self addressLabel] setText:[room address]];
-    } else {
-        [[self addressLabel] setText:[room coordinateString]];
-        [[self addressLabel] setFont:[UIFont systemFontOfSize:9.0f]];
-    }
+    [_timeLabel setText:[_room timeSpan]];
+    [_addressLabel setText:[_room address]];
     
-    [[self amountOfUsersLabel] setText:[room amountOfUsersString]];
-    [[self descriptionLabel] setText:[room info]];
+    [_userCountLabel setText:[_room userCount]];
+    [_descriptionLabel setText:[_room summary]];
     
     // Now this View is the delegate of the relayed location manager.
-    [[ETRSession sharedSession] setLocationDelegate:self];
+    [[ETRSession sharedManager] setLocationDelegate:self];
     
     // Make it call the delegate distance methods,so the GUI updates.
-    [[ETRSession sharedSession] callLocationManagerDelegates];
+    [[ETRSession sharedManager] callLocationManagerDelegates];
     
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[ETRSession sharedSession] setLocationDelegate:nil];
+    [[ETRSession sharedManager] setLocationDelegate:nil];
 }
 
 #pragma mark - ETRRelayedLocationDelegate
@@ -71,7 +72,7 @@
     NSString *distanceLabel, *distanceValue;
     
     // Prepare different distance cells depending on the current location.
-    if ([[ETRSession sharedSession] isInRegion]) {
+    if ([[ETRSession sharedManager] isInRegion]) {
         [[self distanceCell] setBackgroundColor:[UIColor whiteColor]];
         
         //TODO: Localization
@@ -83,7 +84,7 @@
         
         //TODO: Localization
         distanceLabel = @"Distance";
-        distanceValue = [manager readableDistanceToRoom:room];
+        distanceValue = [manager formattedDistanceToRoom:_room];
     }
     
     // Apply the current values to the labels.
@@ -104,10 +105,10 @@
 
 - (IBAction)joinButtonPressed:(id)sender {
     // Only perform a join action, if the user did not join yet.
-    if (![[ETRSession sharedSession] didBeginSession]) {
+    if (![[ETRSession sharedManager] didBeginSession]) {
         
         // Show the password prompt, if the device location is inside the region.
-        if ([[ETRSession sharedSession] isInRegion]) {
+        if ([[ETRSession sharedManager] isInRegion]) {
             [self performSegueWithIdentifier:kSegueToNext sender:self];
         } else {
             [ETRAlertViewBuilder showOutsideRegionAlertView];

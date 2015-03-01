@@ -19,6 +19,6 @@
  */
 - (NSInteger)distanceToRoom:(ETRRoom *)room ;
 
-- (NSString *)readableDistanceToRoom:(ETRRoom *)room;
+- (NSString *)formattedDistanceToRoom:(ETRRoom *)room;
 
 @end

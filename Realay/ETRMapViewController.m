@@ -32,10 +32,10 @@
     
     NSInteger myControllerIndex;
     myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedSession] setMapControllerIndex:myControllerIndex];
+    [[ETRSession sharedManager] setMapControllerIndex:myControllerIndex];
     
     // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSession sharedSession] room]) {
+    if (![[ETRSession sharedManager] room]) {
         [[self navigationController] popViewControllerAnimated:NO];
         NSLog(@"ERROR: No room set in manager.");
         return;
@@ -47,11 +47,11 @@
     [super viewWillAppear:animated];
     
     // Basic GUI setup:
-    [self setTitle:[[[ETRSession sharedSession] room] title]];
+    [self setTitle:[[[ETRSession sharedManager] room] title]];
     [[self navigationController] setToolbarHidden:NO animated:YES];
     
     // Hide the join button if the user is already in this room.
-    if ([[ETRSession sharedSession] didBeginSession]) {
+    if ([[ETRSession sharedManager] didBeginSession]) {
         [[self navigationItem] setRightBarButtonItem:nil];
         [self setDirectionsButton:nil];
     } else {
@@ -82,14 +82,19 @@
     // Create the room marker.
     // TODO: Create custom markers for each room.
     GMSMarker *marker = [[GMSMarker alloc] init];
-    ETRRoom *room = [[ETRSession sharedSession] room];
+    ETRRoom *room = [[ETRSession sharedManager] room];
+    if (!room) {
+        NSLog(@"ERROR: Cannot start ETRMapViewController without a prepared Session Room.");
+        return;
+    }
+    
     [marker setPosition:[[room location] coordinate]];
     [marker setMap:_mapView];
     _mapView.selectedMarker = marker;
     
     // Add a radius circle to the marker.
     GMSCircle *circle = [[GMSCircle alloc] init];
-    [circle setRadius:[room radius]];
+    [circle setRadius:[[room radius] shortValue]];
     [circle setFillColor:[UIColor colorWithRed:50.0f green:50.0f blue:50.0f alpha:.5f]];
     [circle setStrokeColor:[UIColor lightGrayColor]];
     [circle setPosition:[marker position]];
@@ -113,8 +118,8 @@
     if (myNavIndex == NSNotFound) {
         
         // If we didn't join this room, discard it.
-        if (![[ETRSession sharedSession] didBeginSession]) {
-            [[ETRSession sharedSession] endSession];
+        if (![[ETRSession sharedManager] didBeginSession]) {
+            [[ETRSession sharedManager] endSession];
 #ifdef DEBUG
             NSLog(@"INFO: Manager Room object reset.");
 #endif
@@ -138,13 +143,13 @@
 - (GMSCameraPosition *)adjustedCamera {
     
     // Get data from the session manager.
-    CLLocationManager *locMan = [[ETRSession sharedSession] locationManager];
-    ETRRoom *room = [[ETRSession sharedSession] room];
+    CLLocationManager *locMan = [[ETRSession sharedManager] locationManager];
+    ETRRoom *room = [[ETRSession sharedManager] room];
     
     // Decide which camera to show.
     if ([locMan location]) {
         
-        if ([[ETRSession sharedSession] isInRegion]) {
+        if ([[ETRSession sharedManager] isInRegion]) {
             // Zoom in on the region, not the user, if the user is inside.
             
             // TODO: Determine a useful zoom level for different region radii.
@@ -183,23 +188,17 @@
 
 - (IBAction)navigateButtonPressed:(id)sender {
     NSString *URLString;
-    CLLocationCoordinate2D destinationCoordinate;
-    destinationCoordinate = ETRSession.sharedSession.room.location.coordinate;
     
-    // Try to open the navigation in Google Maps.
     NSURL *gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
+    NSString *address = [[[ETRSession sharedManager] room] address];
     if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
-        
-        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%f,%f",
-               destinationCoordinate.latitude, destinationCoordinate.longitude];
-        
+        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
     } else {
         // No app was found that opens Google Maps URLs.
 #ifdef DEBUG
         NSLog(@"INFO: Can not use comgooglemaps://.");
 #endif
-        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%f,%f",
-               destinationCoordinate.latitude, destinationCoordinate.longitude];
+        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%@", address];
     }
     
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
@@ -212,12 +211,12 @@
 - (IBAction)joinButtonPressed:(id)sender {
     
     // Only perform a join action, if the user did not join yet.
-    if (![[ETRSession sharedSession] didBeginSession]) {
+    if (![[ETRSession sharedManager] didBeginSession]) {
         
-        if ([[ETRSession sharedSession] isInRegion]) {
+        if ([[ETRSession sharedManager] isInRegion]) {
             // Show the password prompt, if the device location is inside the region.
             [self performSegueWithIdentifier:kSegueToNext sender:self];
-        } else if ([[ETRSession sharedSession] locationUpdateFails]){
+        } else if ([[ETRSession sharedManager] locationUpdateFails]){
             // The user's location is unknown.
             [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:0];
         } else {

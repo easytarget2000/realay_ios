@@ -20,6 +20,10 @@
 
 @implementation ETRChatObject
 
+@dynamic remoteID;
+@dynamic imageID;
+@synthesize lowResImage;
+
 // TODO: Use default formats.
 + (NSString *)readableStringForDate:(NSDate *)date {
     if (!date) {
@@ -92,7 +96,7 @@
 }
 
 - (NSString *)imageIDWithHiResFlag:(BOOL)doLoadHiRes {
-    return [NSString stringWithFormat:@"%ld%s", _imageID, doLoadHiRes ? "" : "s"];
+    return [NSString stringWithFormat:@"%ld%s", [[self imageID] longValue], doLoadHiRes ? "" : "s"];
 }
 
 

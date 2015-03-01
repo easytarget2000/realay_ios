@@ -14,7 +14,6 @@
 #define kDictKeyNotifyChats     @"newMessages"
 #define kDictKeyLastMsgId       @"lastMsgId"
 
-// Margins of chat message cells/bubbles:
 #define kMarginOuter            8
 #define kMarginInner            4
 #define kMarginInnerBottom      12
@@ -23,13 +22,12 @@
 
 #define kPHPInsertAction        @"insert_action.php"
 
-#define kPHPDownloadImage       @"download_image.php"
 #define kPHPUploadImage         @"upload_image.php"
-
-#define kURLPHPScripts          @"http://rldb.easy-target.org/"
 
 #define kUserDefsUserName       @"userDefaultsUserName"
 #define kUserDefsUserStatus     @"userDefaultsUserStatus"
+
+#define kPublicReceiverID -10
 
 #endif
 

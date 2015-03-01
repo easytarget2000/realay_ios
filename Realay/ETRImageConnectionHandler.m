@@ -8,7 +8,7 @@
 
 #import "ETRImageConnectionHandler.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 
 #define kDebugTag @"ETRImageConnectionHandler"
 
@@ -30,27 +30,7 @@
     return self;
 }
 
-+ (void)loadForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
-    if (!imageLoader) return;
-    
-    // Prepare the URL to the download script.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@",
-                           kURLPHPScripts, kPHPDownloadImage];
-    NSURL *URL = [NSURL URLWithString:URLString];
-    
-    // Prepare the POST request.
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    NSString *bodyString;
-    
-    ETRChatObject *chatObject = [imageLoader chatObject];
-    if (!chatObject) return;
-    if ([chatObject imageID] < 100) return;
-    bodyString = [NSString stringWithFormat:@"image_id=%@", [chatObject imageIDWithHiResFlag:doLoadHiRes]];
-    NSData *bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
-    [request setHTTPBody:[NSMutableData dataWithData:bodyData]];
-    [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:kHTTPTimeout];
-    
++ (void)performRequest:(NSURLRequest *) request forLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL) doLoadHiRes {
     ETRImageConnectionHandler *instance = [[ETRImageConnectionHandler alloc] initWithImageLoader:imageLoader doLoadHiRes:doLoadHiRes];
     [instance imageConnection:[[NSURLConnection alloc] initWithRequest:request delegate:instance]];
 }

@@ -12,7 +12,7 @@
 #import "ETRCreateProfileViewController.h"
 #import "ETRAlertViewBuilder.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 
 #define DEBUG_NO_PW_CHECK       1
 
@@ -26,6 +26,7 @@
 #pragma mark - UIViewController
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
     
     // The join process takes a while.
     // Show an activity indicator (spinning circle).
@@ -42,7 +43,7 @@
     
     [[self passwordTextField] setDelegate:self];
     [[self passwordTextField] setText:@""];
-    [self setTitle:[[[ETRSession sharedSession] room] title]];
+    [self setTitle:[[[ETRSession sharedManager] room] title]];
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
@@ -57,10 +58,10 @@
 - (IBAction)joinButtonPressed:(id)sender {
     
     // Only perform a join action, if the user did not join yet.
-    if (![[ETRSession sharedSession] didBeginSession]) {
+    if (![[ETRSession sharedManager] didBeginSession]) {
         
         // Show the password prompt, if the device location is inside the region.
-        if ([[ETRSession sharedSession] isInRegion]) [self checkEnteredPassword];
+        if ([[ETRSession sharedManager] isInRegion]) [self checkEnteredPassword];
         else [ETRAlertViewBuilder showOutsideRegionAlertView];
     }
 }
@@ -86,21 +87,21 @@
     
     // Get the password values.
     NSString *typedPassword = [[self passwordTextField] text];
-    NSString *password = [[[ETRSession sharedSession] room] password];
+    NSString *password = [[[ETRSession sharedManager] room] password];
     
 #ifdef DEBUG_NO_PW_CHECK
-    typedPassword = password;
+//    typedPassword = password;
 #endif
     
     if([typedPassword isEqualToString:password]) {
         // The right password was given.
         // If the user is already registered, attempt to join the room.
         // Otherwise let the user create a profile first.
-        if ([[ETRLocalUser sharedLocalUser] userID] > 10) {
+        if ([[ETRLocalUserManager sharedManager] userID] > 10) {
             
-            [[ETRSession sharedSession] beginSession];
+            [[ETRSession sharedManager] beginSession];
             
-            if ([[ETRSession sharedSession] didBeginSession]) {
+            if ([[ETRSession sharedManager] didBeginSession]) {
                 [self performSegueWithIdentifier:kSegueToChat sender:self];
             } else {
                 //TODO: Error handling
@@ -119,21 +120,14 @@
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
     // Tell the Create Profile controller to go to the chat when done.
     if ([[segue identifier] isEqualToString:kSegueToChat]) {
-        
         ETRChatViewController *destination = [segue destinationViewController];
-        [destination setChat:[ETRChat chatWithID:-10]];
-        [destination setIsPublic:YES];
-        
+        [destination setConversationID:kPublicReceiverID];
     } else if ([[segue identifier] isEqualToString:kSegueToCreateProfile]) {
-        
         ETRCreateProfileViewController *destination = [segue destinationViewController];
         [destination setGoToOnFinish:kEnumGoToChat];
-        
     }
-    
 }
 
 @end

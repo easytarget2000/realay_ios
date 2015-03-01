@@ -24,7 +24,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel            *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel            *addressLabel;
-@property (weak, nonatomic) IBOutlet UILabel            *amountOfUsersLabel;
+@property (weak, nonatomic) IBOutlet UILabel            *userCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel            *descriptionLabel;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem    *joinButton;
 

@@ -1,33 +1,40 @@
 //
-//  RLChatMessage.h
+//  Action.h
 //  Realay
 //
-//  Created by Michel S on 10.12.13.
-//  Copyright (c) 2013 Michel Sievers. All rights reserved.
+//  Created by Michel on 01/03/15.
+//  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
-#import "ETRChatObject.h"
-#import "ETRUser.h"
+@class ETRRoom, User;
 
-@interface ETRAction : ETRChatObject
+@interface ETRAction : NSManagedObject
 
-@property (nonatomic)                   NSInteger   messageID;
-@property (nonatomic)                   NSInteger   chatID;
-@property (strong, nonatomic)           ETRUser     *sender;
-@property (strong, nonatomic, readonly) NSDate      *sentDate;
-@property (strong, nonatomic)           NSString    *messageString;
+@property (nonatomic, retain) NSNumber * remoteID;
+@property (nonatomic, retain) NSDate * sentTime;
+@property (nonatomic, retain) NSNumber * code;
+@property (nonatomic, retain) NSNumber * imageID;
+@property (nonatomic, retain) NSString * messageContent;
+@property (nonatomic, retain) NSNumber * isInQueue;
+@property (nonatomic, retain) User *sender;
+@property (nonatomic, retain) User *recipient;
+@property (nonatomic, retain) ETRRoom *room;
 
-+ (ETRAction *)messageFromJSONDictionary:(NSDictionary *)JSONDict;
-+ (ETRAction *)outgoingMessage:(NSString *)messageString
-                             inChat:(NSInteger)chatID;
++ (ETRAction *)actionFromJSONDictionary:(NSDictionary *)JSONDict;
++ (ETRAction *)outgoingMessage:(NSString *)messageContent toRecipient:(User *)recipient;
 
 - (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
-- (void)insertMessageIntoDB;
 - (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
 - (NSString *)sentDateHoursAndMinutes;
 - (NSString *)sentDateDayDate;
-- (void)setSentDateFromSqlString:(NSString *)dateString;
+
+- (BOOL)isPublicMessage;
+
+- (BOOL)isPhotoMessage;
+
+- (BOOL)isSentMessage;
 
 @end

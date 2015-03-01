@@ -10,7 +10,7 @@
 
 #import "ETRSession.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 //#define DEBUG_LABEL_BOUNDS 1
 #define kHeightSenderLabel 18
 
@@ -38,7 +38,7 @@
         [_nameLabel setBackgroundColor:[UIColor clearColor]];
         [_nameLabel setNumberOfLines:1];
         [_nameLabel setLineBreakMode:NSLineBreakByTruncatingMiddle];
-        UIFont *nameFont = [[ETRSession sharedSession] msgSenderFont];
+        UIFont *nameFont = [[ETRSession sharedManager] msgSenderFont];
         [_nameLabel setFont:nameFont];
         [[self contentView] addSubview:_nameLabel];
         
@@ -48,7 +48,7 @@
         [_textLabel setBackgroundColor:[UIColor clearColor]];
         [_textLabel setNumberOfLines:0];
         [_textLabel setLineBreakMode:NSLineBreakByWordWrapping];
-        UIFont *textFont = [[ETRSession sharedSession] msgTextFont];
+        UIFont *textFont = [[ETRSession sharedManager] msgTextFont];
         [_textLabel setFont:textFont];
         [[self contentView] addSubview:_textLabel];
     }
@@ -56,15 +56,14 @@
     return self;
 }
 
-- (void)applyMessage:(ETRAction *)message
-           fitsWidth:(CGFloat)width
-            sentByMe:(BOOL)sentByMe
-         showsSender:(BOOL)showsSender {
+- (void)applyMessage:(ETRAction *)message fitsWidth:(CGFloat)width {
     
-    if (![message messageString]) return;
+    if (![message messageContent]) return;
     
     // Calculate the size of the combined labels.
-    CGSize innerSize = [message frameSizeForWidth:width hasNameLabel:showsSender];
+    BOOL isMyMessage = [message isSentMessage];
+    BOOL doShowSender = !isMyMessage && [message isPublicMessage];
+    CGSize innerSize = [message frameSizeForWidth:width hasNameLabel:doShowSender];
     
     // Add the margins to the labels to get the size of the bubble frame.
     CGSize bubbleSize = CGSizeMake(kMarginInner + innerSize.width + kMarginInner,
@@ -75,7 +74,7 @@
     UIImage *bubbleImage;
     
     // Messages sent by the local user are displayed right-bound cells.
-    if (sentByMe) {
+    if (isMyMessage) {
         
         // Load the bubble.
         bubbleImage = [UIImage imageNamed:@"RightBubble.png"];
@@ -130,7 +129,7 @@
     
     // Apply a frame to the sender label or hide it.
     CGFloat senderLabelHeight = 0;
-    if (showsSender) {
+    if (doShowSender) {
         senderLabelHeight = kHeightSenderLabel;
         [_nameLabel setHidden:NO];
     } else {
@@ -156,10 +155,51 @@
 #endif
 
     // Apply the values to the views.
-    if (showsSender) {
-        [_nameLabel setText:[[message sender] name]];
+    if (doShowSender) {
+        // Get user name from UserCache.
     }
-    [_textLabel setText:[message messageString]];
+    [_textLabel setText:[message messageContent]];
 }
+
+- (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel {
+    
+    // Calculate the frame of the name label, if wanted.
+    CGSize nameSize = CGSizeMake(0, 0);
+    if (hasNameLabel) {
+        NSString *senderName;
+        // TODO: Get User data from Cache.
+        if (senderName) {
+            UIFont *nameFont = [[ETRSession sharedManager] msgSenderFont];
+            nameSize = [senderName sizeWithAttributes:@{NSFontAttributeName:nameFont}];
+        }
+    }
+    
+    // Calculate the frame of the message label.
+    CGSize maxMsgSize = CGSizeMake(width - 76, MAXFLOAT);
+    UIFont *textFont = [[ETRSession sharedManager] msgTextFont];
+    CGRect messageRect;
+//    messageRect = [self boundingRectWithSize:maxMsgSize
+//                                               options:NSStringDrawingUsesLineFragmentOrigin
+//                                            attributes:@{NSFontAttributeName:textFont}
+//                                               context:nil];
+    
+    CGSize frameSize;
+    if (nameSize.width > messageRect.size.width) frameSize.width = nameSize.width + 4;
+    else frameSize.width = messageRect.size.width + 4;
+    
+    //    if (name)
+    //    else frameSize.height = messageRect.size.height;
+    frameSize.height = nameSize.height + messageRect.size.height;
+    
+    //    if (frameSize.width < 64) frameSize.width = 64;
+    
+    return frameSize;
+}
+
+- (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel {
+    CGSize frameSize = [self frameSizeForWidth:width hasNameLabel:hasNameLabel];
+    return kMarginOuter + kMarginInner + frameSize.height + kMarginInner + 20;
+}
+
 
 @end

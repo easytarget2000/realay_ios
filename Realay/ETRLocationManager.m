@@ -23,13 +23,15 @@
  values below 10 are handled as 0 to avoid unnecessary precision
  */
 - (NSInteger)distanceToRoom:(ETRRoom *)room {
+    if (!room) return 0;
+    
     NSInteger value = [[self location] distanceFromLocation:[room location]];
-    value -= [room radius];
+    value -= [[room radius] integerValue];
     if (value < 10) return 0;
     else return value;
 }
 
-- (NSString *)readableDistanceToRoom:(ETRRoom *)room {
+- (NSString *)formattedDistanceToRoom:(ETRRoom *)room {
     return [ETRChatObject lengthFromMetres:[self distanceToRoom:room]];
 }
 

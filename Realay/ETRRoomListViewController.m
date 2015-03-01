@@ -9,16 +9,16 @@
 #import "ETRRoomListViewController.h"
 
 #import "ETRCreateProfileViewController.h"
-#import "ETRHTTPHandler.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRImageLoader.h"
 #import "ETRSession.h"
-#import "ETRRoom.h"
 #import "ETRInformationCell.h"
 #import "ETRRoomListCell.h"
 #import "ETRAlertViewBuilder.h"
 #import "ETRViewProfileViewController.h"
+#import "ETRLocalUserManager.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 
 #define kDefaultRangeInKm       15
 #define kInfoCellIdentifier     @"infoCell"
@@ -46,7 +46,7 @@
     
     NSInteger myControllerIndex;
     myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedSession] setRoomListControllerIndex:myControllerIndex];
+    [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
     
     // Initialise failure variable.
     _noRoomFoundCounter = 0;
@@ -59,8 +59,8 @@
                     forControlEvents:UIControlEventValueChanged];
     
     // Adjust the location manager and act as its delegate for now.
-    [[ETRSession sharedSession] resetLocationManager];
-    [[[ETRSession sharedSession] locationManager] setDelegate:self];
+    [[ETRSession sharedManager] resetLocationManager];
+    [[[ETRSession sharedManager] locationManager] setDelegate:self];
     
     [_activityIndicator setColor:[UIColor whiteColor]];
     [_activityIndicator stopAnimating];
@@ -133,40 +133,42 @@
 
 - (void)updateRoomsTable {
     
-    // Start the activity indicator spin.
-    [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
-                             toTarget:self
-                           withObject:nil];
+    [ETRServerAPIHelper updateRoomList];
     
-    // Stop refreshing the table.
-    [[self refreshControl] endRefreshing];
-    
-    // The actual download of room data:
-    _roomsArray = [ETRHTTPHandler queryRoomListInRadius:kDefaultRangeInKm];
-    
-    if ([_roomsArray count] > 0) {
-        // A list of rooms was received.
-        // Reset error counter.
-        _noRoomFoundCounter = 0;
-        _nilArrayCounter = 0;
-        [_activityIndicator stopAnimating];
-        
-    } else if ([_roomsArray count] == 0) {
-        // No room was found. The reason is unknown.
-        _noRoomFoundCounter++;
-        
-        if (!_roomsArray) {
-            //TODO: Handle DB Errors
-            NSLog(@"ERROR: Database connection keeps failing.");
-        }
-    }
-    
-#ifdef DEBUG
-    NSLog(@"INFO: Updated rooms table: %ld, %ld", [_roomsArray count], _noRoomFoundCounter);
-#endif
-    
-    // Put the data into the table or at least display an info cell.
-    [[self tableView] reloadData];
+//    // Start the activity indicator spin.
+//    [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
+//                             toTarget:self
+//                           withObject:nil];
+//    
+//    // Stop refreshing the table.
+//    [[self refreshControl] endRefreshing];
+//    
+//    // The actual download of room data:
+//    _roomsArray = [ETRServerAPIHelper queryRoomListInRadius:kDefaultRangeInKm];
+//    
+//    if ([_roomsArray count] > 0) {
+//        // A list of rooms was received.
+//        // Reset error counter.
+//        _noRoomFoundCounter = 0;
+//        _nilArrayCounter = 0;
+//        [_activityIndicator stopAnimating];
+//        
+//    } else if ([_roomsArray count] == 0) {
+//        // No room was found. The reason is unknown.
+//        _noRoomFoundCounter++;
+//        
+//        if (!_roomsArray) {
+//            //TODO: Handle DB Errors
+//            NSLog(@"ERROR: Database connection keeps failing.");
+//        }
+//    }
+//    
+//#ifdef DEBUG
+//    NSLog(@"INFO: Updated rooms table: %ld, %ld", [_roomsArray count], _noRoomFoundCounter);
+//#endif
+//    
+//    // Put the data into the table or at least display an info cell.
+//    [[self tableView] reloadData];
 }
 
 // This table only has one section.
@@ -239,19 +241,19 @@
     // Get a Room from the RoomList and apply its attributes to the cell views.
     ETRRoom *currentRoom = [_roomsArray objectAtIndex:indexPath.row];
     [[roomCell titleLabel] setText:[currentRoom title]];
-    [[roomCell sizeLabel] setText:[currentRoom size]];
+    [[roomCell sizeLabel] setText:[currentRoom formattedSize]];
     [[roomCell timeLabel] setText:[currentRoom timeSpan]];
-    [[roomCell descriptionLabel] setText:[currentRoom info]];
+    [[roomCell descriptionLabel] setText:[currentRoom summary]];
     
     // Display the distance to the closest region point.
-    ETRLocationManager *locMan = [[ETRSession sharedSession] locationManager];
+    ETRLocationManager *locMan = [[ETRSession sharedManager] locationManager];
     if ([locMan distanceToRoom:currentRoom] < 10) {
         [[roomCell distanceLabel] setHidden:YES];
         [[roomCell placeIcon] setHidden:NO];
     } else {
         [[roomCell placeIcon] setHidden:YES];
         [[roomCell distanceLabel] setHidden:NO];
-        [[roomCell distanceLabel] setText:[locMan readableDistanceToRoom:currentRoom]];
+        [[roomCell distanceLabel] setText:[locMan formattedDistanceToRoom:currentRoom]];
     }
     
 //    [self startIconDownload:currentRoom forIndexPath:indexPath];
@@ -335,7 +337,7 @@
     [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
                              toTarget:self
                            withObject:nil];
-    [[ETRSession sharedSession] prepareSessionInRoom:[_roomsArray objectAtIndex:[indexPath row]]
+    [[ETRSession sharedManager] prepareSessionInRoom:[_roomsArray objectAtIndex:[indexPath row]]
                                 navigationController:[self navigationController]];
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     [_activityIndicator stopAnimating];
@@ -344,7 +346,7 @@
 
 // Create or view my profile.
 - (IBAction)profileButtonPressed:(id)sender {
-    if ([[ETRLocalUser sharedLocalUser] userID] > 10) {
+    if ([[ETRLocalUserManager sharedManager] userID] > 10) {
         [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
     } else {
         [self performSegueWithIdentifier:kSegueToCreateProfile sender:self];
@@ -364,7 +366,7 @@
         // Just show my own user profile.
         
         ETRViewProfileViewController *destination = [segue destinationViewController];
-        [destination setShowMyProfile:YES];
+        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
         //TODO: Tell the View Profile controller to come back to the Room List on Back.
     }
     

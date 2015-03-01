@@ -8,19 +8,19 @@
 
 #import "ETRSession.h"
 
-#import "ETRHTTPHandler.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRAlertViewBuilder.h"
 
-#import "SharedMacros.h"
+#import "ETRSharedMacros.h"
 
 #define kTickInterval           3
 
 #define kFontSizeMsgSender      15
 #define kFontSizeMsgText        15
 
-#define kPHPInsertUserInRoom    @"insert_user_in_room.php"
-#define kPHPSelectActions       @"select_actions.php"
-#define kPHPSelectUserList      @"select_users_in_room.php"
+#define kPHPInsertUserInRoom    @"insert_user_in_room"
+#define kPHPSelectActions       @"select_actions"
+#define kPHPSelectUserList      @"select_users_in_room"
 
 #define kTimeReturnKick         10
 #define kTimeReturnWarning1     5
@@ -53,8 +53,12 @@ static ETRSession *sharedInstance = nil;
     }
 }
 
-+ (ETRSession *)sharedSession {
++ (ETRSession *)sharedManager {
     return sharedInstance;
+}
+
++ (User *)publicDummyUser {
+    return nil;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -71,34 +75,18 @@ static ETRSession *sharedInstance = nil;
         return;
     }
     
-    if ([[[self room] endDate] compare:[NSDate date]] != 1) {
+    if ([[[self room] endTime] compare:[NSDate date]] != 1) {
         NSLog(@"ERROR: Room was already closed.");
         //TODO: Display error message.
         return;
     }
     
-    // Insert into user_in_room table.
-    NSString *bodyString = [NSString stringWithFormat:@"user_id=%ld&room_id=%ld",
-                            [[ETRLocalUser sharedLocalUser] userID],
-                            [[self room] iden]];
-    
-    // Get the JSON data and parse it.
-    NSDictionary *jsonDict = [ETRHTTPHandler JSONDictionaryFromPHPScript:kPHPInsertUserInRoom
-                                                              bodyString:bodyString];
-    NSString *statusCode = [jsonDict valueForKey:@"status"];
-    // If an error returned, stop here.
-    if(![statusCode isEqualToString:@"INSERT_USER_ACTION_OK"]) {
-        NSLog(@"ERROR: %@", statusCode);
-        return;
-    }
+//    if (![ETRServerAPIHelper startSession]) {
+//        return;
+//    }
     
     _allMyChats = [NSMutableDictionary dictionary];
     _sortedChatKeys = [NSMutableArray array];
-    
-#ifdef DEBUG
-    NSLog(@"INFO: User %ld became member of %ld.",
-          [[ETRLocalUser sharedLocalUser] userID], [[self room] iden]);
-#endif
     
     // Prepare the invocation for the timer that queries new actions from the DB.
     NSMethodSignature *tickSignature = [self methodSignatureForSelector:@selector(tick)];
@@ -131,7 +119,7 @@ static ETRSession *sharedInstance = nil;
     if ([self didBeginSession]) {
         //TODO: update_user_in_room.php
     }
-
+    
     _room = nil;
     [_updateTimer invalidate];
     _updateTimer = nil;
@@ -177,12 +165,6 @@ static ETRSession *sharedInstance = nil;
     [[self locationManager] setDelegate:self];
     [[self locationManager] startUpdatingLocation];
     [self determineRegionState];
-    
-#ifdef DEBUG
-    NSLog(@"INFO: Manager got new room %ld, %ld.",
-          [room iden], [[self users] count]);
-#endif
-
 }
 
 /*
@@ -218,208 +200,23 @@ static ETRSession *sharedInstance = nil;
 
 #pragma mark - In-Session
 
-/*
- Add this user to the list of blocked people and refresh the user and conversation lists.
- */
-- (void)blockUser:(ETRUser *)user {
-    
-    [_blockedUsers addObject:user];
-//    [_users removeObjectForKey:[user userKey]];
-    [_sortedUserKeys removeObject:[user userKey]];
-    
-    NSString *chatKey = [[ETRChat unknownIDChatWithPartner:user] dictKey];
-//    ETRChat *delChat = [_allMyChats objectForKey:chatKey];
-    [_allMyChats removeObjectForKey:chatKey];
-    [_sortedChatKeys removeObject:chatKey];
-//    [self queryUserList];
-//    [self sortChatLists];
-    [[self userListDelegate] didUpdateUserChatList];
-    
-    // Pop to user list.
-    NSInteger listControllerIndex = [self userListControllerIndex];
-    UINavigationController *navc = [self navigationController];
-    if (listControllerIndex >= 0 && navc) {
-        UIViewController *listController;
-        listController = [[navc viewControllers] objectAtIndex:listControllerIndex];
-        
-        [navc popToViewController:listController animated:YES];
-    } else {
-        NSLog(@"ERROR: No user list view controller on stack.");
-        [navc popToRootViewControllerAnimated:YES];
-    }
-}
-
-/*
- Return the chat object for a given dictionary key.
- */
-- (ETRChat *)chatForKey:(NSString *)dictKey {
-    
-    if ([[_allMyChats objectForKey:dictKey] isMemberOfClass:[ETRChat class]]) {
-        return [_allMyChats objectForKey:dictKey];
-    } else {
-        NSLog(@"WARNING: %@ is not a key for a chat object.", dictKey);
-        return nil;
-    } 
-    
-}
-
-/*
- Queries the entire list of users for this room and downloads entire user objects.
- */
-- (void)queryUserList {
-#ifdef DEBUG
-    NSLog(@"INFO: %ld.queryUserList", [[self room] iden]);
-#endif
-    
-    // Prepare the query.
-    NSString *bodyString;
-    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld", [[self room] iden]];
-    
-    // Request the JSON update data.
-    NSDictionary *requestJSON = [ETRHTTPHandler JSONDictionaryFromPHPScript:kPHPSelectUserList
-                                                                 bodyString:bodyString];
-    
-    // Check if the status code doesn't signal any problems before continuing.
-    NSString *reqStatusCode = [requestJSON objectForKey:@"status"];
-    if (![reqStatusCode isEqual:@"SELECT_USERS_IN_ROOM_OK"]) {
-        NSLog(@"ERROR: %@", reqStatusCode);
-        //TODO: Handle error gracefully.
-        return;
-    }
-    
-    // Prepare the objects before filling them.
-    NSDictionary *usersJSONArray = [requestJSON objectForKey:@"users"];
-    //    NSMutableArray *unsortedUsers = [NSMutableArray array];
-    _users = [NSMutableDictionary dictionary];
-    
-    for (NSDictionary *userDict in usersJSONArray) {
-        ETRUser *user = [ETRUser userFromJSONDictionary:userDict];
-        
-        /*
-         Do not display a user in the list, if he is blocked
-         or if it is the local user.
-         */
-        BOOL isBlockedUser = [_blockedUsers containsObject:user];
-        BOOL isLocalUser = [user userID] == [[ETRLocalUser sharedLocalUser] userID];
-        if (!isBlockedUser && !isLocalUser) {
-#ifdef DEBUG
-            NSLog(@"INFO: Added user to return array: %ld, %@",
-                  [user userID], [user name]);
-#endif
-            
-            // Add this user to the return array.
-            [[self users] setObject:user forKey:[user userKey]];
-        }
-        
-    }
-    
-    //Now we have the array of all unsorted users and the dictionary of all user keys.
-    [self sortUserKeys];
-    
-}
-
-/*
- Sort all present private chats by last message and update the array of sorted keys.
- */
-- (void)sortChatLists {
-    NSMutableArray *unsortedChats = [NSMutableArray array];
-    //TODO: Iterate through updated AND EXISTING chat keys.
-    for (NSString *key in [_allMyChats allKeys]) {
-        ETRChat *chat = [_allMyChats objectForKey:key];
-        
-        /*
-         If the currently processed chat is not the public chat,
-         add it to the array of chats that will be sorted and displayed in the list.
-         */
-        if ([chat chatID] != -10) {
-            if (![chat partner]) {
-                [chat setPartner:[ETRUser userPartnerInChat:[chat chatID]]];
-            }
-            
-            [unsortedChats addObject:chat];
-        }
-    }
-    
-    //Now we have the array of all unsorted chats and the dictionary of all chat keys.
-    
-    // Sort the chats and put the chat keys into the array of sorted keys,
-    // which is used by the tables.
-    NSArray *sortedChats = [unsortedChats sortedArrayUsingSelector:@selector(compare:)];
-    for (ETRChat *chat in sortedChats) {
-        if (![_sortedChatKeys containsObject:[chat dictKey]]) {
-            [_sortedChatKeys addObject:[chat dictKey]];
-        }
-    }
-    
-    [[self userListDelegate] didUpdateUserChatList];
-}
-
-/*
- Takes an unsorted array of users, sorts them
- and updates the instance array of sorted chat keys
- which is used by the user list table to display the users alphabetically.
- The user list delegate is called to refresh the table.
- */
-- (void)sortUserKeys {
-    
-    // Get all objects from the user dictionary.
-    NSArray *unsortedUsers = [[self users] allValues];
-    // Sort the users and put the user keys into the array of sorted keys,
-    // which is used by the tables.
-    NSArray *sortedUsers = [unsortedUsers sortedArrayUsingSelector:@selector(compare:)];
-    _sortedUserKeys = [NSMutableArray array];
-    
-    // Check if each user is not blocked and then add its key to the sorted key array.
-    for (ETRUser *user in sortedUsers) {
-        
-        if (![_blockedUsers containsObject:user]) {
-            [_sortedUserKeys addObject:[user userKey]];
-        }
-        
-    }
-    
-    [[self userListDelegate] didUpdateUserChatList];
-}
-
 #pragma mark - Tick
 
 /*
  Check the user status and get all new actions from the server.
  */
 - (void)tick {
-    
     if (![self validateLocationTime]) return;
     
-    /*
-     Query the database for all new actions.
-     */
-#ifdef DEBUG
-    NSLog(@"INFO: Asking for new actions. %ld, %ld", [[self room] iden], _lastActionID);
-#endif
-    // Prepare the query.
-    NSString *bodyString;
-    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld&user_id=%ld&last_action_id=%ld",
-                  [[self room] iden],
-                  [[ETRLocalUser sharedLocalUser] userID],
-                  _lastActionID];
-    
     // Request the JSON update data.
-    NSDictionary *requestJSON = [ETRHTTPHandler JSONDictionaryFromPHPScript:kPHPSelectActions
-                                                                 bodyString:bodyString];
-    
-    // Check if the status code doesn't signal any problems before continuing.
-    NSString *reqStatusCode = [requestJSON objectForKey:@"status"];
-    if (![reqStatusCode isEqual:@"SELECT_ACTIONS_OK"]) {
-        NSLog(@"ERROR: %@", reqStatusCode);
-        //TODO: Handle error gracefully.
-        return;
-    }
+    NSDictionary *requestJSON;
     
     /*
      Process all the actions.
      */
     NSMutableArray *notifications = [NSMutableArray array];
     NSArray *actionsJSON = [requestJSON objectForKey:@"actions"];
+    long localUserID = [[ETRLocalUserManager sharedManager] userID];
     for (NSDictionary *action in actionsJSON) {
         
         // Read the ID of this action and store the highest processed ID.
@@ -428,12 +225,12 @@ static ETRSession *sharedInstance = nil;
         
         // Get the user key/ID and action code of this action.
         NSString *actionCode    = [action objectForKey:@"code"];
-        NSString *userKey       = [action objectForKey:@"user_id"];
         
-        // Determine if this is an action from or, in case of admin actions, for me.
-        BOOL isMyAction = [userKey isEqualToString:[[ETRLocalUser sharedLocalUser] userKey]];
+        long userID = [[action objectForKey:@"u"] longValue];
         
-        // Process the action according to its code.
+        // Process the action according to its code
+        // and wether this is an action from or, in case of admin actions, for me.
+        BOOL isMyAction = userID == localUserID;
         if ([actionCode isEqualToString:@"KICK"] && isMyAction) {
             // Action Type: KICK this user
             //TODO: Kick.
@@ -442,92 +239,59 @@ static ETRSession *sharedInstance = nil;
         } else if ([actionCode isEqualToString:@"MSG"]) {
             // Action Type: MESSAGE
             
-            ETRAction *message = [ETRAction messageFromJSONDictionary:action];
+            ETRAction *message = [ETRAction actionFromJSONDictionary:action];
             
-            // Do no process messages any further if they have been sent by a blocked user.
-            if (![_blockedUsers containsObject:[message sender]]) {
-                // Add this message to the appropriate array inside the dict.
-                NSString *chatKeyOfThisMsg = [NSString stringWithFormat:@"%ld",[message chatID]];
-                ETRChat *chatOfThisMsg = [_allMyChats objectForKey:chatKeyOfThisMsg];
-                
-                // If the array for this conversation does not exist yet, initialize it.
-                if (!chatOfThisMsg) {
-                    chatOfThisMsg = [ETRChat chatWithID:[message chatID]];
-                    [_allMyChats setObject:chatOfThisMsg forKey:chatKeyOfThisMsg];
-                }
-                
-                // Add the message to the chat.
-                [[chatOfThisMsg messages] addObject:message];
-                // Update the datetime for the table sort.
-                [chatOfThisMsg setLastMsgDate:[message sentDate]];
-                
-                // Let the view controllers know that there are new messages.
-                [[self chatDelegate] chatDidUpdateWithKey:chatKeyOfThisMsg];
-                
-                // Create a notification.
-                // Notification test:
-                UILocalNotification *testNotif = [[UILocalNotification alloc] init];
-                [testNotif setFireDate:[NSDate date]];
-                [testNotif setTimeZone:[NSTimeZone localTimeZone]];
-                NSString *notifAction   = @"View Message";    //TODO: Localization
-                NSString *notifBody     = [message messageString];
-                [testNotif setAlertAction:notifAction];
-                [testNotif setAlertBody:notifBody];
-                [testNotif setSoundName:UILocalNotificationDefaultSoundName];
-                [testNotif setApplicationIconBadgeNumber:15];
-                [notifications addObject:testNotif];
-            }
+            // TODO: Do no process messages any further if they have been sent by a blocked user.
+            
+            // Create a notification.
+            // Notification test:
+            UILocalNotification *testNotif = [[UILocalNotification alloc] init];
+            [testNotif setFireDate:[NSDate date]];
+            [testNotif setTimeZone:[NSTimeZone localTimeZone]];
+            NSString *notifAction   = @"View Message";    //TODO: Localization
+            NSString *notifBody     = [message messageContent];
+            [testNotif setAlertAction:notifAction];
+            [testNotif setAlertBody:notifBody];
+            [testNotif setSoundName:UILocalNotificationDefaultSoundName];
+            [testNotif setApplicationIconBadgeNumber:15];
+            [notifications addObject:testNotif];
+            
             
         } else if ([actionCode isEqualToString:@"JOIN"] && !isMyAction) {
             // Action type: A user JOINED the room.
             
             // Only if this user is not known yet, do something.
-            if (![[self users] objectForKey:userKey]) {
+            if (![_users containsObject:[NSNumber numberWithLong:userID]]) {
                 // Create the new user object and add it to the dictionary of users.
-                ETRUser *newUser = [ETRUser userWithIDKey:userKey];
-                [[self users] setObject:newUser forKey:userKey];
+                // TODO: Make use of UsersCache. Let Cache notify Lists.
+                [_users addObject:[NSNumber numberWithLong:userID]];
             }
-            
-            // Sort the keys and update the user dictionary.
-            [self sortUserKeys];
             
         } else if ([actionCode isEqualToString:@"UPDATE"] && !isMyAction) {
             // Action type: A user changed his PROFILE data.
             
             // Re-download the entire user object.
-            ETRUser *updatedUser = [ETRUser userWithIDKey:userKey];
-            [[self users] setObject:updatedUser forKey:userKey];
-            
-            // Sort the keys and update the user dictionary.
-            [self sortUserKeys];
+            // TODO: Make use of UsersCache.
             
         } else if ([actionCode isEqualToString:@"LEAVE"] && !isMyAction) {
             // Action type: A user LEFT the room.
-            
-            [_sortedUserKeys removeObject:userKey];
-            [[self users] removeObjectForKey:userKey];
-            
-            // Sort the keys and update the user dictionary.
-            [self sortUserKeys];
+            [_users removeObject:[NSNumber numberWithLong:userID]];
+            // TODO: Notify changes.
             
         } else if ([actionCode isEqualToString:@"LEAVE"] && isMyAction) {
             /*
              Something went wrong. A kicked user should get a kick message.
              A leaving user should not receive any action updates.
-            */
+             */
             
         }
         
     }
     
-    // Now that we have the updated chats, update the existing chats and resort them.
-    [self sortChatLists];
-    
     // Display all new notifications.
     for (UILocalNotification *localNotif in notifications) {
         [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
     }
-    
 }
 
 - (BOOL)validateLocationTime {
@@ -701,7 +465,7 @@ static ETRSession *sharedInstance = nil;
     [[self locationManager] setDelegate:nil];
     [[self locationManager] setDistanceFilter:30];
     [[self locationManager] setDesiredAccuracy:kCLLocationAccuracyKilometer];
-//    [[[ETRSession sharedSession] locationManager] startMonitoringSignificantLocationChanges];
+    //    [[[ETRSession sharedSession] locationManager] startMonitoringSignificantLocationChanges];
     [[self locationManager] startUpdatingLocation];
     
 }

@@ -2,62 +2,89 @@
 //  Room.m
 //  Realay
 //
-//  Created by Michel on 13.09.13.
-//  Copyright (c) 2013 Michel Sievers. All rights reserved.
+//  Created by Michel on 01/03/15.
+//  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
 #import "ETRRoom.h"
+#import "User.h"
 
-#import "ETRSession.h"
-#import "ETRUser.h"
-#import "ETRHTTPHandler.h"
-//#import "SharedMacros.h"
+@interface ETRRoom()
+
+@property (nonatomic, retain, readwrite) CLLocation * location;
+
+@end
 
 @implementation ETRRoom
 
-#pragma mark - Factory Methods
+@dynamic address;
+@dynamic createdBy;
+@dynamic endTime;
+@dynamic latitude;
+@dynamic longitude;
+@dynamic password;
+@dynamic queryDistance;
+@dynamic radius;
+@dynamic startTime;
+@dynamic summary;
+@dynamic title;
+@dynamic queryUserCount;
+@dynamic users;
+@dynamic actions;
+@synthesize location;
+
 + (ETRRoom *)roomFromJSONDictionary:(NSDictionary *)JSONDict {
     
     ETRRoom *room = [[ETRRoom alloc] init];
     
-    // Get the room information from the JSON key array.
-    [room setIden:[[JSONDict objectForKey:@"r"] integerValue]];
+    id idObject = [JSONDict objectForKey:@"r"];
+    if (!idObject) {
+        NSLog(@"ERROR: Could not find remote ID in JSON Room object.");
+        return nil;
+    }
+    long remoteID = [[JSONDict objectForKey:@"r"] longValue];
+    [room setRemoteID:[NSNumber numberWithLong:remoteID]];
+    
     [room setTitle:[JSONDict objectForKey:@"tt"]];
-    [room setInfo:[JSONDict objectForKey:@"ds"]];
+    [room setSummary:[JSONDict objectForKey:@"ds"]];
     [room setPassword:[JSONDict objectForKey:@"pw"]];
     if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
         [room setAddress:[JSONDict objectForKey:@"ad"]];
     }
-    [room setRadius:[[JSONDict objectForKey:@"rd"] floatValue]];
+    [room setRadius:[NSNumber numberWithShort:[[JSONDict objectForKey:@"rd"] shortValue]]];
     
-    [room setUserCount:[[JSONDict objectForKey:@"ucn"] integerValue]];
-    [room setImageID:[[JSONDict objectForKey:@"i"] integerValue]];
+    [room setQueryUserCount:[NSNumber numberWithLong:[[JSONDict objectForKey:@"ucn"] shortValue]]];
+    [room setImageID:[NSNumber numberWithLong:[[JSONDict objectForKey:@"i"] longValue]]];
     
     NSInteger startTimestamp = [[JSONDict objectForKey:@"st"] integerValue];
     if (startTimestamp > 1000000000) {
-        [room setStartDate:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+        [room setStartTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
     }
     NSInteger endTimestamp = [[JSONDict objectForKey:@"et"] integerValue];
     if (endTimestamp > 1000000000) {
-        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+        [room setEndTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
     }
     
-    // We query the database with km values.
-    CGFloat distance = [[JSONDict objectForKey:@"dst"] doubleValue] * 1000.0;
-    [room setQueryDistance:distance];
+    // We query the database with km values and only use metre integer precision.
+    NSInteger distance = [[JSONDict objectForKey:@"dst"] doubleValue] * 1000;
+    [room setQueryDistance:[NSNumber numberWithInteger:distance]];
     
-    // Get the room's position from the JSON data.
-    CGFloat latitude = [[JSONDict objectForKey:@"lat"] floatValue];
-    CGFloat longitude = [[JSONDict objectForKey:@"lng"] floatValue];
-    CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
-    [room setLocation:location];
-    
-#ifdef DEBUG
-    NSLog(@"INFO: Added room to return array: %ld, Distance: %f",
-          [room iden], [room queryDistance]);
-#endif
+    [room setLatitude:[NSNumber numberWithLong:[[JSONDict objectForKey:@"lat"] floatValue]]];
+    [room setLongitude:[NSNumber numberWithLong:[[JSONDict objectForKey:@"lng"] floatValue]]];
     
     return room;
+}
+
+- (NSString *)address {
+    if ([self address]) return [self address];
+    
+    NSString *coordinates = [NSString stringWithFormat:@"%f,%f", [[self latitude] floatValue], [[self longitude] floatValue]];
+    [self setAddress:coordinates];
+    return coordinates;
+}
+
+- (NSString *)formattedSize {
+    return [ETRChatObject lengthFromMetres:[[self radius] integerValue]];
 }
 
 - (NSString *)timeSpan {
@@ -65,66 +92,49 @@
     NSString *ongoing = @"Ongoing";
     
     NSString *start;
-    if (![self startDate]) {
+    if (![self startTime]) {
         start = ongoing;
     } else {
-        if ([[self startDate] compare:[NSDate date]] > 0) {
-            start = [ETRChatObject readableStringForDate:[self startDate]];
+        if ([[self startTime] compare:[NSDate date]] > 0) {
+            start = [ETRChatObject readableStringForDate:[self startTime]];
         } else {
             start = ongoing;
         }
     }
     
     
-    if (![self endDate]) {
+    if (![self endTime]) {
         return start;
     } else {
         NSString *until = @"until";
-        NSString *end = [ETRChatObject readableStringForDate:[self endDate]];
+        NSString *end = [ETRChatObject readableStringForDate:[self endTime]];
         return [NSString stringWithFormat:@"%@ %@ %@", start, until, end];
     }
 }
 
-- (NSString *)size {
-    return [ETRChatObject lengthFromMetres:[self radius]];
+- (NSString *)userCount {
+    // TODO: Count users in CoreData.
+    return [NSString stringWithFormat:@"%d", [[self queryUserCount] shortValue]];
 }
 
-- (NSString *)coordinateString {
-    NSString *coordinateString;
+- (CLLocation *)location {
+    if (self.location) return self.location;
     
-    if ([self location]) {
-        coordinateString = [NSString stringWithFormat:@"%f, %f",
-                            self.location.coordinate.latitude,
-                            self.location.coordinate.longitude];
-    } else {
-        coordinateString = @"Location unknown";
-    }
+    CGFloat latitude = [[self latitude] floatValue];
+    CGFloat longitude = [[self longitude] floatValue];
+    [self setLocation:[[CLLocation alloc] initWithLatitude:latitude longitude:longitude]];
     
-    return coordinateString;
+    return self.location;
 }
 
-- (NSString *)amountOfUsersString {
-    NSString *unitString;
-    
-    //TODO: Localize "users".
-    if ([self userCount] < 2) {
-        unitString = @"user at the moment";
-    } else {
-        unitString = @"users at the moment";
-    }
-    
-    return [NSString stringWithFormat:@"%ld %@", [self userCount], unitString];
+- (void)setLatitude:(NSNumber *)latitude {
+    self.latitude = latitude;
+    [self setLocation:nil];
 }
 
-
-- (NSString *)infoString {
-    NSMutableString *infoString = [[NSMutableString alloc] init];
-    [infoString appendString:[NSString stringWithFormat:@"%ld", [self userCount]]];
-    [infoString appendString:@" user"];
-    [infoString appendString:@"\n\n"];
-    [infoString appendString:[self info]];
-    
-    return infoString;
+- (void)setLongitude:(NSNumber *)longitude {
+    self.longitude = longitude;
+    [self setLocation:nil];
 }
 
 @end

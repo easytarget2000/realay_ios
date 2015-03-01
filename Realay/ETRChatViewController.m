@@ -14,6 +14,8 @@
 #import "ETRViewProfileViewController.h"
 #import "ETRAction.h"
 
+#import "ETRSharedMacros.h"
+
 #define kIdentLeftMsgCell   @"strangeMsgCell"
 #define kIdentMsgCell       @"myMsgCell"
 #define kSegueToNext        @"chatToUserListSegue"
@@ -30,13 +32,13 @@
     [super viewDidAppear:animated];
     
     // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSession sharedSession] room] && ![[ETRSession sharedSession] didBeginSession]) {
+    if (![[ETRSession sharedManager] room] && ![[ETRSession sharedManager] didBeginSession]) {
         NSLog(@"ERROR: No Room object in manager or user did not join.");
         [[self navigationController] popViewControllerAnimated:NO];
         return;
     }
     
-    if (![self chat]) {
+    if (_conversationID < 10) {
         NSLog(@"ERROR: No chat object assigned to chat view controller.");
         [[self navigationController] popViewControllerAnimated:NO];
         return;
@@ -45,7 +47,6 @@
 }
 
 - (void)viewDidLoad {
-    
     [super viewDidLoad];
     
     // Enable automatic scrolling.
@@ -56,11 +57,6 @@
     [[UITapGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(dismissKeyboard)];
     [[self view] addGestureRecognizer:tap];
-
-#ifdef DEBUG
-    NSLog(@"INFO: Chat viewDidLoad %ld", [[self chat] chatID]);
-#endif
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -68,27 +64,26 @@
     [super viewWillAppear:animated];
     
     // Assign delegates.
-    [[ETRSession sharedSession] setChatDelegate:self];
+    [[ETRSession sharedManager] setChatDelegate:self];
     [[self messagesTableView] setDataSource:self];
     [[self messagesTableView] setDelegate:self];
     [[self messagesTableView] reloadData];
     [[self messageTextField] setDelegate:self];
     
     // Show no notifications for this chat.
-    [[ETRSession sharedSession] setActiveChatID:[[self chat] chatID]];
+    [[ETRSession sharedManager] setActiveChatID:_conversationID];
     
     NSString *backButtonTitle;
-    if ([self isPublic]) {
+    if (_conversationID == kPublicReceiverID) {
         // Public chat controller's title is the room title.
-        [self setTitle:[[[ETRSession sharedSession] room] title]];
+        [self setTitle:[[[ETRSession sharedManager] room] title]];
         //TODO: Localization
         backButtonTitle = @"Public";
 
     } else {
         // Private chat:
         
-        // Display the chat partner as the title.
-        [self setTitle:[[[self chat] partner] name]];
+        // TODO: Query the UserCache and display the chat partner as the title.
         // Remove the "Leave" button. Will automatically be replaced with back button.
         [[self navigationItem] setLeftBarButtonItem:nil];
         
@@ -117,15 +112,6 @@
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
-    
-    // Fake a delegate call to get the initial messages.
-    [self chatDidUpdateWithKey:[[self chat] dictKey]];
-    
-#ifdef DEBUG
-    NSLog(@"\nINFO: ETRChatViewController viewDidAppear %ld, %ld",
-          [[[ETRSession sharedSession] room] iden], [[self chat] chatID]);
-#endif
-    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -133,11 +119,11 @@
     [self dismissKeyboard];
     
     // Disable delegates.
-    [[ETRSession sharedSession] setChatDelegate:nil];
+    [[ETRSession sharedManager] setChatDelegate:nil];
     [[self messageTextField] setDelegate:nil];
     
     // Show all notifications because no chat is visible.
-    [[ETRSession sharedSession] setActiveChatID:-1];
+    [[ETRSession sharedManager] setActiveChatID:-1];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillShowNotification
@@ -145,47 +131,40 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
-
-#ifdef DEBUG
-    NSLog(@"INFO: ETRChatViewController %ld viewWillDisappear finished.",
-          [[self chat] chatID]);
-#endif
-    
     [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    [[ETRSession sharedSession] didReceiveMemoryWarning];
+    [[ETRSession sharedManager] didReceiveMemoryWarning];
 }
 
 #pragma mark - ETRRoomManagerDelegate
 
 - (void)chatDidUpdateWithKey:(NSString *)chatKey {
     
-    // Add new messages if any of them are for this chat controller.
-    if ([chatKey isEqualToString:[[self chat] dictKey]]) {
-        
-        // Overwrite this controller's chat object with the updated one from the manager.
-        ETRChat *updatedChat = [[ETRSession sharedSession] chatForKey:[[self chat] dictKey]];
-        if (updatedChat) [self setChat:updatedChat];
-        
-        // Refresh the table and scroll down.
-        [[self messagesTableView] reloadData];
-        [self scrollDownTableViewAnimated:NO];
-        
-#ifdef DEBUG 
-        NSLog(@"INFO: New messages arrived in %@, %ld.",
-              chatKey, [[[ETRSession sharedSession] room] iden]);
-#endif
-    }
+//    // Add new messages if any of them are for this chat controller.
+//    if ([chatKey isEqualToString:[[self chat] dictKey]]) {
+//        
+//        // Overwrite this controller's chat object with the updated one from the manager.
+//        ETRChat *updatedChat = [[ETRSession sharedManager] chatForKey:[[self chat] dictKey]];
+//        if (updatedChat) [self setChat:updatedChat];
+//        
+//        // Refresh the table and scroll down.
+//        [[self messagesTableView] reloadData];
+//        [self scrollDownTableViewAnimated:NO];
+//        
+//#ifdef DEBUG 
+//        NSLog(@"INFO: New messages arrived in %@, %ld.",
+//              chatKey, [[[ETRSession sharedManager] room] iden]);
+//#endif
+//    }
 
 }
 
 #pragma mark - IBAction
 
 - (IBAction)sendButtonPressed:(id)sender {
-    
     [self dismissKeyboard];
     
     // Get the message from the text field.
@@ -194,9 +173,7 @@
                              [NSCharacterSet whitespaceCharacterSet]];
     
     if ([typedString length] > 0) {
-        ETRAction *newMessage = [ETRAction outgoingMessage:typedString
-                                                              inChat:[[self chat] chatID]];
-        [newMessage insertMessageIntoDB];
+//        ETRAction *newMessage = [ETRAction outgoingMessage:typedString toRecipient:_conversationID];
     }
     
     [[self messageTextField] setText:@""];
@@ -212,10 +189,10 @@
     allowDisappear = YES;
     
     // The More button is a Profile button in private chats.
-    if ([self isPublic]) {
-        [self performSegueWithIdentifier:kSegueToNext sender:self];
+    if (_conversationID == kPublicReceiverID) {
+        [self performSegueWithIdentifier:kSegueToNext sender:nil];
     } else {
-        [self performSegueWithIdentifier:kSegueToProfile sender:[[self chat] partner]];
+        [self performSegueWithIdentifier:kSegueToProfile sender:nil];
     }
 }
 
@@ -225,19 +202,15 @@
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     // Get the message for this particular cell.
-    ETRAction *currentMsg = [[[self chat] messages] objectAtIndex:[indexPath row]];
-    
-    // Check if this is one of my sent messages.
-    BOOL isMyMessage;
-    isMyMessage = [[currentMsg sender] userID] == [[ETRLocalUser sharedLocalUser] userID];
+    ETRAction *message;
     
     // Decide if this message needs a name label or not.
-    BOOL showsSender = [self isPublic] && !isMyMessage;
+//    BOOL showsSender = [self isPublic] && [message senderID] != [[ETRLocalUserManager sharedManager] userID];
     
     // Get the cell with the identifier.
     ETRChatMessageCell *msgCell;
-    
     msgCell = [myTableView dequeueReusableCellWithIdentifier:kIdentMsgCell];
+    
     // If the cell does not exist yet, set the views up programatically.
     if (!msgCell) {
         msgCell = [[ETRChatMessageCell alloc] initWithStyle:UITableViewCellStyleDefault
@@ -246,37 +219,33 @@
     
     // Apply the message and current view width to the cell.
     // It will calculate the bubble size and display the message.
-    [msgCell applyMessage:currentMsg
-                fitsWidth:self.view.frame.size.width
-                 sentByMe:isMyMessage
-              showsSender:showsSender];
+    [msgCell applyMessage:message
+                fitsWidth:self.view.frame.size.width];
     
     return msgCell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    ETRAction *currentMsg = [[[self chat] messages] objectAtIndex:[indexPath row]];
-    if (currentMsg) {
-        // Decide if this message needs a name label or not.
-        BOOL hasNameLabel = [self isPublic]
-        && ([[currentMsg sender] userID] != [[ETRLocalUser sharedLocalUser] userID]);
-        
-        CGFloat rowHeight = [currentMsg rowHeightForWidth:self.view.frame.size.width
-                                             hasNameLabel:hasNameLabel];
-        
-//        [_rowHeights setObject:[NSNumber numberWithDouble:rowHeight]
-//            atIndexedSubscript:[indexPath row]];
-        
-        return rowHeight;
-    } else {
-        return 0;
-    }
-
+//    ETRAction *message = [[[self chat] messages] objectAtIndex:[indexPath row]];
+//    if (message) {
+//        // Decide if this message needs a name label or not.
+//        BOOL hasNameLabel = [self isPublic] || ([message senderID] == [[ETRLocalUserManager sharedManager] userID]);
+//        
+//        CGFloat rowHeight = [message rowHeightForWidth:self.view.frame.size.width
+//                                             hasNameLabel:hasNameLabel];
+//        
+////        [_rowHeights setObject:[NSNumber numberWithDouble:rowHeight]
+////            atIndexedSubscript:[indexPath row]];
+//        
+//        return rowHeight;
+//    }
+    
+    return 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [[[self chat] messages] count];
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -297,7 +266,7 @@
                                                 animated:animated];
         
 #ifdef DEBUG
-        NSLog(@"INFO: Scrolling %ld table to %ld", [[self chat] chatID], bottomRow);
+        NSLog(@"INFO: Scrolling %ld table to %ld", _conversationID, bottomRow);
 #endif
     }
     
@@ -309,7 +278,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
-        [[ETRSession sharedSession] endSession];
+        [[ETRSession sharedManager] endSession];
     }
 }
 
@@ -373,8 +342,8 @@
     if ([[segue identifier] isEqualToString:kSegueToProfile]) {
         
         ETRViewProfileViewController *destination = [segue destinationViewController];
-        if ([sender isMemberOfClass:[ETRUser class]]) {
-            [destination setUser:(ETRUser *)sender];
+        if ([sender isMemberOfClass:[User class]]) {
+            [destination setUser:(User *)sender];
         }
         
     }

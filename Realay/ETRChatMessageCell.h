@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import "ETRAction.h"
 
 @interface ETRChatMessageCell : UITableViewCell
 
-- (void)applyMessage:(ETRAction *)message
-           fitsWidth:(CGFloat)width
-            sentByMe:(BOOL)sentByMe
-         showsSender:(BOOL)showsSender;
+@property (strong, nonatomic, readonly) ETRAction *message;
+
+- (void)applyMessage:(ETRAction *)message fitsWidth:(CGFloat)width;
 
 @end

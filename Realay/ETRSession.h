@@ -14,8 +14,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ETRAction.h"
-#import "ETRChat.h"
-#import "ETRLocalUser.h"
+#import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRRoom.h"
 
@@ -40,6 +39,8 @@
 
 # pragma mark - Interface
 @interface ETRSession : NSObject <CLLocationManagerDelegate>
+
+@property (strong, nonatomic, readonly) User * publicDummyUser;
 
 /*
  View controller that needs constant message updates:
@@ -120,7 +121,7 @@
 /*
  All user objects in this session:
   */
-@property (strong, nonatomic, readonly) NSMutableDictionary *users;
+@property (strong, nonatomic, readonly) NSMutableArray *users;
 
 /*
  Keys of all chats sorted by last message date:
@@ -137,22 +138,12 @@
 /* 
  The shared singleton instance:
   */
-+ (ETRSession *)sharedSession;
-
-/*
- Add this user to the list of blocked people and refresh the user and conversation lists.
- */
-- (void)blockUser:(ETRUser *)user;
++ (ETRSession *)sharedManager;
 
 /*
  Call the delegate methods without any specific values, so the GUI is asked to reload data.
  */
 - (void)callLocationManagerDelegates;
-
-/*
- Return the chat object for a given dictionary key.
- */
-- (ETRChat *)chatForKey:(NSString *)dictKey;
 
 /*
  To be called by view controllers receiving memory warnings.

@@ -8,7 +8,7 @@
 
 #import "ETRImageLoader.h"
 
-#import "ETRImageConnectionHandler.h"
+#import "ETRServerAPIHelper.h"
 
 @implementation ETRImageLoader {
     BOOL _doShowHiRes;
@@ -24,17 +24,22 @@
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject doLoadHiRes:(BOOL)doLoadHiRes {
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject targetImageView:nil doLoadHiRes:doLoadHiRes];
-    [instance startLoading];
+    [NSThread detachNewThreadSelector:@selector(startLoading)
+                             toTarget:instance
+                           withObject:nil];
 }
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject intoView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doShowHiRes {
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject targetImageView:targetImageView doLoadHiRes:(BOOL)doShowHiRes];
-    [instance startLoading];
+//    [instance startLoading];
+    [NSThread detachNewThreadSelector:@selector(startLoading)
+                             toTarget:instance
+                           withObject:nil];
 }
 
 - (void)startLoading {
     if (!_chatObject) return;
-    if ([_chatObject imageID] < 100) return;
+    if ([[_chatObject imageID] longValue] < 100) return;
     
     if ([_chatObject lowResImage]) {
         [ETRImageLoader cropImage:[_chatObject lowResImage] applyToView:_targetImageView];
@@ -49,7 +54,7 @@
     } else {
         // If the low-res image has not been stored as a file, download it.
         // This will also place it into the Object and View.
-        [ETRImageConnectionHandler loadForLoader:self doLoadHiRes:NO];
+        [ETRServerAPIHelper getImageLoader:self doLoadHiRes:NO];
     }
     
     // If the high-resolution image is not supposed to be shown, return.
@@ -59,7 +64,7 @@
     if (cachedHiResImage) {
         [ETRImageLoader cropImage:cachedHiResImage applyToView:_targetImageView];
     } else {
-        [ETRImageConnectionHandler loadForLoader:self doLoadHiRes:YES];
+        [ETRServerAPIHelper getImageLoader:self doLoadHiRes:YES];
     }
 }
 

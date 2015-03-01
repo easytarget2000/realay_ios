@@ -7,19 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ETRSession.h"
 
-@interface ETRViewProfileViewController : UITableViewController
- <UIAlertViewDelegate, UITableViewDelegate, UITableViewDelegate>
+#import "User.h"
 
-@property (weak, nonatomic) IBOutlet UIButton           *imageView;
-@property (weak, nonatomic) IBOutlet UILabel            *nameLabel;
-@property (weak, nonatomic) IBOutlet UITableViewCell    *statusCell;
+@interface ETRViewProfileViewController : UIViewController
 
-@property (nonatomic) ETRUser           *user;
+@property (weak, nonatomic) IBOutlet UIButton *headerImageView;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+
+@property (nonatomic) User *user;
 @property (nonatomic) UIViewController  *previousController;
-@property (nonatomic) BOOL              showMyProfile;
-
-- (IBAction)imageButtonPressed:(id)sender;
 
 @end
