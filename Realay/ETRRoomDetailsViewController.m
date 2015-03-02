@@ -8,7 +8,7 @@
 
 #import "ETRRoomDetailsViewController.h"
 
-#import "ETRLocationManager.h"
+#import "ETRLocationHelper.h"
 #import "ETRAlertViewBuilder.h"
 #import "ETRRoom.h"
 
@@ -54,10 +54,6 @@
     
     // Now this View is the delegate of the relayed location manager.
     [[ETRSession sharedManager] setLocationDelegate:self];
-    
-    // Make it call the delegate distance methods,so the GUI updates.
-    [[ETRSession sharedManager] callLocationManagerDelegates];
-    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -67,7 +63,7 @@
 
 #pragma mark - ETRRelayedLocationDelegate
 
-- (void)sessionDidUpdateLocationManager:(ETRLocationManager *)manager {
+- (void)sessionDidUpdateLocationManager:(ETRLocationHelper *)manager {
     
     NSString *distanceLabel, *distanceValue;
     

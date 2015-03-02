@@ -8,10 +8,11 @@
 
 #import "ETRServerAPIHelper.h"
 
-#import "ETRAppDelegate.h"
+#import "ETRImageConnectionHandler.h"
+#import "ETRImageLoader.h"
+#import "ETRJSONCoreDataBridge.h"
 #import "ETRLocalUserManager.h"
 #import "ETRSession.h"
-#import "ETRImageConnectionHandler.h"
 
 #define kServerURL              @"http://rldb.easy-target.org/"
 
@@ -114,9 +115,14 @@
 }
 
 + (void)updateRoomList {
+    CLLocation *location = [ETRLocationHelper location];
+    if (!location) {
+        NSLog(@"WARNING: Not updating Room list because Location is unknown.");
+    }
+    
     // Get the current coordinates from the main manager.
     CLLocationCoordinate2D coordinate;
-    coordinate = [[[[ETRSession sharedManager] locationManager] location] coordinate];
+    coordinate = [location coordinate];
     
     // Build the string using coordinates, radius and unit appendage.
     NSString *bodyString;
@@ -132,19 +138,14 @@
                      completionHandler:^(NSObject *receivedObject) {
                          // Check if an array of rooms was returned by this API call.
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
-                             ETRAppDelegate *app = (ETRAppDelegate *)[[UIApplication sharedApplication] delegate];
-                             NSManagedObjectContext * context = [app managedObjectContext];
-                             if (!context) return;
+                             ETRJSONCoreDataBridge *dataBridge = [ETRJSONCoreDataBridge coreDataBridge];
                              
                              NSArray *jsonRooms = (NSArray *) receivedObject;
                              for (NSObject *jsonRoom in jsonRooms) {
                                  if ([jsonRoom isKindOfClass:[NSDictionary class]]) {
-                                     ETRRoom *room = [ETRRoom roomFromJSONDictionary:(NSDictionary *)jsonRoom];
-                                     [context insertObject:room];
+                                     [dataBridge insertRoomFromDictionary:(NSDictionary *) jsonRoom];
                                  }
                              }
-                             
-                             NSLog(@"Received %ld rooms.", [jsonRooms count]);
                          }
                      }];
     

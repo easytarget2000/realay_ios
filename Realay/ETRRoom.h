@@ -30,8 +30,7 @@
 @property (nonatomic, retain) NSSet *users;
 @property (nonatomic, retain) NSManagedObject *actions;
 
-+ (ETRRoom *)roomFromJSONDictionary:(NSDictionary *)JSONDict;
-
+- (NSString *)description;
 - (NSString *)timeSpan;
 - (NSString *)formattedSize;
 - (NSString *)userCount;

@@ -25,6 +25,8 @@
 		D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464B18D3945A00833C94 /* LeftBubble@2x.png */; };
 		D06E465018D3966D00833C94 /* RightBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464E18D3966D00833C94 /* RightBubble.png */; };
 		D06E465118D3966D00833C94 /* RightBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464F18D3966D00833C94 /* RightBubble@2x.png */; };
+		D0795F8E1AA48E76009CCF73 /* ETRJSONCoreDataBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D0795F8D1AA48E76009CCF73 /* ETRJSONCoreDataBridge.m */; };
+		D0795F901AA4FB92009CCF73 /* lustgarten.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */; };
 		D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */; };
 		D0CF29DD185264210012AF7F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0CF29DC185264210012AF7F /* OpenGLES.framework */; };
 		D0D0CEED17E74EE70079017F /* ETRCreateProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D0CEEC17E74EE70079017F /* ETRCreateProfileViewController.m */; };
@@ -33,7 +35,7 @@
 		D0D1249117FCB15000E37C45 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1249017FCB15000E37C45 /* Security.framework */; };
 		D0D1249317FCB19500E37C45 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1249217FCB19500E37C45 /* CFNetwork.framework */; };
 		D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */; };
-		D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DA55391918165300B8A0F7 /* ETRLocationManager.m */; };
+		D0DA553A1918165300B8A0F7 /* ETRLocationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DA55391918165300B8A0F7 /* ETRLocationHelper.m */; };
 		D0DE0DD3184BAC7E0039DE0E /* ETRChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DE0DD2184BAC7E0039DE0E /* ETRChatViewController.m */; };
 		D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D0DE0DD4184BB1880039DE0E /* Settings.bundle */; };
 		D0E1970917E276DB00135B8C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970817E276DB00135B8C /* UIKit.framework */; };
@@ -102,6 +104,9 @@
 		D06E464B18D3945A00833C94 /* LeftBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LeftBubble@2x.png"; sourceTree = "<group>"; };
 		D06E464E18D3966D00833C94 /* RightBubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RightBubble.png; sourceTree = "<group>"; };
 		D06E464F18D3966D00833C94 /* RightBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RightBubble@2x.png"; sourceTree = "<group>"; };
+		D0795F8C1AA48E76009CCF73 /* ETRJSONCoreDataBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRJSONCoreDataBridge.h; sourceTree = "<group>"; };
+		D0795F8D1AA48E76009CCF73 /* ETRJSONCoreDataBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRJSONCoreDataBridge.m; sourceTree = "<group>"; };
+		D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lustgarten.gpx; sourceTree = "<group>"; };
 		D07BF08618E3588700C70873 /* ETRSharedMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRSharedMacros.h; sourceTree = "<group>"; };
 		D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageLoader.h; sourceTree = "<group>"; };
 		D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageLoader.m; sourceTree = "<group>"; };
@@ -114,8 +119,8 @@
 		D0D1249217FCB19500E37C45 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D0D7D8BF17EFADCF00F8008E /* ETRMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMapViewController.h; sourceTree = "<group>"; };
 		D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMapViewController.m; sourceTree = "<group>"; };
-		D0DA55381918165300B8A0F7 /* ETRLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationManager.h; sourceTree = "<group>"; };
-		D0DA55391918165300B8A0F7 /* ETRLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationManager.m; sourceTree = "<group>"; };
+		D0DA55381918165300B8A0F7 /* ETRLocationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationHelper.h; sourceTree = "<group>"; };
+		D0DA55391918165300B8A0F7 /* ETRLocationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationHelper.m; sourceTree = "<group>"; };
 		D0DE0DD1184BAC7E0039DE0E /* ETRChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRChatViewController.h; sourceTree = "<group>"; };
 		D0DE0DD2184BAC7E0039DE0E /* ETRChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRChatViewController.m; sourceTree = "<group>"; };
 		D0DE0DD4184BB1880039DE0E /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -209,8 +214,8 @@
 			children = (
 				D0035C3818B2AA1E00C5EEAF /* ETRLocalUserManager.h */,
 				D0035C3918B2AA1E00C5EEAF /* ETRLocalUserManager.m */,
-				D0DA55381918165300B8A0F7 /* ETRLocationManager.h */,
-				D0DA55391918165300B8A0F7 /* ETRLocationManager.m */,
+				D0DA55381918165300B8A0F7 /* ETRLocationHelper.h */,
+				D0DA55391918165300B8A0F7 /* ETRLocationHelper.m */,
 				D0F0392918C379DF008DDA5F /* ETRSession.h */,
 				D0F0392A18C379DF008DDA5F /* ETRSession.m */,
 				D0529A431AA28937002211A3 /* ETRUsersCache.h */,
@@ -244,12 +249,14 @@
 			children = (
 				D0081F5618C546B200D0819A /* ETRAlertViewBuilder.h */,
 				D0081F5718C546B200D0819A /* ETRAlertViewBuilder.m */,
-				D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */,
-				D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */,
-				D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */,
-				D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */,
 				D01446C11A9FD90A00748378 /* ETRImageConnectionHandler.h */,
 				D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */,
+				D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */,
+				D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */,
+				D0795F8C1AA48E76009CCF73 /* ETRJSONCoreDataBridge.h */,
+				D0795F8D1AA48E76009CCF73 /* ETRJSONCoreDataBridge.m */,
+				D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */,
+				D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */,
 			);
 			name = Helper;
 			sourceTree = "<group>";
@@ -286,6 +293,7 @@
 		D0E196FC17E276DB00135B8C = {
 			isa = PBXGroup;
 			children = (
+				D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */,
 				D0E1970617E276DB00135B8C /* Products */,
 				D0E1970E17E276DB00135B8C /* Realay */,
 			);
@@ -478,6 +486,7 @@
 				D06E464918D391E400833C94 /* MainStoryboard.storyboard in Resources */,
 				D0E4E8DF1AA0A94700ADF026 /* placeholder_map.png in Resources */,
 				D0E1971D17E276DB00135B8C /* Default@2x.png in Resources */,
+				D0795F901AA4FB92009CCF73 /* lustgarten.gpx in Resources */,
 				D0E1971F17E276DB00135B8C /* Default-568h@2x.png in Resources */,
 				D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */,
 				D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */,
@@ -495,7 +504,7 @@
 				D01446B61A9F573900748378 /* ETRChatObject.m in Sources */,
 				D0E1971517E276DB00135B8C /* main.m in Sources */,
 				D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */,
-				D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */,
+				D0DA553A1918165300B8A0F7 /* ETRLocationHelper.m in Sources */,
 				D0E1971917E276DB00135B8C /* ETRAppDelegate.m in Sources */,
 				D0081F5818C546B200D0819A /* ETRAlertViewBuilder.m in Sources */,
 				D0F0392818C24EC4008DDA5F /* ETRRoomDetailsViewController.m in Sources */,
@@ -513,6 +522,7 @@
 				D0035C3A18B2AA1E00C5EEAF /* ETRLocalUserManager.m in Sources */,
 				D01446BF1A9F9E0D00748378 /* ETRCircleView.m in Sources */,
 				D0DE0DD3184BAC7E0039DE0E /* ETRChatViewController.m in Sources */,
+				D0795F8E1AA48E76009CCF73 /* ETRJSONCoreDataBridge.m in Sources */,
 				D0E31B671AA377F40008AF9F /* ETRConversation.m in Sources */,
 				D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */,
 				D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */,

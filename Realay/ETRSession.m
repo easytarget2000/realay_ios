@@ -160,11 +160,7 @@ static ETRSession *sharedInstance = nil;
     _leftRegionDate = nil;
     
     // Adjust the location manager for a higher accuracy.
-    [[self locationManager] setDesiredAccuracy:kCLLocationAccuracyBest];
-    [[self locationManager] setDistanceFilter:10];
-    [[self locationManager] setDelegate:self];
-    [[self locationManager] startUpdatingLocation];
-    [self determineRegionState];
+    // TODO: Increase location update speed?
 }
 
 /*
@@ -179,23 +175,23 @@ static ETRSession *sharedInstance = nil;
  Used when app moves to the background.
  */
 - (void)switchToBackgroundSession {
-    if ([self didBeginSession]) {
-        [[self locationManager] startMonitoringSignificantLocationChanges];
-    } else {
-        [[self locationManager] stopMonitoringSignificantLocationChanges];
-        [[self locationManager] stopUpdatingLocation];
-    }
+//    if ([self didBeginSession]) {
+//        [[self locationManager] startMonitoringSignificantLocationChanges];
+//    } else {
+//        [[self locationManager] stopMonitoringSignificantLocationChanges];
+//        [[self locationManager] stopUpdatingLocation];
+//    }
 }
 
 /*
  Used when the app moves back to the foreground.
  */
 - (void)switchToForegroundSession {
-    if ([self room]) {
-        [[self locationManager] startUpdatingLocation];
-    } else {
-        [[self locationManager] startMonitoringSignificantLocationChanges];
-    }
+//    if ([self room]) {
+//        [[self locationManager] startUpdatingLocation];
+//    } else {
+//        [[self locationManager] startMonitoringSignificantLocationChanges];
+//    }
 }
 
 #pragma mark - In-Session
@@ -344,40 +340,6 @@ static ETRSession *sharedInstance = nil;
     return YES;
 }
 
-#pragma mark - CLLocationManagerDelegate
-
-/*
- Call the delegate methods without any specific values, so the GUI is asked to reload data.
- */
-- (void)callLocationManagerDelegates {
-    [[self locationDelegate] sessionDidUpdateLocationManager:[self locationManager]];
-}
-
-/*
- Own way monitoring the region enter/exit.
- */
-- (void)determineRegionState {
-    CGFloat deltaDistanceRadius = [[self locationManager] distanceToRoom:[self room]];
-    if (deltaDistanceRadius < [[_locationManager location] horizontalAccuracy]) {
-        // Only notify if we were not in the region a moment ago.
-        if (!_isInRegion) [self locationManager:nil didEnterRegion:nil];
-        _isInRegion = YES;
-    } else {
-        // Only notify if we were in the region a moment ago.
-        if (_isInRegion) [self locationManager:nil didExitRegion:nil];
-        _isInRegion = NO;
-    }
-}
-
-//- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
-//    if (state == CLRegionStateInside) {
-//        _isInRegion = YES;
-//        _leftRegionDate = nil;
-//    } else {
-//        _isInRegion = NO;
-//    }
-//}
-
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     _isInRegion = NO;
     
@@ -426,47 +388,20 @@ static ETRSession *sharedInstance = nil;
     NSLog(@"ERROR: LocationManager (%ld): %@", _locationUpdateFails, error);
 }
 
-- (void)locationManagerDidPauseLocationUpdates:(CLLocationManager *)manager {
-#ifdef DEBUG
-    NSLog(@"INFO: locationManagerDidPauseLocationUpdates");
-#endif
-}
-
-- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
-#ifdef DEBUG
-    NSLog(@"INFO: didStartMonitoringForRegion");
-#endif
-}
-
-// This method will be called when the location was updated successfully.
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    _locationUpdateFails = 0;
-    
-#ifdef DEBUG
-    NSLog(@"INFO: Device coordinates: %f %f",
-          manager.location.coordinate.latitude,
-          manager.location.coordinate.longitude);
-#endif
-    [self determineRegionState];
-    
-    // Give the new values to the GUI.
-    [[self locationDelegate] sessionDidUpdateLocationManager:[self locationManager]];
-}
-
 
 /*
  Reset the location manager, so the room list can be queried.
  */
 - (void)resetLocationManager {
-    
-    if (![self locationManager]) {
-        _locationManager = [[ETRLocationManager alloc] init];
-    }
-    [[self locationManager] setDelegate:nil];
-    [[self locationManager] setDistanceFilter:30];
-    [[self locationManager] setDesiredAccuracy:kCLLocationAccuracyKilometer];
-    //    [[[ETRSession sharedSession] locationManager] startMonitoringSignificantLocationChanges];
-    [[self locationManager] startUpdatingLocation];
+//    
+//    if (![self locationManager]) {
+//        _locationManager = [[ETRLocationHelper alloc] init];
+//    }
+//    [[self locationManager] setDelegate:nil];
+//    [[self locationManager] setDistanceFilter:30];
+//    [[self locationManager] setDesiredAccuracy:kCLLocationAccuracyKilometer];
+//    //    [[[ETRSession sharedSession] locationManager] startMonitoringSignificantLocationChanges];
+//    [[self locationManager] startUpdatingLocation];
     
 }
 

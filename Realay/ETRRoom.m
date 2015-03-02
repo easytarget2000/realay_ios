@@ -31,48 +31,12 @@
 @dynamic queryUserCount;
 @dynamic users;
 @dynamic actions;
-@synthesize location;
+@dynamic imageID;
 
-+ (ETRRoom *)roomFromJSONDictionary:(NSDictionary *)JSONDict {
-    
-    ETRRoom *room = [[ETRRoom alloc] init];
-    
-    id idObject = [JSONDict objectForKey:@"r"];
-    if (!idObject) {
-        NSLog(@"ERROR: Could not find remote ID in JSON Room object.");
-        return nil;
-    }
-    long remoteID = [[JSONDict objectForKey:@"r"] longValue];
-    [room setRemoteID:[NSNumber numberWithLong:remoteID]];
-    
-    [room setTitle:[JSONDict objectForKey:@"tt"]];
-    [room setSummary:[JSONDict objectForKey:@"ds"]];
-    [room setPassword:[JSONDict objectForKey:@"pw"]];
-    if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
-        [room setAddress:[JSONDict objectForKey:@"ad"]];
-    }
-    [room setRadius:[NSNumber numberWithShort:[[JSONDict objectForKey:@"rd"] shortValue]]];
-    
-    [room setQueryUserCount:[NSNumber numberWithLong:[[JSONDict objectForKey:@"ucn"] shortValue]]];
-    [room setImageID:[NSNumber numberWithLong:[[JSONDict objectForKey:@"i"] longValue]]];
-    
-    NSInteger startTimestamp = [[JSONDict objectForKey:@"st"] integerValue];
-    if (startTimestamp > 1000000000) {
-        [room setStartTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
-    }
-    NSInteger endTimestamp = [[JSONDict objectForKey:@"et"] integerValue];
-    if (endTimestamp > 1000000000) {
-        [room setEndTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
-    }
-    
-    // We query the database with km values and only use metre integer precision.
-    NSInteger distance = [[JSONDict objectForKey:@"dst"] doubleValue] * 1000;
-    [room setQueryDistance:[NSNumber numberWithInteger:distance]];
-    
-    [room setLatitude:[NSNumber numberWithLong:[[JSONDict objectForKey:@"lat"] floatValue]]];
-    [room setLongitude:[NSNumber numberWithLong:[[JSONDict objectForKey:@"lng"] floatValue]]];
-    
-    return room;
+@synthesize location = _location;
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@: %@: %@", [self objectID], [self remoteID], [self title]];
 }
 
 - (NSString *)address {
@@ -84,7 +48,7 @@
 }
 
 - (NSString *)formattedSize {
-    return [ETRChatObject lengthFromMetres:[[self radius] integerValue]];
+    return [ETRChatObject formattedLength:[[self radius] integerValue]];
 }
 
 - (NSString *)timeSpan {
@@ -118,23 +82,12 @@
 }
 
 - (CLLocation *)location {
-    if (self.location) return self.location;
+    if (_location) return _location;
     
     CGFloat latitude = [[self latitude] floatValue];
     CGFloat longitude = [[self longitude] floatValue];
-    [self setLocation:[[CLLocation alloc] initWithLatitude:latitude longitude:longitude]];
-    
-    return self.location;
-}
-
-- (void)setLatitude:(NSNumber *)latitude {
-    self.latitude = latitude;
-    [self setLocation:nil];
-}
-
-- (void)setLongitude:(NSNumber *)longitude {
-    self.longitude = longitude;
-    [self setLocation:nil];
+    _location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
+    return _location;
 }
 
 @end

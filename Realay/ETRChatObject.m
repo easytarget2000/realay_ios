@@ -72,7 +72,7 @@
  100 returns "100 m" or "109 yd"
  15000 returns "15 km" or "8 mi"
  */
-+ (NSString *)lengthFromMetres:(NSInteger)metres {
++ (NSString *)formattedLength:(NSInteger)metres {
     if ([[[NSLocale currentLocale] objectForKey:NSLocaleUsesMetricSystem] boolValue]) {
         if (metres < kMaxShowMetre) {
             NSString *unit = @"m";

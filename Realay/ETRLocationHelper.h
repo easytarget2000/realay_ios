@@ -8,16 +8,24 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-#import "ETRRoom.h"
+@class ETRRoom;
 
-@interface ETRLocationManager : CLLocationManager
+@interface ETRLocationHelper : CLLocationManager <CLLocationManagerDelegate>
+
++ (ETRLocationHelper *)sharedManager;
+
++ (CLLocation *)location;
 
 /*
  Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
  and the current device location;
  values below 10 are handled as 0 to avoid unnecessary precision
  */
-- (NSInteger)distanceToRoom:(ETRRoom *)room ;
++ (NSInteger)distanceToRoom:(ETRRoom *)room;
+
++ (NSString *)formattedDistanceToRoom:(ETRRoom *)room;
+
+- (void)launch;
 
 - (NSString *)formattedDistanceToRoom:(ETRRoom *)room;
 

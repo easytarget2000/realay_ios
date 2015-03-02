@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
 
-@interface ETRRoomListViewController : UITableViewController <CLLocationManagerDelegate>
+@interface ETRRoomListViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 
 - (IBAction)profileButtonPressed:(id)sender;
 

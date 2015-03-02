@@ -12,8 +12,9 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 
-@property (nonatomic) NSInteger goToOnFinish;
-
 - (IBAction)saveButtonPressed:(id)sender;
+
+- (void)showProfileOnLogin;
+- (void)showSessionOnFinish;
 
 @end

@@ -18,9 +18,17 @@
 #define kSegueToChat        @"createProfileToChatSegue"
 #define kSegueToViewProfile @"createProfileToViewProfileSegue"
 
-@implementation ETRCreateProfileViewController {
-    UIActivityIndicatorView *_activityIndicator;
-}
+@interface ETRCreateProfileViewController()
+
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic) BOOL doShowProfileOnFinish;
+@property (nonatomic) BOOL doStartSessionOnFinish;
+
+@end
+
+@implementation ETRCreateProfileViewController
+
+@synthesize activityIndicator = _activityIndicator;
 
 #pragma mark - UIViewController
 
@@ -63,6 +71,16 @@
 
 #pragma mark - Navigation
 
+- (BOOL)doShowProfileOnFinish {
+    _doShowProfileOnFinish = YES;
+    _doStartSessionOnFinish = NO;
+}
+
+- (BOOL)doStartSessionOnFinish {
+    _doStartSessionOnFinish = YES;
+    _doShowProfileOnFinish = NO;
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:kSegueToViewProfile]) {
         ETRViewProfileViewController *destination = [segue destinationViewController];
@@ -97,7 +115,10 @@
             [[ETRLocalUserManager sharedManager] setUser:localUser];
             [_activityIndicator stopAnimating];
             
-            if ([self goToOnFinish] == kEnumGoToChat){
+            if (_doShowProfileOnFinish) {
+                // If we are coming from the room list, we want to see our profile now.
+                [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
+            } else if (_doStartSessionOnFinish) {
                 
                 // Attempt joining the room.
                 [[ETRSession sharedManager] beginSession];
@@ -106,9 +127,6 @@
                 if ([[ETRSession sharedManager] didBeginSession]) {
                     [self performSegueWithIdentifier:kSegueToChat sender:self];
                 }
-            } else {
-                // If we are coming from the room list, we want to see our profile now.
-                [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
             }
         }];
     }

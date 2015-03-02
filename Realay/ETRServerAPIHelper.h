@@ -8,9 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ETRImageLoader.h"
+
 
 @class User;
+@class ETRImageLoader;
 
 @interface ETRServerAPIHelper : NSObject
 

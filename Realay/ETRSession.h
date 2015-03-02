@@ -15,7 +15,7 @@
 
 #import "ETRAction.h"
 #import "ETRLocalUserManager.h"
-#import "ETRLocationManager.h"
+#import "ETRLocationHelper.h"
 #import "ETRRoom.h"
 
 # pragma mark - Delegate Protocols
@@ -27,7 +27,7 @@
 
 @protocol ETRRelayedLocationDelegate <NSObject>
 
-- (void)sessionDidUpdateLocationManager:(ETRLocationManager *)manager;
+- (void)sessionDidUpdateLocationManager:(ETRLocationHelper *)manager;
 
 @end
 
@@ -72,11 +72,6 @@
  Stores if the user is inside the region of a room.
   */
 @property (nonatomic, readonly) BOOL isInRegion;
-
-/*
- The overall location manager:
-  */
-@property (strong, nonatomic) ETRLocationManager *locationManager;
 
 /*
  Return to this view when clicking the map button after joining.
@@ -139,11 +134,6 @@
  The shared singleton instance:
   */
 + (ETRSession *)sharedManager;
-
-/*
- Call the delegate methods without any specific values, so the GUI is asked to reload data.
- */
-- (void)callLocationManagerDelegates;
 
 /*
  To be called by view controllers receiving memory warnings.

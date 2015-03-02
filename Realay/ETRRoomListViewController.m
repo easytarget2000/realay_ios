@@ -17,57 +17,33 @@
 #import "ETRAlertViewBuilder.h"
 #import "ETRViewProfileViewController.h"
 #import "ETRLocalUserManager.h"
+#import "ETRJSONCoreDataBridge.h"
+#import "ETRSession.h"
 
-#import "ETRSharedMacros.h"
+//#import "ETRSharedMacros.h"
 
 #define kDefaultRangeInKm       15
 #define kInfoCellIdentifier     @"infoCell"
 #define kRoomCellHeight         380
 #define kRoomCellIdentifier     @"roomCell"
-#define kSegueToNext            @"roomListToMapSegue"
+#define kMapSegueIdentifier     @"roomListToMapSegue"
 #define kSegueToCreateProfile   @"roomListToCreateProfileSegue"
 #define kSegueToViewProfile     @"roomListToViewProfileSegue"
 
-@implementation ETRRoomListViewController {
-    UIActivityIndicatorView *_activityIndicator;       // Spinning wheel
-    //    CLLocationManager *_locationManager;                // Updates user location
-    NSArray *_roomsArray;                               // Stores all rooms
-    NSMutableDictionary *_imageDownloadsInProgress;     // Stores image downloads
-    BOOL _locationIsUnknown;                            // For information cell
-    NSInteger _noRoomFoundCounter;                      // For information cell
-    NSInteger _nilArrayCounter;                         // For information cell
-}
+@interface ETRRoomListViewController () <NSFetchedResultsControllerDelegate>
+
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+
+@end
+
+@implementation ETRRoomListViewController
+
+@synthesize fetchedResultsController = _fetchedResultsController;
 
 #pragma mark - UIViewController Overrides
 
-- (void)viewDidAppear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
-    
-    NSInteger myControllerIndex;
-    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
-    
-    // Initialise failure variable.
-    _noRoomFoundCounter = 0;
-    _nilArrayCounter = 0;
-    _locationIsUnknown = NO;
-    
-    // Refreshing:
-    [[self refreshControl] addTarget:self
-                              action:@selector(updateRoomsTable)
-                    forControlEvents:UIControlEventValueChanged];
-    
-    // Adjust the location manager and act as its delegate for now.
-    [[ETRSession sharedManager] resetLocationManager];
-    [[[ETRSession sharedManager] locationManager] setDelegate:self];
-    
-    [_activityIndicator setColor:[UIColor whiteColor]];
-    [_activityIndicator stopAnimating];
-    
-    NSLog(@"\n\nINFO: ETRoomListViewController viewWillAppear");
-}
-
+#pragma mark -
+#pragma mark View Life Cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -77,13 +53,35 @@
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     
-    // Show an activity indicator (circle).
-    _activityIndicator = [[UIActivityIndicatorView alloc]
-                          initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [_activityIndicator setCenter:[[self view] center]];
-    //[[self view] addSubview:_activityIndicator];
+//    [[self tableView] reloadData];
     
-    [[self tableView] reloadData];
+    // Initialize Fetched Results Controller
+    ETRJSONCoreDataBridge *bridge = [ETRJSONCoreDataBridge coreDataBridge];
+    _fetchedResultsController = [bridge roomListResultsControllerWithDelegate:self];
+    if (!_fetchedResultsController) return;
+    
+    // Perform Fetch
+    NSError *error = nil;
+    [_fetchedResultsController performFetch:&error];
+    
+    if (error) {
+        NSLog(@"Unable to perform fetch.");
+        NSLog(@"%@, %@", error, error.localizedDescription);
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    NSInteger myControllerIndex;
+    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
+    [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
+    
+    // Refreshing:
+    [[self refreshControl] addTarget:self
+                              action:@selector(updateRoomsTable)
+                    forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -94,39 +92,151 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [_activityIndicator stopAnimating];
     if ([[self refreshControl] isRefreshing]) [[self refreshControl] endRefreshing];
 }
 
-- (void)dealloc {
-    NSLog(@"WARNING: ETRoomListViewController DEALLOC");
+#pragma mark -
+#pragma mark Fetched Results Controller Delegate Methods
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [[self tableView] beginUpdates];
 }
 
-- (void)threadStartAnimating:(id)data {
-    [_activityIndicator startAnimating];
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [[self refreshControl] endRefreshing];
+    [[self tableView] endUpdates];
 }
 
-#pragma mark - CLLocationManagerDelegate
-
-// This method will be called when the location was updated successfully.
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-#ifdef DEBUG
-    NSLog(@"INFO: Device coordinates for room list query: %g %g",
-          manager.location.coordinate.latitude,
-          manager.location.coordinate.longitude);
-#endif
-    _locationIsUnknown = NO;
-    [self updateRoomsTable];
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        }
+        case NSFetchedResultsChangeUpdate: {
+            // TODO: Implement updates.
+            break;
+        }
+        case NSFetchedResultsChangeMove: {
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
 }
 
-// An error occured trying to get the device location.
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    //TODO: Handle error message.
-    NSLog(@"ERROR: %@", error);
-    _locationIsUnknown = YES;
+#pragma mark -
+#pragma mark Table View Data Source Methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (!_fetchedResultsController) return 0;
+    else return [[_fetchedResultsController sections] count];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (!_fetchedResultsController) return 0;
+    if (![[_fetchedResultsController fetchedObjects] count]) return 0;
     
-    // Display info cell.
-    [[self tableView] reloadData];
+    id<NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
+    return [sectionInfo numberOfObjects];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (![[_fetchedResultsController fetchedObjects] count]) {
+        return [self infoCellAtIndexPath:indexPath];
+    } else {
+        return [self roomCellAtIndexPath:indexPath];
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (![[_fetchedResultsController fetchedObjects] count]) return tableView.bounds.size.height;
+    else return kRoomCellHeight;
+}
+
+- (ETRRoomListCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
+    
+    ETRRoomListCell *cell;
+    cell = [[self tableView] dequeueReusableCellWithIdentifier:kRoomCellIdentifier forIndexPath:indexPath];
+    if (!cell) {
+        cell = [[ETRRoomListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kRoomCellIdentifier];
+    }
+    
+    //[[[roomCell contentView] layer] setShadowOffset:CGSizeMake(1, -1)];
+    //[[[roomCell contentView] layer] setShadowOpacity:0.5f];
+    
+    // Get the Room Record from the ResultsController
+    // and apply its attributes to the cell views.
+    ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
+    [[cell titleLabel] setText:[record title]];
+    [[cell sizeLabel] setText:[record formattedSize]];
+    [[cell timeLabel] setText:[record timeSpan]];
+    [[cell descriptionLabel] setText:[record summary]];
+    
+    // Display the distance to the closest region point.
+    if ([ETRLocationHelper distanceToRoom:record] < 10) {
+        [[cell distanceLabel] setHidden:YES];
+        [[cell placeIcon] setHidden:NO];
+    } else {
+        [[cell placeIcon] setHidden:YES];
+        [[cell distanceLabel] setHidden:NO];
+        [[cell distanceLabel] setText:[ETRLocationHelper formattedDistanceToRoom:record]];
+    }
+    
+    //    [self startIconDownload:currentRoom forIndexPath:indexPath];
+    [ETRImageLoader loadImageForObject:record intoView:[cell headerImageView] doLoadHiRes:YES];
+    [[cell headerImageView] setTag:[indexPath row]];
+    
+    return cell;
+}
+
+- (ETRInformationCell *)infoCellAtIndexPath:(NSIndexPath *)indexPath {
+    
+    ETRInformationCell *cell;
+    cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier forIndexPath:indexPath];
+    if (!cell) {
+        cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier];
+    }
+    ETRInformationCell *infoCell = (ETRInformationCell *) cell;
+    
+    // TODO: Button to location menu
+    // TODO: Localization
+    //        if (_locationIsUnknown) {
+    //            NSString *statusNoLocation = @"Please allow Realay to find places near your location.\n\nPull down to refresh.";
+    //            [[loadingCell infoLabel] setText:statusNoLocation];
+    //        } else if (_noRoomFoundCounter > 5) {
+    //            NSString *radius = [ETRChatObject lengthFromMetres:(kDefaultRangeInKm * 1000)];
+    //            NSString *statusNoRooms = [NSString stringWithFormat:
+    //                                       @"No Realays found in a %@ radius.\n\nPull down to refresh.", radius];
+    //            [[loadingCell textLabel] setText:statusNoRooms];
+    //            [_activityIndicator stopAnimating];
+    //        } else {
+    NSString *searching = @"Searching for Realays...";
+    [[infoCell infoLabel] setText:searching];
+    //        }
+    
+    cell = infoCell;
+    return cell;
+}
+
+#pragma mark -
+#pragma mark Table View Delegate Methods
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // If the list only shows information cells and no Rooms, do not listen to selections.
+    if (![[_fetchedResultsController fetchedObjects] count]) {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        return;
+    }
+    
+    // Hide the selection, prepare the Session and go to the Room Map.
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
+    [[ETRSession sharedManager] prepareSessionInRoom:record navigationController:[self navigationController]];
+    
+    NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
+    
+    [self performSegueWithIdentifier:kMapSegueIdentifier sender:record];
 }
 
 #pragma mark - UITableViewDataSource
@@ -169,102 +279,6 @@
 //    
 //    // Put the data into the table or at least display an info cell.
 //    [[self tableView] reloadData];
-}
-
-// This table only has one section.
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-/**
- Get the number of rows for this table.
- */
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_roomsArray) return 1;
-    else if ([_roomsArray count] < 1) return 1;
-    else return [_roomsArray count];
-}
-
-// Set up the table cells.
-- (UITableViewCell *)tableView:(UITableView *)tableView
-         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    //Add a placeholder cell while waiting for table data.
-    if ([_roomsArray count] == 0 && [indexPath row] == 0) {
-        ETRInformationCell *loadingCell = [tableView
-                                        dequeueReusableCellWithIdentifier:kInfoCellIdentifier];
-        
-        if (!loadingCell) {
-            loadingCell = [[ETRInformationCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                                    reuseIdentifier:kInfoCellIdentifier];
-        }
-        
-        // TODO: Button to location menu
-        // TODO: Localization
-        if (_locationIsUnknown) {
-            NSString *statusNoLocation = @"Please allow Realay to find places near your location.\n\nPull down to refresh.";
-            [[loadingCell infoLabel] setText:statusNoLocation];
-        } else if (_noRoomFoundCounter > 5) {
-            NSString *radius = [ETRChatObject lengthFromMetres:(kDefaultRangeInKm * 1000)];
-            NSString *statusNoRooms = [NSString stringWithFormat:
-                           @"No Realays found in a %@ radius.\n\nPull down to refresh.", radius];
-            [[loadingCell textLabel] setText:statusNoRooms];
-            [_activityIndicator stopAnimating];
-        } else {
-            NSString *searching = @"Searching for Realays...";
-            [[loadingCell infoLabel] setText:searching];
-        }
-        
-        // Configure the information text label.
-        [[loadingCell textLabel] setTextColor:[UIColor grayColor]];
-        [[loadingCell textLabel] setLineBreakMode:NSLineBreakByWordWrapping];
-        [[loadingCell textLabel] setNumberOfLines:0];
-        [[loadingCell textLabel] setTextAlignment:NSTextAlignmentCenter];
-        [[loadingCell textLabel] setFont:[UIFont systemFontOfSize:14.0f]];
-        
-        return loadingCell;
-    }
-    
-    /*
-     We have found rooms. Give useful cells.
-     */
-    ETRRoomListCell *roomCell = [tableView
-                                 dequeueReusableCellWithIdentifier:kRoomCellIdentifier];
-    if (!roomCell) {
-        roomCell = [[ETRRoomListCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                          reuseIdentifier:kRoomCellIdentifier];
-    }
-
-    //[[[roomCell contentView] layer] setShadowOffset:CGSizeMake(1, -1)];
-    //[[[roomCell contentView] layer] setShadowOpacity:0.5f];
-    
-    // Get a Room from the RoomList and apply its attributes to the cell views.
-    ETRRoom *currentRoom = [_roomsArray objectAtIndex:indexPath.row];
-    [[roomCell titleLabel] setText:[currentRoom title]];
-    [[roomCell sizeLabel] setText:[currentRoom formattedSize]];
-    [[roomCell timeLabel] setText:[currentRoom timeSpan]];
-    [[roomCell descriptionLabel] setText:[currentRoom summary]];
-    
-    // Display the distance to the closest region point.
-    ETRLocationManager *locMan = [[ETRSession sharedManager] locationManager];
-    if ([locMan distanceToRoom:currentRoom] < 10) {
-        [[roomCell distanceLabel] setHidden:YES];
-        [[roomCell placeIcon] setHidden:NO];
-    } else {
-        [[roomCell placeIcon] setHidden:YES];
-        [[roomCell distanceLabel] setHidden:NO];
-        [[roomCell distanceLabel] setText:[locMan formattedDistanceToRoom:currentRoom]];
-    }
-    
-//    [self startIconDownload:currentRoom forIndexPath:indexPath];
-    [ETRImageLoader loadImageForObject:currentRoom intoView:[roomCell headerImageView] doLoadHiRes:YES];
-    [[roomCell headerImageView] setTag:[indexPath row]];
-    return roomCell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([_roomsArray count] == 0) return tableView.bounds.size.height;
-    else return kRoomCellHeight;
 }
 
 #pragma mark - Cell Icon Support
@@ -325,25 +339,6 @@
 #pragma mark - Navigation
 
 
-
-// User touched a table row.
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([_roomsArray count] < 1) {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        return;
-    }
-    
-    // Start the activity indicator spin.
-    [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
-                             toTarget:self
-                           withObject:nil];
-    [[ETRSession sharedManager] prepareSessionInRoom:[_roomsArray objectAtIndex:[indexPath row]]
-                                navigationController:[self navigationController]];
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    [_activityIndicator stopAnimating];
-    [self performSegueWithIdentifier:kSegueToNext sender:nil];
-}
-
 // Create or view my profile.
 - (IBAction)profileButtonPressed:(id)sender {
     if ([[ETRLocalUserManager sharedManager] userID] > 10) {
@@ -360,7 +355,7 @@
         
         // Tell the Create Profile controller where to go next.
         ETRCreateProfileViewController *destination = [segue destinationViewController];
-        [destination setGoToOnFinish:kEnumGoToViewProfile];
+        [destination showProfileOnLogin];
         
     } else if([[segue identifier] isEqualToString:kSegueToViewProfile]) {
         // Just show my own user profile.
