@@ -8,6 +8,7 @@
 
 #import "ETRImageLoader.h"
 
+#import "ETRImageEditor.h"
 #import "ETRServerAPIHelper.h"
 
 @implementation ETRImageLoader {
@@ -31,18 +32,32 @@
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject intoView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doShowHiRes {
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject targetImageView:targetImageView doLoadHiRes:(BOOL)doShowHiRes];
-//    [instance startLoading];
     [NSThread detachNewThreadSelector:@selector(startLoading)
                              toTarget:instance
                            withObject:nil];
 }
 
 - (void)startLoading {
-    if (!_chatObject) return;
-    if ([[_chatObject imageID] longValue] < 100) return;
+    if (!_chatObject) {
+      return;
+    }
+    
+    if (_targetImageView) {
+        NSInteger tag = [_targetImageView tag];
+        if (tag > 100) {
+            NSLog(@"DEBUG: ImageView already has tag %i.", (int) tag);
+        } else {
+            [_targetImageView setTag:(int) [_chatObject imageID]];
+        }
+    }
+    
+    if ([[_chatObject imageID] longValue] < 100) {
+        NSLog(@"ERROR: Image ID %@ is not valid.", [_chatObject imageID]);
+        return;
+    }
     
     if ([_chatObject lowResImage]) {
-        [ETRImageLoader cropImage:[_chatObject lowResImage] applyToView:_targetImageView];
+        [ETRImageEditor cropImage:[_chatObject lowResImage] applyToView:_targetImageView];
         if (!_doShowHiRes) return;
     }
     
@@ -50,21 +65,23 @@
     UIImage *cachedLoResImage = [UIImage imageWithContentsOfFile:[self imagefilePath:NO]];
     if (cachedLoResImage) {
         [_chatObject setLowResImage:cachedLoResImage];
-        [ETRImageLoader cropImage:cachedLoResImage applyToView:_targetImageView];
+        [ETRImageEditor cropImage:cachedLoResImage applyToView:_targetImageView];
     } else {
         // If the low-res image has not been stored as a file, download it.
         // This will also place it into the Object and View.
-        [ETRServerAPIHelper getImageLoader:self doLoadHiRes:NO];
+        [ETRServerAPIHelper getImageForLoader:self doLoadHiRes:NO];
     }
     
     // If the high-resolution image is not supposed to be shown, return.
-    if (!_doShowHiRes) return;
+    if (!_doShowHiRes) {
+        return;
+    }
     
     UIImage *cachedHiResImage = [UIImage imageWithContentsOfFile:[self imagefilePath:YES]];
     if (cachedHiResImage) {
-        [ETRImageLoader cropImage:cachedHiResImage applyToView:_targetImageView];
+        [ETRImageEditor cropImage:cachedHiResImage applyToView:_targetImageView];
     } else {
-        [ETRServerAPIHelper getImageLoader:self doLoadHiRes:YES];
+        [ETRServerAPIHelper getImageForLoader:self doLoadHiRes:YES];
     }
 }
 
@@ -75,22 +92,6 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *fileName = [NSString stringWithFormat:@"%@.jpg", [_chatObject imageIDWithHiResFlag:doLoadHiRes]];
     return [[paths objectAtIndex:0] stringByAppendingPathComponent:fileName];
-}
-
-+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView {
-    if (!image || !targetImageView) return;
-    
-    // Adjust the size if needed.
-    CGSize viewSize = targetImageView.frame.size;
-    if (image.size.width != viewSize.width || image.size.height != viewSize.height) {
-        UIGraphicsBeginImageContext(viewSize);
-        CGRect imageRect = CGRectMake(0.0f, 0.0f, viewSize.width, viewSize.height);
-        [image drawInRect:imageRect];
-        image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-    }
-    
-    [targetImageView setImage:image];
 }
 
 @end

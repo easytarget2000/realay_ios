@@ -18,6 +18,7 @@
 		D01F2A6F18622D6D00DC97F7 /* ETRWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01F2A6E18622D6D00DC97F7 /* ETRWelcomeViewController.m */; };
 		D032E7441A9E6F3E0021E501 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D032E7431A9E6F3E0021E501 /* GoogleMaps.framework */; };
 		D032E74A1A9E71570021E501 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D032E7491A9E71570021E501 /* GoogleMaps.bundle */; };
+		D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = D048E2941AA65083001631CB /* ETRImageEditor.m */; };
 		D0529A0D1AA26FED002211A3 /* Realay.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D0529A0B1AA26FED002211A3 /* Realay.xcdatamodeld */; };
 		D0529A451AA28937002211A3 /* ETRUsersCache.m in Sources */ = {isa = PBXBuildFile; fileRef = D0529A441AA28937002211A3 /* ETRUsersCache.m */; };
 		D06E464918D391E400833C94 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D06E464818D391E400833C94 /* MainStoryboard.storyboard */; };
@@ -95,6 +96,8 @@
 		D020733117EBB34400453B69 /* ETRRoomListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListCell.h; sourceTree = "<group>"; };
 		D032E7431A9E6F3E0021E501 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		D032E7491A9E71570021E501 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleMaps.bundle; sourceTree = "<group>"; };
+		D048E2931AA65083001631CB /* ETRImageEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageEditor.h; sourceTree = "<group>"; };
+		D048E2941AA65083001631CB /* ETRImageEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageEditor.m; sourceTree = "<group>"; };
 		D0529A0C1AA26FED002211A3 /* Realay.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Realay.xcdatamodel; sourceTree = "<group>"; };
 		D0529A431AA28937002211A3 /* ETRUsersCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUsersCache.h; sourceTree = SOURCE_ROOT; };
 		D0529A441AA28937002211A3 /* ETRUsersCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUsersCache.m; sourceTree = SOURCE_ROOT; };
@@ -257,6 +260,8 @@
 				D0795F8D1AA48E76009CCF73 /* ETRJSONCoreDataBridge.m */,
 				D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */,
 				D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */,
+				D048E2931AA65083001631CB /* ETRImageEditor.h */,
+				D048E2941AA65083001631CB /* ETRImageEditor.m */,
 			);
 			name = Helper;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */,
 				D01446B61A9F573900748378 /* ETRChatObject.m in Sources */,
 				D0E1971517E276DB00135B8C /* main.m in Sources */,
 				D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */,

@@ -69,11 +69,6 @@
 @property (nonatomic, readonly) BOOL didBeginSession;
 
 /*
- Stores if the user is inside the region of a room.
-  */
-@property (nonatomic, readonly) BOOL isInRegion;
-
-/*
  Return to this view when clicking the map button after joining.
   */
 @property (nonatomic) NSInteger mapControllerIndex;
@@ -160,11 +155,6 @@
  Get all new actions from the database.
  */
 - (void)tick;
-
-/*
- Get a complete list of users for this session.
- */
-- (void)queryUserList;
 
 /*
  Read the user settings.

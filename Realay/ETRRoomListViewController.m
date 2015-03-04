@@ -106,7 +106,12 @@
     [[self tableView] endUpdates];
 }
 
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+- (void)controller:(NSFetchedResultsController *)controller
+   didChangeObject:(id)anObject
+       atIndexPath:(NSIndexPath *)indexPath
+     forChangeType:(NSFetchedResultsChangeType)type
+      newIndexPath:(NSIndexPath *)newIndexPath {
+    
     switch (type) {
         case NSFetchedResultsChangeInsert: {
             [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -117,7 +122,10 @@
             break;
         }
         case NSFetchedResultsChangeUpdate: {
-            // TODO: Implement updates.
+            UITableViewCell *cell = [[self tableView] cellForRowAtIndexPath:indexPath];
+            if (cell && [cell isKindOfClass:[ETRRoomListCell class]]) {
+                [self configureRoomCell:(ETRRoomListCell *)cell atIndexPath:indexPath];
+            }
             break;
         }
         case NSFetchedResultsChangeMove: {
@@ -135,8 +143,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_fetchedResultsController) return 0;
-    if (![[_fetchedResultsController fetchedObjects] count]) return 0;
+    if (!_fetchedResultsController || ![[_fetchedResultsController fetchedObjects] count]) {
+        return 0;
+    }
     
     id<NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
     return [sectionInfo numberOfObjects];
@@ -151,18 +160,26 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (![[_fetchedResultsController fetchedObjects] count]) return tableView.bounds.size.height;
-    else return kRoomCellHeight;
+    if (![[_fetchedResultsController fetchedObjects] count]) {
+        return tableView.bounds.size.height;
+    } else {
+       return kRoomCellHeight;
+    }
 }
 
 - (ETRRoomListCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
-    
     ETRRoomListCell *cell;
     cell = [[self tableView] dequeueReusableCellWithIdentifier:kRoomCellIdentifier forIndexPath:indexPath];
     if (!cell) {
         cell = [[ETRRoomListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kRoomCellIdentifier];
     }
     
+    [self configureRoomCell:cell atIndexPath:indexPath];
+    
+    return cell;
+}
+
+- (void)configureRoomCell:(ETRRoomListCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     //[[[roomCell contentView] layer] setShadowOffset:CGSizeMake(1, -1)];
     //[[[roomCell contentView] layer] setShadowOpacity:0.5f];
     
@@ -175,20 +192,18 @@
     [[cell descriptionLabel] setText:[record summary]];
     
     // Display the distance to the closest region point.
-    if ([ETRLocationHelper distanceToRoom:record] < 10) {
+    if ([record distance] < 10) {
         [[cell distanceLabel] setHidden:YES];
         [[cell placeIcon] setHidden:NO];
     } else {
         [[cell placeIcon] setHidden:YES];
         [[cell distanceLabel] setHidden:NO];
-        [[cell distanceLabel] setText:[ETRLocationHelper formattedDistanceToRoom:record]];
+        [[cell distanceLabel] setText:[record formattedDistance]];
     }
     
     //    [self startIconDownload:currentRoom forIndexPath:indexPath];
     [ETRImageLoader loadImageForObject:record intoView:[cell headerImageView] doLoadHiRes:YES];
     [[cell headerImageView] setTag:[indexPath row]];
-    
-    return cell;
 }
 
 - (ETRInformationCell *)infoCellAtIndexPath:(NSIndexPath *)indexPath {
@@ -242,69 +257,9 @@
 #pragma mark - UITableViewDataSource
 
 - (void)updateRoomsTable {
-    
     [ETRServerAPIHelper updateRoomList];
-    
-//    // Start the activity indicator spin.
-//    [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
-//                             toTarget:self
-//                           withObject:nil];
-//    
-//    // Stop refreshing the table.
-//    [[self refreshControl] endRefreshing];
-//    
-//    // The actual download of room data:
-//    _roomsArray = [ETRServerAPIHelper queryRoomListInRadius:kDefaultRangeInKm];
-//    
-//    if ([_roomsArray count] > 0) {
-//        // A list of rooms was received.
-//        // Reset error counter.
-//        _noRoomFoundCounter = 0;
-//        _nilArrayCounter = 0;
-//        [_activityIndicator stopAnimating];
-//        
-//    } else if ([_roomsArray count] == 0) {
-//        // No room was found. The reason is unknown.
-//        _noRoomFoundCounter++;
-//        
-//        if (!_roomsArray) {
-//            //TODO: Handle DB Errors
-//            NSLog(@"ERROR: Database connection keeps failing.");
-//        }
-//    }
-//    
-//#ifdef DEBUG
-//    NSLog(@"INFO: Updated rooms table: %ld, %ld", [_roomsArray count], _noRoomFoundCounter);
-//#endif
-//    
-//    // Put the data into the table or at least display an info cell.
-//    [[self tableView] reloadData];
 }
 
-#pragma mark - Cell Icon Support
-
-//- (void)startIconDownload:(ETRRoom *)room forIndexPath:(NSIndexPath *)indexPath {
-//    // See if there is a download on the dict stack.
-//    ETRImageLoader *iconDownloader = [_imageDownloadsInProgress objectForKey:indexPath];
-//    
-//    if (iconDownloader == nil) {
-//        iconDownloader = [[ETRImageLoader alloc] initWithObject:room];
-//        
-//        [iconDownloader setCompletionHandler:^{
-//            // After downloading, add the image to the appropriate cell.
-//            ETRRoomListCell *roomCell;
-//            roomCell = (ETRRoomListCell *)[[self tableView] cellForRowAtIndexPath:indexPath];
-//            [self applyImage:[room lowResImage] toRoomCell:roomCell];
-//            
-//            // Remove the downloader from the in-progress list.
-//            [_imageDownloadsInProgress removeObjectForKey:indexPath];
-//        }];
-//        
-//        // Add the object to the progress stack after giving it a useful completion handler.
-//        [_imageDownloadsInProgress setObject:iconDownloader forKey:indexPath];
-//        [iconDownloader startLoading];
-//    }
-//}
 
 #pragma mark - UIScrollViewDelegate
 
@@ -321,23 +276,10 @@
 }
 
 - (void)loadImagesForOnScreenRows {
-//    if ([_roomsArray count] > 0) {
-//        NSArray *visiblePaths = [[self tableView] indexPathsForVisibleRows];
-//        
-//        for (NSIndexPath *indexPath in visiblePaths) {
-//            ETRRoom *currentRoom = [_roomsArray objectAtIndex:[indexPath row]];
-//            
-//            if (![currentRoom lowResImage]) {
-//                [self startIconDownload:currentRoom forIndexPath:indexPath];
-//            }
-//            
-//        }
-//    }
     
 }
 
 #pragma mark - Navigation
-
 
 // Create or view my profile.
 - (IBAction)profileButtonPressed:(id)sender {

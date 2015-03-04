@@ -73,7 +73,7 @@
  15000 returns "15 km" or "8 mi"
  */
 + (NSString *)formattedLength:(NSInteger)metres {
-    if ([[[NSLocale currentLocale] objectForKey:NSLocaleUsesMetricSystem] boolValue]) {
+    if ([[[NSLocale systemLocale] objectForKey:NSLocaleUsesMetricSystem] boolValue]) {
         if (metres < kMaxShowMetre) {
             NSString *unit = @"m";
             return [NSString stringWithFormat:@"%ld %@", metres, unit];

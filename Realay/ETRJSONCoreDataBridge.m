@@ -50,7 +50,8 @@
     
     // Check the context CoreData, if an object with this remote ID already exists.
     NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:kRoomEntityName];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ == %@", kRemoteIDKey, remoteID];
+    NSString *where = [NSString stringWithFormat:@"%@ == %ld", kRemoteIDKey, [remoteID longValue]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
     [fetch setPredicate:predicate];
     NSArray *existingRooms = [_managedObjectContext executeFetchRequest:fetch error:nil];
     

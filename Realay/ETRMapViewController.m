@@ -14,8 +14,8 @@
 
 #import <GoogleMaps/GoogleMaps.h>
 
-#define kMapCloseZoom   16
-#define kMapWideZoom    11
+#define kMapCloseZoom   14.0f
+#define kMapWideZoom    11.0f
 
 #define kSegueToNext    @"mapToPasswordSegue"
 #define kSegueToDetails @"mapToDetailsSegue"
@@ -64,13 +64,8 @@
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
     
-    // Set up the map.
-//    _mapView = [GMSMapView mapWithFrame:[[self mapSubView] bounds]
-//                                 camera:[self adjustedCamera]];
-    
     _mapView = [[GMSMapView alloc] init];
     [_mapView setFrame:[[self mapSubView] bounds]];
-    
     [_mapView setCamera:[self adjustedCamera]];
     
     // Other map settings:
@@ -94,7 +89,7 @@
     
     // Add a radius circle to the marker.
     GMSCircle *circle = [[GMSCircle alloc] init];
-    [circle setRadius:[[room radius] shortValue]];
+    [circle setRadius:[[room radius] doubleValue]];
     [circle setFillColor:[UIColor colorWithRed:50.0f green:50.0f blue:50.0f alpha:.5f]];
     [circle setStrokeColor:[UIColor lightGrayColor]];
     [circle setPosition:[marker position]];
@@ -127,13 +122,10 @@
     }
 }
 
-// Readjust the frame of the map when the device is rotated.
-- (void)orientationChanged:(NSNotification *)notification
-{
-#ifdef DEBUG
-    NSLog(@"INFO: Orientation changed on MapVC.");
-#endif
-    
+/*
+ Readjusts the frame of the map when the device is rotated
+ */
+- (void)orientationChanged:(NSNotification *)notification {
     [_mapView setFrame:[[self mapSubView] bounds]];
 }
 
@@ -143,11 +135,11 @@
 - (GMSCameraPosition *)adjustedCamera {
     
     // Get data from the session manager.
-    CLLocationManager *locMan = [[ETRSession sharedManager] locationManager];
+    CLLocation *currentLocation = [ETRLocationHelper location];
     ETRRoom *room = [[ETRSession sharedManager] room];
     
     // Decide which camera to show.
-    if ([locMan location]) {
+    if (currentLocation) {
         
         if ([[ETRSession sharedManager] isInRegion]) {
             // Zoom in on the region, not the user, if the user is inside.
@@ -162,13 +154,13 @@
             // The map should include the device position, as well as the room's location.
             GMSCoordinateBounds *bounds;
             
-            bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:[[locMan location] coordinate]
+            bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:[currentLocation coordinate]
                                                           coordinate:[[room location] coordinate]];
-            return [_mapView cameraForBounds:bounds insets:UIEdgeInsetsMake(70, 70, 70, 70)];
+            return [_mapView cameraForBounds:bounds insets:UIEdgeInsetsMake(70.0f, 70.0f, 70.0f, 70.0f)];
         }
     } else {
         // Just show where approximately the region is if the device location is unknown.
-        //TODO: Use different zoom levels depending on the size of the radius.
+        // TODO: Use different zoom levels depending on the size of the radius.
         return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
                                               zoom:kMapWideZoom];
     }

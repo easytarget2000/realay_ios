@@ -12,8 +12,8 @@
 
 @interface ETRImageConnectionHandler : NSObject <NSURLConnectionDataDelegate>
 
-- (id)initWithImageLoader:(ETRImageLoader *) imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
+//- (id)initWithImageLoader:(ETRImageLoader *) imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
 
-+ (void)performRequest:(NSURLRequest *) request forLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL) doLoadHiRes;
+//+ (void)performRequest:(NSURLRequest *) request forLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL) doLoadHiRes;
 
 @end

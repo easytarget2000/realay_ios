@@ -12,12 +12,21 @@
 
 #define kDebugTag @"ETRImageConnectionHandler"
 
-@implementation ETRImageConnectionHandler {
-    NSMutableData *_activeDlData;
-    NSURLConnection *_imageConnection;
-    ETRImageLoader *_imageLoader;
-    BOOL _doLoadHiRes;
-}
+@interface ETRImageConnectionHandler()
+
+@property (retain, nonatomic) NSMutableData * activeDlData;
+@property (retain, nonatomic) NSURLConnection *imageConnection;
+@property (retain, nonatomic) ETRImageLoader *imageLoader;
+@property (nonatomic) BOOL doLoadHiRes;
+
+@end
+
+@implementation ETRImageConnectionHandler
+
+@synthesize activeDlData = _activeDlData;
+@synthesize imageConnection = _imageConnection;
+@synthesize imageLoader = _imageLoader;
+@synthesize doLoadHiRes = _doLoadHiRes;
 
 - (id)initWithImageLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
     self = [super init];
@@ -30,13 +39,19 @@
     return self;
 }
 
-+ (void)performRequest:(NSURLRequest *) request forLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL) doLoadHiRes {
++ (void)performRequest:(NSURLRequest *)request
+                                    forLoader:(ETRImageLoader *)imageLoader
+                                  doLoadHiRes:(BOOL)doLoadHiRes {    
     ETRImageConnectionHandler *instance = [[ETRImageConnectionHandler alloc] initWithImageLoader:imageLoader doLoadHiRes:doLoadHiRes];
     [instance imageConnection:[[NSURLConnection alloc] initWithRequest:request delegate:instance]];
 }
 
 - (void)imageConnection:(NSURLConnection *)imageConnection {
     _imageConnection = imageConnection;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    NSLog(@"Response: %@", response);
 }
 
 #pragma mark - NSURLConnectionDelegate

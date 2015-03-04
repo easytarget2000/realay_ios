@@ -9,6 +9,7 @@
 #import "ETRServerAPIHelper.h"
 
 #import "ETRImageConnectionHandler.h"
+#import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
 #import "ETRJSONCoreDataBridge.h"
 #import "ETRLocalUserManager.h"
@@ -24,13 +25,40 @@
 
 #define kDefaultSearchRadius    20
 
+static NSMutableArray *connections;
+
 @implementation ETRServerAPIHelper
+
++ (BOOL)didStartConnection:(NSString *)connectionID {
+    if (!connections) {
+        connections = [NSMutableArray array];
+    } else if ([connections containsObject:connectionID]) {
+        NSLog(@"DEBUG: Not performing %@ because the same call has already been started.", connectionID);
+        return true;
+    }
+    
+    [connections addObject:connectionID];
+    return false;
+}
+
++ (void)didFinishConnection:(NSString *)connectionID {
+    if (!connections) {
+        connections = [NSMutableArray array];
+        return;
+    } else if ([connections containsObject:connectionID]){
+        [connections removeObject:connectionID];
+    }
+}
 
 + (void)performAPICall:(NSString *) apiCall
               POSTbody:(NSString *) bodyString
          successStatus:(NSString *) successStatus
              objectTag:(NSString *) objectTag
      completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
+    
+    if ([ETRServerAPIHelper didStartConnection:apiCall]) {
+        return;
+    }
     
     // Prepare the URL to the give PHP file.
     NSString *URLString = [NSString stringWithFormat:@"%@%@", kServerURL, apiCall];
@@ -55,6 +83,8 @@
                            completionHandler:^(NSURLResponse *response,
                                                NSData *data,
                                                NSError *connectionError) {
+                               [ETRServerAPIHelper didFinishConnection:apiCall];
+                               
                                if (!handler) {
                                    NSLog(@"ERROR: No completionHandler given for API call: %@", apiCall);
                                    return;
@@ -85,33 +115,6 @@
                                
                                handler(nil);
                            }];
-}
-
-+ (void)loadImageFromUrlString:(NSString *)URLString intoImageView:(UIImageView *)imageView{
-    NSURL *url = [NSURL URLWithString: URLString];
-    //    UIImage __block *loadedImage;
-    NSError __block *httpError;
-    
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:url] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        
-        if (!connectionError) {
-            if (data) [imageView setImage:[UIImage imageWithData:data]];
-        } else {
-            httpError = connectionError;
-            NSLog(@"ERROR: loadImageFromUrlString: %@", connectionError);
-        }
-        
-    }];
-    
-    // Go into a RunLoop while the JSON array is not initialised.
-    //NSDate *timeout = [[NSDate date] dateByAddingTimeInterval:HTTP_TIMEOUT];
-    //NSRunLoop *runLoop = [NSRunLoop ];
-    //while (!httpError && !loadedImage && [runLoop runMode:NSDefaultRunLoopMode beforeDate:timeout]);
-    
-    //    if (!loadedImage) {
-    //        NSLog(@"ERROR: Downloaded image returned null.");
-    //        return nil;
-    //    }
 }
 
 + (void)updateRoomList {
@@ -152,8 +155,16 @@
     return;
 }
 
-+ (void)getImageLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
++ (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
     if (!imageLoader) return;
+    
+    ETRChatObject *chatObject = [imageLoader chatObject];
+    if (!chatObject) return;
+    if (![chatObject imageID]) return;
+    NSString *fileID = [chatObject imageIDWithHiResFlag:doLoadHiRes];
+    if ([ETRServerAPIHelper didStartConnection:fileID]) {
+        return;
+    }
     
     // Prepare the URL to the download script.
     NSString *URLString = [NSString stringWithFormat:@"%@%@", kServerURL, @"download_image"];
@@ -162,16 +173,44 @@
     // Prepare the POST request.
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     
-    ETRChatObject *chatObject = [imageLoader chatObject];
-    if (!chatObject) return;
-    if (![chatObject imageID]) return;
-    NSString *bodyString = [NSString stringWithFormat:@"image_id=%@", [chatObject imageIDWithHiResFlag:doLoadHiRes]];
+    
+    NSString *bodyString = [NSString stringWithFormat:@"image_id=%@", fileID];
     NSData *bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
     [request setHTTPBody:[NSMutableData dataWithData:bodyData]];
     [request setHTTPMethod:@"POST"];
     [request setTimeoutInterval:kTimeoutInterval];
     
-    [ETRImageConnectionHandler performRequest:request forLoader:imageLoader doLoadHiRes:doLoadHiRes];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               [ETRServerAPIHelper didFinishConnection:fileID];
+                               
+                               if (connectionError || !data) {
+                                   NSLog(@"ERROR: loadImageFromUrlString: %@", connectionError);
+                                   return;
+                               }
+                               
+                               // Try to build an image from the received data.
+                               UIImage *image = [[UIImage alloc] initWithData:data];
+                               // Release the data and clear the connection.
+                               data = nil;
+                               
+                               if (!image) {
+                                   NSLog(@"ERROR: No image in connection data.");
+                                   return;
+                               }
+                               
+                               // Display the image and store the image file
+                               // and the low-res image inside of the Object.
+                               [ETRImageEditor cropImage:image
+                                             applyToView:[imageLoader targetImageView]
+                                                 withTag:(int) [chatObject imageID]];
+                               
+                               ETRChatObject *loaderObject = [imageLoader chatObject];
+                               if (!doLoadHiRes && loaderObject) [loaderObject setLowResImage:image];
+                               [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[imageLoader imagefilePath:doLoadHiRes]
+                                                                        atomically:YES];
+                           }];
 }
 
 /*

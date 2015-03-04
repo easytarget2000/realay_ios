@@ -21,11 +21,13 @@ static ETRLocationHelper *sharedInstance;
 @interface ETRLocationHelper()
 
 @property (nonatomic) BOOL doUpdateFast;
+@property (atomic, readwrite) BOOL didAuthorize;
 
 @end
 
 @implementation ETRLocationHelper
 
+@synthesize didAuthorize = _didAuthorize;
 @synthesize doUpdateFast = _doUpdateFast;
 
 + (void)initialize {
@@ -44,38 +46,37 @@ static ETRLocationHelper *sharedInstance;
     return [sharedInstance location];
 }
 
-+ (NSInteger)distanceToRoom:(ETRRoom *)room {
-    if (!sharedInstance || ![sharedInstance location]) {
-        return [[room queryDistance] integerValue];
+- (BOOL)isInSessionRegion {
+    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
+    if (!sessionRoom) {
+        return NO;
     } else {
-        return [[sharedInstance location] distanceFromLocation:[room location]];
+        return [sessionRoom distance] < 10;
     }
-}
-
-+ (NSString *)formattedDistanceToRoom:(ETRRoom *)room {
-    return [ETRChatObject formattedLength:[self distanceToRoom:room]];
 }
 
 - (void)launch {
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
-        [self startMonitoringSignificantLocationChanges];
-        [super startUpdatingLocation];
-        return;
-    }
+    NSLog(@"%d", [CLLocationManager authorizationStatus]);
+    
+//    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
+//        [self startMonitoringSignificantLocationChanges];
+//        [super startUpdatingLocation];
+//        return;
+//    }
     
     if ([self respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
         [self requestWhenInUseAuthorization];
     } else {
         [self startMonitoringSignificantLocationChanges];
-        [super startUpdatingLocation];
     }
     
     if ([self respondsToSelector:@selector(requestAlwaysAuthorization)]) {
         [self requestAlwaysAuthorization];
     } else {
         [self startMonitoringSignificantLocationChanges];
-        [super startUpdatingLocation];
     }
+    
+    [super startUpdatingLocation];
 }
 
 #pragma mark -
@@ -91,14 +92,18 @@ static ETRLocationHelper *sharedInstance;
     NSLog(@"didUpdateLocations: Interval: %g", [[[self location] timestamp] timeIntervalSinceDate:[newLocation timestamp]]);
 }
 
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"LocationManager didFailWithError: %@", [error description]);
+}
+
 /*
  Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
  and the current device location;
  values below 10 are handled as 0 to avoid unnecessary precision
  */
 - (NSInteger)distanceToRoom:(ETRRoom *)room {
-    if (![self location]) return 2744;
     if (!room) return 2644;
+    if (![self location]) return 2744;
     
     NSInteger value = [[self location] distanceFromLocation:[room location]];
     value -= [[room radius] integerValue];

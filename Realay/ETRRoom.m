@@ -7,6 +7,8 @@
 //
 
 #import "ETRRoom.h"
+
+#import "ETRLocationHelper.h"
 #import "User.h"
 
 @interface ETRRoom()
@@ -36,7 +38,7 @@
 @synthesize location = _location;
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: %@: %@", [self objectID], [self remoteID], [self title]];
+    return [NSString stringWithFormat:@"%@: %@", [self remoteID], [self title]];
 }
 
 - (NSString *)address {
@@ -45,6 +47,39 @@
     NSString *coordinates = [NSString stringWithFormat:@"%f,%f", [[self latitude] floatValue], [[self longitude] floatValue]];
     [self setAddress:coordinates];
     return coordinates;
+}
+
+/*
+ Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
+ and the current device location;
+ Takes current device location from the LocationManager;
+ Uses the server API / query distance value, if the device location is unknown;
+ Values below 10 are handled as 0 to avoid unnecessary precision
+ */
+- (NSInteger)distance; {
+    CLLocation *roomLocation = [self location];
+    if (!roomLocation) {
+        return 8424;
+    }
+    
+    CLLocation *deviceLocation = [ETRLocationHelper location];
+    NSInteger distanceToCenter;
+    if (deviceLocation) {
+        distanceToCenter = [deviceLocation distanceFromLocation:roomLocation];
+    } else {
+        distanceToCenter = [[self queryDistance] integerValue];
+    }
+    
+    NSInteger distanceToRadius = distanceToCenter - [[self radius] integerValue];
+    if (distanceToRadius < 10) {
+        return 0;
+    } else {
+        return distanceToRadius;
+    }
+}
+
+- (NSString *)formattedDistance {
+    return [ETRChatObject formattedLength:[self distance]];
 }
 
 - (NSString *)formattedSize {
@@ -82,7 +117,9 @@
 }
 
 - (CLLocation *)location {
-    if (_location) return _location;
+    if (_location) {
+        return _location;
+    }
     
     CGFloat latitude = [[self latitude] floatValue];
     CGFloat longitude = [[self longitude] floatValue];

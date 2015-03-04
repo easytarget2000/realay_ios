@@ -8,8 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-
-
+@class ETRRoom;
 @class User;
 @class ETRImageLoader;
 
@@ -18,7 +17,7 @@
 // Queries the list of rooms that are inside a given distance radius.
 + (void)updateRoomList;
 
-+ (void)getImageLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
++ (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
 
 /*
  Registers a new User at the database or retrieves the data
@@ -26,5 +25,7 @@
  stores the new User object through the Local User Manager when finished
  */
 + (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(User *localUser))onSuccessBlock;
+
++ (void)queryUserListInRoom:(ETRRoom *)room;
 
 @end

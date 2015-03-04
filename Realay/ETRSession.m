@@ -98,7 +98,7 @@ static ETRSession *sharedInstance = nil;
     [[UIApplication sharedApplication] setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
     
     // Get the initial array of users.
-    [self queryUserList];
+    [ETRServerAPIHelper queryUserListInRoom:_room];
     
     // Start the first tick.
     [self tick];
@@ -108,7 +108,6 @@ static ETRSession *sharedInstance = nil;
     _updateTimer = [NSTimer scheduledTimerWithTimeInterval:kTickInterval
                                                 invocation:_invocation
                                                    repeats:YES];
-    
 }
 
 - (void)endSession {
