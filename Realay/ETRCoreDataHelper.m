@@ -6,29 +6,36 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import "ETRJSONCoreDataBridge.h"
+#import "ETRCoreDataHelper.h"
 
 #import "ETRAppDelegate.h"
+#import "ETRJSONDictionary.h"
 #import "ETRRoom.h"
+#import "ETRUser.h"
 
 #define kRoomEntityName     @"ETRRoom"
 #define kRemoteIDKey        @"remoteID"
 #define kRoomDistanceKey    @"queryDistance"
+#define kUserEntityName     @"ETRUser"
 
-@interface ETRJSONCoreDataBridge()
+@interface ETRCoreDataHelper()
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+
 @property (strong, nonatomic) NSEntityDescription *roomEntity;
+
+@property (strong, nonatomic) NSEntityDescription *userEntity;
 
 @end
 
-@implementation ETRJSONCoreDataBridge
+@implementation ETRCoreDataHelper
 
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize roomEntity = _roomEntity;
+@synthesize userEntity = _userEntity;
 
-+ (ETRJSONCoreDataBridge *)coreDataBridge {
-    ETRJSONCoreDataBridge *coreDataBridge = [[ETRJSONCoreDataBridge alloc] init];
++ (ETRCoreDataHelper *)helper {
+    ETRCoreDataHelper *coreDataBridge = [[ETRCoreDataHelper alloc] init];
     ETRAppDelegate *app = (ETRAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *context = [app managedObjectContext];
     if (!context) return coreDataBridge;
@@ -129,6 +136,72 @@
     if (![_managedObjectContext save:&error] || error) {
         NSLog(@"ERROR: Could not save context: %@", error);
     }
+}
+
+#pragma mark -
+#pragma mark User Objects
+
+- (ETRUser *)insertUserFromDictionary:(ETRJSONDictionary *)jsonDictionary {
+    if (!_managedObjectContext) {
+        NSLog(@"ERROR: No Managed Object Context to insert User into.");
+        return nil;
+    }
+    
+    // Get the remote DB ID from the JSON data.
+    long remoteID = (long) [[jsonDictionary longNumberForKey:@"u" withFallbackValue:-55] longLongValue];
+    
+    if (remoteID < 10) {
+        NSLog(@"ERROR: Could not insert User because remote ID is invalid: %ld", remoteID);
+        return nil;
+    }
+    
+    // Check the context CoreData, if an object with this remote ID already exists.
+    ETRUser *user = [self userWithRemoteID:remoteID];
+    
+    if (!user) {
+        // The User was not stored in the local database yet, use the CoreData initializer to create a new object.
+        if (!_userEntity) {
+            _userEntity = [NSEntityDescription entityForName:kUserEntityName
+                                      inManagedObjectContext:_managedObjectContext];
+        }
+        user = [[ETRUser alloc] initWithEntity:_userEntity
+                insertIntoManagedObjectContext:_managedObjectContext];
+        [user setRemoteID:@(remoteID)];
+    }
+    
+    [user setImageID:[jsonDictionary longNumberForKey:@"i" withFallbackValue:-5]];
+    [user setStatus:[jsonDictionary stringForKey:@"s"]];
+    [user setMail:[jsonDictionary stringForKey:@"em"]];
+    [user setPhone:[jsonDictionary stringForKey:@"ph"]];
+    [user setWebsite:[jsonDictionary stringForKey:@"ws"]];
+    [user setFacebook:[jsonDictionary stringForKey:@"fb"]];
+    [user setInstagram:[jsonDictionary stringForKey:@"ig"]];
+    [user setTwitter:[jsonDictionary stringForKey:@"tw"]];
+
+    NSLog(@"Inserting User: %@", [user description]);
+    [self saveContext];
+    return user;
+}
+
+- (ETRUser *)userWithRemoteID:(long)remoteID {
+    if (_managedObjectContext) {
+        return nil;
+    }
+    
+    // Check the context CoreData, if an object with this remote ID exists.
+    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:kUserEntityName];
+    NSString *where = [NSString stringWithFormat:@"%@ == %ld", kRemoteIDKey, remoteID];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [fetch setPredicate:predicate];
+    NSArray *existingUsers = [_managedObjectContext executeFetchRequest:fetch error:nil];
+    
+    if (existingUsers && [existingUsers count]) {
+        if ([existingUsers[0] isKindOfClass:[ETRUser class]]) {
+            return (ETRUser *)existingUsers[0];
+        }
+    }
+    
+    return nil;
 }
 
 @end

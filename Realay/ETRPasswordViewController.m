@@ -56,13 +56,14 @@
 #pragma mark - IBAction
 
 - (IBAction)joinButtonPressed:(id)sender {
-    
     // Only perform a join action, if the user did not join yet.
     if (![[ETRSession sharedManager] didBeginSession]) {
-        
         // Show the password prompt, if the device location is inside the region.
-        if ([[ETRSession sharedManager] isInRegion]) [self checkEnteredPassword];
-        else [ETRAlertViewBuilder showOutsideRegionAlertView];
+        if ([ETRLocationHelper isInSessionRegion]) {
+           [self checkEnteredPassword];
+        } else {
+          [ETRAlertViewBuilder showOutsideRegionAlertView];
+        }
     }
 }
 
@@ -126,7 +127,7 @@
         [destination setConversationID:kPublicReceiverID];
     } else if ([[segue identifier] isEqualToString:kSegueToCreateProfile]) {
         ETRCreateProfileViewController *destination = [segue destinationViewController];
-        [destination setGoToOnFinish:kEnumGoToChat];
+        [destination startSessionOnLogin];
     }
 }
 

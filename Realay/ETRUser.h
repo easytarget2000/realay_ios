@@ -6,11 +6,9 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ETRChatObject.h"
 
-
-@interface User : NSManagedObject
+@interface ETRUser : ETRChatObject
 
 @property (nonatomic, retain) NSNumber * remoteID;
 @property (nonatomic, retain) NSString * name;
@@ -27,6 +25,6 @@
 @property (nonatomic, retain) NSManagedObject *receivedActions;
 @property (nonatomic, retain) NSManagedObject *inConversation;
 
-+ (User *)userFromJSONDictionary:(NSDictionary *)JSONDict;
++ (ETRUser *)userFromJSONDictionary:(NSDictionary *)JSONDict;
 
 @end

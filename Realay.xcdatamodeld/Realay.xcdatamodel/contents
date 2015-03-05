@@ -6,13 +6,13 @@
         <attribute name="messageContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="remoteID" attributeType="Integer 64" defaultValueString="-44" indexed="YES" syncable="YES"/>
         <attribute name="sentTime" attributeType="Date" syncable="YES"/>
-        <relationship name="recipient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="receivedActions" inverseEntity="User" syncable="YES"/>
+        <relationship name="recipient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="receivedActions" inverseEntity="ETRUser" syncable="YES"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="actions" inverseEntity="ETRRoom" syncable="YES"/>
-        <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="sentActions" inverseEntity="User" syncable="YES"/>
+        <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="sentActions" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
     <entity name="ETRConversation" representedClassName="ETRConversation" syncable="YES">
         <attribute name="hasUnreadMessage" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <relationship name="partner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="inConversation" inverseEntity="User" syncable="YES"/>
+        <relationship name="partner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="inConversation" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
     <entity name="ETRRoom" representedClassName="ETRRoom" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
@@ -30,9 +30,9 @@
         <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" minValueString="1" syncable="YES"/>
         <relationship name="actions" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="room" inverseEntity="ETRAction" syncable="YES"/>
-        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="lastKnownRoom" inverseEntity="User" syncable="YES"/>
+        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="lastKnownRoom" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
-    <entity name="User" representedClassName="User" syncable="YES">
+    <entity name="ETRUser" representedClassName="ETRUser" syncable="YES">
         <attribute name="facebook" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="imageID" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="instagram" optional="YES" attributeType="String" syncable="YES"/>
@@ -49,9 +49,9 @@
         <relationship name="sentActions" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="sender" inverseEntity="ETRAction" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ETRAction" positionX="0" positionY="0" width="128" height="165"/>
-        <element name="ETRConversation" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="ETRRoom" positionX="0" positionY="0" width="128" height="285"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="255"/>
+        <element name="ETRAction" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ETRConversation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ETRRoom" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ETRUser" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

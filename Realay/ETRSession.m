@@ -57,7 +57,7 @@ static ETRSession *sharedInstance = nil;
     return sharedInstance;
 }
 
-+ (User *)publicDummyUser {
++ (ETRUser *)publicDummyUser {
     return nil;
 }
 
@@ -153,7 +153,6 @@ static ETRSession *sharedInstance = nil;
     
     // TODO: Only query user ID here?
     _room = room;
-    _isInRegion = NO;
     _locationUpdateFails = 0;
     _numberOfLocWarnings = 0;
     _leftRegionDate = nil;
@@ -339,8 +338,9 @@ static ETRSession *sharedInstance = nil;
     return YES;
 }
 
+// TODO: Move content of LocationManagerDelegate implementation to LocationHelper & Bouncer.
+
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
-    _isInRegion = NO;
     
     /*
      Display the first warning if the user has joined a room
@@ -357,22 +357,8 @@ static ETRSession *sharedInstance = nil;
 #endif
 }
 
-- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
-    _isInRegion = YES;
-    
-    // Reset everything warning related.
-    _leftRegionDate = nil;
-    _numberOfLocWarnings = 0;
-    
-#ifdef DEBUG
-    NSLog(@"INFO: Region ENTRY");
-#endif
-}
-
 // An error occured trying to get the device location.
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    _locationUpdateFails++;
-    _isInRegion = NO;
     
     /*
      Display the first warning if the user has joined a room

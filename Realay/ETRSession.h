@@ -40,7 +40,7 @@
 # pragma mark - Interface
 @interface ETRSession : NSObject <CLLocationManagerDelegate>
 
-@property (strong, nonatomic, readonly) User * publicDummyUser;
+@property (strong, nonatomic, readonly) ETRUser * publicDummyUser;
 
 /*
  View controller that needs constant message updates:

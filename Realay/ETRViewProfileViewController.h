@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-#import "User.h"
+#import "ETRUser.h"
 
 @interface ETRViewProfileViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UIButton *headerImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 
-@property (nonatomic) User *user;
+@property (nonatomic) ETRUser *user;
 @property (nonatomic) UIViewController  *previousController;
 
 @end

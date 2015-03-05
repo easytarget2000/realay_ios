@@ -71,12 +71,12 @@
 
 #pragma mark - Navigation
 
-- (BOOL)doShowProfileOnFinish {
+- (void)showProfileOnLogin {
     _doShowProfileOnFinish = YES;
     _doStartSessionOnFinish = NO;
 }
 
-- (BOOL)doStartSessionOnFinish {
+- (void)startSessionOnLogin {
     _doStartSessionOnFinish = YES;
     _doShowProfileOnFinish = NO;
 }
@@ -105,29 +105,8 @@
         // Hide the keyboard.
         [[self nameTextField] resignFirstResponder];
         
-        [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(User *localUser) {
-            if (!localUser) {
-                [_activityIndicator stopAnimating];
-                // TODO: Display login error.
-                return;
-            }
-            
-            [[ETRLocalUserManager sharedManager] setUser:localUser];
-            [_activityIndicator stopAnimating];
-            
-            if (_doShowProfileOnFinish) {
-                // If we are coming from the room list, we want to see our profile now.
-                [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
-            } else if (_doStartSessionOnFinish) {
-                
-                // Attempt joining the room.
-                [[ETRSession sharedManager] beginSession];
-                
-                // If we are about to join a room, we want to see the chat now.
-                if ([[ETRSession sharedManager] didBeginSession]) {
-                    [self performSegueWithIdentifier:kSegueToChat sender:self];
-                }
-            }
+        [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(BOOL didSucceed) {
+            // TODO: Handle onSuccessBlock.
         }];
     }
     

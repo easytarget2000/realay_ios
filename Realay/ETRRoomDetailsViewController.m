@@ -64,32 +64,7 @@
 #pragma mark - ETRRelayedLocationDelegate
 
 - (void)sessionDidUpdateLocationManager:(ETRLocationHelper *)manager {
-    
-    NSString *distanceLabel, *distanceValue;
-    
-    // Prepare different distance cells depending on the current location.
-    if ([[ETRSession sharedManager] isInRegion]) {
-        [[self distanceCell] setBackgroundColor:[UIColor whiteColor]];
-        
-        //TODO: Localization
-        distanceLabel = @"Inside Realay region";
-        distanceValue = @" ";
-        
-    } else {
-        [[self distanceCell] setBackgroundColor:[UIColor lightGrayColor]];
-        
-        //TODO: Localization
-        distanceLabel = @"Distance";
-        distanceValue = [manager formattedDistanceToRoom:_room];
-    }
-    
-    // Apply the current values to the labels.
-    [[self distanceLabel] setText:distanceLabel];
-    [[self distanceValueLabel] setText:distanceValue];
-//    [[self accuracyLabel] setText:[manager readableLocationAccuracy]];
-//    [[self radiusLabel] setText:[manager readableRadiusOfSessionRoom]];
-    
-//    [[self tableView] reloadData];
+    // TODO: Implement update of distance Label.
 }
 
 #pragma mark - Navigation
@@ -100,16 +75,7 @@
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
-    // Only perform a join action, if the user did not join yet.
-    if (![[ETRSession sharedManager] didBeginSession]) {
-        
-        // Show the password prompt, if the device location is inside the region.
-        if ([[ETRSession sharedManager] isInRegion]) {
-            [self performSegueWithIdentifier:kSegueToNext sender:self];
-        } else {
-            [ETRAlertViewBuilder showOutsideRegionAlertView];
-        }
-    }
+    // TODO: Use PrepareViewController super class and implement there.
 }
 
 @end

@@ -141,7 +141,7 @@
     // Decide which camera to show.
     if (currentLocation) {
         
-        if ([[ETRSession sharedManager] isInRegion]) {
+        if ([ETRLocationHelper isInSessionRegion]) {
             // Zoom in on the region, not the user, if the user is inside.
             
             // TODO: Determine a useful zoom level for different region radii.
@@ -203,18 +203,17 @@
 - (IBAction)joinButtonPressed:(id)sender {
     
     // Only perform a join action, if the user did not join yet.
-    if (![[ETRSession sharedManager] didBeginSession]) {
+    if ([[ETRSession sharedManager] didBeginSession]) return;
         
-        if ([[ETRSession sharedManager] isInRegion]) {
-            // Show the password prompt, if the device location is inside the region.
-            [self performSegueWithIdentifier:kSegueToNext sender:self];
-        } else if ([[ETRSession sharedManager] locationUpdateFails]){
-            // The user's location is unknown.
-            [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:0];
-        } else {
-            // The user is outside of the radius.
-            [ETRAlertViewBuilder showOutsideRegionAlertView];
-        }
+    if ([ETRLocationHelper isInSessionRegion]) {
+        // Show the password prompt, if the device location is inside the region.
+        [self performSegueWithIdentifier:kSegueToNext sender:self];
+    } else if ([[ETRSession sharedManager] locationUpdateFails]){
+        // The user's location is unknown.
+        [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:0];
+    } else {
+        // The user is outside of the radius.
+        [ETRAlertViewBuilder showOutsideRegionAlertView];
     }
 }
 

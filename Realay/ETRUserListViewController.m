@@ -9,7 +9,7 @@
 #import "ETRUserListViewController.h"
 
 #import "ETRChatViewController.h"
-#import "User.h"
+#import "ETRUser.h"
 #import "ETRAction.h"
 #import "ETRViewProfileViewController.h"
 #import "ETRImageLoader.h"
@@ -87,7 +87,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:kCellIdentifierInfo];
     };
-    User *user;
+    ETRUser *user;
     
     if ([indexPath section] == 0) {
         // Section 0 contains the conversations.
@@ -205,8 +205,8 @@
         
         ETRViewProfileViewController *destination = [segue destinationViewController];
         
-        if ([sender isMemberOfClass:[User class]]) {
-            [destination setUser:(User *)sender];
+        if ([sender isMemberOfClass:[ETRUser class]]) {
+            [destination setUser:(ETRUser *)sender];
         } else {
             
         }

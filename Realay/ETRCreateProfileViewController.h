@@ -14,7 +14,8 @@
 
 - (IBAction)saveButtonPressed:(id)sender;
 
+- (void)startSessionOnLogin;
+
 - (void)showProfileOnLogin;
-- (void)showSessionOnFinish;
 
 @end

@@ -9,26 +9,23 @@
 #import "ETRLocalUserManager.h"
 
 #import "ETRAppDelegate.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSession.h"
 
-//#import "SharedMacros.h"
-
-#define kDefsKeyUserID          @"userDefaultsUserID"
-#define kDefsKeyUserImageID     @"userDefaultsUserImageID"
-#define kDefsKeyUserStatus      @"userDefaultsUserStatus"
-#define kDefsKeyUserPhone       @"userDefaultsUserPhone"
-#define kDefsKeyUserMail        @"userDefaultsUserMail"
-#define kDefsKeyUserWeb         @"userDefaultsUserWeb"
-#define kDefsKeyUserFb          @"userDefaultsUserFb"
-#define kDefsKeyUserIg          @"userDefaultsUserIg"
-#define kDefsKeyUserTwitter     @"userDefaultsUserTwitter"
+#define kDefsKeyUserID          @"LOCAL_USER_REMOTE_ID"
+#define kDefsKeyUserName        @"LOCAL_USER_NAME"
+#define kDefsKeyUserImageID     @"LOCAL_USER_IMAGE_ID"
+#define kDefsKeyUserStatus      @"LOCAL_USER_STATUS"
+#define kDefsKeyUserPhone       @"LOCAL_USER_PHONE"
+#define kDefsKeyUserMail        @"LOCAL_USER_MAIL"
+#define kDefsKeyUserWeb         @"LOCAL_USER_WEBSITE"
+#define kDefsKeyUserFb          @"LOCAL_USER_FACEBOOK"
+#define kDefsKeyUserIg          @"LOCAL_USER_INSTAGRAM"
+#define kDefsKeyUserTwitter     @"LOCAL_USER_TWITTER"
 
 #define kImageSize              1080
 #define kImageSizeSmall         128
-
-#define kInsertUserCall         @"insert_user"
-#define kUpdateUserCall         @"update_user"
 
 static ETRLocalUserManager *sharedInstance = nil;
 
@@ -50,8 +47,10 @@ static ETRLocalUserManager *sharedInstance = nil;
     return sharedInstance;
 }
 
-- (User *)user {
-    if (_user) return _user;
+- (ETRUser *)user {
+    if (_user) {
+        return _user;
+    }
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -60,29 +59,25 @@ static ETRLocalUserManager *sharedInstance = nil;
     
     // TODO: Check CoreData for this User ID before UserDefaults.
     
-    if (userID > 10) {
-        
-        
-//        _user = [ETRUser ]
-//        
-//        [user setUserID:userID];
-//        [self setName:[defaults objectForKey:kDefsKeyUserName]];
-//        [self setStatus:[defaults objectForKey:kDefsKeyUserStatus]];
-//        [self setImageID:[defaults objectForKey:kDefsKeyUserImageID]];
-//        [self setMail:[defaults object]]
-        
-        
-    } else  {
-        NSLog(@"ERROR: LocalUser object not in user defaults.");
+    if (userID < 10) {
+        return nil;
     }
     
+    _user = [[ETRCoreDataHelper helper] userWithRemoteID:userID];
+    if (_user) {
+        return _user;
+    }
+
     return _user;
 }
 
-- (void)setUser:(User *)user {
-    if (!user) return;
-    [self setUser:user];
-    [self storeData];
+- (void)setUser:(ETRUser *)user {
+    if (!user) {
+        return;
+    } else {
+        _user = user;
+        [self storeUserDefaults];
+    }
 }
 
 - (long)userID {
@@ -90,51 +85,19 @@ static ETRLocalUserManager *sharedInstance = nil;
     
     return [[[self user] remoteID] longValue];
 }
+
+- (void)storeUserDefaults {
+    if (!_user) {
+        return;
+    }
     
-//    [self setName:name];
-//    [self setStatus:@"Hi!"];
-//    [self setDeviceId:kNewDefaultDeviceId];
-//    [self setUserID:-1];
-//    
-//    NSString *bodyString = [NSString stringWithFormat:@"device_id=%@&name=%@",
-//                            [self deviceId], [self name]];
-//    
-//    // Get the JSON data and parse it.
-//    NSDictionary *jsonDict = [ETRHTTPHandler JSONDictionaryFromPHPScript:kPHPInsertUser bodyString:bodyString];
-//    NSString *statusCode = [jsonDict valueForKey:@"status"];
-//    
-//    NSInteger receivedID = -1;
-//    
-//    if (![statusCode isEqualToString:@"INSERT_USER_OK"]) {
-//        NSLog(@"ERROR: %@", statusCode);
-//        return NO;
-//    } else {
-//        receivedID = [[jsonDict valueForKey:@"new_id"] intValue];
-//    }
-//    
-//#ifdef DEBUG
-//    NSLog(@"INFO: idFromInsertUser returns %ld", receivedID);
-//#endif
-//    
-//    if (receivedID < 1) return NO;
-//    else [self setUserID:receivedID];
-//    
-//#ifdef DEBUG
-//    NSLog(@"INFO: Stored new user in database with ID %ld", receivedID);
-//#endif
-//    
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    [defaults setInteger:[self userID] forKey:kUserDefKeyUserID];
-//    [defaults setObject:[self name] forKey:kDefsUserName];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    [defaults setObject:[_user remoteID] forKey:kDefsKeyUserID];
+//    [defaults setObject:[_user name] forKey:kDefsKeyUserName];
 //    [defaults setObject:[self status] forKey:kDefsUserStatus];
 //    [defaults setObject:[self imageID] forKey:kDefsUserImageID];
-//    [defaults synchronize];
-
-- (BOOL)storeData {
-    ETRAppDelegate *app = (ETRAppDelegate *)[[UIApplication sharedApplication] delegate];
-    [[app managedObjectContext] insertObject:[self user]];
-
-    return YES;
+    [defaults synchronize];
 }
 
 - (void)updateImage:(UIImage *)image {

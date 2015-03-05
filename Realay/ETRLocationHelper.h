@@ -16,10 +16,10 @@
 
 + (CLLocation *)location;
 
++ (BOOL)isInSessionRegion;
+
 @property (atomic, readonly) BOOL didAuthorize;
 
 - (void)launch;
-
-- (BOOL)isInSessionRegion;
 
 @end

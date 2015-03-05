@@ -38,7 +38,7 @@
 
     
 
-    [[ETRLocalUserManager sharedManager] storeData];
+    [[ETRLocalUserManager sharedManager] storeUserDefaults];
     [queryListIndicator stopAnimating];
     [[self navigationController] popViewControllerAnimated:YES];
 }

@@ -10,7 +10,7 @@
 
 #import "ETRChatObject.h"
 
-@class User;
+@class ETRUser;
 
 @interface ETRRoom : ETRChatObject
 
@@ -67,8 +67,8 @@
 
 @interface ETRRoom (CoreDataGeneratedAccessors)
 
-- (void)addUsersObject:(User *)value;
-- (void)removeUsersObject:(User *)value;
+- (void)addUsersObject:(ETRUser *)value;
+- (void)removeUsersObject:(ETRUser *)value;
 - (void)addUsers:(NSSet *)values;
 - (void)removeUsers:(NSSet *)values;
 

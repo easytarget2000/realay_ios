@@ -9,7 +9,7 @@
 #import "ETRAction.h"
 
 #import "ETRRoom.h"
-#import "User.h"
+#import "ETRUser.h"
 #import "ETRSession.h"
 
 #import "ETRSharedMacros.h"
@@ -56,7 +56,7 @@
     return receivedAction;
 }
 
-+ (ETRAction *)outgoingMessage:(NSString *)messageContent toRecipient:(User *)recipient {
++ (ETRAction *)outgoingMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient {
     
     short code;
     if ([recipient isEqual:[[ETRSession sharedManager] publicDummyUser]]) code = kActionCodePublicMessage;

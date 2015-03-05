@@ -342,8 +342,8 @@
     if ([[segue identifier] isEqualToString:kSegueToProfile]) {
         
         ETRViewProfileViewController *destination = [segue destinationViewController];
-        if ([sender isMemberOfClass:[User class]]) {
-            [destination setUser:(User *)sender];
+        if ([sender isMemberOfClass:[ETRUser class]]) {
+            [destination setUser:(ETRUser *)sender];
         }
         
     }

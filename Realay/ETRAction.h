@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ETRRoom, User;
+@class ETRRoom, ETRUser;
 
 @interface ETRAction : NSManagedObject
 
@@ -19,12 +19,12 @@
 @property (nonatomic, retain) NSNumber * imageID;
 @property (nonatomic, retain) NSString * messageContent;
 @property (nonatomic, retain) NSNumber * isInQueue;
-@property (nonatomic, retain) User *sender;
-@property (nonatomic, retain) User *recipient;
+@property (nonatomic, retain) ETRUser *sender;
+@property (nonatomic, retain) ETRUser *recipient;
 @property (nonatomic, retain) ETRRoom *room;
 
 + (ETRAction *)actionFromJSONDictionary:(NSDictionary *)JSONDict;
-+ (ETRAction *)outgoingMessage:(NSString *)messageContent toRecipient:(User *)recipient;
++ (ETRAction *)outgoingMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
 
 - (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
 - (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;

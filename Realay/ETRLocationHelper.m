@@ -46,7 +46,7 @@ static ETRLocationHelper *sharedInstance;
     return [sharedInstance location];
 }
 
-- (BOOL)isInSessionRegion {
++ (BOOL)isInSessionRegion {
     ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
     if (!sessionRoom) {
         return NO;

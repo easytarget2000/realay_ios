@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import "User.h"
+#import "ETRUser.h"
 
 
-@implementation User
+@implementation ETRUser
 
 @dynamic remoteID;
 @dynamic imageID;
@@ -26,7 +26,7 @@
 @dynamic receivedActions;
 @dynamic inConversation;
 
-+ (User *)userFromJSONDictionary:(NSDictionary *)JSONDict {
++ (ETRUser *)userFromJSONDictionary:(NSDictionary *)JSONDict {
     // This new room object will be added to the return array.
     if (!JSONDict) return nil;
     
@@ -37,7 +37,7 @@
     if (!name) return nil;
     else if ([name length] < 1) return nil;
     
-    User *user = [[User alloc] init];
+    ETRUser *user = [[ETRUser alloc] init];
     [user setRemoteID:[NSNumber numberWithLong:iden]];
     [user setImageID:[NSNumber numberWithLong:[[JSONDict objectForKey:@"i"] longValue]]];
     [user setName:name];
@@ -52,7 +52,7 @@
     return user;
 }
 
-- (NSComparisonResult)compare:(User *)otherUser {
+- (NSComparisonResult)compare:(ETRUser *)otherUser {
     return [[self name] compare:[otherUser name]];
 }
 

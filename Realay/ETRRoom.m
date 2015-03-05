@@ -9,7 +9,7 @@
 #import "ETRRoom.h"
 
 #import "ETRLocationHelper.h"
-#import "User.h"
+#import "ETRUser.h"
 
 @interface ETRRoom()
 

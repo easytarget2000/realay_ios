@@ -17,7 +17,7 @@
 #import "ETRAlertViewBuilder.h"
 #import "ETRViewProfileViewController.h"
 #import "ETRLocalUserManager.h"
-#import "ETRJSONCoreDataBridge.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRSession.h"
 
 //#import "ETRSharedMacros.h"
@@ -56,7 +56,7 @@
 //    [[self tableView] reloadData];
     
     // Initialize Fetched Results Controller
-    ETRJSONCoreDataBridge *bridge = [ETRJSONCoreDataBridge coreDataBridge];
+    ETRCoreDataHelper *bridge = [ETRCoreDataHelper helper];
     _fetchedResultsController = [bridge roomListResultsControllerWithDelegate:self];
     if (!_fetchedResultsController) return;
     

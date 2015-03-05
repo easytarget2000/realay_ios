@@ -7,7 +7,7 @@
 //
 
 #import "ETRConversation.h"
-#import "User.h"
+#import "ETRUser.h"
 
 
 @implementation ETRConversation

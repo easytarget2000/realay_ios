@@ -8,10 +8,11 @@
 
 #import "ETRServerAPIHelper.h"
 
+#import "ETRJSONDictionary.h"
 #import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
-#import "ETRJSONCoreDataBridge.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRSession.h"
 
@@ -141,7 +142,7 @@ static NSMutableArray *connections;
                      completionHandler:^(NSObject *receivedObject) {
                          // Check if an array of rooms was returned by this API call.
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
-                             ETRJSONCoreDataBridge *dataBridge = [ETRJSONCoreDataBridge coreDataBridge];
+                             ETRCoreDataHelper *dataBridge = [ETRCoreDataHelper helper];
                              
                              NSArray *jsonRooms = (NSArray *) receivedObject;
                              for (NSObject *jsonRoom in jsonRooms) {
@@ -156,7 +157,9 @@ static NSMutableArray *connections;
 }
 
 + (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
-    if (!imageLoader) return;
+    if (!imageLoader) {
+        return;
+    }
     
     ETRChatObject *chatObject = [imageLoader chatObject];
     if (!chatObject) return;
@@ -218,7 +221,7 @@ static NSMutableArray *connections;
  that matches the combination of the given name and device ID;
  stores the new User object through the Local User Manager when finished
  */
-+ (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(User *localUser))onSuccessBlock {
++ (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(BOOL))onSuccessBlock {
     NSString* uuid;
     if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
         // IOS 6 new Unique Identifier implementation, IFA
@@ -227,19 +230,31 @@ static NSMutableArray *connections;
         uuid = [NSString stringWithFormat:@"%@-%ld", [[UIDevice currentDevice] systemVersion], random()];
     }
     
-    NSString *body = [NSString stringWithFormat:@"name=%@&device_id=%@", name, uuid];
+    // TODO: Localize.
+    NSString *status = @"Send me a RealHey!";
+    NSString *body = [NSString stringWithFormat:@"name=%@&device_id=%@&status=%@", name, uuid, status];
     
-    [ETRServerAPIHelper performAPICall:@"get_id_reg"
+    [ETRServerAPIHelper performAPICall:@"get_local_user"
                               POSTbody:body
-                         successStatus:@"IU_OK"
-                             objectTag:@"u"
+                         successStatus:@"SU_OK"
+                             objectTag:@"user"
                      completionHandler:^(id<NSObject> receivedObject) {
-                         if (!receivedObject) return;
-                         
-                         if ([receivedObject isKindOfClass:[NSArray class]]) {
-                             NSLog(@"%@", receivedObject);
-                             onSuccessBlock(nil);
+                         if (receivedObject && [receivedObject isKindOfClass:[ETRJSONDictionary class]]) {
+                             ETRJSONDictionary *jsonDictionary;
+                             jsonDictionary = (ETRJSONDictionary *) receivedObject;
+                             ETRUser *localUser;
+                             localUser = [[ETRCoreDataHelper helper] insertUserFromDictionary:jsonDictionary];
+                             
+                             if (localUser) {
+                                 [[ETRLocalUserManager sharedManager] setUser:localUser];
+                                 [[ETRLocalUserManager sharedManager] storeUserDefaults];
+                                 onSuccessBlock(YES);
+                                 return;
+                             }
                          }
+                         
+                         onSuccessBlock(NO);
+                         
                      }];
 }
 
