@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michel Sievers. All rights reserved.
 //
 
-#import "ETRUser.h"
+@class ETRUser;
 
 @interface ETRLocalUserManager : NSObject
 
@@ -27,11 +27,13 @@
 /*
  Stores the User on the remote Server
  */
-- (BOOL)putUserRemote;
+- (void)putUserRemote;
 
 /*
  The shared singleton instance:
  */
 + (ETRLocalUserManager *)sharedManager;
+
+- (BOOL)isLocalUser:(ETRUser *) user;
 
 @end

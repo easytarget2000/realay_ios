@@ -9,7 +9,7 @@
 #import "ETRSession.h"
 
 #import "ETRServerAPIHelper.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 
 #import "ETRSharedMacros.h"
 
@@ -306,7 +306,7 @@ static ETRSession *sharedInstance = nil;
         }
         
         // Show the alert and leave the room.
-        [ETRAlertViewBuilder showKickWithMessage:reason];
+        [ETRAlertViewFactory showKickWithMessage:reason];
         [self endSession];
         return NO;
         
@@ -326,9 +326,9 @@ static ETRSession *sharedInstance = nil;
         
         // Display different warnings depending on the location manager state.
         if ([self locationUpdateFails]) {
-            [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:minutes];
+            [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:minutes];
         } else {
-            [ETRAlertViewBuilder showDidExitRegionAlertViewWithMinutes:minutes];
+            [ETRAlertViewFactory showDidExitRegionAlertViewWithMinutes:minutes];
         }
         
         // A warning was displayed.
@@ -348,7 +348,7 @@ static ETRSession *sharedInstance = nil;
      */
     if (!_leftRegionDate && [self didBeginSession] && _numberOfLocWarnings < 1) {
         _leftRegionDate = [NSDate date];
-        [ETRAlertViewBuilder showDidExitRegionAlertViewWithMinutes:kTimeReturnKick];
+        [ETRAlertViewFactory showDidExitRegionAlertViewWithMinutes:kTimeReturnKick];
         _numberOfLocWarnings = 1;
     }
     
@@ -366,7 +366,7 @@ static ETRSession *sharedInstance = nil;
      */
     if (!_leftRegionDate && [self didBeginSession] && _numberOfLocWarnings < 1) {
         _leftRegionDate = [NSDate date];
-        [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:kTimeReturnKick];
+        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:kTimeReturnKick];
         _numberOfLocWarnings = 1;
     }
     

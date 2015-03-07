@@ -28,3 +28,11 @@
 - (ETRUser *)userWithRemoteID:(long)remoteID;
 
 @end
+
+@interface NSDictionary (TypesafeJSON)
+
+- (NSString *)stringForKey:(id)key;
+- (long)longValueForKey:(id)key withFallbackValue:(long)fallbackValue;
+- (short)shortValueForKey:(id)key withFallbackValue:(short)fallbackValue;
+
+@end

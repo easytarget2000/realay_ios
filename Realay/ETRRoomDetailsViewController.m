@@ -9,7 +9,7 @@
 #import "ETRRoomDetailsViewController.h"
 
 #import "ETRLocationHelper.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 #import "ETRRoom.h"
 
 #define kSegueToImage   @"roomDetailsToViewImageSegue"

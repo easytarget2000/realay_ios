@@ -10,7 +10,7 @@
 
 #import "ETRRoom.h"
 #import "ETRSession.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 
 #define kMethodEnumDist 0
 #define kMethodEnumAccu 1

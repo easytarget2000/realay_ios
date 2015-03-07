@@ -8,7 +8,6 @@
 
 #import "ETRUser.h"
 
-
 @implementation ETRUser
 
 @dynamic remoteID;

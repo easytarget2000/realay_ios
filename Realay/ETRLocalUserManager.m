@@ -12,6 +12,7 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSession.h"
+#import "ETRUser.h"
 
 #define kDefsKeyUserID          @"LOCAL_USER_REMOTE_ID"
 #define kDefsKeyUserName        @"LOCAL_USER_NAME"
@@ -84,6 +85,10 @@ static ETRLocalUserManager *sharedInstance = nil;
     if (![self user]) return -34;
     
     return [[[self user] remoteID] longValue];
+}
+
+- (void)putUserRemote {
+    // TODO: Queue entry update in Actions.
 }
 
 - (void)storeUserDefaults {
@@ -169,6 +174,14 @@ static ETRLocalUserManager *sharedInstance = nil;
                                NSLog(@"INFO: upload_image returns: %@",
                                      [NSString stringWithUTF8String:[data bytes]]);
                            }];
+}
+
+- (BOOL)isLocalUser:(ETRUser *)user {
+    if (!user || [user remoteID] || !_user) {
+        return NO;
+    } else {
+        return [[user remoteID] compare:[_user remoteID]];
+    }
 }
 
 @end

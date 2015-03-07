@@ -8,11 +8,12 @@
 
 #import "ETRChatViewController.h"
 
-#import "ETRChatMessageCell.h"
-#import "ETRUserListViewController.h"
-#import "ETRAlertViewBuilder.h"
-#import "ETRViewProfileViewController.h"
 #import "ETRAction.h"
+#import "ETRAlertViewFactory.h"
+#import "ETRChatMessageCell.h"
+#import "ETRProfileViewController.h"
+#import "ETRUserListViewController.h"
+#import "ETRUser.h"
 
 #import "ETRSharedMacros.h"
 
@@ -181,7 +182,7 @@
 
 - (IBAction)leaveButtonPressed:(id)sender {
     allowDisappear = YES;
-    [ETRAlertViewBuilder showLeaveConfirmViewWithDelegate:self];
+    [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
 }
 
 - (IBAction)moreButtonPressed:(id)sender {
@@ -341,7 +342,7 @@
     
     if ([[segue identifier] isEqualToString:kSegueToProfile]) {
         
-        ETRViewProfileViewController *destination = [segue destinationViewController];
+        ETRProfileViewController *destination = [segue destinationViewController];
         if ([sender isMemberOfClass:[ETRUser class]]) {
             [destination setUser:(ETRUser *)sender];
         }

@@ -11,7 +11,7 @@
 #import "ETRChatViewController.h"
 #import "ETRUser.h"
 #import "ETRAction.h"
-#import "ETRViewProfileViewController.h"
+#import "ETRProfileViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRConversation.h"
 
@@ -81,7 +81,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSInteger row = [indexPath row];
+//    NSInteger row = [indexPath row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellIdentifierInfo];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -203,7 +203,7 @@
     } else if([[segue identifier] isEqualToString:kSegueToProfile]) {
         // Just show my own user profile.
         
-        ETRViewProfileViewController *destination = [segue destinationViewController];
+        ETRProfileViewController *destination = [segue destinationViewController];
         
         if ([sender isMemberOfClass:[ETRUser class]]) {
             [destination setUser:(ETRUser *)sender];

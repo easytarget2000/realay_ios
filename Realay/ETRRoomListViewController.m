@@ -14,8 +14,8 @@
 #import "ETRSession.h"
 #import "ETRInformationCell.h"
 #import "ETRRoomListCell.h"
-#import "ETRAlertViewBuilder.h"
-#import "ETRViewProfileViewController.h"
+#import "ETRAlertViewFactory.h"
+#import "ETRProfileViewController.h"
 #import "ETRLocalUserManager.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRSession.h"
@@ -27,8 +27,8 @@
 #define kRoomCellHeight         380
 #define kRoomCellIdentifier     @"roomCell"
 #define kMapSegueIdentifier     @"roomListToMapSegue"
-#define kSegueToCreateProfile   @"roomListToCreateProfileSegue"
-#define kSegueToViewProfile     @"roomListToViewProfileSegue"
+#define kSegueToCreateProfile   @"roomListToLoginSegue"
+#define kSegueToViewProfile     @"roomListToProfileSegue"
 
 @interface ETRRoomListViewController () <NSFetchedResultsControllerDelegate>
 
@@ -159,13 +159,13 @@
     }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (![[_fetchedResultsController fetchedObjects] count]) {
-        return tableView.bounds.size.height;
-    } else {
-       return kRoomCellHeight;
-    }
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+//    if (![[_fetchedResultsController fetchedObjects] count]) {
+//        return tableView.bounds.size.height;
+//    } else {
+//       return kRoomCellHeight;
+//    }
+//}
 
 - (ETRRoomListCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
     ETRRoomListCell *cell;
@@ -302,7 +302,7 @@
     } else if([[segue identifier] isEqualToString:kSegueToViewProfile]) {
         // Just show my own user profile.
         
-        ETRViewProfileViewController *destination = [segue destinationViewController];
+        ETRProfileViewController *destination = [segue destinationViewController];
         [destination setUser:[[ETRLocalUserManager sharedManager] user]];
         //TODO: Tell the View Profile controller to come back to the Room List on Back.
     }

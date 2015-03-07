@@ -9,7 +9,6 @@
 #import "ETRCoreDataHelper.h"
 
 #import "ETRAppDelegate.h"
-#import "ETRJSONDictionary.h"
 #import "ETRRoom.h"
 #import "ETRUser.h"
 
@@ -141,14 +140,14 @@
 #pragma mark -
 #pragma mark User Objects
 
-- (ETRUser *)insertUserFromDictionary:(ETRJSONDictionary *)jsonDictionary {
+- (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary {
     if (!_managedObjectContext) {
         NSLog(@"ERROR: No Managed Object Context to insert User into.");
         return nil;
     }
     
     // Get the remote DB ID from the JSON data.
-    long remoteID = (long) [[jsonDictionary longNumberForKey:@"u" withFallbackValue:-55] longLongValue];
+    long remoteID = [jsonDictionary longValueForKey:@"u" withFallbackValue:-55];
     
     if (remoteID < 10) {
         NSLog(@"ERROR: Could not insert User because remote ID is invalid: %ld", remoteID);
@@ -169,7 +168,8 @@
         [user setRemoteID:@(remoteID)];
     }
     
-    [user setImageID:[jsonDictionary longNumberForKey:@"i" withFallbackValue:-5]];
+    [user setImageID:@([jsonDictionary longValueForKey:@"i" withFallbackValue:-5])];
+    [user setName:[jsonDictionary stringForKey:@"n"]];
     [user setStatus:[jsonDictionary stringForKey:@"s"]];
     [user setMail:[jsonDictionary stringForKey:@"em"]];
     [user setPhone:[jsonDictionary stringForKey:@"ph"]];
@@ -184,7 +184,7 @@
 }
 
 - (ETRUser *)userWithRemoteID:(long)remoteID {
-    if (_managedObjectContext) {
+    if (!_managedObjectContext) {
         return nil;
     }
     
@@ -202,6 +202,38 @@
     }
     
     return nil;
+}
+
+@end
+
+@implementation NSDictionary (TypesafeJSON)
+
+- (NSString *)stringForKey:(id)key {
+    id object = [self objectForKey:key];
+    
+    if (object && [object isKindOfClass:[NSString class]]) {
+        return (NSString *)object;
+    } else {
+        return nil;
+    }
+}
+
+- (long)longValueForKey:(id)key withFallbackValue:(long)fallbackValue {
+    NSString *value = [self stringForKey:key];
+    if (value) {
+        return (long) [value longLongValue];
+    } else {
+        return fallbackValue;
+    }
+}
+
+- (short)shortValueForKey:(id)key withFallbackValue:(short)fallbackValue {
+    NSString *value = [self stringForKey:key];
+    if (value) {
+        return [value integerValue];
+    } else {
+        return fallbackValue;
+    }
 }
 
 @end

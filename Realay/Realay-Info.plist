@@ -36,13 +36,17 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Background updates are used to keep your Realay list fresh and enable endless sessions.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This is required to make sure that you only chat with people that are really around you.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>location</string>
 	</array>
 	<key>UIMainStoryboardFile</key>
-	<string>MainStoryboard</string>
+	<string>NewStoryboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -59,9 +63,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This is required to make sure that you only chat with people that are really around you.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Background updates are used to keep your Realay list fresh and enable endless sessions.</string>
 </dict>
 </plist>

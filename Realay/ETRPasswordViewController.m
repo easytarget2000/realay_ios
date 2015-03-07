@@ -10,7 +10,7 @@
 
 #import "ETRChatViewController.h"
 #import "ETRCreateProfileViewController.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 
 #import "ETRSharedMacros.h"
 
@@ -62,7 +62,7 @@
         if ([ETRLocationHelper isInSessionRegion]) {
            [self checkEnteredPassword];
         } else {
-          [ETRAlertViewBuilder showOutsideRegionAlertView];
+          [ETRAlertViewFactory showOutsideRegionAlertView];
         }
     }
 }
@@ -112,7 +112,7 @@
             [self performSegueWithIdentifier:kSegueToCreateProfile sender:self];
         }
     } else {
-        [ETRAlertViewBuilder showWrongPasswordAlertView];
+        [ETRAlertViewFactory showWrongPasswordAlertView];
     }
     
     [_activityIndicator stopAnimating];

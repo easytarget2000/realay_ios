@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ETRAlertViewBuilder : NSObject
+@interface ETRAlertViewFactory : NSObject
 
 /*
  Displays a dialog in an alert view that asks to confirm a block action.
@@ -54,5 +54,7 @@
  Displays an alert view that says the entered room password is wrong.
  */
 + (void)showWrongPasswordAlertView;
+
++ (void)showGeneralErrorAlert;
 
 @end

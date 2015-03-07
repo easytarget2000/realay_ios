@@ -8,7 +8,6 @@
 
 #import "ETRServerAPIHelper.h"
 
-#import "ETRJSONDictionary.h"
 #import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
@@ -221,7 +220,7 @@ static NSMutableArray *connections;
  that matches the combination of the given name and device ID;
  stores the new User object through the Local User Manager when finished
  */
-+ (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(BOOL))onSuccessBlock {
++ (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(ETRUser *))onSuccessBlock {
     NSString* uuid;
     if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
         // IOS 6 new Unique Identifier implementation, IFA
@@ -239,7 +238,7 @@ static NSMutableArray *connections;
                          successStatus:@"SU_OK"
                              objectTag:@"user"
                      completionHandler:^(id<NSObject> receivedObject) {
-                         if (receivedObject && [receivedObject isKindOfClass:[ETRJSONDictionary class]]) {
+                         if (receivedObject && [receivedObject isKindOfClass:[NSDictionary class]]) {
                              ETRJSONDictionary *jsonDictionary;
                              jsonDictionary = (ETRJSONDictionary *) receivedObject;
                              ETRUser *localUser;
@@ -248,12 +247,12 @@ static NSMutableArray *connections;
                              if (localUser) {
                                  [[ETRLocalUserManager sharedManager] setUser:localUser];
                                  [[ETRLocalUserManager sharedManager] storeUserDefaults];
-                                 onSuccessBlock(YES);
+                                 onSuccessBlock(localUser);
                                  return;
                              }
                          }
                          
-                         onSuccessBlock(NO);
+                         onSuccessBlock(nil);
                          
                      }];
 }

@@ -175,8 +175,8 @@
     }
     
     // Calculate the frame of the message label.
-    CGSize maxMsgSize = CGSizeMake(width - 76, MAXFLOAT);
-    UIFont *textFont = [[ETRSession sharedManager] msgTextFont];
+//    CGSize maxMsgSize = CGSizeMake(width - 76, MAXFLOAT);
+//    UIFont *textFont = [[ETRSession sharedManager] msgTextFont];
     CGRect messageRect;
 //    messageRect = [self boundingRectWithSize:maxMsgSize
 //                                               options:NSStringDrawingUsesLineFragmentOrigin

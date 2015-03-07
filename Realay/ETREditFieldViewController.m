@@ -9,7 +9,7 @@
 #import "ETREditFieldViewController.h"
 
 #import "ETRLocalUserManager.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 
 #import "ETRSharedMacros.h"
 

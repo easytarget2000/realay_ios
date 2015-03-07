@@ -6,11 +6,11 @@
 //  Copyright (c) 2014 Michel Sievers. All rights reserved.
 //
 
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 
 #import "ETRSession.h"
 
-@implementation ETRAlertViewBuilder
+@implementation ETRAlertViewFactory
 
 /*
  Displays a dialog in an alert view that asks to confirm a block action.

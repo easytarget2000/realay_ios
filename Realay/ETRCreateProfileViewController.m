@@ -8,15 +8,17 @@
 
 #import "ETRCreateProfileViewController.h"
 
-#import "ETRViewProfileViewController.h"
-#import "ETRSession.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
+#import "ETRLocalUserManager.h"
+#import "ETRProfileViewController.h"
 #import "ETRServerAPIHelper.h"
+#import "ETRSession.h"
+#import "ETRUser.h"
 
 #import "ETRSharedMacros.h"
 
 #define kSegueToChat        @"createProfileToChatSegue"
-#define kSegueToViewProfile @"createProfileToViewProfileSegue"
+#define kSegueToViewProfile @"loginToProfileSegue"
 
 @interface ETRCreateProfileViewController()
 
@@ -49,7 +51,7 @@
     // Directly pop the controller if there is already a valid local user stored.
     if ([[ETRLocalUserManager sharedManager] user]) {
 #ifdef DEBUG
-        NSLog(@"INFO: Skipping Create Profile. Local user is %@.",
+        NSLog(@"WARNING: Skipping Create Profile. Local user is %@.",
               [[[ETRLocalUserManager sharedManager] user] name]);
 #endif
         [[self navigationController] popViewControllerAnimated:NO];
@@ -82,9 +84,9 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:kSegueToViewProfile]) {
-        ETRViewProfileViewController *destination = [segue destinationViewController];
-        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
+    if ([[segue identifier] isEqualToString:kSegueToViewProfile] && [sender isKindOfClass:[ETRUser class]]) {
+        ETRProfileViewController *destination = [segue destinationViewController];
+        [destination setUser:(ETRUser *) sender];
     }
 }
 
@@ -93,7 +95,7 @@
     typedName = [[_nameTextField text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if([typedName length] < 2) {
-        [ETRAlertViewBuilder showTypedNameTooShortAlert];
+        [ETRAlertViewFactory showTypedNameTooShortAlert];
     } else {
         // The typed name is long enough.
         
@@ -105,8 +107,12 @@
         // Hide the keyboard.
         [[self nameTextField] resignFirstResponder];
         
-        [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(BOOL didSucceed) {
-            // TODO: Handle onSuccessBlock.
+        [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(ETRUser *localUser) {
+            if (localUser) {
+                [self performSegueWithIdentifier:kSegueToViewProfile sender:localUser];
+            } else {
+                [ETRAlertViewFactory showGeneralErrorAlert];
+            }
         }];
     }
     

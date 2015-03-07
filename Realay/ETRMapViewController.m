@@ -10,7 +10,7 @@
 
 #import "ETRPasswordViewController.h"
 #import "ETRRoomDetailsViewController.h"
-#import "ETRAlertViewBuilder.h"
+#import "ETRAlertViewFactory.h"
 
 #import <GoogleMaps/GoogleMaps.h>
 
@@ -210,10 +210,10 @@
         [self performSegueWithIdentifier:kSegueToNext sender:self];
     } else if ([[ETRSession sharedManager] locationUpdateFails]){
         // The user's location is unknown.
-        [ETRAlertViewBuilder showNoLocationAlertViewWithMinutes:0];
+        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:0];
     } else {
         // The user is outside of the radius.
-        [ETRAlertViewBuilder showOutsideRegionAlertView];
+        [ETRAlertViewFactory showOutsideRegionAlertView];
     }
 }
 
