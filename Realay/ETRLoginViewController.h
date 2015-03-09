@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRCreateProfileViewController : UIViewController <UITextFieldDelegate>
+@interface ETRLoginViewController : UIViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 

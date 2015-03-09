@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import "ETRProfileValueCell.h"
+#import "ETRKeyValueCell.h"
 
-@implementation ETRProfileValueCell
+@implementation ETRKeyValueCell
 
 - (void)awakeFromNib {
     // Initialization code

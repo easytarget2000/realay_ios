@@ -43,7 +43,7 @@
  Displays an alert view that says the user cannot join the room
  until stepping inside the region.
  */
-+ (void)showOutsideRegionAlertView;
++ (void)showDistanceLeftAlertView;
 
 /*
  Displays an alert view that says the typed name is not long enough to be used.

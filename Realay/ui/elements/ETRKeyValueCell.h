@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRProfileValueCell : UITableViewCell
+@interface ETRKeyValueCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *keyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *valueLabel;

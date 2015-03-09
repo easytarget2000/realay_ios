@@ -21,7 +21,7 @@
 
 @dynamic address;
 @dynamic createdBy;
-@dynamic endTime;
+@dynamic endDate;
 @dynamic latitude;
 @dynamic longitude;
 @dynamic password;
@@ -41,10 +41,10 @@
     return [NSString stringWithFormat:@"%@: %@", [self remoteID], [self title]];
 }
 
-- (NSString *)address {
-    if ([self address]) return [self address];
-    
-    NSString *coordinates = [NSString stringWithFormat:@"%f,%f", [[self latitude] floatValue], [[self longitude] floatValue]];
+- (NSString *)formattedCoordinates {
+    NSString *coordinates = [NSString stringWithFormat:@"%f,%f",
+                   [[self latitude] floatValue],
+                   [[self longitude] floatValue]];
     [self setAddress:coordinates];
     return coordinates;
 }
@@ -102,11 +102,11 @@
     }
     
     
-    if (![self endTime]) {
+    if (![self endDate]) {
         return start;
     } else {
         NSString *until = @"until";
-        NSString *end = [ETRChatObject readableStringForDate:[self endTime]];
+        NSString *end = [ETRChatObject readableStringForDate:[self endDate]];
         return [NSString stringWithFormat:@"%@ %@ %@", start, until, end];
     }
 }

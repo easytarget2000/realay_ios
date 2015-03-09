@@ -17,7 +17,7 @@
     <entity name="ETRRoom" representedClassName="ETRRoom" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="createdBy" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="endTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="imageID" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="latitude" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
@@ -49,9 +49,9 @@
         <relationship name="sentActions" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="sender" inverseEntity="ETRAction" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ETRAction" positionX="0" positionY="0" width="128" height="165"/>
-        <element name="ETRConversation" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="ETRRoom" positionX="0" positionY="0" width="128" height="285"/>
-        <element name="ETRUser" positionX="0" positionY="0" width="128" height="255"/>
+        <element name="ETRAction" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ETRConversation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ETRRoom" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ETRUser" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

@@ -17,9 +17,15 @@
 
 + (ETRCoreDataHelper *)helper;
 
+- (BOOL)saveContext;
+
 - (void)insertRoomFromDictionary:(NSDictionary *)JSONDictionary;
 
 - (ETRUser *)insertUserFromDictionary:(ETRJSONDictionary *)JSONDictionary;
+
+- (ETRUser *)storeLocalUser;
+
+- (ETRUser *)copyUser:(ETRUser *)user;
 
 - (NSFetchedResultsController *)roomListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>) delegate;
 

@@ -75,7 +75,7 @@ static ETRSession *sharedInstance = nil;
         return;
     }
     
-    if ([[[self room] endTime] compare:[NSDate date]] != 1) {
+    if ([[[self room] endDate] compare:[NSDate date]] != 1) {
         NSLog(@"ERROR: Room was already closed.");
         //TODO: Display error message.
         return;

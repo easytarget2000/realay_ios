@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import "ETRCreateProfileViewController.h"
+#import "ETRLoginViewController.h"
 
 #import "ETRAlertViewFactory.h"
 #import "ETRLocalUserManager.h"
-#import "ETRProfileViewController.h"
+#import "ETRDetailsViewController.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSession.h"
 #import "ETRUser.h"
@@ -20,7 +20,7 @@
 #define kSegueToChat        @"createProfileToChatSegue"
 #define kSegueToViewProfile @"loginToProfileSegue"
 
-@interface ETRCreateProfileViewController()
+@interface ETRLoginViewController()
 
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic) BOOL doShowProfileOnFinish;
@@ -28,7 +28,7 @@
 
 @end
 
-@implementation ETRCreateProfileViewController
+@implementation ETRLoginViewController
 
 @synthesize activityIndicator = _activityIndicator;
 
@@ -85,7 +85,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:kSegueToViewProfile] && [sender isKindOfClass:[ETRUser class]]) {
-        ETRProfileViewController *destination = [segue destinationViewController];
+        ETRDetailsViewController *destination = [segue destinationViewController];
         [destination setUser:(ETRUser *) sender];
     }
 }
@@ -94,7 +94,7 @@
     NSString *typedName;
     typedName = [[_nameTextField text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    if([typedName length] < 2) {
+    if ([typedName length] < 1) {
         [ETRAlertViewFactory showTypedNameTooShortAlert];
     } else {
         // The typed name is long enough.

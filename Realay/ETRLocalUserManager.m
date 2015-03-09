@@ -87,10 +87,6 @@ static ETRLocalUserManager *sharedInstance = nil;
     return [[[self user] remoteID] longValue];
 }
 
-- (void)putUserRemote {
-    // TODO: Queue entry update in Actions.
-}
-
 - (void)storeUserDefaults {
     if (!_user) {
         return;
@@ -177,10 +173,10 @@ static ETRLocalUserManager *sharedInstance = nil;
 }
 
 - (BOOL)isLocalUser:(ETRUser *)user {
-    if (!user || [user remoteID] || !_user) {
+    if (!user || ![user remoteID] || !_user) {
         return NO;
     } else {
-        return [[user remoteID] compare:[_user remoteID]];
+        return [[user remoteID] isEqualToNumber:[_user remoteID]];
     }
 }
 

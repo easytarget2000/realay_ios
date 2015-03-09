@@ -11,7 +11,7 @@
 #import "ETRChatViewController.h"
 #import "ETRUser.h"
 #import "ETRAction.h"
-#import "ETRProfileViewController.h"
+#import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRConversation.h"
 
@@ -203,7 +203,7 @@
     } else if([[segue identifier] isEqualToString:kSegueToProfile]) {
         // Just show my own user profile.
         
-        ETRProfileViewController *destination = [segue destinationViewController];
+        ETRDetailsViewController *destination = [segue destinationViewController];
         
         if ([sender isMemberOfClass:[ETRUser class]]) {
             [destination setUser:(ETRUser *)sender];

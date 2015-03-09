@@ -18,7 +18,7 @@
 
 @property (nonatomic, retain) NSString * createdBy;
 
-@property (nonatomic, retain) NSDate * endTime;
+@property (nonatomic, retain) NSDate * endDate;
 
 @property (nonatomic, retain) NSNumber * latitude;
 
@@ -47,6 +47,8 @@
 - (NSString *)description;
 
 - (NSString *)timeSpan;
+
+- (NSString *)formattedCoordinates;
 
 - (NSString *)formattedSize;
 

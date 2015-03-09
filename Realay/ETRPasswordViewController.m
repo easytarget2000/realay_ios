@@ -9,7 +9,7 @@
 #import "ETRPasswordViewController.h"
 
 #import "ETRChatViewController.h"
-#import "ETRCreateProfileViewController.h"
+#import "ETRLoginViewController.h"
 #import "ETRAlertViewFactory.h"
 
 #import "ETRSharedMacros.h"
@@ -62,7 +62,7 @@
         if ([ETRLocationHelper isInSessionRegion]) {
            [self checkEnteredPassword];
         } else {
-          [ETRAlertViewFactory showOutsideRegionAlertView];
+          [ETRAlertViewFactory showDistanceLeftAlertView];
         }
     }
 }
@@ -126,7 +126,7 @@
         ETRChatViewController *destination = [segue destinationViewController];
         [destination setConversationID:kPublicReceiverID];
     } else if ([[segue identifier] isEqualToString:kSegueToCreateProfile]) {
-        ETRCreateProfileViewController *destination = [segue destinationViewController];
+        ETRLoginViewController *destination = [segue destinationViewController];
         [destination startSessionOnLogin];
     }
 }

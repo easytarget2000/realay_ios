@@ -25,6 +25,6 @@
 @property (nonatomic, retain) NSManagedObject *receivedActions;
 @property (nonatomic, retain) NSManagedObject *inConversation;
 
-+ (ETRUser *)userFromJSONDictionary:(NSDictionary *)JSONDict;
+//+ (ETRUser *)userFromJSONDictionary:(NSDictionary *)JSONDict;
 
 @end

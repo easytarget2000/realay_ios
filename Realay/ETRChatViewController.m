@@ -11,7 +11,7 @@
 #import "ETRAction.h"
 #import "ETRAlertViewFactory.h"
 #import "ETRChatMessageCell.h"
-#import "ETRProfileViewController.h"
+#import "ETRDetailsViewController.h"
 #import "ETRUserListViewController.h"
 #import "ETRUser.h"
 
@@ -342,7 +342,7 @@
     
     if ([[segue identifier] isEqualToString:kSegueToProfile]) {
         
-        ETRProfileViewController *destination = [segue destinationViewController];
+        ETRDetailsViewController *destination = [segue destinationViewController];
         if ([sender isMemberOfClass:[ETRUser class]]) {
             [destination setUser:(ETRUser *)sender];
         }

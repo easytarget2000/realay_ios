@@ -25,11 +25,6 @@
 - (void)storeUserDefaults;
 
 /*
- Stores the User on the remote Server
- */
-- (void)putUserRemote;
-
-/*
  The shared singleton instance:
  */
 + (ETRLocalUserManager *)sharedManager;

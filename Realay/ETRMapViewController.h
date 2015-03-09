@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import "ETRSession.h"
 
 @interface ETRMapViewController : UIViewController
 

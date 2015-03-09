@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRProfileHeaderCell : UITableViewCell
+@interface ETRHeaderCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *headerImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;

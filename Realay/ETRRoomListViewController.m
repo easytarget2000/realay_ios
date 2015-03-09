@@ -8,14 +8,14 @@
 
 #import "ETRRoomListViewController.h"
 
-#import "ETRCreateProfileViewController.h"
+#import "ETRLoginViewController.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRImageLoader.h"
 #import "ETRSession.h"
 #import "ETRInformationCell.h"
 #import "ETRRoomListCell.h"
 #import "ETRAlertViewFactory.h"
-#import "ETRProfileViewController.h"
+#import "ETRDetailsViewController.h"
 #import "ETRLocalUserManager.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRSession.h"
@@ -52,9 +52,9 @@
     
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-    
-//    [[self tableView] reloadData];
-    
+    [[self tableView] setRowHeight:UITableViewAutomaticDimension];
+    [[self tableView] setEstimatedRowHeight:kRoomCellHeight];
+        
     // Initialize Fetched Results Controller
     ETRCoreDataHelper *bridge = [ETRCoreDataHelper helper];
     _fetchedResultsController = [bridge roomListResultsControllerWithDelegate:self];
@@ -71,7 +71,6 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    
     [super viewDidAppear:animated];
     
     NSInteger myControllerIndex;
@@ -82,6 +81,7 @@
     [[self refreshControl] addTarget:self
                               action:@selector(updateRoomsTable)
                     forControlEvents:UIControlEventValueChanged];
+    [[self tableView] reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -296,13 +296,13 @@
         // Create my profile before showing it.
         
         // Tell the Create Profile controller where to go next.
-        ETRCreateProfileViewController *destination = [segue destinationViewController];
+        ETRLoginViewController *destination = [segue destinationViewController];
         [destination showProfileOnLogin];
         
     } else if([[segue identifier] isEqualToString:kSegueToViewProfile]) {
         // Just show my own user profile.
         
-        ETRProfileViewController *destination = [segue destinationViewController];
+        ETRDetailsViewController *destination = [segue destinationViewController];
         [destination setUser:[[ETRLocalUserManager sharedManager] user]];
         //TODO: Tell the View Profile controller to come back to the Room List on Back.
     }

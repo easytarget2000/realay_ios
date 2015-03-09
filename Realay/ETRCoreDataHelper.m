@@ -9,6 +9,7 @@
 #import "ETRCoreDataHelper.h"
 
 #import "ETRAppDelegate.h"
+#import "ETRLocalUserManager.h"
 #import "ETRRoom.h"
 #import "ETRUser.h"
 
@@ -93,7 +94,7 @@
     
     NSInteger endTimestamp = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
     if (endTimestamp > 1000000000) {
-        [room setEndTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
     }
     
     // We query the database with km values and only use metre integer precision.
@@ -129,11 +130,14 @@
     return resultsController;
 }
 
-- (void)saveContext {
+- (BOOL)saveContext {
     // Save Record.
     NSError *error;
     if (![_managedObjectContext save:&error] || error) {
         NSLog(@"ERROR: Could not save context: %@", error);
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -177,10 +181,39 @@
     [user setFacebook:[jsonDictionary stringForKey:@"fb"]];
     [user setInstagram:[jsonDictionary stringForKey:@"ig"]];
     [user setTwitter:[jsonDictionary stringForKey:@"tw"]];
-
-    NSLog(@"Inserting User: %@", [user description]);
+    
+//    NSLog(@"Inserting User: %@", [user description]);
     [self saveContext];
     return user;
+}
+
+- (ETRUser *)copyUser:(ETRUser *)user {
+    if (!user || !_managedObjectContext) {
+        return nil;
+    }
+    
+    ETRUser *copiedUser;
+    if (!_userEntity) {
+        _userEntity = [NSEntityDescription entityForName:kUserEntityName
+                                  inManagedObjectContext:_managedObjectContext];
+    }
+    copiedUser = [[ETRUser alloc] initWithEntity:_userEntity
+                  insertIntoManagedObjectContext:_managedObjectContext];
+    
+    // Copy all the attributes.
+    [copiedUser setRemoteID:[user remoteID]];
+    [copiedUser setImageID:[user imageID]];
+    [copiedUser setName:[user name]];
+    [copiedUser setStatus:[user status]];
+    [copiedUser setPhone:[user phone]];
+    [copiedUser setMail:[user mail]];
+    [copiedUser setWebsite:[user website]];
+    [copiedUser setFacebook:[user facebook]];
+    [copiedUser setInstagram:[user instagram]];
+    [copiedUser setTwitter:[user twitter]];
+    
+    // This user will not be stored.
+    return copiedUser;
 }
 
 - (ETRUser *)userWithRemoteID:(long)remoteID {

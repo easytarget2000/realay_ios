@@ -55,9 +55,7 @@ static ETRLocationHelper *sharedInstance;
     }
 }
 
-- (void)launch {
-    NSLog(@"%d", [CLLocationManager authorizationStatus]);
-    
+- (void)launch {    
 //    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
 //        [self startMonitoringSignificantLocationChanges];
 //        [super startUpdatingLocation];

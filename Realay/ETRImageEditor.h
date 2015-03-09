@@ -12,6 +12,6 @@
 
 + (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag;
 
-+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView;
+//+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView;
 
 @end

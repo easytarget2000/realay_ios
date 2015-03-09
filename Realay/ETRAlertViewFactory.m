@@ -96,9 +96,15 @@
  Displays an alert view that says the user cannot join the room
  until stepping inside the region.
  */
-+ (void)showOutsideRegionAlertView {
-    NSString *title = @"Outside of this Realay's region.";
-    NSString *message = @"Please move inside the circle to join.";
++ (void)showDistanceLeftAlertView {
+    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
+    if (!sessionRoom) {
+        return;
+    }
+    
+    NSInteger distance = [sessionRoom distance];
+    NSString *title = [NSString stringWithFormat:@"You are currently %ld away", distance];
+    NSString *message = @"Before you can join, you need to be within the radius of this place.\n\nThecircle on the map displays the area of a Realay.";
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
                                delegate:nil

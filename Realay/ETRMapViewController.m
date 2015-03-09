@@ -8,11 +8,13 @@
 
 #import "ETRMapViewController.h"
 
-#import "ETRPasswordViewController.h"
-#import "ETRRoomDetailsViewController.h"
-#import "ETRAlertViewFactory.h"
-
+//#import <CoreLocation/CoreLocation.h>
 #import <GoogleMaps/GoogleMaps.h>
+
+#import "ETRAlertViewFactory.h"
+#import "ETRDetailsViewController.h"
+#import "ETRPasswordViewController.h"
+#import "ETRSession.h"
 
 #define kMapCloseZoom   14.0f
 #define kMapWideZoom    11.0f
@@ -20,27 +22,15 @@
 #define kSegueToNext    @"mapToPasswordSegue"
 #define kSegueToDetails @"mapToDetailsSegue"
 
+#define kPrimaryColor               colorWithRed:(0x7A/255.0f) green:(0xBA/255.0f) blue:(0x3A/255.0f) alpha:1.0f
+#define kPrimaryColorTransparent    colorWithRed:(0x7A/255.0f) green:(0xBA/255.0f) blue:(0x3A/255.0f) alpha:0.4f
+
+
 @implementation ETRMapViewController {
     GMSMapView *_mapView;   // Google Maps SDK Object
 }
 
 #pragma mark - UIViewController
-
-- (void)viewDidAppear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
-    
-    NSInteger myControllerIndex;
-    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedManager] setMapControllerIndex:myControllerIndex];
-    
-    // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSession sharedManager] room]) {
-        [[self navigationController] popViewControllerAnimated:NO];
-        NSLog(@"ERROR: No room set in manager.");
-        return;
-    }
-}
 
 - (void)viewWillAppear:(BOOL)animated {
     
@@ -63,6 +53,24 @@
                                              selector:@selector(orientationChanged:)
                                                  name:UIDeviceOrientationDidChangeNotification
                                                object:nil];
+
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    NSInteger myControllerIndex;
+    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
+    [[ETRSession sharedManager] setMapControllerIndex:myControllerIndex];
+    
+    // Make sure the room manager meets the requirements for this view controller.
+    if (![[ETRSession sharedManager] room]) {
+        [[self navigationController] popViewControllerAnimated:NO];
+        NSLog(@"ERROR: No room set in manager.");
+        return;
+    }
+    
     
     _mapView = [[GMSMapView alloc] init];
     [_mapView setFrame:[[self mapSubView] bounds]];
@@ -75,24 +83,23 @@
     [[self mapSubView] addSubview:_mapView];
     
     // Create the room marker.
-    // TODO: Create custom markers for each room.
-    GMSMarker *marker = [[GMSMarker alloc] init];
     ETRRoom *room = [[ETRSession sharedManager] room];
     if (!room) {
         NSLog(@"ERROR: Cannot start ETRMapViewController without a prepared Session Room.");
         return;
     }
+    GMSMarker *roomMarker = [[GMSMarker alloc] init];
     
-    [marker setPosition:[[room location] coordinate]];
-    [marker setMap:_mapView];
-    _mapView.selectedMarker = marker;
+    [roomMarker setPosition:[[room location] coordinate]];
+    [roomMarker setMap:_mapView];
+    [_mapView setSelectedMarker:roomMarker];
     
     // Add a radius circle to the marker.
     GMSCircle *circle = [[GMSCircle alloc] init];
     [circle setRadius:[[room radius] doubleValue]];
-    [circle setFillColor:[UIColor colorWithRed:50.0f green:50.0f blue:50.0f alpha:.5f]];
-    [circle setStrokeColor:[UIColor lightGrayColor]];
-    [circle setPosition:[marker position]];
+    [circle setFillColor:[UIColor kPrimaryColorTransparent]];
+    [circle setStrokeColor:[UIColor kPrimaryColor]];
+    [circle setPosition:[roomMarker position]];
     [circle setMap:_mapView];
 }
 
@@ -149,7 +156,7 @@
 //            if ([room radius] < 250) zoom = 16;
             
             return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
-                                                    zoom:zoom];
+                                                  zoom:zoom];
         } else {
             // The map should include the device position, as well as the room's location.
             GMSCoordinateBounds *bounds;
@@ -201,7 +208,6 @@
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
-    
     // Only perform a join action, if the user did not join yet.
     if ([[ETRSession sharedManager] didBeginSession]) return;
         
@@ -213,7 +219,15 @@
         [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:0];
     } else {
         // The user is outside of the radius.
-        [ETRAlertViewFactory showOutsideRegionAlertView];
+        [ETRAlertViewFactory showDistanceLeftAlertView];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:kSegueToDetails]) {
+        ETRDetailsViewController *destination;
+        destination = [segue destinationViewController];
+        [destination setRoom:[[ETRSession sharedManager] room]];
     }
 }
 

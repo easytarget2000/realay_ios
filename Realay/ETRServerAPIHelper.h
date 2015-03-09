@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class ETRAction;
 @class ETRRoom;
 @class ETRUser;
 @class ETRImageLoader;
@@ -27,5 +28,11 @@
 + (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(ETRUser *))onSuccessBlock;
 
 + (void)queryUserListInRoom:(ETRRoom *)room;
+
++ (void)sendLocalUserUpdate;
+
++ (void)sendAction:(ETRAction *)action;
+
++ (void)sendImage:(UIImage *)image completionHandler:(void(^)(BOOL))completionHandler;
 
 @end
