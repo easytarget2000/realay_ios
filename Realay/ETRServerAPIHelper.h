@@ -27,6 +27,8 @@
  */
 + (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(ETRUser *))onSuccessBlock;
 
++ (void)joinRoom:(ETRRoom *)room showProgressInLabel:(UILabel *)label progressView:(UIProgressView *)progressView completionHandler:(void(^)(BOOL))completionHandler;
+
 + (void)queryUserListInRoom:(ETRRoom *)room;
 
 + (void)sendLocalUserUpdate;

@@ -21,7 +21,7 @@
 
 - (void)insertRoomFromDictionary:(NSDictionary *)JSONDictionary;
 
-- (ETRUser *)insertUserFromDictionary:(ETRJSONDictionary *)JSONDictionary;
+- (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
 
 - (ETRUser *)storeLocalUser;
 

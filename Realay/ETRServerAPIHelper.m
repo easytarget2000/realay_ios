@@ -14,16 +14,21 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRSession.h"
+#import "ETRUser.h"
 
-#define kServerURL              @"http://rldb.easy-target.org/"
+#define kServerURL                  @"http://rldb.easy-target.org/"
 
-#define kTimeoutInterval        20
+#define kTimeoutInterval            20
 
-#define kApiStatusKey           @"st"
-#define kApiCallRoomList        @"select_rooms"
-#define kApiCallGetImage        @"download_image"
+#define kApiStatusKey               @"st"
+#define kApiCallRoomList            @"select_rooms"
+#define kApiCallGetImage            @"download_image"
 
-#define kDefaultSearchRadius    20
+#define kDefaultSearchRadius        20
+
+static NSString *const getActionsAPICall       = @"get_actions";
+static NSString *const getActionsSuccessStatus = @"AS_OK";
+static NSString *const getActionsObjectTag     = @"as";
 
 static NSMutableArray *connections;
 
@@ -107,13 +112,23 @@ static NSMutableArray *connections;
                                    }
                                    
                                    if ([status isEqualToString:successStatus]) {
-                                       id<NSObject> receivedObject = [JSONDict objectForKey:objectTag];
-                                       handler(receivedObject);
-                                       return;
+                                       if (!objectTag) {
+                                           handler([NSNumber numberWithBool:YES]);
+                                           return;
+                                       } else {
+                                           id<NSObject> receivedObject = [JSONDict objectForKey:objectTag];
+                                           handler(receivedObject);
+                                           return;
+                                       }
+                                       
                                    }
                                }
                                
-                               handler(nil);
+                               if (!objectTag) {
+                                   handler([NSNumber numberWithBool:NO]);
+                               } else {
+                                   handler(nil);
+                               }
                            }];
 }
 
@@ -214,6 +229,99 @@ static NSMutableArray *connections;
                                                                         atomically:YES];
                            }];
 }
+
++ (void)joinRoom:(ETRRoom *)room showProgressInLabel:(UILabel *)label progressView:(UIProgressView *)progressView completionHandler:(void(^)(BOOL))completionHandler {
+    if (!room) {
+        completionHandler(NO);
+        return;
+    }
+    
+    ETRCoreDataHelper *dataBridge = [ETRCoreDataHelper helper];
+    long roomID = [[room remoteID] longValue];
+    long localUserID = [[ETRLocalUserManager sharedManager] userID];
+    
+    // Prepare the block that will be called at the end.
+    // This will always call the
+    void (^getMessagesCompletionHandler) (id<NSObject>) = ^(id<NSObject> receivedObject) {
+        [progressView setProgress:0.9f];
+        
+        if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
+            
+            NSArray *jsonActions = (NSArray *) receivedObject;
+            for (NSObject *jsonAction in jsonActions) {
+                if ([jsonAction isKindOfClass:[NSDictionary class]]) {
+                    
+                }
+            }
+            return;
+        }
+        
+        completionHandler(NO);
+    };
+    
+    // Prepare the block that will be called at at the end of getting the User list.
+    // This block starts the message loading.
+    void (^getUsersCompletionHandler) (id<NSObject>) = ^(id<NSObject> receivedObject) {
+        if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
+            
+            NSArray *jsonUsers = (NSArray *) receivedObject;
+            for (NSObject *jsonUser in jsonUsers) {
+                if ([jsonUser isKindOfClass:[NSDictionary class]]) {
+                    ETRUser *sessionUser;
+                    sessionUser = [dataBridge insertUserFromDictionary:(NSDictionary *) jsonUser];
+                    if (sessionUser) {
+                        [sessionUser setLastKnownRoom:room];
+                    }
+                }
+            }
+            
+            [label setText:@"Loading messages."];
+            [progressView setProgress:0.8f];
+            NSString *getActionsBody;
+            NSString *getActionsFormat = @"room_id=%ld&user_id=%ld&initial=1&blocked=%@";
+            // TODO: Add IDs of blocked Users.
+            getActionsBody = [NSString stringWithFormat:getActionsFormat, roomID, localUserID, nil];
+            [ETRServerAPIHelper performAPICall:getActionsAPICall
+                                      POSTbody:getActionsBody
+                                 successStatus:getActionsSuccessStatus
+                                     objectTag:getActionsObjectTag
+                             completionHandler:getMessagesCompletionHandler];
+            return;
+        }
+        completionHandler(NO);
+    };
+    
+    // Prepare the first block that will be called at the end of inserting the User into the Room.
+    // This block starts loading the User list.
+    void (^joinBlock) (id<NSObject>) = ^(id<NSObject> receivedObject) {
+        // Fetch a boolean from the received Object to see if the request did succeed.
+        if (receivedObject && [receivedObject isKindOfClass:[NSNumber class]]) {
+            NSNumber *didSucceed = (NSNumber *) receivedObject;
+            if ([didSucceed boolValue]) {
+                [label setText:@"Loading Users."];
+                [progressView setProgress:0.4f];
+                NSString *userListBody;
+                userListBody = [NSString stringWithFormat:@"room_id=%ld", roomID];
+                [ETRServerAPIHelper performAPICall:@"get_room_users"
+                                          POSTbody:userListBody
+                                     successStatus:@"UIR_OK"
+                                         objectTag:@"us"
+                                 completionHandler:getUsersCompletionHandler];
+                return;
+            }
+        }
+        
+        completionHandler(NO);
+    };
+    
+    NSString *joinBody;
+    joinBody = [NSString stringWithFormat:@"room_id=%ld&user_id=%ld", roomID, localUserID];
+    [ETRServerAPIHelper performAPICall:@"do_join_room"
+                              POSTbody:joinBody successStatus:@"INS_U_OK"
+                             objectTag:nil
+                     completionHandler:joinBlock];
+}
+
 
 /*
  Registers a new User at the database or retrieves the data

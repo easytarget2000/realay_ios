@@ -8,8 +8,7 @@
 
 #import "ETRCircleView.h"
 
-// #FF9800
-#define kAccentColor colorWithRed:(0xFF/255.0f) green:(0x98/255.0f) blue:(0x00/255.0f) alpha:1.0f
+#import "ETRColorMacros.h"
 
 @implementation ETRCircleView
 

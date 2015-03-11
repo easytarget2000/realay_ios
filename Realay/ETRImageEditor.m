@@ -27,11 +27,14 @@
             UIGraphicsBeginImageContext(viewSize);
             CGRect imageRect = CGRectMake(0.0f, 0.0f, viewSize.width, viewSize.height);
             [image drawInRect:imageRect];
-            image = UIGraphicsGetImageFromCurrentImageContext();
+            UIImage *croppedImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
+//            NSLog(@"DEBUG: Fitting image %ld into view size %g x %g", tag, viewSize.width, viewSize.height);
+            [targetImageView setImage:croppedImage];
+        } else {
+            [targetImageView setImage:image];
         }
         
-        [targetImageView setImage:image];
     } else {
         NSLog(@"DEBUG: Not applying image because tags are unequal: %ld != %ld", [targetImageView tag], tag);
     }

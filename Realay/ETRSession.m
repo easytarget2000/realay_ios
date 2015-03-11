@@ -68,7 +68,6 @@ static ETRSession *sharedInstance = nil;
 #pragma mark - Session State
 
 - (void)beginSession {
-    
     //TODO: Handle errors
     if (![self room]) {
         NSLog(@"ERROR: No room object given before starting a session.");
@@ -81,13 +80,6 @@ static ETRSession *sharedInstance = nil;
         return;
     }
     
-//    if (![ETRServerAPIHelper startSession]) {
-//        return;
-//    }
-    
-    _allMyChats = [NSMutableDictionary dictionary];
-    _sortedChatKeys = [NSMutableArray array];
-    
     // Prepare the invocation for the timer that queries new actions from the DB.
     NSMethodSignature *tickSignature = [self methodSignatureForSelector:@selector(tick)];
     _invocation = [NSInvocation invocationWithMethodSignature:tickSignature];
@@ -96,9 +88,6 @@ static ETRSession *sharedInstance = nil;
     
     // Register for background fetches.
     [[UIApplication sharedApplication] setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
-    
-    // Get the initial array of users.
-    [ETRServerAPIHelper queryUserListInRoom:_room];
     
     // Start the first tick.
     [self tick];

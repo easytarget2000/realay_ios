@@ -16,7 +16,7 @@
 
 #define DEBUG_NO_PW_CHECK       1
 
-#define kSegueToChat            @"passwordToChatSegue"
+#define kSegueToChat            @"passwordToJoinSegue"
 #define kSegueToCreateProfile   @"passwordToCreateProfileSegue"
 
 @implementation ETRPasswordViewController {

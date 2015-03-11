@@ -21,6 +21,8 @@
 		D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */; };
 		D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C51A9FF04D00748378 /* ETRInformationCell.m */; };
 		D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01A602518E35BF900730A1B /* ETRRoomListCell.m */; };
+		D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */; };
+		D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */; };
 		D01F2A6F18622D6D00DC97F7 /* ETRWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01F2A6E18622D6D00DC97F7 /* ETRWelcomeViewController.m */; };
 		D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */; };
 		D03133981AAB582B004E981B /* ETRKeyValueEditorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */; };
@@ -107,6 +109,11 @@
 		D01446C41A9FF04D00748378 /* ETRInformationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRInformationCell.h; sourceTree = "<group>"; };
 		D01446C51A9FF04D00748378 /* ETRInformationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRInformationCell.m; sourceTree = "<group>"; };
 		D01A602518E35BF900730A1B /* ETRRoomListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListCell.m; sourceTree = "<group>"; };
+		D01D3CF81AAF89AB00AE9393 /* ETRColorMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRColorMacros.h; sourceTree = "<group>"; };
+		D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRJoinViewController.h; path = ui/ETRJoinViewController.h; sourceTree = "<group>"; };
+		D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRJoinViewController.m; path = ui/ETRJoinViewController.m; sourceTree = "<group>"; };
+		D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRActionManager.h; path = manager/ETRActionManager.h; sourceTree = "<group>"; };
+		D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRActionManager.m; path = manager/ETRActionManager.m; sourceTree = "<group>"; };
 		D01F2A6D18622D6D00DC97F7 /* ETRWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRWelcomeViewController.h; sourceTree = "<group>"; };
 		D01F2A6E18622D6D00DC97F7 /* ETRWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRWelcomeViewController.m; sourceTree = "<group>"; };
 		D020733117EBB34400453B69 /* ETRRoomListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListCell.h; sourceTree = "<group>"; };
@@ -238,6 +245,8 @@
 				D0F0392A18C379DF008DDA5F /* ETRSession.m */,
 				D0529A431AA28937002211A3 /* ETRUsersCache.h */,
 				D0529A441AA28937002211A3 /* ETRUsersCache.m */,
+				D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */,
+				D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */,
 			);
 			name = Manager;
 			sourceTree = "<group>";
@@ -376,6 +385,7 @@
 				D0E1970F17E276DB00135B8C /* Supporting Files */,
 				D0F39EC517F1141F00D60257 /* UI */,
 				D0BF1FDB18C3D4D800E17774 /* Utils */,
+				D01D3CF81AAF89AB00AE9393 /* ETRColorMacros.h */,
 			);
 			path = Realay;
 			sourceTree = "<group>";
@@ -413,6 +423,8 @@
 				D0DE0DD2184BAC7E0039DE0E /* ETRChatViewController.m */,
 				D00A16091AAA25BC0036B25B /* ETRDetailsViewController.h */,
 				D00A160A1AAA25BC0036B25B /* ETRDetailsViewController.m */,
+				D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */,
+				D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */,
 				D0D0CEEB17E74EE70079017F /* ETRLoginViewController.h */,
 				D0D0CEEC17E74EE70079017F /* ETRLoginViewController.m */,
 				D0D7D8BF17EFADCF00F8008E /* ETRMapViewController.h */,
@@ -535,6 +547,7 @@
 				D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */,
 				D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */,
 				D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */,
+				D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */,
 				D0E31B5E1AA377F30008AF9F /* ETRUser.m in Sources */,
 				D0D0CEED17E74EE70079017F /* ETRLoginViewController.m in Sources */,
 				D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */,
@@ -557,6 +570,7 @@
 				D0529A451AA28937002211A3 /* ETRUsersCache.m in Sources */,
 				D031339B1AAB5860004E981B /* ETRProfileHeaderEditorCell.m in Sources */,
 				D0F415A817F8C1D100C0FFD5 /* ETRUserListViewController.m in Sources */,
+				D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */,
 				D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */,
 				D0E31B611AA377F40008AF9F /* ETRRoom.m in Sources */,
 				D0529A0D1AA26FED002211A3 /* Realay.xcdatamodeld in Sources */,

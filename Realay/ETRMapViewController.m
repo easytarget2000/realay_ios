@@ -16,14 +16,13 @@
 #import "ETRPasswordViewController.h"
 #import "ETRSession.h"
 
+#import "ETRColorMacros.h"
+
 #define kMapCloseZoom   14.0f
 #define kMapWideZoom    11.0f
 
 #define kSegueToNext    @"mapToPasswordSegue"
 #define kSegueToDetails @"mapToDetailsSegue"
-
-#define kPrimaryColor               colorWithRed:(0x7A/255.0f) green:(0xBA/255.0f) blue:(0x3A/255.0f) alpha:1.0f
-#define kPrimaryColorTransparent    colorWithRed:(0x7A/255.0f) green:(0xBA/255.0f) blue:(0x3A/255.0f) alpha:0.4f
 
 
 @implementation ETRMapViewController {
@@ -90,6 +89,8 @@
     }
     GMSMarker *roomMarker = [[GMSMarker alloc] init];
     
+    [roomMarker setTitle:[room title]];
+    [roomMarker setAppearAnimation:kGMSMarkerAnimationPop];
     [roomMarker setPosition:[[room location] coordinate]];
     [roomMarker setMap:_mapView];
     [_mapView setSelectedMarker:roomMarker];

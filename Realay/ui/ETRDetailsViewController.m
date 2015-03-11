@@ -19,6 +19,8 @@
 #import "ETRRoom.h"
 #import "ETRUser.h"
 
+#import "ETRColorMacros.h"
+
 #define kHeaderCellIdentifier           @"profileHeaderCell"
 #define kValueCellIdentifier            @"profileValueCell"
 #define kSocialMediaCellIdentifier      @"socialMediaCell"
@@ -49,6 +51,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[[self navigationController] navigationBar] setTranslucent:YES];
+    
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+//    self.navigationController.navigationBar.translucent = YES;
+    self.navigationController.view.backgroundColor = [UIColor kPrimaryColorTransparent];
+    [[[self navigationController] navigationBar] setBackgroundColor:[UIColor kPrimaryColorTransparent]];
+//    UIToolbar* blurredView = [[UIToolbar alloc] initWithFrame:self.navigationController.navigationBar.bounds];
+//    [blurredView setBarStyle:UIBarStyleBlack];
+//    [blurredView setBarTintColor:[UIColor redColor]];
+//    [self.navigationController.navigationBar insertSubview:blurredView atIndex:0];
+    
     [[self tableView] setRowHeight:UITableViewAutomaticDimension];
     [[self tableView] setEstimatedRowHeight:128.0f];
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
@@ -59,8 +74,6 @@
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
-    
-    [[self tableView] reloadData];
     
     if ((!_user && !_room) || (_user && _room)) {
         NSLog(@"ERROR: No Room or User object to show in this Detail View Controller.");
@@ -75,6 +88,21 @@
             [[self barButton] setTitle:@"Join"];
         }
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [[self tableView] reloadData];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    CGRect rect = self.navigationController.navigationBar.frame;
+    
+    float y = -rect.origin.y;
+    
+    self.tableView.contentInset = UIEdgeInsetsMake(y ,0,0,0);
 }
 
 #pragma mark - Table view data source

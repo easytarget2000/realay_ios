@@ -86,8 +86,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    // Just in case there is a toolbar wanting to be displayed:
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
