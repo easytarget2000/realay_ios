@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import "ETRChatViewController.h"
+#import "ETRConversationViewController.h"
 
 #import "ETRAction.h"
 #import "ETRAlertViewFactory.h"
@@ -22,15 +22,20 @@
 #define kSegueToNext        @"chatToUserListSegue"
 #define kSegueToProfile     @"chatToViewProfileSegue"
 
-@implementation ETRChatViewController {
+@implementation ETRConversationViewController {
     BOOL allowDisappear;
 }
 
 # pragma mark - UIViewController
 
 - (void)viewDidAppear:(BOOL)animated {
-    
     [super viewDidAppear:animated];
+    
+    if (!_partner) {
+        NSLog(@"ERROR: No chat object assigned to chat view controller.");
+        [[self navigationController] popViewControllerAnimated:NO];
+        return;
+    }
     
     // Make sure the room manager meets the requirements for this view controller.
     if (![[ETRSession sharedManager] room] && ![[ETRSession sharedManager] didBeginSession]) {
@@ -38,13 +43,6 @@
         [[self navigationController] popViewControllerAnimated:NO];
         return;
     }
-    
-    if (_conversationID < 10) {
-        NSLog(@"ERROR: No chat object assigned to chat view controller.");
-        [[self navigationController] popViewControllerAnimated:NO];
-        return;
-    }
-    
 }
 
 - (void)viewDidLoad {
@@ -54,52 +52,52 @@
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
     
     // Tapping anywhere but the keyboard, hides it.
-    UITapGestureRecognizer *tap =
-    [[UITapGestureRecognizer alloc] initWithTarget:self
-                                            action:@selector(dismissKeyboard)];
+    UITapGestureRecognizer *tap;
+    tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                  action:@selector(dismissKeyboard)];
     [[self view] addGestureRecognizer:tap];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-
     [super viewWillAppear:animated];
     
     // Assign delegates.
-    [[ETRSession sharedManager] setChatDelegate:self];
+    // TODO: Assign Session & Location delegates to
     [[self messagesTableView] setDataSource:self];
     [[self messagesTableView] setDelegate:self];
     [[self messagesTableView] reloadData];
     [[self messageTextField] setDelegate:self];
     
-    // Show no notifications for this chat.
-    [[ETRSession sharedManager] setActiveChatID:_conversationID];
+    // TODO: Tell Actions Manager that this View Controller is visible
+    // to avoid obsolete Notifications.
     
-    NSString *backButtonTitle;
-    if (_conversationID == kPublicReceiverID) {
-        // Public chat controller's title is the room title.
-        [self setTitle:[[[ETRSession sharedManager] room] title]];
-        //TODO: Localization
-        backButtonTitle = @"Public";
+    // TODO: Prepare the appropriate back button TO this view controller.
 
-    } else {
-        // Private chat:
-        
-        // TODO: Query the UserCache and display the chat partner as the title.
-        // Remove the "Leave" button. Will automatically be replaced with back button.
-        [[self navigationItem] setLeftBarButtonItem:nil];
-        
-        // The More button is a Profile button in private chats.
-        NSString *profile = @"Profile";
-        [[self moreButton] setTitle:profile];
-        backButtonTitle = @"";
-    }
-    
-    // Prepare the appropriate back button TO this view controller.
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle
-                                                                   style:UIBarButtonItemStylePlain
-                                                                  target:nil
-                                                                  action:nil];
-    [[self navigationItem] setBackBarButtonItem:backButton];
+//    NSString *backButtonTitle;
+//    if (_conversationID == kPublicReceiverID) {
+//        // Public chat controller's title is the room title.
+//        [self setTitle:[[[ETRSession sharedManager] room] title]];
+//        //TODO: Localization
+//        backButtonTitle = @"Public";
+//    } else {
+//        // Private chat:
+//        
+//        // TODO: Query the UserCache and display the chat partner as the title.
+//        // Remove the "Leave" button. Will automatically be replaced with back button.
+//        [[self navigationItem] setLeftBarButtonItem:nil];
+//        
+//        // The More button is a Profile button in private chats.
+//        NSString *profile = @"Profile";
+//        [[self moreButton] setTitle:profile];
+//        backButtonTitle = @"";
+//    }
+//    
+//    UIBarButtonItem *backButton;
+//    backButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle
+//                                                  style:UIBarButtonItemStylePlain
+//                                                 target:nil
+//                                                 action:nil];
+//    [[self navigationItem] setBackBarButtonItem:backButton];
     
     // Listen for keyboard changes.
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -138,6 +136,19 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     [[ETRSession sharedManager] didReceiveMemoryWarning];
+}
+
+#pragma mark -
+#pragma mark Public/Private Conversation Definition
+
+- (void)setIsPublic:(BOOL *)isPublic {
+    _partner = nil;
+    _isPublic = isPublic;
+}
+
+- (void)setPartner:(ETRUser *)partner {
+    _isPublic = NO;
+    _partner = partner;
 }
 
 #pragma mark - ETRRoomManagerDelegate
@@ -186,11 +197,10 @@
 }
 
 - (IBAction)moreButtonPressed:(id)sender {
-    
     allowDisappear = YES;
     
     // The More button is a Profile button in private chats.
-    if (_conversationID == kPublicReceiverID) {
+    if (_isPublic) {
         [self performSegueWithIdentifier:kSegueToNext sender:nil];
     } else {
         [self performSegueWithIdentifier:kSegueToProfile sender:nil];
@@ -265,10 +275,7 @@
         [[self messagesTableView] scrollToRowAtIndexPath:indexPath
                                         atScrollPosition:UITableViewScrollPositionMiddle
                                                 animated:animated];
-        
-#ifdef DEBUG
-        NSLog(@"INFO: Scrolling %ld table to %ld", _conversationID, bottomRow);
-#endif
+
     }
     
     allowDisappear = YES;

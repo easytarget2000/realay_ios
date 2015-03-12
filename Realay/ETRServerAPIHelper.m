@@ -26,9 +26,15 @@
 
 #define kDefaultSearchRadius        20
 
-static NSString *const getActionsAPICall       = @"get_actions";
+static NSString *const getRoomsAPICall = @"get_rooms";
+
+static NSString *const getRoomsSuccessStatus = @"RS_OK";
+
+static NSString *const getActionsAPICall = @"get_actions";
+
 static NSString *const getActionsSuccessStatus = @"AS_OK";
-static NSString *const getActionsObjectTag     = @"as";
+
+static NSString *const getActionsObjectTag = @"as";
 
 static NSMutableArray *connections;
 
@@ -55,10 +61,10 @@ static NSMutableArray *connections;
     }
 }
 
-+ (void)performAPICall:(NSString *) apiCall
-              POSTbody:(NSString *) bodyString
-         successStatus:(NSString *) successStatus
-             objectTag:(NSString *) objectTag
++ (void)performAPICall:(NSString *)apiCall
+              POSTbody:(NSString *)bodyString
+         successStatus:(NSString *)successStatus
+             objectTag:(NSString *)objectTag
      completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
     
     if ([ETRServerAPIHelper didStartConnection:apiCall]) {
@@ -101,6 +107,7 @@ static NSMutableArray *connections;
                                                                                             options:kNilOptions
                                                                                               error:&error];
                                    if (error) {
+                                       NSLog(@"ERROR: performApiCall: %@", error);
                                        handler(nil);
                                        return;
                                    }
@@ -132,10 +139,11 @@ static NSMutableArray *connections;
                            }];
 }
 
-+ (void)updateRoomList {
++ (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler {
     CLLocation *location = [ETRLocationHelper location];
     if (!location) {
         NSLog(@"WARNING: Not updating Room list because Location is unknown.");
+        return;
     }
     
     // Get the current coordinates from the main manager.
@@ -164,11 +172,22 @@ static NSMutableArray *connections;
                                      [dataBridge insertRoomFromDictionary:(NSDictionary *) jsonRoom];
                                  }
                              }
+                             if (completionHandler) {
+                                 completionHandler([jsonRooms count]);
+                                 return;
+                             }
+                         }
+                         
+                         if (completionHandler) {
+                             completionHandler(NO);
                          }
                      }];
     
     return;
 }
+
+#pragma mark -
+#pragma mark Images
 
 + (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
     if (!imageLoader) {
@@ -230,7 +249,17 @@ static NSMutableArray *connections;
                            }];
 }
 
-+ (void)joinRoom:(ETRRoom *)room showProgressInLabel:(UILabel *)label progressView:(UIProgressView *)progressView completionHandler:(void(^)(BOOL))completionHandler {
++ (void)sendImage:(UIImage *)image completionHandler:(void (^)(BOOL))completionHandler {
+    
+}
+
+#pragma mark -
+#pragma mark InSession
+
++ (void)joinRoom:(ETRRoom *)room
+showProgressInLabel:(UILabel *)label
+    progressView:(UIProgressView *)progressView
+completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     if (!room) {
         completionHandler(NO);
         return;
@@ -250,9 +279,10 @@ static NSMutableArray *connections;
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    
+                    [dataBridge handleMessageInDictionary:(NSDictionary *)jsonAction];
                 }
             }
+            completionHandler(YES);
             return;
         }
         
@@ -265,6 +295,7 @@ static NSMutableArray *connections;
         if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
             
             NSArray *jsonUsers = (NSArray *) receivedObject;
+            // TODO: Clean up "lastKnownRoom" column.
             for (NSObject *jsonUser in jsonUsers) {
                 if ([jsonUser isKindOfClass:[NSDictionary class]]) {
                     ETRUser *sessionUser;
@@ -277,10 +308,10 @@ static NSMutableArray *connections;
             
             [label setText:@"Loading messages."];
             [progressView setProgress:0.8f];
-            NSString *getActionsBody;
             NSString *getActionsFormat = @"room_id=%ld&user_id=%ld&initial=1&blocked=%@";
+            NSString *blockedIDs = "";
             // TODO: Add IDs of blocked Users.
-            getActionsBody = [NSString stringWithFormat:getActionsFormat, roomID, localUserID, nil];
+            getActionsBody = [NSString stringWithFormat:getActionsFormat, roomID, localUserID, blockedIDs];
             [ETRServerAPIHelper performAPICall:getActionsAPICall
                                       POSTbody:getActionsBody
                                  successStatus:getActionsSuccessStatus
@@ -317,11 +348,22 @@ static NSMutableArray *connections;
     NSString *joinBody;
     joinBody = [NSString stringWithFormat:@"room_id=%ld&user_id=%ld", roomID, localUserID];
     [ETRServerAPIHelper performAPICall:@"do_join_room"
-                              POSTbody:joinBody successStatus:@"INS_U_OK"
+                              POSTbody:joinBody
+                         successStatus:@"INS_U_OK"
                              objectTag:nil
                      completionHandler:joinBlock];
 }
 
++ (void)getUserListInRoom:(ETRRoom *)room {
+    
+}
+
++ (void)sendAction:(ETRAction *)action {
+    
+}
+
+#pragma mark -
+#pragma mark Local User
 
 /*
  Registers a new User at the database or retrieves the data
@@ -347,8 +389,8 @@ static NSMutableArray *connections;
                              objectTag:@"user"
                      completionHandler:^(id<NSObject> receivedObject) {
                          if (receivedObject && [receivedObject isKindOfClass:[NSDictionary class]]) {
-                             ETRJSONDictionary *jsonDictionary;
-                             jsonDictionary = (ETRJSONDictionary *) receivedObject;
+                             NSDictionary *jsonDictionary;
+                             jsonDictionary = (NSDictionary *) receivedObject;
                              ETRUser *localUser;
                              localUser = [[ETRCoreDataHelper helper] insertUserFromDictionary:jsonDictionary];
                              
@@ -363,6 +405,10 @@ static NSMutableArray *connections;
                          onSuccessBlock(nil);
                          
                      }];
+}
+
++ (void)sendLocalUserUpdate {
+    
 }
 
 @end

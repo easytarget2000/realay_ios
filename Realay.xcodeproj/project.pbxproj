@@ -47,7 +47,7 @@
 		D0D1249317FCB19500E37C45 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1249217FCB19500E37C45 /* CFNetwork.framework */; };
 		D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */; };
 		D0DA553A1918165300B8A0F7 /* ETRLocationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DA55391918165300B8A0F7 /* ETRLocationHelper.m */; };
-		D0DE0DD3184BAC7E0039DE0E /* ETRChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DE0DD2184BAC7E0039DE0E /* ETRChatViewController.m */; };
+		D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */; };
 		D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D0DE0DD4184BB1880039DE0E /* Settings.bundle */; };
 		D0E1970917E276DB00135B8C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970817E276DB00135B8C /* UIKit.framework */; };
 		D0E1970B17E276DB00135B8C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970A17E276DB00135B8C /* Foundation.framework */; };
@@ -152,8 +152,8 @@
 		D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMapViewController.m; sourceTree = "<group>"; };
 		D0DA55381918165300B8A0F7 /* ETRLocationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationHelper.h; sourceTree = "<group>"; };
 		D0DA55391918165300B8A0F7 /* ETRLocationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationHelper.m; sourceTree = "<group>"; };
-		D0DE0DD1184BAC7E0039DE0E /* ETRChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRChatViewController.h; sourceTree = "<group>"; };
-		D0DE0DD2184BAC7E0039DE0E /* ETRChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRChatViewController.m; sourceTree = "<group>"; };
+		D0DE0DD1184BAC7E0039DE0E /* ETRConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRConversationViewController.h; sourceTree = "<group>"; };
+		D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRConversationViewController.m; sourceTree = "<group>"; };
 		D0DE0DD4184BB1880039DE0E /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		D0E1970517E276DB00135B8C /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0E1970817E276DB00135B8C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -419,8 +419,8 @@
 			children = (
 				D0EC763918EDAB5200CB0BAE /* ETRChatMessageCell.h */,
 				D0EC763A18EDAB5200CB0BAE /* ETRChatMessageCell.m */,
-				D0DE0DD1184BAC7E0039DE0E /* ETRChatViewController.h */,
-				D0DE0DD2184BAC7E0039DE0E /* ETRChatViewController.m */,
+				D0DE0DD1184BAC7E0039DE0E /* ETRConversationViewController.h */,
+				D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */,
 				D00A16091AAA25BC0036B25B /* ETRDetailsViewController.h */,
 				D00A160A1AAA25BC0036B25B /* ETRDetailsViewController.m */,
 				D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */,
@@ -558,7 +558,7 @@
 				D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */,
 				D0035C3A18B2AA1E00C5EEAF /* ETRLocalUserManager.m in Sources */,
 				D01446BF1A9F9E0D00748378 /* ETRCircleView.m in Sources */,
-				D0DE0DD3184BAC7E0039DE0E /* ETRChatViewController.m in Sources */,
+				D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */,
 				D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */,
 				D0E31B671AA377F40008AF9F /* ETRConversation.m in Sources */,
 				D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */,

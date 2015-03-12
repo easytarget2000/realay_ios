@@ -344,7 +344,7 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" verticalHuggingPriority="247" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Eq-zp-NLi" userLabel="Divider2">
+                                        <view opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" verticalHuggingPriority="247" translatesAutoresizingMaskIntoConstraints="NO" id="3Eq-zp-NLi" userLabel="Divider2">
                                             <rect key="frame" x="0.0" y="299" width="600" height="1"/>
                                             <color key="backgroundColor" red="0.86274509799999999" green="0.92941176469999998" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
@@ -354,13 +354,13 @@
                                                 <rect key="frame" x="0.0" y="245" width="0.0" height="1"/>
                                             </variation>
                                         </view>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" misplaced="YES" text="Description" lineBreakMode="tailTruncation" baselineAdjustment="none" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uep-0S-vtJ">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Description" lineBreakMode="tailTruncation" baselineAdjustment="none" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uep-0S-vtJ">
                                             <rect key="frame" x="8" y="316" width="564" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </label>
-                                        <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5dG-0e-Tys" userLabel="BottomSpace">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5dG-0e-Tys" userLabel="BottomSpace">
                                             <rect key="frame" x="0.0" y="353" width="600" height="27"/>
                                             <color key="backgroundColor" red="0.91372549020000005" green="0.8980392157" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </view>
@@ -618,7 +618,7 @@
                                 <rect key="frame" x="144" y="299" width="312" height="2"/>
                                 <color key="progressTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </progressView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Entering..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CuK-Rs-6Rn">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Entering..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CuK-Rs-6Rn">
                                 <rect key="frame" x="261" y="271" width="78" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -648,7 +648,7 @@
         <!--Chat View Controller-->
         <scene sceneID="LgA-rm-44b">
             <objects>
-                <viewController title="Chat" id="aXv-5O-iXY" userLabel="Chat View Controller" customClass="ETRChatViewController" sceneMemberID="viewController">
+                <viewController title="Chat" id="aXv-5O-iXY" userLabel="Chat View Controller" customClass="ETRConversationViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Mxd-E4-1jK"/>
                         <viewControllerLayoutGuide type="bottom" id="prh-tI-LiU"/>
@@ -895,12 +895,12 @@
         <image name="TimeBlack" width="18" height="18"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="gwZ-eE-zEK"/>
-        <segue reference="ust-LK-7xz"/>
-        <segue reference="pCv-oo-jLv"/>
-        <segue reference="ae4-q7-wfX"/>
-        <segue reference="rgb-Cz-5Pn"/>
+        <segue reference="Mra-U2-AQc"/>
         <segue reference="NMs-mP-plo"/>
-        <segue reference="dbC-HE-cjU"/>
+        <segue reference="ZRF-Tc-n8F"/>
+        <segue reference="2dG-6e-NTA"/>
+        <segue reference="pCv-oo-jLv"/>
+        <segue reference="ust-LK-7xz"/>
+        <segue reference="Y5k-JM-nJY"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -16,7 +16,7 @@
 @interface ETRServerAPIHelper : NSObject
 
 // Queries the list of rooms that are inside a given distance radius.
-+ (void)updateRoomList;
++ (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler;
 
 + (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
 
@@ -27,14 +27,17 @@
  */
 + (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(ETRUser *))onSuccessBlock;
 
-+ (void)joinRoom:(ETRRoom *)room showProgressInLabel:(UILabel *)label progressView:(UIProgressView *)progressView completionHandler:(void(^)(BOOL))completionHandler;
++ (void)joinRoom:(ETRRoom *)room
+showProgressInLabel:(UILabel *)label
+    progressView:(UIProgressView *)progressView
+completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
-+ (void)queryUserListInRoom:(ETRRoom *)room;
++ (void)getUserListInRoom:(ETRRoom *)room;
 
 + (void)sendLocalUserUpdate;
 
 + (void)sendAction:(ETRAction *)action;
 
-+ (void)sendImage:(UIImage *)image completionHandler:(void(^)(BOOL))completionHandler;
++ (void)sendImage:(UIImage *)image completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 @end

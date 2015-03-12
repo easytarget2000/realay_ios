@@ -19,11 +19,11 @@
 
 - (BOOL)saveContext;
 
-- (void)insertRoomFromDictionary:(NSDictionary *)JSONDictionary;
+- (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
+
+- (void)handleMessageInDictionary:(NSDictionary *)jsonDictionary;
 
 - (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
-
-- (ETRUser *)storeLocalUser;
 
 - (ETRUser *)copyUser:(ETRUser *)user;
 

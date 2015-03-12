@@ -34,6 +34,9 @@
 @synthesize roomEntity = _roomEntity;
 @synthesize userEntity = _userEntity;
 
+#pragma mark -
+#pragma mark Accessories
+
 + (ETRCoreDataHelper *)helper {
     ETRCoreDataHelper *coreDataBridge = [[ETRCoreDataHelper alloc] init];
     ETRAppDelegate *app = (ETRAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -44,6 +47,20 @@
     
     return coreDataBridge;
 }
+
+- (BOOL)saveContext {
+    // Save Record.
+    NSError *error;
+    if (![_managedObjectContext save:&error] || error) {
+        NSLog(@"ERROR: Could not save context: %@", error);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+#pragma mark -
+#pragma mark Rooms
 
 - (void)insertRoomFromDictionary:(NSDictionary *)JSONDict {
     if (!_managedObjectContext) return;
@@ -130,15 +147,15 @@
     return resultsController;
 }
 
-- (BOOL)saveContext {
-    // Save Record.
-    NSError *error;
-    if (![_managedObjectContext save:&error] || error) {
-        NSLog(@"ERROR: Could not save context: %@", error);
-        return true;
-    } else {
-        return false;
-    }
+- (ETRRoom *)roomWithRemoteID:(long)remoteID {
+    return nil;
+}
+
+#pragma mark -
+#pragma mark Actions
+
+- (void)handleMessageInDictionary:(NSDictionary *)jsonDictionary {
+    
 }
 
 #pragma mark -

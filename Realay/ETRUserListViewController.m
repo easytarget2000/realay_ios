@@ -8,7 +8,7 @@
 
 #import "ETRUserListViewController.h"
 
-#import "ETRChatViewController.h"
+#import "ETRConversationViewController.h"
 #import "ETRUser.h"
 #import "ETRAction.h"
 #import "ETRDetailsViewController.h"
@@ -187,7 +187,6 @@
 //    }
     
     [self performSegueWithIdentifier:kSegueToMap sender:self];
-    
 }
 
 - (IBAction)profileButtonPressed:(id)sender {
@@ -197,9 +196,8 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
     if ([[segue identifier] isEqualToString:kSegueToConversation]) {
-        ETRChatViewController *destination = [segue destinationViewController];
-        long conversationID = [sender tag];
-        [destination setConversationID:conversationID];
+        ETRConversationViewController *destination = [segue destinationViewController];
+        
     } else if([[segue identifier] isEqualToString:kSegueToProfile]) {
         // Just show my own user profile.
         

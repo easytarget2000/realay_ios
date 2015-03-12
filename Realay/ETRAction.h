@@ -14,6 +14,7 @@
 @interface ETRAction : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * remoteID;
+@property (nonatomic, retain) NSNumber * isPublic;
 @property (nonatomic, retain) NSDate * sentTime;
 @property (nonatomic, retain) NSNumber * code;
 @property (nonatomic, retain) NSNumber * imageID;

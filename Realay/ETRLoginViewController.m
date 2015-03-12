@@ -17,8 +17,8 @@
 
 #import "ETRSharedMacros.h"
 
-#define kSegueToChat        @"createProfileToChatSegue"
-#define kSegueToViewProfile @"loginToProfileSegue"
+static NSString *const joinSegue = @"loginToJoinSegue";
+static NSString *const profileSegue = @"loginToProfileSegue";
 
 @interface ETRLoginViewController()
 
@@ -84,7 +84,7 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:kSegueToViewProfile] && [sender isKindOfClass:[ETRUser class]]) {
+    if ([[segue identifier] isEqualToString:joinSegue] && [sender isKindOfClass:[ETRUser class]]) {
         ETRDetailsViewController *destination = [segue destinationViewController];
         [destination setUser:(ETRUser *) sender];
     }
@@ -109,7 +109,11 @@
         
         [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(ETRUser *localUser) {
             if (localUser) {
-                [self performSegueWithIdentifier:kSegueToViewProfile sender:localUser];
+                if (_doStartSessionOnFinish) {
+                    [self performSegueWithIdentifier:joinSegue sender:nil];
+                } else {
+                    [self performSegueWithIdentifier:profileSegue sender:localUser];
+                }
             } else {
                 [ETRAlertViewFactory showGeneralErrorAlert];
             }

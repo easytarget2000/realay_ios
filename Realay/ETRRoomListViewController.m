@@ -259,7 +259,15 @@
 #pragma mark - UITableViewDataSource
 
 - (void)updateRoomsTable {
-    [ETRServerAPIHelper updateRoomList];
+    [ETRServerAPIHelper updateRoomListWithCompletionHandler:^(BOOL didReceive) {
+        // If no Rooms were received, end refreshing immediately.
+        // Otherwise the Table update will end the refresh.
+        if (!didReceive) {
+            [[self refreshControl] endRefreshing];
+        }
+        
+        // TODO: End refreshing after a while.
+    }];
 }
 
 

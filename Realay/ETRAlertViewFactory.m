@@ -12,11 +12,22 @@
 
 @implementation ETRAlertViewFactory
 
++ (void)showGeneralErrorAlert {
+    NSString *title = @"Something went wrong.";
+    NSString *msg   = @"Sorry about that!";
+    
+    [[[UIAlertView alloc] initWithTitle:title
+                                message:msg
+                               delegate:nil
+                      cancelButtonTitle:@"OK"
+                      otherButtonTitles:nil] show];
+}
+
 /*
  Displays a dialog in an alert view that asks to confirm a block action.
  The delegate will handle the YES button click.
  */
-+(void)showBlockConfirmViewWithDelegate:(id)delegate {
++ (void)showBlockConfirmViewWithDelegate:(id)delegate {
     NSString *title = @"Do you really want to block this user?";
     NSString *msg   = @"Blocking keeps a person from writing you and hides their public messages";
     

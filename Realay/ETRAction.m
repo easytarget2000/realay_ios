@@ -26,6 +26,7 @@
 @implementation ETRAction
 
 @dynamic remoteID;
+@dynamic isPublic;
 @dynamic sentTime;
 @dynamic code;
 @dynamic messageContent;

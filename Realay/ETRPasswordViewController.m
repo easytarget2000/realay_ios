@@ -8,16 +8,19 @@
 
 #import "ETRPasswordViewController.h"
 
-#import "ETRChatViewController.h"
-#import "ETRLoginViewController.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRConversationViewController.h"
+#import "ETRLocalUserManager.h"
+#import "ETRLoginViewController.h"
+#import "ETRSession.h"
 
 #import "ETRSharedMacros.h"
 
 #define DEBUG_NO_PW_CHECK       1
 
-#define kSegueToChat            @"passwordToJoinSegue"
-#define kSegueToCreateProfile   @"passwordToCreateProfileSegue"
+static NSString *const joinSegueIdentifier = @"passwordToJoinSegue";
+
+static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileSegue";
 
 @implementation ETRPasswordViewController {
     UIActivityIndicatorView *_activityIndicator;
@@ -60,7 +63,7 @@
     if (![[ETRSession sharedManager] didBeginSession]) {
         // Show the password prompt, if the device location is inside the region.
         if ([ETRLocationHelper isInSessionRegion]) {
-           [self checkEnteredPassword];
+           [self verifyPasswordAndJoin];
         } else {
           [ETRAlertViewFactory showDistanceLeftAlertView];
         }
@@ -71,18 +74,12 @@
 
 // Press the OK button of the password prompt, when the return key is hit.
 - (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
-    [self checkEnteredPassword];
+    [self verifyPasswordAndJoin];
     return YES;
 }
 
 //TODO: Localization
-- (void)checkEnteredPassword {
-    
-    // Start the activity indicator.
-    [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
-                             toTarget:self
-                           withObject:nil];
-        
+- (void)verifyPasswordAndJoin {        
     // Hide the keyboard.
     [[self passwordTextField] resignFirstResponder];
     
@@ -91,7 +88,7 @@
     NSString *password = [[[ETRSession sharedManager] room] password];
     
 #ifdef DEBUG_NO_PW_CHECK
-//    typedPassword = password;
+    typedPassword = password;
 #endif
     
     if([typedPassword isEqualToString:password]) {
@@ -99,33 +96,20 @@
         // If the user is already registered, attempt to join the room.
         // Otherwise let the user create a profile first.
         if ([[ETRLocalUserManager sharedManager] userID] > 10) {
-            
-            [[ETRSession sharedManager] beginSession];
-            
-            if ([[ETRSession sharedManager] didBeginSession]) {
-                [self performSegueWithIdentifier:kSegueToChat sender:self];
-            } else {
-                //TODO: Error handling
-            }
+            [self performSegueWithIdentifier:joinSegueIdentifier sender:self];
         } else {
-            // There is no local user created yet.
-            [self performSegueWithIdentifier:kSegueToCreateProfile sender:self];
+            [self performSegueWithIdentifier:createProfileSegueIdentifier sender:self];
         }
     } else {
         [ETRAlertViewFactory showWrongPasswordAlertView];
     }
     
-    [_activityIndicator stopAnimating];
 }
 
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Tell the Create Profile controller to go to the chat when done.
-    if ([[segue identifier] isEqualToString:kSegueToChat]) {
-        ETRChatViewController *destination = [segue destinationViewController];
-        [destination setConversationID:kPublicReceiverID];
-    } else if ([[segue identifier] isEqualToString:kSegueToCreateProfile]) {
+    if ([[segue identifier] isEqualToString:createProfileSegueIdentifier]) {
         ETRLoginViewController *destination = [segue destinationViewController];
         [destination startSessionOnLogin];
     }

@@ -7,17 +7,23 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ETRSession.h"
 
-@interface ETRChatViewController : UIViewController
+@class ETRUser;
+
+@interface ETRConversationViewController : UIViewController
     <UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView        *messagesTableView;
+
 @property (weak, nonatomic) IBOutlet UITextField        *messageTextField;
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem    *leaveButton;
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem    *moreButton;
 
-@property (nonatomic) long conversationID;
+@property (strong, nonatomic) ETRUser *partner;
+
+@property (nonatomic) BOOL *isPublic;
 
 - (IBAction)sendButtonPressed:(id)sender;
 - (IBAction)leaveButtonPressed:(id)sender;
