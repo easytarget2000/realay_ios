@@ -28,26 +28,12 @@
 
 # pragma mark - UIViewController
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    if (!_partner) {
-        NSLog(@"ERROR: No chat object assigned to chat view controller.");
-        [[self navigationController] popViewControllerAnimated:NO];
-        return;
-    }
-    
-    // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSession sharedManager] room] && ![[ETRSession sharedManager] didBeginSession]) {
-        NSLog(@"ERROR: No Room object in manager or user did not join.");
-        [[self navigationController] popViewControllerAnimated:NO];
-        return;
-    }
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (![self verifySession]) {
+        return;
+    }
+     
     // Enable automatic scrolling.
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
     
@@ -56,6 +42,22 @@
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                   action:@selector(dismissKeyboard)];
     [[self view] addGestureRecognizer:tap];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (![self verifySession]) {
+        return;
+    }
+    
+    if (_isPublic) {
+        ETRRoom *sessionRoom;
+        sessionRoom = [[ETRSession sharedManager] room];
+        [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
+        [[self navigationController] setTitle:[sessionRoom title]];
+    } else {
+        
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -138,10 +140,29 @@
     [[ETRSession sharedManager] didReceiveMemoryWarning];
 }
 
+- (BOOL)verifySession {
+    if (!_isPublic && !_partner) {
+        NSLog(@"ERROR: Private Conversation requires a partner User.");
+        [[ETRSession sharedManager] endSession];
+        [[self navigationController] popToRootViewControllerAnimated:YES];
+        return NO;
+    }
+    
+    // Make sure the room manager meets the requirements for this view controller.
+    if (![[ETRSession sharedManager] room] && ![[ETRSession sharedManager] didBeginSession]) {
+        NSLog(@"ERROR: No Room object in manager or user did not join.");
+        [[ETRSession sharedManager] endSession];
+        [[self navigationController] popToRootViewControllerAnimated:YES];
+        return NO;
+    }
+    
+    return YES;
+}
+
 #pragma mark -
 #pragma mark Public/Private Conversation Definition
 
-- (void)setIsPublic:(BOOL *)isPublic {
+- (void)setIsPublic:(BOOL)isPublic {
     _partner = nil;
     _isPublic = isPublic;
 }
@@ -191,7 +212,7 @@
     [[self messageTextField] setText:@""];
 }
 
-- (IBAction)leaveButtonPressed:(id)sender {
+- (void)backButtonPressed:(id)sender {
     allowDisappear = YES;
     [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
 }

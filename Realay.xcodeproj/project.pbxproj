@@ -39,6 +39,7 @@
 		D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0795F8D1AA48E76009CCF73 /* ETRCoreDataHelper.m */; };
 		D0795F901AA4FB92009CCF73 /* lustgarten.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */; };
 		D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */; };
+		D0BB824E1AB2483B00276D5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0BB824D1AB2483B00276D5C /* Localizable.strings */; };
 		D0CF29DD185264210012AF7F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0CF29DC185264210012AF7F /* OpenGLES.framework */; };
 		D0D0CEED17E74EE70079017F /* ETRLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D0CEEC17E74EE70079017F /* ETRLoginViewController.m */; };
 		D0D1248E17FCB03100E37C45 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1248917FCB03100E37C45 /* libsqlite3.dylib */; };
@@ -141,6 +142,7 @@
 		D07BF08618E3588700C70873 /* ETRSharedMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRSharedMacros.h; sourceTree = "<group>"; };
 		D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageLoader.h; sourceTree = "<group>"; };
 		D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageLoader.m; sourceTree = "<group>"; };
+		D0BB824D1AB2483B00276D5C /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		D0CF29DC185264210012AF7F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		D0D0CEEB17E74EE70079017F /* ETRLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLoginViewController.h; sourceTree = "<group>"; };
 		D0D0CEEC17E74EE70079017F /* ETRLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLoginViewController.m; sourceTree = "<group>"; };
@@ -254,6 +256,8 @@
 		D01446B91A9F9BDF00748378 /* Small Elements */ = {
 			isa = PBXGroup;
 			children = (
+				D0EC763918EDAB5200CB0BAE /* ETRChatMessageCell.h */,
+				D0EC763A18EDAB5200CB0BAE /* ETRChatMessageCell.m */,
 				D01446BD1A9F9E0D00748378 /* ETRCircleView.h */,
 				D01446BE1A9F9E0D00748378 /* ETRCircleView.m */,
 				D01446C41A9FF04D00748378 /* ETRInformationCell.h */,
@@ -417,8 +421,6 @@
 		D0F39EC517F1141F00D60257 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				D0EC763918EDAB5200CB0BAE /* ETRChatMessageCell.h */,
-				D0EC763A18EDAB5200CB0BAE /* ETRChatMessageCell.m */,
 				D0DE0DD1184BAC7E0039DE0E /* ETRConversationViewController.h */,
 				D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */,
 				D00A16091AAA25BC0036B25B /* ETRDetailsViewController.h */,
@@ -442,6 +444,7 @@
 				D01446B71A9F78F500748378 /* Images.xcassets */,
 				D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */,
 				D01446B91A9F9BDF00748378 /* Small Elements */,
+				D0BB824D1AB2483B00276D5C /* Localizable.strings */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -523,6 +526,7 @@
 				D0795F901AA4FB92009CCF73 /* lustgarten.gpx in Resources */,
 				D0E1971F17E276DB00135B8C /* Default-568h@2x.png in Resources */,
 				D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */,
+				D0BB824E1AB2483B00276D5C /* Localizable.strings in Resources */,
 				D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */,
 				D0F2AB0118FFDA14008B7C32 /* empty.jpg in Resources */,
 			);

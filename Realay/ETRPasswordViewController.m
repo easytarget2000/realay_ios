@@ -78,7 +78,6 @@ static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileS
     return YES;
 }
 
-//TODO: Localization
 - (void)verifyPasswordAndJoin {        
     // Hide the keyboard.
     [[self passwordTextField] resignFirstResponder];

@@ -88,16 +88,15 @@
 
 - (NSString *)timeSpan {
     // TODO: Localization
-    NSString *ongoing = @"Ongoing";
     
     NSString *start;
     if (![self startTime]) {
-        start = ongoing;
+        start = NSLocalizedString(@"Ongoing", @"Event has started");
     } else {
         if ([[self startTime] compare:[NSDate date]] > 0) {
             start = [ETRChatObject readableStringForDate:[self startTime]];
         } else {
-            start = ongoing;
+            start = NSLocalizedString(@"Ongoing", @"Event has started");
         }
     }
     
@@ -105,7 +104,7 @@
     if (![self endDate]) {
         return start;
     } else {
-        NSString *until = @"until";
+        NSString *until = NSLocalizedString(@"until", @"From ... until ...");
         NSString *end = [ETRChatObject readableStringForDate:[self endDate]];
         return [NSString stringWithFormat:@"%@ %@ %@", start, until, end];
     }

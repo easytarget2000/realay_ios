@@ -12,8 +12,6 @@
 
 @implementation ETRKeyValueEditorCell
 
-// TODO: Translate.
-
 - (void)setUpStatusEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user {
     if (!user) {
         return;
@@ -21,7 +19,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeDefault];
-    [[self keyLabel] setText:@"status"];
+    [[self keyLabel] setText:NSLocalizedString(@"status", @"Status message")];
     
     NSString *statusMessage = [user status];
     if (statusMessage) {
@@ -38,7 +36,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypePhonePad];
-    [[self keyLabel] setText:@"phone"];
+    [[self keyLabel] setText:NSLocalizedString(@"phone", @"Phone number")];
     
     NSString *phoneNumber = [user phone];
     if (phoneNumber) {
@@ -56,7 +54,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeEmailAddress];
-    [[self keyLabel] setText:@"email"];
+    [[self keyLabel] setText:NSLocalizedString(@"email", @"Email address")];
     
     NSString *emailAddress = [user mail];
     if (emailAddress) {
@@ -73,7 +71,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeURL];
-    [[self keyLabel] setText:@"website"];
+    [[self keyLabel] setText:NSLocalizedString(@"website", @"Website URL")];
     
     NSString *websiteURL = [user website];
     if (websiteURL) {
@@ -91,7 +89,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:@"facebook id"];
+    [[self keyLabel] setText:NSLocalizedString(@"facebook_id", @"Facebook ID")];
     
     NSString *facebookName = [user facebook];
     if (facebookName) {
@@ -108,7 +106,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:@"instagram username"];
+    [[self keyLabel] setText:NSLocalizedString(@"instagram_name", @"Instagram username")];
     
     NSString *instagramName = [user instagram];
     if (instagramName) {
@@ -125,7 +123,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:@"twitter username"];
+    [[self keyLabel] setText:NSLocalizedString(@"twitter_name", @"Twitter username")];
     
     NSString *twitterName = [user twitter];
     if (twitterName) {

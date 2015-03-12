@@ -38,6 +38,14 @@ static NSString *const getActionsObjectTag = @"as";
 
 static NSMutableArray *connections;
 
+@interface ETRServerAPIHelper ()
+
+@property (strong, nonatomic) UILabel *progressLabel;
+
+@property (strong, nonatomic) UIProgressView *progressView;
+
+@end
+
 @implementation ETRServerAPIHelper
 
 + (BOOL)didStartConnection:(NSString *)connectionID {
@@ -119,18 +127,25 @@ static NSMutableArray *connections;
                                    }
                                    
                                    if ([status isEqualToString:successStatus]) {
+                                       // The call returned a success status code.
                                        if (!objectTag) {
                                            handler([NSNumber numberWithBool:YES]);
-                                           return;
                                        } else {
                                            id<NSObject> receivedObject = [JSONDict objectForKey:objectTag];
-                                           handler(receivedObject);
-                                           return;
+                                           if (!receivedObject) {
+                                               handler([NSNumber numberWithBool:YES]);
+                                           } else {
+                                               handler(receivedObject);
+                                           }
                                        }
                                        
+                                       return;
                                    }
                                }
                                
+                               // Something went wrong.
+                               // If an Object was expected, return nil.
+                               // If a boolean was expected, return NO.
                                if (!objectTag) {
                                    handler([NSNumber numberWithBool:NO]);
                                } else {
@@ -256,7 +271,7 @@ static NSMutableArray *connections;
 #pragma mark -
 #pragma mark InSession
 
-+ (void)joinRoom:(ETRRoom *)room
+- (void)joinRoom:(ETRRoom *)room
 showProgressInLabel:(UILabel *)label
     progressView:(UIProgressView *)progressView
 completionHandler:(void(^)(BOOL didSucceed))completionHandler {
@@ -265,6 +280,9 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
         return;
     }
     
+    _progressLabel = label;
+    _progressView = progressView;
+    
     ETRCoreDataHelper *dataBridge = [ETRCoreDataHelper helper];
     long roomID = [[room remoteID] longValue];
     long localUserID = [[ETRLocalUserManager sharedManager] userID];
@@ -272,28 +290,49 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     // Prepare the block that will be called at the end.
     // This will always call the
     void (^getMessagesCompletionHandler) (id<NSObject>) = ^(id<NSObject> receivedObject) {
-        [progressView setProgress:0.9f];
+        if ([[NSThread currentThread] isCancelled]) {
+            [NSThread exit];
+            return;
+        }
         
-        if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
-            
+//        [progressView setProgress:0.9f];
+        if (!receivedObject) {
+            completionHandler(NO);
+            return;
+        }
+        
+        
+        if ([receivedObject isKindOfClass:[NSArray class]]) {
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
                     [dataBridge handleMessageInDictionary:(NSDictionary *)jsonAction];
                 }
             }
-            completionHandler(YES);
-            return;
+
         }
         
-        completionHandler(NO);
+        if ([[NSThread currentThread] isCancelled]) {
+            [NSThread exit];
+        } else {
+            completionHandler([[ETRSession sharedManager] startSession]);
+        }
     };
     
     // Prepare the block that will be called at at the end of getting the User list.
     // This block starts the message loading.
     void (^getUsersCompletionHandler) (id<NSObject>) = ^(id<NSObject> receivedObject) {
-        if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
-            
+        if ([[NSThread currentThread] isCancelled]) {
+            [NSThread exit];
+            return;
+        }
+        
+        if (!receivedObject) {
+            completionHandler(NO);
+            return;
+        }
+        
+        if ([receivedObject isKindOfClass:[NSArray class]]) {
             NSArray *jsonUsers = (NSArray *) receivedObject;
             // TODO: Clean up "lastKnownRoom" column.
             for (NSObject *jsonUser in jsonUsers) {
@@ -306,31 +345,47 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
                 }
             }
             
-            [label setText:@"Loading messages."];
-            [progressView setProgress:0.8f];
+            // Update the UI to show the upcoming step.
+            [NSThread detachNewThreadSelector:@selector(updateProgress:)
+                                     toTarget:self
+                                   withObject:@(0.8f)];
+            [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
+                                     toTarget:self
+                                   withObject:@"Loading messages..."];
+            
             NSString *getActionsFormat = @"room_id=%ld&user_id=%ld&initial=1&blocked=%@";
-            NSString *blockedIDs = "";
+            NSString *blockedIDs = @"0";
             // TODO: Add IDs of blocked Users.
+            NSString *getActionsBody;
             getActionsBody = [NSString stringWithFormat:getActionsFormat, roomID, localUserID, blockedIDs];
             [ETRServerAPIHelper performAPICall:getActionsAPICall
                                       POSTbody:getActionsBody
                                  successStatus:getActionsSuccessStatus
                                      objectTag:getActionsObjectTag
                              completionHandler:getMessagesCompletionHandler];
-            return;
         }
-        completionHandler(NO);
     };
     
     // Prepare the first block that will be called at the end of inserting the User into the Room.
     // This block starts loading the User list.
     void (^joinBlock) (id<NSObject>) = ^(id<NSObject> receivedObject) {
+        if ([[NSThread currentThread] isCancelled]) {
+            [NSThread exit];
+            return;
+        }
+        
         // Fetch a boolean from the received Object to see if the request did succeed.
         if (receivedObject && [receivedObject isKindOfClass:[NSNumber class]]) {
             NSNumber *didSucceed = (NSNumber *) receivedObject;
             if ([didSucceed boolValue]) {
-                [label setText:@"Loading Users."];
-                [progressView setProgress:0.4f];
+                // Update the UI to show the upcoming step.
+                [NSThread detachNewThreadSelector:@selector(updateProgress:)
+                                         toTarget:self
+                                       withObject:@(0.8f)];
+                [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
+                                         toTarget:self
+                                       withObject:@"Loading Users..."];
+                
                 NSString *userListBody;
                 userListBody = [NSString stringWithFormat:@"room_id=%ld", roomID];
                 [ETRServerAPIHelper performAPICall:@"get_room_users"
@@ -347,6 +402,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     
     NSString *joinBody;
     joinBody = [NSString stringWithFormat:@"room_id=%ld&user_id=%ld", roomID, localUserID];
+    
     [ETRServerAPIHelper performAPICall:@"do_join_room"
                               POSTbody:joinBody
                          successStatus:@"INS_U_OK"
@@ -379,8 +435,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
         uuid = [NSString stringWithFormat:@"%@-%ld", [[UIDevice currentDevice] systemVersion], random()];
     }
     
-    // TODO: Localize.
-    NSString *status = @"Send me a RealHey!";
+    NSString *status = NSLocalizedString(@"send_me_realhey", @"Default status message");
     NSString *body = [NSString stringWithFormat:@"name=%@&device_id=%@&status=%@", name, uuid, status];
     
     [ETRServerAPIHelper performAPICall:@"get_local_user"
@@ -409,6 +464,24 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
 
 + (void)sendLocalUserUpdate {
     
+}
+
+#pragma mark -
+#pragma mark UI Updates
+
+- (void)updateProgressLabelText:(NSString *)text {
+    if (!_progressLabel) {
+        return;
+    }
+    
+    [_progressLabel setText:text];
+}
+
+- (void)updateProgress:(NSNumber *)progress {
+    if (!_progressView || !progress) {
+        return;
+    }
+    [_progressView setProgress:[progress floatValue]];
 }
 
 @end

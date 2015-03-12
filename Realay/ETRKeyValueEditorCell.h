@@ -29,6 +29,6 @@
 
 - (void)setUpTwitterNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user;
 
-- (NSString *)validatedFieldValueWithTag:(NSInteger)tag forUser:(ETRUser *)user;
+//- (NSString *)validatedFieldValueWithTag:(NSInteger)tag forUser:(ETRUser *)user;
 
 @end

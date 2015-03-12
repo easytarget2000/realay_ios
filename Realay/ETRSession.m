@@ -67,18 +67,18 @@ static ETRSession *sharedInstance = nil;
 
 #pragma mark - Session State
 
-- (void)beginSession {
+- (BOOL)startSession {
     //TODO: Handle errors
     if (![self room]) {
         NSLog(@"ERROR: No room object given before starting a session.");
-        return;
+        return NO;
     }
     
     if ([_room endDate]) {
         if ([[_room endDate] compare:[NSDate date]] != 1) {
             NSLog(@"ERROR: Room was already closed.");
             //TODO: Display error message.
-            return;
+            return NO;
         }
     }
     
@@ -91,14 +91,13 @@ static ETRSession *sharedInstance = nil;
     // Register for background fetches.
     [[UIApplication sharedApplication] setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
     
-    // Start the first tick.
-    [self tick];
-    
     // Consider the join successful and start the tick timer.
     _didBeginSession = YES;
     _updateTimer = [NSTimer scheduledTimerWithTimeInterval:kTickInterval
                                                 invocation:_invocation
                                                    repeats:YES];
+    
+    return YES;
 }
 
 - (void)endSession {
@@ -288,12 +287,11 @@ static ETRSession *sharedInstance = nil;
     NSLog(@"INFO: Left region %ld s ago.", leftRegionSeconds);
 #endif
     if (leftRegionSeconds < (-kTimeReturnKick * 60)) {
-        //TODO: Localization
         NSString *reason;
         if (_locationUpdateFails == 0) {
-            reason = @"Please do not leave the region of a Realay permanently.";
+            reason = NSLocalizedString(@"Do_not_leave", @"'Do not leave' warning");
         } else {
-            reason = @"Please make sure your device regularly updates your location.";
+            reason = NSLocalizedString(@"Regular_location_updates", @"'Location updates' advise");
         }
         
         // Show the alert and leave the room.
@@ -317,9 +315,9 @@ static ETRSession *sharedInstance = nil;
         
         // Display different warnings depending on the location manager state.
         if ([self locationUpdateFails]) {
-            [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:minutes];
+//            [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:minutes];
         } else {
-            [ETRAlertViewFactory showDidExitRegionAlertViewWithMinutes:minutes];
+//            [ETRAlertViewFactory showDidExitRegionAlertViewWithMinutes:minutes];
         }
         
         // A warning was displayed.
@@ -357,7 +355,7 @@ static ETRSession *sharedInstance = nil;
      */
     if (!_leftRegionDate && [self didBeginSession] && _numberOfLocWarnings < 1) {
         _leftRegionDate = [NSDate date];
-        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:kTimeReturnKick];
+//        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:kTimeReturnKick];
         _numberOfLocWarnings = 1;
     }
     

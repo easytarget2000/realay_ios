@@ -9,17 +9,15 @@
 #import "ETRAlertViewFactory.h"
 
 #import "ETRSession.h"
+#import "ETRUser.h"
 
 @implementation ETRAlertViewFactory
 
 + (void)showGeneralErrorAlert {
-    NSString *title = @"Something went wrong.";
-    NSString *msg   = @"Sorry about that!";
-    
-    [[[UIAlertView alloc] initWithTitle:title
-                                message:msg
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Something_wrong", @"Something wrong.")
+                                message:NSLocalizedString(@"Sorry", "General appology")
                                delegate:nil
-                      cancelButtonTitle:@"OK"
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
 
@@ -27,44 +25,53 @@
  Displays a dialog in an alert view that asks to confirm a block action.
  The delegate will handle the YES button click.
  */
-+ (void)showBlockConfirmViewWithDelegate:(id)delegate {
-    NSString *title = @"Do you really want to block this user?";
-    NSString *msg   = @"Blocking keeps a person from writing you and hides their public messages";
++ (void)showBlockConfirmViewForUser:(ETRUser *)user withDelegate:(id)delegate {
+    if (!user) {
+        return;
+    }
     
-    [[[UIAlertView alloc] initWithTitle:title
-                                message:msg
+    NSString *titleFormat = NSLocalizedString(@"Want_block", @"Want block %@?");
+    NSString *userName = [user name];
+    
+    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, userName]
+                                message:NSLocalizedString(@"Blocking_hides", @"Hidden user")
                                delegate:delegate
-                      cancelButtonTitle:@"No"
-                      otherButtonTitles:@"Yes", nil] show];
+                      cancelButtonTitle:NSLocalizedString(@"No", "Negative")
+                      otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil] show];
 }
 
 /*
  Displays an alert view that gives the reason why the user was kicked from the room.
  */
 + (void)showKickWithMessage:(NSString *)message {
-    NSString *title = @"You had to leave this Realay.";
-    
-    [[[UIAlertView alloc] initWithTitle:title
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Session_terminated", @"Got kicked")
                                 message:message
                                delegate:nil
-                      cancelButtonTitle:@"OK"
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
 
 /*
  Displays a warning in an alert view saying that the user left the session region.
  */
-+ (void)showDidExitRegionAlertViewWithMinutes:(NSInteger)minutes {
-    NSString *title = @"You have left the region of this Realay.";
++ (void)showLocationWarningWithKickDate:(NSDate *)kickDate {
+    if (!kickDate) {
+        return;
+    }
     
-    if (minutes < 0) minutes = -minutes;
-    NSString *msgFormat = @"Please return in the next %d minutes. Use the map for more information.";
-    NSString *msg = [NSString stringWithFormat:msgFormat, minutes];
+    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
+    if (!sessionRoom) {
+        return;
+    }
     
-    [[[UIAlertView alloc] initWithTitle:title
-                                message:msg
+    NSString *titleFormat = NSLocalizedString(@"Left_region", @"Left region of Realay %@");
+    NSString *roomTitle = [sessionRoom title];
+    NSString *msgFormat = NSLocalizedString(@"Return_to_area", @"Return until %@");
+    
+    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, roomTitle]
+                                message:[NSString stringWithFormat:msgFormat, kickDate]
                                delegate:nil
-                      cancelButtonTitle:@"OK"
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
 
@@ -73,33 +80,34 @@
  The delegate will handle the OK button click.
  */
 + (void)showLeaveConfirmViewWithDelegate:(id)delegate {
-    NSString *title = @"Do you want to leave this Realay?";
-    [[[UIAlertView alloc] initWithTitle:title
+    NSString *titleFormat = NSLocalizedString(@"Want_leave", @"Want to leave %@?");
+    
+    NSString *roomTitle;
+    if ([[ETRSession sharedManager] room]) {
+        roomTitle = [[[ETRSession sharedManager] room] title];
+    } else {
+        roomTitle = @"";
+    }
+    
+    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, roomTitle]
                                 message:nil
                                delegate:delegate
-                      cancelButtonTitle:@"No"
-                      otherButtonTitles:@"Yes", nil] show];
+                      cancelButtonTitle:NSLocalizedString(@"No", "Negative")
+                      otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil] show];
 }
 
 /*
  Displays a warning in an alert view saying that the device location cannot be found.
  */
 + (void)showNoLocationAlertViewWithMinutes:(NSInteger)minutes {
-    NSString *title = @"Your location cannot be found.";
     NSString *msg;
     
-    if (minutes != 0) {
-        if (minutes < 0) minutes = -minutes;
-        NSString *msgFormat = @"Please make sure your device finds your location in the next %d minutes.";
-        msg = [NSString stringWithFormat:msgFormat, minutes];
-    } else {
-        msg = @"Please make sure your device finds your location.";
-    }
+    // TODO: Use different way of handling unknown locations.
 
-    [[[UIAlertView alloc] initWithTitle:title
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Unknown_location", @"Unknown device location")
                                 message:msg
                                delegate:nil
-                      cancelButtonTitle:@"OK"
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
 
@@ -113,13 +121,14 @@
         return;
     }
     
-    NSInteger distance = [sessionRoom distance];
-    NSString *title = [NSString stringWithFormat:@"You are currently %ld away", distance];
-    NSString *message = @"Before you can join, you need to be within the radius of this place.\n\nThecircle on the map displays the area of a Realay.";
+    NSString *distanceFormat;
+    distanceFormat = NSLocalizedString(@"Current_distance", @"Current distance: %@");
+    NSString *title = [NSString stringWithFormat:distanceFormat, [sessionRoom formattedDistance]];
+    NSString *message = NSLocalizedString(@"Before_join", @"Before you can join, enter");
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
                                delegate:nil
-                      cancelButtonTitle:@"OK"
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
 
@@ -127,27 +136,17 @@
  Displays an alert view that says the typed name is not long enough to be used.
  */
 + (void)showTypedNameTooShortAlert {
-    // Show "too short" alert.
-    // TODO: Localization
-    NSString *title = @"Entered name too short";
-    NSString *message = @"Please use a name that is a little longer.";
-    NSString *alertOk = @"OK";
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:title
-                                                   message:message
-                                                  delegate:nil
-                                         cancelButtonTitle:alertOk
-                                         otherButtonTitles:nil];
-    [alert show];
+    // TODO: Replace with warning icon.
 }
 
 /*
  Displays an alert view that says the entered room password is wrong.
  */
 + (void)showWrongPasswordAlertView {
-    [[[UIAlertView alloc] initWithTitle:@"Wrong Password"
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Wrong_Password", "Incorrect password")
                                 message:nil
                                delegate:nil
-                      cancelButtonTitle:@"OK"
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
 

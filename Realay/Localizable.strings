@@ -1,0 +1,87 @@
+/* 
+  Localizable.strings
+  Realay
+
+  Created by Michel on 12/03/15.
+  Copyright (c) 2015 Easy Target. All rights reserved.
+*/
+
+"Before_join" = "Before you can join, you need to be within the radius of this place.\n\nThe circle on the map displays the area of a Realay.";
+
+"Block_User" = "Block User";
+
+"Blocking_hides" = "This person and their messages will be hidden from you.";
+
+"Cancel" = "Cancel";
+
+"Current_distance" = "You are currently %@ away.";
+
+"Do_not_leave" = "Please do not leave the region of a Realay permanently.";
+
+"email" = "email";
+
+"facebook_id" = "facebook id";
+
+"instagram_name" = "instagram username";
+
+"Join" = "Join";
+
+"location" = "location";
+
+"No" = "No";
+
+"No_private_conversations" = "You dot not have any private conversations yet. Select a User to start one.";
+
+"OK" = "OK";
+
+"Ongoing" = "Ongoing";
+
+"phone" = "phone";
+
+"Return_to_area" = "Please make sure that your location can be estimated and return until %@.";
+
+"Regular_location_updates" = "Please make sure that your device regularly updates your location.";
+
+"send_me_realhey" = "Send me a RealHey!";
+
+"Session_terminated" = "Your session has been terminated.";
+
+"size" = "size";
+
+"Something_wrong" = "Something went wrong.";
+
+"Sorry" = "Sorry about that.";
+
+"status" = "status";
+
+"Today" = "Today";
+
+"twitter_name" = "twitter username";
+
+"Unknown_location" = "Your location is unknown.";
+
+"until" = "until";
+
+"users_online" = "users currently online";
+
+"Want_block" = "Do you want to block %@?";
+
+"Want_leave" = "Do you want to leave %@?";
+
+"website" = "website";
+
+"Wrong_Password" = "Wrong Password";
+
+"Yes" = "Yes";
+
+/*
+ Unit symbols
+ */
+
+"unit_metre" = "m";
+
+"unit_kilometre" = "km";
+
+"unit_yard" = "yd";
+
+"unit_mile" = "mi";

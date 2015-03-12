@@ -31,6 +31,8 @@
 
 #define kProfilePlaceholderImageName    @"PlaceholderProfileW"
 
+//#define NSLocalizedString(key, comment) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
+
 @interface ETRDetailsViewController ()
 
 @property (nonatomic) NSInteger phoneRow;
@@ -85,7 +87,7 @@
         if ([[ETRSession sharedManager] didBeginSession]) {
             [self setBarButton:nil];
         } else {
-            [[self barButton] setTitle:@"Join"];
+            [[self barButton] setTitle:NSLocalizedString(@"Join", @"Join")];
         }
     }
 }
@@ -182,8 +184,6 @@
     return NO;
 }
 
-// TODO: Translate.
-
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -226,7 +226,7 @@
     
     switch ([indexPath row]) {
         case 1: {
-            [[cell keyLabel] setText:@"address"];
+            [[cell keyLabel] setText:NSLocalizedString(@"location", @"Room address")];
             NSString *address = [_room address];
             if (!address) {
                 address = [_room formattedCoordinates];
@@ -236,19 +236,21 @@
         }
             
         case 2: {
-            [[cell keyLabel] setText:@"size"];
+            [[cell keyLabel] setText:NSLocalizedString(@"size", @"Room Size")];
             [[cell valueLabel] setText:[_room formattedSize]];
             break;
         }
             
         case 3: {
-            [[cell keyLabel] setText:@"available"];
+            [[cell keyLabel] setText:@""];
             [[cell valueLabel] setText:[_room timeSpan]];
             break;
         }
             
         case 4: {
-            [[cell keyLabel] setText:@"users currently online"];
+            NSString *labelText;
+            labelText = NSLocalizedString(@"users_online", @"Number of Users");
+            [[cell keyLabel] setText:labelText];
             [[cell valueLabel] setText:[_room userCount]];
             break;
         }
@@ -276,7 +278,7 @@
             blockButtonCell = [tableView dequeueReusableCellWithIdentifier:kButtonCellIdentifier
                                                               forIndexPath:indexPath];
             
-            NSString *blockUser = @"Block user";
+            NSString *blockUser = NSLocalizedString(@"Block_User", @"Block User");
             [[blockButtonCell buttonLabel] setText:blockUser];
             
             return blockButtonCell;
@@ -298,28 +300,29 @@
                                                 forIndexPath:indexPath];
     
     if (row == 1) {     // Configure the status cell.
-        NSString *statusKey = @"status";
+        NSString *statusKey;
+        statusKey = NSLocalizedString(@"status", @"Status message");
         [[valueCell keyLabel] setText:statusKey];
         [[valueCell valueLabel] setText:[_user status]];
         return valueCell;
     }
     
     if (row == _phoneRow && [_user phone] && [[_user phone] length]) {
-        NSString *phoneKey = @"phone number";
+        NSString *phoneKey = NSLocalizedString(@"phone", @"Phone number");
         [[valueCell keyLabel] setText:phoneKey];
         [[valueCell valueLabel] setText:[_user phone]];
         return valueCell;
     }
     
     if (row == _mailRow && [_user mail] && [[_user mail] length]) {
-        NSString *emailKey = @"email";
+        NSString *emailKey = NSLocalizedString(@"email", @"Email address");
         [[valueCell keyLabel] setText:emailKey];
         [[valueCell valueLabel] setText:[_user mail]];
         return valueCell;
     }
     
     if (row == _mailRow && [_user website] && [[_user website] length]) {
-        NSString *websiteKey = @"website";
+        NSString *websiteKey = NSLocalizedString(@"website", "Website URL");
         [[valueCell keyLabel] setText:websiteKey];
         [[valueCell valueLabel] setText:[_user website]];
         return valueCell;

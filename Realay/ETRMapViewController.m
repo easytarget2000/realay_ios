@@ -217,7 +217,7 @@
         [self performSegueWithIdentifier:kSegueToNext sender:self];
     } else if ([[ETRSession sharedManager] locationUpdateFails]){
         // The user's location is unknown.
-        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:0];
+//        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:0];
     } else {
         // The user is outside of the radius.
         [ETRAlertViewFactory showDistanceLeftAlertView];

@@ -53,8 +53,8 @@
         // Write "today" if it is the current date.
         if ([givenComponents month] == [currentCompontents month]
             && [givenComponents day] == [currentCompontents day]) {
-            //TODO: Localization
-            [returnString appendString:@"Today "];
+            [returnString appendString:NSLocalizedString(@"Today", @"Today")];
+            [returnString appendString:@", "];
             [timeFormat setDateFormat:@"HH:mm"];
         } else {
             // The DEFAULT format is 01 Jan 12:59.
@@ -75,21 +75,21 @@
 + (NSString *)formattedLength:(NSInteger)metres {
     if ([[[NSLocale systemLocale] objectForKey:NSLocaleUsesMetricSystem] boolValue]) {
         if (metres < kMaxShowMetre) {
-            NSString *unit = @"m";
+            NSString *unit = NSLocalizedString(@"unit_metre", @"m");
             return [NSString stringWithFormat:@"%ld %@", metres, unit];
         } else {
-            NSString *unit = @"km";
+            NSString *unit = NSLocalizedString(@"unit_kilometre", @"km");
             return [NSString stringWithFormat:@"%d %@", (int) (metres / 1000), unit];
         }
     } else {
         if (metres < kMaxShowYard) {
-            NSString *unit = @"yd";
+            NSString *unit = NSLocalizedString(@"unit_yard", @"yd");
             return [NSString stringWithFormat:@"%d %@", (int) (metres * kYardInMetre), unit];
         } else if (metres < kMaxShowDecimalMile) {
-            NSString *unit = @"mi";
+            NSString *unit = NSLocalizedString(@"unit_mile", @"mi");
             return [NSString stringWithFormat:@"%.1f %@", (metres * kMileInMetre), unit];
         } else {
-            NSString *unit = @"mi";
+            NSString *unit = NSLocalizedString(@"unit_mile", @"mi");
             return [NSString stringWithFormat:@"%d %@", (int) (metres * kMileInMetre), unit];
         }
     }

@@ -138,7 +138,7 @@
 /*
  Become a member of a room and start a new session.
  */
-- (void)beginSession;
+- (BOOL)startSession;
 
 /*
  Remove user from the room, reset attributes and return to the room list.

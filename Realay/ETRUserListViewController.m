@@ -95,8 +95,7 @@
         if ([[[ETRSession sharedManager] sortedChatKeys] count] < 1) {
             // No conversation started yet.
             
-            //TODO: Localization
-            NSString *noConvos = @"No private conversations. Select a user to start one.";
+            NSString *noConvos = NSLocalizedString(@"No_private_conversations", @"No PMs yet");
             [[cell textLabel] setText:noConvos];
             [[cell textLabel] setAdjustsFontSizeToFitWidth:YES];
             

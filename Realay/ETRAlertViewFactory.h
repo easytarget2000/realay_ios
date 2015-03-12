@@ -8,13 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class ETRUser;
+
 @interface ETRAlertViewFactory : NSObject
 
 /*
  Displays a dialog in an alert view that asks to confirm a block action.
  The delegate will handle the YES button click.
  */
-+(void)showBlockConfirmViewWithDelegate:(id)delegate;
++ (void)showBlockConfirmViewForUser:(ETRUser *)user withDelegate:(id)delegate;
 
 /*
  Displays an alert view that gives the reason why the user was kicked from the room.
@@ -37,7 +39,7 @@
  Displays a warning in an alert view saying that the device location cannot be found
  and how many minutes are left.
  */
-+ (void)showNoLocationAlertViewWithMinutes:(NSInteger)minutes;
++ (void)showLocationWarningWithKickDate:(NSDate *)kickDate;
 
 /*
  Displays an alert view that says the user cannot join the room

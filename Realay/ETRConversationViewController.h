@@ -17,16 +17,13 @@
 
 @property (weak, nonatomic) IBOutlet UITextField        *messageTextField;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem    *leaveButton;
-
 @property (weak, nonatomic) IBOutlet UIBarButtonItem    *moreButton;
 
 @property (strong, nonatomic) ETRUser *partner;
 
-@property (nonatomic) BOOL *isPublic;
+@property (nonatomic) BOOL isPublic;
 
 - (IBAction)sendButtonPressed:(id)sender;
-- (IBAction)leaveButtonPressed:(id)sender;
 - (IBAction)moreButtonPressed:(id)sender;
 
 @end
