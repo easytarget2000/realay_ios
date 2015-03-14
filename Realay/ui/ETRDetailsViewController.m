@@ -9,14 +9,16 @@
 #import "ETRDetailsViewController.h"
 
 #import "ETRAlertViewFactory.h"
-#import "ETRLocalUserManager.h"
 #import "ETRHeaderCell.h"
 #import "ETRImageLoader.h"
+#import "ETRKeyValueCell.h"
+#import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
 #import "ETRProfileButtonCell.h"
 #import "ETRProfileSocialCell.h"
-#import "ETRKeyValueCell.h"
-#import "ETRSession.h"
+#import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
+#import "ETRSession.h"
 #import "ETRUser.h"
 
 #import "ETRColorMacros.h"
@@ -237,13 +239,17 @@
             
         case 2: {
             [[cell keyLabel] setText:NSLocalizedString(@"size", @"Room Size")];
-            [[cell valueLabel] setText:[_room formattedSize]];
+            NSString *size;
+            size = [ETRReadabilityHelper formattedLength:[_room radius]];
+            [[cell valueLabel] setText:size];
             break;
         }
             
         case 3: {
             [[cell keyLabel] setText:@""];
-            [[cell valueLabel] setText:[_room timeSpan]];
+            NSString *timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startTime]
+                                                                    endDate:[_room endDate]];
+            [[cell valueLabel] setText:timeSpan];
             break;
         }
             
@@ -336,7 +342,7 @@
 - (IBAction)barButtonPressed:(id)sender {
     if (_room) {
         if (![[ETRSession sharedManager] didBeginSession]) {
-            if ([ETRLocationHelper isInSessionRegion]) {
+            if ([ETRLocationManager isInSessionRegion]) {
                 [self performSegueWithIdentifier:kPasswordSegue sender:nil];
             } else {
                 [ETRAlertViewFactory showDistanceLeftAlertView];

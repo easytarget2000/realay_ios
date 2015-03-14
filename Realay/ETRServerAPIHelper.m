@@ -13,6 +13,8 @@
 #import "ETRImageLoader.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
+#import "ETRRoom.h"
 #import "ETRSession.h"
 #import "ETRUser.h"
 
@@ -155,9 +157,10 @@ static NSMutableArray *connections;
 }
 
 + (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler {
-    CLLocation *location = [ETRLocationHelper location];
+    CLLocation *location = [ETRLocationManager location];
     if (!location) {
         NSLog(@"WARNING: Not updating Room list because Location is unknown.");
+        completionHandler(NO);
         return;
     }
     
@@ -179,12 +182,11 @@ static NSMutableArray *connections;
                      completionHandler:^(NSObject *receivedObject) {
                          // Check if an array of rooms was returned by this API call.
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
-                             ETRCoreDataHelper *dataBridge = [ETRCoreDataHelper helper];
                              
                              NSArray *jsonRooms = (NSArray *) receivedObject;
                              for (NSObject *jsonRoom in jsonRooms) {
                                  if ([jsonRoom isKindOfClass:[NSDictionary class]]) {
-                                     [dataBridge insertRoomFromDictionary:(NSDictionary *) jsonRoom];
+                                     [ETRCoreDataHelper insertRoomFromDictionary:(NSDictionary *) jsonRoom];
                                  }
                              }
                              if (completionHandler) {
@@ -283,7 +285,6 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     _progressLabel = label;
     _progressView = progressView;
     
-    ETRCoreDataHelper *dataBridge = [ETRCoreDataHelper helper];
     long roomID = [[room remoteID] longValue];
     long localUserID = [[ETRLocalUserManager sharedManager] userID];
     
@@ -306,7 +307,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    [dataBridge handleMessageInDictionary:(NSDictionary *)jsonAction];
+                    [ETRCoreDataHelper handleMessageInDictionary:(NSDictionary *)jsonAction];
                 }
             }
 
@@ -338,7 +339,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             for (NSObject *jsonUser in jsonUsers) {
                 if ([jsonUser isKindOfClass:[NSDictionary class]]) {
                     ETRUser *sessionUser;
-                    sessionUser = [dataBridge insertUserFromDictionary:(NSDictionary *) jsonUser];
+                    sessionUser = [ETRCoreDataHelper insertUserFromDictionary:(NSDictionary *)jsonUser];
                     if (sessionUser) {
                         [sessionUser setLastKnownRoom:room];
                     }
@@ -426,7 +427,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
  that matches the combination of the given name and device ID;
  stores the new User object through the Local User Manager when finished
  */
-+ (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(ETRUser *))onSuccessBlock {
++ (void)loginUserWithName:(NSString *)name completionHandler:(void(^)(ETRUser *))onSuccessBlock {
     NSString* uuid;
     if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
         // IOS 6 new Unique Identifier implementation, IFA
@@ -447,7 +448,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
                              NSDictionary *jsonDictionary;
                              jsonDictionary = (NSDictionary *) receivedObject;
                              ETRUser *localUser;
-                             localUser = [[ETRCoreDataHelper helper] insertUserFromDictionary:jsonDictionary];
+                             localUser = [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
                              
                              if (localUser) {
                                  [[ETRLocalUserManager sharedManager] setUser:localUser];

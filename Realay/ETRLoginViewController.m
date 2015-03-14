@@ -22,7 +22,6 @@ static NSString *const profileSegue = @"loginToProfileSegue";
 
 @interface ETRLoginViewController()
 
-@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic) BOOL doShowProfileOnFinish;
 @property (nonatomic) BOOL doStartSessionOnFinish;
 
@@ -34,27 +33,14 @@ static NSString *const profileSegue = @"loginToProfileSegue";
 
 #pragma mark - UIViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [[self nameTextField] setDelegate:self];
-    
-    // Show an acitvity indicator while performing DB actions.
-    _activityIndicator = [[UIActivityIndicatorView alloc]
-                                                  initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [[self view] addSubview:_activityIndicator];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [[self nameTextField] setText:@""];
     [super viewWillAppear:animated];
     
     // Directly pop the controller if there is already a valid local user stored.
     if ([[ETRLocalUserManager sharedManager] user]) {
-#ifdef DEBUG
-        NSLog(@"WARNING: Skipping Create Profile. Local user is %@.",
-              [[[ETRLocalUserManager sharedManager] user] name]);
-#endif
-        [[self navigationController] popViewControllerAnimated:NO];
+        NSLog(@"WARNING: Skipping Create Profile. Local user has been set up.");
+        [[self navigationController] popToRootViewControllerAnimated:YES];
     }
 }
 
@@ -99,7 +85,7 @@ static NSString *const profileSegue = @"loginToProfileSegue";
     } else {
         // The typed name is long enough.
         
-        // Show an activity indicator during the DB actions.
+        // Start the ProgressView.
         [NSThread detachNewThreadSelector:@selector(threadStartAnimating:)
                                  toTarget:self
                                withObject:nil];
@@ -107,7 +93,8 @@ static NSString *const profileSegue = @"loginToProfileSegue";
         // Hide the keyboard.
         [[self nameTextField] resignFirstResponder];
         
-        [ETRServerAPIHelper loginUserWithName:typedName onSuccessBlock:^(ETRUser *localUser) {
+        [ETRServerAPIHelper loginUserWithName:typedName
+                            completionHandler:^(ETRUser *localUser) {
             if (localUser) {
                 if (_doStartSessionOnFinish) {
                     [self performSegueWithIdentifier:joinSegue sender:nil];

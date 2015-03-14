@@ -10,4 +10,6 @@
 
 @interface ETRActionManager : NSObject
 
++ (void)setForegroundConversationID:(long)remotePartnerID;
+
 @end

@@ -49,7 +49,7 @@
                                                object:nil];
     
     ETRUser *localUser = [[ETRLocalUserManager sharedManager] user];
-    _localUserCopy = [[ETRCoreDataHelper helper] copyUser:localUser];
+    _localUserCopy = [ETRCoreDataHelper copyUser:localUser];
     
     _didChangeAttribute = NO;
 }
@@ -388,7 +388,7 @@
         [localUser setTwitter:[_localUserCopy twitter]];
     }
     
-    if (doSendUpdate && [[ETRCoreDataHelper helper] saveContext]) {
+    if (doSendUpdate && [ETRCoreDataHelper saveContext]) {
         // TODO: Add Action to query with Action Code "User update".
         // This will fetch the local User object and upload it to the server.
     }

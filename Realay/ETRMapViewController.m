@@ -13,7 +13,9 @@
 
 #import "ETRAlertViewFactory.h"
 #import "ETRDetailsViewController.h"
+#import "ETRLocationManager.h"
 #import "ETRPasswordViewController.h"
+#import "ETRRoom.h"
 #import "ETRSession.h"
 
 #import "ETRColorMacros.h"
@@ -36,7 +38,7 @@
     [super viewWillAppear:animated];
     
     // Basic GUI setup:
-    [self setTitle:[[[ETRSession sharedManager] room] title]];
+    [self setTitle:[[ETRSession sessionRoom] title]];
     [[self navigationController] setToolbarHidden:NO animated:YES];
     
     // Hide the join button if the user is already in this room.
@@ -143,13 +145,13 @@
 - (GMSCameraPosition *)adjustedCamera {
     
     // Get data from the session manager.
-    CLLocation *currentLocation = [ETRLocationHelper location];
+    CLLocation *currentLocation = [ETRLocationManager location];
     ETRRoom *room = [[ETRSession sharedManager] room];
     
     // Decide which camera to show.
     if (currentLocation) {
         
-        if ([ETRLocationHelper isInSessionRegion]) {
+        if ([ETRLocationManager isInSessionRegion]) {
             // Zoom in on the region, not the user, if the user is inside.
             
             // TODO: Determine a useful zoom level for different region radii.
@@ -212,7 +214,7 @@
     // Only perform a join action, if the user did not join yet.
     if ([[ETRSession sharedManager] didBeginSession]) return;
         
-    if ([ETRLocationHelper isInSessionRegion]) {
+    if ([ETRLocationManager isInSessionRegion]) {
         // Show the password prompt, if the device location is inside the region.
         [self performSegueWithIdentifier:kSegueToNext sender:self];
     } else if ([[ETRSession sharedManager] locationUpdateFails]){

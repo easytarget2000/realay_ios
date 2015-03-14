@@ -6,26 +6,23 @@
 //  Copyright (c) 2014 Easy Target. All rights reserved.
 //
 
-#import "ETRLocationHelper.h"
+#import "ETRLocationManager.h"
 
+#import "ETRAlertViewFactory.h"
+#import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRSession.h"
-#import "ETRAlertViewFactory.h"
 
-#define kMethodEnumDist 0
-#define kMethodEnumAccu 1
-#define kMethodEnumRadi 2
+static ETRLocationManager *sharedInstance;
 
-static ETRLocationHelper *sharedInstance;
-
-@interface ETRLocationHelper()
+@interface ETRLocationManager()
 
 @property (nonatomic) BOOL doUpdateFast;
 @property (atomic, readwrite) BOOL didAuthorize;
 
 @end
 
-@implementation ETRLocationHelper
+@implementation ETRLocationManager
 
 @synthesize didAuthorize = _didAuthorize;
 @synthesize doUpdateFast = _doUpdateFast;
@@ -34,25 +31,21 @@ static ETRLocationHelper *sharedInstance;
     static BOOL initialized = NO;
     if (!initialized) {
         initialized = YES;
-        sharedInstance = [[ETRLocationHelper alloc] init];
+        sharedInstance = [[ETRLocationManager alloc] init];
     }
 }
 
-+ (ETRLocationHelper *)sharedManager {
++ (ETRLocationManager *)sharedManager {
     return sharedInstance;
 }
 
 + (CLLocation *)location {
-    return [sharedInstance location];
+    return [[ETRLocationManager sharedManager] location];
 }
 
 + (BOOL)isInSessionRegion {
     ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
-    if (!sessionRoom) {
-        return NO;
-    } else {
-        return [sessionRoom distance] < 10;
-    }
+    return [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom] < 10;
 }
 
 - (void)launch {    
@@ -85,6 +78,11 @@ static ETRLocationHelper *sharedInstance;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    if (!locations || ![locations count]) {
+        NSLog(@"ERROR: Received empty Locations Array.");
+        return;
+    }
+    
     CLLocation *newLocation = locations[0];
     
     NSLog(@"didUpdateLocations: Interval: %g", [[[self location] timestamp] timeIntervalSinceDate:[newLocation timestamp]]);
@@ -97,20 +95,32 @@ static ETRLocationHelper *sharedInstance;
 /*
  Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
  and the current device location;
- values below 10 are handled as 0 to avoid unnecessary precision
+ Uses the server API / query distance value, if the device location is unknown;
+ Values below 10 are handled as 0 to avoid unnecessary precision
  */
 - (NSInteger)distanceToRoom:(ETRRoom *)room {
-    if (!room) return 2644;
-    if (![self location]) return 2744;
+    if (!room) {
+        return 7715;
+    }
+    
+    NSInteger distanceToCenter;
+    if (![self location]) {
+        distanceToCenter = [[room queryDistance] integerValue];
+    } else {
+        distanceToCenter = [[self location] distanceFromLocation:[room location]];
+    }
+    
+    NSInteger distanceToRadius = distanceToCenter - [[room radius] integerValue];
+    if (distanceToRadius < 10) {
+        return 0;
+    } else {
+        return distanceToRadius;
+    }
     
     NSInteger value = [[self location] distanceFromLocation:[room location]];
     value -= [[room radius] integerValue];
     if (value < 10) return 0;
     else return value;
-}
-
-- (NSString *)formattedDistanceToRoom:(ETRRoom *)room {
-    return [ETRChatObject formattedLength:[self distanceToRoom:room]];
 }
 
 @end

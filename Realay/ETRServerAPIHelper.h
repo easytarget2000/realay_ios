@@ -25,7 +25,7 @@
  that matches the combination of the given name and device ID;
  stores the new User object through the Local User Manager when finished
  */
-+ (void)loginUserWithName:(NSString *)name onSuccessBlock:(void(^)(ETRUser *))onSuccessBlock;
++ (void)loginUserWithName:(NSString *)name completionHandler:(void(^)(ETRUser *))onSuccessBlock;
 
 - (void)joinRoom:(ETRRoom *)room
 showProgressInLabel:(UILabel *)label

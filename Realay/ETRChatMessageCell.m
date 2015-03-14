@@ -63,7 +63,8 @@
     // Calculate the size of the combined labels.
     BOOL isMyMessage = [message isSentMessage];
     BOOL doShowSender = !isMyMessage && [message isPublicMessage];
-    CGSize innerSize = [message frameSizeForWidth:width hasNameLabel:doShowSender];
+    CGSize innerSize;
+//    innerSize = [message frameSizeForWidth:width hasNameLabel:doShowSender];
     
     // Add the margins to the labels to get the size of the bubble frame.
     CGSize bubbleSize = CGSizeMake(kMarginInner + innerSize.width + kMarginInner,

@@ -10,13 +10,15 @@
 
 @class ETRRoom;
 
-@interface ETRLocationHelper : CLLocationManager <CLLocationManagerDelegate>
+@interface ETRLocationManager : CLLocationManager <CLLocationManagerDelegate>
 
-+ (ETRLocationHelper *)sharedManager;
++ (ETRLocationManager *)sharedManager;
 
 + (CLLocation *)location;
 
 + (BOOL)isInSessionRegion;
+
+- (NSInteger)distanceToRoom:(ETRRoom *)room;
 
 @property (atomic, readonly) BOOL didAuthorize;
 

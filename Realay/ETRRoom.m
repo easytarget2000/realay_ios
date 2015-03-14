@@ -8,7 +8,7 @@
 
 #import "ETRRoom.h"
 
-#import "ETRLocationHelper.h"
+#import "ETRLocationManager.h"
 #import "ETRUser.h"
 
 @interface ETRRoom()
@@ -47,67 +47,6 @@
                    [[self longitude] floatValue]];
     [self setAddress:coordinates];
     return coordinates;
-}
-
-/*
- Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
- and the current device location;
- Takes current device location from the LocationManager;
- Uses the server API / query distance value, if the device location is unknown;
- Values below 10 are handled as 0 to avoid unnecessary precision
- */
-- (NSInteger)distance; {
-    CLLocation *roomLocation = [self location];
-    if (!roomLocation) {
-        return 8424;
-    }
-    
-    CLLocation *deviceLocation = [ETRLocationHelper location];
-    NSInteger distanceToCenter;
-    if (deviceLocation) {
-        distanceToCenter = [deviceLocation distanceFromLocation:roomLocation];
-    } else {
-        distanceToCenter = [[self queryDistance] integerValue];
-    }
-    
-    NSInteger distanceToRadius = distanceToCenter - [[self radius] integerValue];
-    if (distanceToRadius < 10) {
-        return 0;
-    } else {
-        return distanceToRadius;
-    }
-}
-
-- (NSString *)formattedDistance {
-    return [ETRChatObject formattedLength:[self distance]];
-}
-
-- (NSString *)formattedSize {
-    return [ETRChatObject formattedLength:[[self radius] integerValue]];
-}
-
-- (NSString *)timeSpan {
-    // TODO: Localization
-    
-    NSString *start;
-    if (![self startTime]) {
-        start = NSLocalizedString(@"Ongoing", @"Event has started");
-    } else {
-        if ([[self startTime] compare:[NSDate date]] > 0) {
-            start = [ETRChatObject readableStringForDate:[self startTime]];
-        } else {
-            start = NSLocalizedString(@"Ongoing", @"Event has started");
-        }
-    }
-    
-    
-    if (![self endDate]) {
-        return start;
-    } else {
-        NSString *until = NSLocalizedString(@"until", @"From ... until ...");
-        NSString *end = [ETRChatObject readableStringForDate:[self endDate]];
-        return [NSString stringWithFormat:@"%@ %@ %@", start, until, end];
-    }
 }
 
 - (NSString *)userCount {

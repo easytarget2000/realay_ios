@@ -11,11 +11,18 @@
 
 @class ETRRoom, ETRUser;
 
+typedef NS_ENUM(short, ETRActionCode) {
+    ETRActionCodePublicMessage  = 10,
+    ETRActionCodePrivateMessage = 11,
+    ETRActionCodePublicMedia    = 40,
+    ETRActionCodePrivateMedia   = 41
+};
+
 @interface ETRAction : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * remoteID;
-@property (nonatomic, retain) NSNumber * isPublic;
-@property (nonatomic, retain) NSDate * sentTime;
+//@property (nonatomic, retain) NSNumber * isPublic;
+@property (nonatomic, retain) NSDate * sentDate;
 @property (nonatomic, retain) NSNumber * code;
 @property (nonatomic, retain) NSNumber * imageID;
 @property (nonatomic, retain) NSString * messageContent;
@@ -24,13 +31,8 @@
 @property (nonatomic, retain) ETRUser *recipient;
 @property (nonatomic, retain) ETRRoom *room;
 
-+ (ETRAction *)actionFromJSONDictionary:(NSDictionary *)JSONDict;
-+ (ETRAction *)outgoingMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
-
-- (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
-- (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
-- (NSString *)sentDateHoursAndMinutes;
-- (NSString *)sentDateDayDate;
+//- (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
+//- (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
 
 - (BOOL)isPublicMessage;
 

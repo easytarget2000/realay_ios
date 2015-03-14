@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C1510" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ETRAction" representedClassName="ETRAction" syncable="YES">
         <attribute name="code" attributeType="Integer 16" defaultValueString="-1" syncable="YES"/>
         <attribute name="isInQueue" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isPublic" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="messageContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="remoteID" attributeType="Integer 64" defaultValueString="-44" indexed="YES" syncable="YES"/>
-        <attribute name="sentTime" attributeType="Date" syncable="YES"/>
+        <attribute name="sentDate" attributeType="Date" syncable="YES"/>
         <relationship name="recipient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="receivedActions" inverseEntity="ETRUser" syncable="YES"/>
-        <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="actions" inverseEntity="ETRRoom" syncable="YES"/>
+        <relationship name="room" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="actions" inverseEntity="ETRRoom" syncable="YES"/>
         <relationship name="sender" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="sentActions" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
     <entity name="ETRConversation" representedClassName="ETRConversation" syncable="YES">
@@ -20,10 +19,10 @@
         <attribute name="createdBy" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="endDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="imageID" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
-        <attribute name="latitude" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="longitude" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="latitude" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="queryDistance" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="queryDistance" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="queryUserCount" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="radius" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="remoteID" attributeType="Integer 64" indexed="YES" syncable="YES"/>
@@ -50,7 +49,7 @@
         <relationship name="sentActions" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="sender" inverseEntity="ETRAction" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ETRAction" positionX="0" positionY="0" width="128" height="180"/>
+        <element name="ETRAction" positionX="0" positionY="0" width="128" height="165"/>
         <element name="ETRConversation" positionX="0" positionY="0" width="128" height="75"/>
         <element name="ETRRoom" positionX="0" positionY="0" width="128" height="285"/>
         <element name="ETRUser" positionX="0" positionY="0" width="128" height="255"/>

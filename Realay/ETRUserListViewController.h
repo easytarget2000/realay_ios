@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ETRSession.h"
 
-@interface ETRUserListViewController : UITableViewController <ETRChatDelegate, ETRUserListDelegate>
+@interface ETRUserListViewController : UITableViewController
 
 - (IBAction)mapButtonPressed:(id)sender;
 - (IBAction)profileButtonPressed:(id)sender;

@@ -8,6 +8,9 @@
 
 #import "ETRAlertViewFactory.h"
 
+#import "ETRLocationManager.h"
+#import "ETRReadabilityHelper.h"
+#import "ETRRoom.h"
 #import "ETRSession.h"
 #import "ETRUser.h"
 
@@ -123,7 +126,9 @@
     
     NSString *distanceFormat;
     distanceFormat = NSLocalizedString(@"Current_distance", @"Current distance: %@");
-    NSString *title = [NSString stringWithFormat:distanceFormat, [sessionRoom formattedDistance]];
+    NSInteger distanceValue = [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom];
+    NSString *distance = [ETRReadabilityHelper formattedIntegerLength:distanceValue];
+    NSString *title = [NSString stringWithFormat:distanceFormat, distance];
     NSString *message = NSLocalizedString(@"Before_join", @"Before you can join, enter");
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message

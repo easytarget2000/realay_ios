@@ -11,34 +11,22 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRConversationViewController.h"
 #import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
 #import "ETRLoginViewController.h"
+#import "ETRRoom.h"
 #import "ETRSession.h"
 
 #import "ETRSharedMacros.h"
 
 #define DEBUG_NO_PW_CHECK       1
 
-static NSString *const joinSegueIdentifier = @"passwordToJoinSegue";
+static NSString *const ETRPassordToJoinSegue = @"passwordToJoinSegue";
 
-static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileSegue";
+static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue";
 
-@implementation ETRPasswordViewController {
-    UIActivityIndicatorView *_activityIndicator;
-}
+@implementation ETRPasswordViewController
 
 #pragma mark - UIViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // The join process takes a while.
-    // Show an activity indicator (spinning circle).
-    _activityIndicator = [[UIActivityIndicatorView alloc]
-                         initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [_activityIndicator setCenter:[[self view] center]];
-    [[self view] addSubview:_activityIndicator];
-    
-}
 
 - (void)viewWillAppear:(BOOL)animated {
     
@@ -46,14 +34,10 @@ static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileS
     
     [[self passwordTextField] setDelegate:self];
     [[self passwordTextField] setText:@""];
-    [self setTitle:[[[ETRSession sharedManager] room] title]];
+    [self setTitle:[[ETRSession sessionRoom] title]];
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
-}
-
-- (void)threadStartAnimating:(id)data {
-    [_activityIndicator startAnimating];
 }
 
 #pragma mark - IBAction
@@ -62,7 +46,7 @@ static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileS
     // Only perform a join action, if the user did not join yet.
     if (![[ETRSession sharedManager] didBeginSession]) {
         // Show the password prompt, if the device location is inside the region.
-        if ([ETRLocationHelper isInSessionRegion]) {
+        if ([ETRLocationManager isInSessionRegion]) {
            [self verifyPasswordAndJoin];
         } else {
           [ETRAlertViewFactory showDistanceLeftAlertView];
@@ -95,9 +79,11 @@ static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileS
         // If the user is already registered, attempt to join the room.
         // Otherwise let the user create a profile first.
         if ([[ETRLocalUserManager sharedManager] userID] > 10) {
-            [self performSegueWithIdentifier:joinSegueIdentifier sender:self];
+            [self performSegueWithIdentifier:ETRPassordToJoinSegue
+                                      sender:self];
         } else {
-            [self performSegueWithIdentifier:createProfileSegueIdentifier sender:self];
+            [self performSegueWithIdentifier:ETRPasswordToLoginSegue
+                                      sender:self];
         }
     } else {
         [ETRAlertViewFactory showWrongPasswordAlertView];
@@ -108,8 +94,11 @@ static NSString *const createProfileSegueIdentifier = @"passwordToCreateProfileS
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:createProfileSegueIdentifier]) {
-        ETRLoginViewController *destination = [segue destinationViewController];
+    id destination = [segue destinationViewController];
+    
+    if ([destination isKindOfClass:[ETRLoginViewController class]]) {
+        ETRLoginViewController *loginViewController;
+        loginViewController = (ETRLoginViewController *)[segue destinationViewController];
         [destination startSessionOnLogin];
     }
 }

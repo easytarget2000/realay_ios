@@ -13,11 +13,11 @@
 @interface ETRConversationViewController : UIViewController
     <UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
-@property (weak, nonatomic) IBOutlet UITableView        *messagesTableView;
+@property (weak, nonatomic) IBOutlet UITableView *messagesTableView;
 
-@property (weak, nonatomic) IBOutlet UITextField        *messageTextField;
+@property (weak, nonatomic) IBOutlet UITextField *messageTextField;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem    *moreButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *moreButton;
 
 @property (strong, nonatomic) ETRUser *partner;
 

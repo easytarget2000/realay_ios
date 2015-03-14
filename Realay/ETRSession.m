@@ -8,8 +8,12 @@
 
 #import "ETRSession.h"
 
-#import "ETRServerAPIHelper.h"
+#import "ETRAction.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
+#import "ETRRoom.h"
+#import "ETRServerAPIHelper.h"
 
 #import "ETRSharedMacros.h"
 
@@ -57,8 +61,8 @@ static ETRSession *sharedInstance = nil;
     return sharedInstance;
 }
 
-+ (ETRUser *)publicDummyUser {
-    return nil;
++ (ETRRoom *)sessionRoom {
+    return [sharedInstance room];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -202,28 +206,9 @@ static ETRSession *sharedInstance = nil;
     NSArray *actionsJSON = [requestJSON objectForKey:@"actions"];
     long localUserID = [[ETRLocalUserManager sharedManager] userID];
     for (NSDictionary *action in actionsJSON) {
-        
-        // Read the ID of this action and store the highest processed ID.
-        NSInteger actionID = [[action objectForKey:@"action_id"] integerValue];
-        if (actionID > _lastActionID) _lastActionID = actionID;
-        
-        // Get the user key/ID and action code of this action.
-        NSString *actionCode    = [action objectForKey:@"code"];
-        
-        long userID = [[action objectForKey:@"u"] longValue];
-        
-        // Process the action according to its code
-        // and wether this is an action from or, in case of admin actions, for me.
-        BOOL isMyAction = userID == localUserID;
-        if ([actionCode isEqualToString:@"KICK"] && isMyAction) {
-            // Action Type: KICK this user
-            //TODO: Kick.
-        } else if ([actionCode isEqualToString:@"WARN"] && isMyAction) {
-            // Action Type: WARNING this user
-        } else if ([actionCode isEqualToString:@"MSG"]) {
             // Action Type: MESSAGE
             
-            ETRAction *message = [ETRAction actionFromJSONDictionary:action];
+            ETRAction *message;
             
             // TODO: Do no process messages any further if they have been sent by a blocked user.
             
@@ -239,37 +224,6 @@ static ETRSession *sharedInstance = nil;
             [testNotif setSoundName:UILocalNotificationDefaultSoundName];
             [testNotif setApplicationIconBadgeNumber:15];
             [notifications addObject:testNotif];
-            
-            
-        } else if ([actionCode isEqualToString:@"JOIN"] && !isMyAction) {
-            // Action type: A user JOINED the room.
-            
-            // Only if this user is not known yet, do something.
-            if (![_users containsObject:[NSNumber numberWithLong:userID]]) {
-                // Create the new user object and add it to the dictionary of users.
-                // TODO: Make use of UsersCache. Let Cache notify Lists.
-                [_users addObject:[NSNumber numberWithLong:userID]];
-            }
-            
-        } else if ([actionCode isEqualToString:@"UPDATE"] && !isMyAction) {
-            // Action type: A user changed his PROFILE data.
-            
-            // Re-download the entire user object.
-            // TODO: Make use of UsersCache.
-            
-        } else if ([actionCode isEqualToString:@"LEAVE"] && !isMyAction) {
-            // Action type: A user LEFT the room.
-            [_users removeObject:[NSNumber numberWithLong:userID]];
-            // TODO: Notify changes.
-            
-        } else if ([actionCode isEqualToString:@"LEAVE"] && isMyAction) {
-            /*
-             Something went wrong. A kicked user should get a kick message.
-             A leaving user should not receive any action updates.
-             */
-            
-        }
-        
     }
     
     // Display all new notifications.
@@ -331,13 +285,13 @@ static ETRSession *sharedInstance = nil;
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     
-    /*
+    /* TODO:
      Display the first warning if the user has joined a room
      and left the region for the first time.
      */
     if (!_leftRegionDate && [self didBeginSession] && _numberOfLocWarnings < 1) {
         _leftRegionDate = [NSDate date];
-        [ETRAlertViewFactory showDidExitRegionAlertViewWithMinutes:kTimeReturnKick];
+//        [ETRAlertViewFactory showDidExitRegionAlertViewWithMinutes:kTimeReturnKick];
         _numberOfLocWarnings = 1;
     }
     

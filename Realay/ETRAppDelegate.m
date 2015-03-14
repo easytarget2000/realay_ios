@@ -9,6 +9,7 @@
 #import "ETRAppDelegate.h"
 
 #import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
 #import "ETRSession.h"
 #import "ETRRoomListViewController.h"
 
@@ -25,7 +26,7 @@
     // Make the main manager initialize all preference variables.
     [[ETRSession sharedManager] refreshGUIAttributes];
     
-    [[ETRLocationHelper sharedManager] launch];
+    [[ETRLocationManager sharedManager] launch];
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     

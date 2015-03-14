@@ -24,12 +24,6 @@
 + (void)showKickWithMessage:(NSString *)message;
 
 /*
- Displays a warning in an alert view that says the user left the session region
- and how many minutes he has to return.
- */
-+ (void)showDidExitRegionAlertViewWithMinutes:(NSInteger)minutes;
-
-/*
  Displays a dialog in an alert view if the user wants to leave the room.
  The delegate will handle the OK button click.
  */

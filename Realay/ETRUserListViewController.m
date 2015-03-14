@@ -8,12 +8,14 @@
 
 #import "ETRUserListViewController.h"
 
-#import "ETRConversationViewController.h"
-#import "ETRUser.h"
 #import "ETRAction.h"
+#import "ETRConversation.h"
+#import "ETRConversationViewController.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
-#import "ETRConversation.h"
+#import "ETRRoom.h"
+#import "ETRSession.h"
+#import "ETRUser.h"
 
 #define kSegueToConversation        @"userListToConversationSegue"
 #define kSegueToMap                 @"userListToMapSegue"
@@ -36,7 +38,7 @@
     [super viewDidLoad];
     
     // Navigation Bar:
-    [self setTitle:[[[ETRSession sharedManager] room] title]];
+    [self setTitle:[[ETRSession sessionRoom] title]];
     
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
@@ -48,21 +50,12 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
-//    [[ETRSession sessionManager] setSessionDelegate:self];
-    [[ETRSession sharedManager] setChatDelegate:self];
-    [[ETRSession sharedManager] setUserListDelegate:self];
-    
     [[self navigationController] setToolbarHidden:NO animated:YES];
-    
-    [[self tableView] reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
-    [[self navigationController] setToolbarHidden:NO animated:YES];
-    
+    [[self tableView] reloadData];
     [[self refreshControl] endRefreshing];
 }
 

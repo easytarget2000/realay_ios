@@ -64,7 +64,7 @@ static ETRLocalUserManager *sharedInstance = nil;
         return nil;
     }
     
-    _user = [[ETRCoreDataHelper helper] userWithRemoteID:userID];
+    _user = [ETRCoreDataHelper userWithRemoteID:userID];
     if (_user) {
         return _user;
     }

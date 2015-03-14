@@ -46,24 +46,9 @@
 
 - (NSString *)description;
 
-- (NSString *)timeSpan;
-
 - (NSString *)formattedCoordinates;
 
-- (NSString *)formattedSize;
-
 - (NSString *)userCount;
-
-/*
- Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
- and the current device location;
- Takes current device location from the LocationManager;
- Uses the server API / query distance value, if the device location is unknown;
- Values below 10 are handled as 0 to avoid unnecessary precision
- */
-- (NSInteger)distance;
-
-- (NSString *)formattedDistance;
 
 @end
 

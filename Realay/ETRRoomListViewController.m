@@ -8,16 +8,18 @@
 
 #import "ETRRoomListViewController.h"
 
-#import "ETRLoginViewController.h"
-#import "ETRServerAPIHelper.h"
-#import "ETRImageLoader.h"
-#import "ETRSession.h"
-#import "ETRInformationCell.h"
-#import "ETRRoomListCell.h"
 #import "ETRAlertViewFactory.h"
-#import "ETRDetailsViewController.h"
-#import "ETRLocalUserManager.h"
 #import "ETRCoreDataHelper.h"
+#import "ETRDetailsViewController.h"
+#import "ETRImageLoader.h"
+#import "ETRInformationCell.h"
+#import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
+#import "ETRLoginViewController.h"
+#import "ETRReadabilityHelper.h"
+#import "ETRRoom.h"
+#import "ETRRoomListCell.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRSession.h"
 
 //#import "ETRSharedMacros.h"
@@ -56,9 +58,7 @@
     [[self tableView] setEstimatedRowHeight:kRoomCellHeight];
         
     // Initialize Fetched Results Controller
-    ETRCoreDataHelper *bridge = [ETRCoreDataHelper helper];
-    _fetchedResultsController = [bridge roomListResultsControllerWithDelegate:self];
-    if (!_fetchedResultsController) return;
+    _fetchedResultsController = [ETRCoreDataHelper roomListResultsControllerWithDelegate:self];
     
     // Perform Fetch
     NSError *error = nil;
@@ -77,15 +77,20 @@
     myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
     [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
     
-    // Refreshing:
-    [[self refreshControl] addTarget:self
-                              action:@selector(updateRoomsTable)
-                    forControlEvents:UIControlEventValueChanged];
+//    // Refreshing:
+//    [[self refreshControl] addTarget:self
+//                              action:@selector(updateRoomsTable)
+//                    forControlEvents:UIControlEventValueChanged];
     [[self tableView] reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    // Refreshing:
+    [[self refreshControl] addTarget:self
+                              action:@selector(updateRoomsTable)
+                    forControlEvents:UIControlEventValueChanged];
     
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
@@ -94,7 +99,9 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    if ([[self refreshControl] isRefreshing]) [[self refreshControl] endRefreshing];
+    if ([[self refreshControl] isRefreshing]) {
+        [[self refreshControl] endRefreshing];
+    }
 }
 
 #pragma mark -
@@ -116,11 +123,13 @@
     
     switch (type) {
         case NSFetchedResultsChangeInsert: {
-            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case NSFetchedResultsChangeDelete: {
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case NSFetchedResultsChangeUpdate: {
@@ -131,8 +140,10 @@
             break;
         }
         case NSFetchedResultsChangeMove: {
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
         }
     }
 }
@@ -140,8 +151,11 @@
 #pragma mark -
 #pragma mark Table View Data Source Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if (!_fetchedResultsController) return 0;
-    else return [[_fetchedResultsController sections] count];
+    if (!_fetchedResultsController) {
+        return 0;
+    } else {
+        return [[_fetchedResultsController sections] count];
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -189,18 +203,24 @@
     // and apply its attributes to the cell views.
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
     [[cell titleLabel] setText:[record title]];
-    [[cell sizeLabel] setText:[record formattedSize]];
-    [[cell timeLabel] setText:[record timeSpan]];
+    NSString *size = [ETRReadabilityHelper formattedLength:[record radius]];
+    [[cell sizeLabel] setText:size];
+    NSString *timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[record startTime]
+                                                            endDate:[record endDate]];
+    [[cell timeLabel] setText:timeSpan];
     [[cell descriptionLabel] setText:[record summary]];
     
     // Display the distance to the closest region point.
-    if ([record distance] < 10) {
+    NSInteger distance = [[ETRLocationManager sharedManager] distanceToRoom:record];
+    if (distance < 20) {
         [[cell distanceLabel] setHidden:YES];
         [[cell placeIcon] setHidden:NO];
     } else {
         [[cell placeIcon] setHidden:YES];
         [[cell distanceLabel] setHidden:NO];
-        [[cell distanceLabel] setText:[record formattedDistance]];
+        NSString *formattedDistance;
+        formattedDistance = [ETRReadabilityHelper formattedIntegerLength:distance];
+        [[cell distanceLabel] setText:formattedDistance];
     }
     
     //    [self startIconDownload:currentRoom forIndexPath:indexPath];
@@ -211,7 +231,8 @@
 - (ETRInformationCell *)infoCellAtIndexPath:(NSIndexPath *)indexPath {
     
     ETRInformationCell *cell;
-    cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier forIndexPath:indexPath];
+    cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier
+                                                  forIndexPath:indexPath];
     if (!cell) {
         cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier];
     }

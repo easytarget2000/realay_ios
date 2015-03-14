@@ -15,23 +15,34 @@
 
 @interface ETRCoreDataHelper : NSObject
 
-+ (ETRCoreDataHelper *)helper;
+// TODO: Check JSON Dictionaries for non-optional values to avoid crashes.
 
-- (BOOL)saveContext;
+//+ (ETRCoreDataHelper *)helper;
 
-- (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
++ (BOOL)saveContext;
 
-- (void)handleMessageInDictionary:(NSDictionary *)jsonDictionary;
++ (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
 
-- (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
++ (void)handleMessageInDictionary:(NSDictionary *)jsonDictionary;
 
-- (ETRUser *)copyUser:(ETRUser *)user;
++ (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
 
-- (NSFetchedResultsController *)roomListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>) delegate;
++ (ETRUser *)copyUser:(ETRUser *)user;
 
-- (ETRRoom *)roomWithRemoteID:(long)remoteID;
++ (NSFetchedResultsController *)roomListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>) delegate;
 
-- (ETRUser *)userWithRemoteID:(long)remoteID;
++ (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate;
+
++ (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
+                                                       withDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
+
++ (ETRRoom *)roomWithRemoteID:(long)remoteID;
+
++ (ETRUser *)userWithRemoteID:(long)remoteID;
+
++ (void)dispatchPublicMessage:(NSString *)messageContent;
+
++ (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
 
 @end
 

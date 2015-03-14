@@ -13,49 +13,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ETRAction.h"
-#import "ETRLocalUserManager.h"
-#import "ETRLocationHelper.h"
-#import "ETRRoom.h"
+@class ETRAction;
+@class ETRRoom;
 
 # pragma mark - Delegate Protocols
-@protocol ETRChatDelegate <NSObject>
-
-- (void)chatDidUpdateWithKey:(NSString *)chatKey;
-
-@end
-
-@protocol ETRRelayedLocationDelegate <NSObject>
-
-- (void)sessionDidUpdateLocationManager:(ETRLocationHelper *)manager;
-
-@end
-
-@protocol ETRUserListDelegate <NSObject>
-
-- (void)didUpdateUserChatList;
-
-@end
 
 # pragma mark - Interface
-@interface ETRSession : NSObject <CLLocationManagerDelegate>
-
-@property (strong, nonatomic, readonly) ETRUser * publicDummyUser;
-
-/*
- View controller that needs constant message updates:
- */
-@property (weak, nonatomic) id<ETRChatDelegate> chatDelegate;
-
-/*
- View controller that needs constant location updates:
-  */
-@property (weak, nonatomic) id<ETRRelayedLocationDelegate> locationDelegate;
-
-/*
- View controller that needs constant user list updates:
-  */
-@property (weak, nonatomic) id<ETRUserListDelegate> userListDelegate;
+@interface ETRSession : NSObject
 
 /*
  Chat that does not need notifications.
@@ -129,6 +93,8 @@
  The shared singleton instance:
   */
 + (ETRSession *)sharedManager;
+
++ (ETRRoom *)sessionRoom;
 
 /*
  To be called by view controllers receiving memory warnings.

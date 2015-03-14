@@ -8,6 +8,12 @@
 
 #import "ETRActionManager.h"
 
+static long ForegroundPartnerID = -1;
+
 @implementation ETRActionManager
+
++ (void)setForegroundConversationID:(long)remotePartnerID {
+    ForegroundPartnerID = remotePartnerID;
+}
 
 @end
