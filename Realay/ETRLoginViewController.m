@@ -15,17 +15,19 @@
 #import "ETRSession.h"
 #import "ETRUser.h"
 
-#import "ETRSharedMacros.h"
-
 static NSString *const joinSegue = @"loginToJoinSegue";
+
 static NSString *const profileSegue = @"loginToProfileSegue";
+
 
 @interface ETRLoginViewController()
 
 @property (nonatomic) BOOL doShowProfileOnFinish;
+
 @property (nonatomic) BOOL doStartSessionOnFinish;
 
 @end
+
 
 @implementation ETRLoginViewController
 

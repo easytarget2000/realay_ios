@@ -112,7 +112,9 @@
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self refreshControl] endRefreshing];
-    [[self tableView] endUpdates];
+    if ([self tableView]) {
+        [[self tableView] endUpdates];
+    }
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -314,7 +316,7 @@
 
 // Create or view my profile.
 - (IBAction)profileButtonPressed:(id)sender {
-    if ([[ETRLocalUserManager sharedManager] userID] > 10) {
+    if ([ETRLocalUserManager userID] > 10) {
         [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
     } else {
         [self performSegueWithIdentifier:kSegueToCreateProfile sender:self];

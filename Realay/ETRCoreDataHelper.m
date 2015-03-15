@@ -12,8 +12,11 @@
 #import "ETRAppDelegate.h"
 #import "ETRLocalUserManager.h"
 #import "ETRRoom.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRSession.h"
 #import "ETRUser.h"
+
+long const ETRActionPublicUserID = -10;
 
 static NSString *const ETRRemoteIDKey = @"remoteID";
 
@@ -178,6 +181,8 @@ static NSString *UserEntityName;
             room = (ETRRoom *)existingRooms[0];
         }
     }
+    
+    return room;
 }
 
 + (NSFetchedResultsController *)roomListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>) delegate {
@@ -201,8 +206,47 @@ static NSString *UserEntityName;
 #pragma mark -
 #pragma mark Actions
 
-+ (void)handleMessageInDictionary:(NSDictionary *)jsonDictionary {
++ (void)handleActionFromDictionary:(NSDictionary *)jsonDictionary {
+    // Incoming Actions are always unique. Just initialse a new one.
+    ETRAction *receivedAction;
+    receivedAction = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
+                        insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
     
+    [receivedAction setRemoteID:@([jsonDictionary longValueForKey:@"a" withFallbackValue:-102])];
+    
+    long roomID = [jsonDictionary longValueForKey:@"r" withFallbackValue:-103];
+    if (roomID < 10) {
+        NSLog(@"ERROR: Received Action with Room ID %ld.", roomID);
+        return;
+    }
+    [receivedAction setRoom:[ETRCoreDataHelper roomWithRemoteID:roomID]];
+    
+    // Sender and recipient IDs may be a valid User ID, i.e. positive long,
+    // or -10, the pre-defined ID for public (as recipient ID) and admin (as sender ID) messages.
+    
+    long senderID = [jsonDictionary longValueForKey:@"sn" withFallbackValue:-104];
+    if (senderID > 10) {
+        [receivedAction setSender:[ETRCoreDataHelper userWithRemoteID:senderID]];
+    } else if (senderID == ETRActionPublicUserID) {
+        // TODO: Handle Server messages.
+    } else {
+        NSLog(@"WARNING: Received Action with sender ID %ld", senderID);
+    }
+    
+    long recipientID = [jsonDictionary longValueForKey:@"rc" withFallbackValue:-105];
+    if (recipientID > 10) {
+        [receivedAction setRecipient:[ETRCoreDataHelper userWithRemoteID:recipientID]];
+    } else if (senderID != ETRActionPublicUserID) {
+        NSLog(@"WARNING: Received Action with recipient ID %ld", senderID);
+    }
+    
+    long timestamp = [jsonDictionary longValueForKey:@"t" withFallbackValue:1426439266];
+    [receivedAction setSentDate:[NSDate dateWithTimeIntervalSince1970:timestamp]];
+    
+    [receivedAction setCode:@([jsonDictionary shortValueForKey:@"cd" withFallbackValue:-1])];
+    
+    [receivedAction setMessageContent:[jsonDictionary stringForKey:@"m"]];
+    [ETRCoreDataHelper saveContext];
 }
 
 + (void)dispatchPublicMessage:(NSString *)messageContent {
@@ -216,7 +260,10 @@ static NSString *UserEntityName;
     [message setCode:@(ETRActionCodePublicMessage)];
     [message setMessageContent:messageContent];
     
+    // Immediately store them in the Context, so that they appear in the Conversation.
     [ETRCoreDataHelper saveContext];
+    
+    [ETRServerAPIHelper putAction:message];
 }
 
 + (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient {
@@ -231,6 +278,34 @@ static NSString *UserEntityName;
     [message setCode:@(ETRActionCodePrivateMessage)];
     [message setMessageContent:messageContent];
     
+    // Immediately store them in the Context, so that they appear in the Conversation.
+    [ETRCoreDataHelper saveContext];
+    
+    [ETRServerAPIHelper putAction:message];
+}
+
++ (void)addActionToQueue:(ETRAction *)unsentAction {
+    if (!unsentAction) {
+        return;
+    }
+    
+#ifndef DEBUG
+    if ([[unsentAction isInQueue] boolValue]) {
+        NSLog(@"DEBUG: Action \"%@\" is already in the queue.", unsentAction);
+        return;
+    }
+#endif
+    
+    [unsentAction setIsInQueue:@(YES)];
+    [ETRCoreDataHelper saveContext];
+}
+
++ (void)removeActionFromQueue:(ETRAction *)sentAction {
+    if (!sentAction) {
+        return;
+    }
+    
+    [sentAction setIsInQueue:@(NO)];
     [ETRCoreDataHelper saveContext];
 }
 

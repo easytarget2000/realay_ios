@@ -66,9 +66,11 @@ static NSString *const joinSegue = @"joinToConversationSegue";
               [[self statusLabel] setText:@"Done."];
               [[self progressView] setProgress:1.0f];
               [self performSegueWithIdentifier:joinSegue sender:nil];
+              return;
           } else {
               [ETRAlertViewFactory showGeneralErrorAlert];
               [[self navigationController] popToRootViewControllerAnimated:YES];
+              return;
           }
       }];
 }

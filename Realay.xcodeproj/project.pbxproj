@@ -52,6 +52,7 @@
 		D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DA55391918165300B8A0F7 /* ETRLocationManager.m */; };
 		D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */; };
 		D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D0DE0DD4184BB1880039DE0E /* Settings.bundle */; };
+		D0E092791AB62B7800D190F8 /* ETRPreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E092781AB62B7800D190F8 /* ETRPreferenceHelper.m */; };
 		D0E1970917E276DB00135B8C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970817E276DB00135B8C /* UIKit.framework */; };
 		D0E1970B17E276DB00135B8C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970A17E276DB00135B8C /* Foundation.framework */; };
 		D0E1970D17E276DB00135B8C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970C17E276DB00135B8C /* CoreGraphics.framework */; };
@@ -145,7 +146,6 @@
 		D0795F8C1AA48E76009CCF73 /* ETRCoreDataHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRCoreDataHelper.h; sourceTree = "<group>"; };
 		D0795F8D1AA48E76009CCF73 /* ETRCoreDataHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRCoreDataHelper.m; sourceTree = "<group>"; };
 		D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lustgarten.gpx; sourceTree = "<group>"; };
-		D07BF08618E3588700C70873 /* ETRSharedMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRSharedMacros.h; sourceTree = "<group>"; };
 		D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageLoader.h; sourceTree = "<group>"; };
 		D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageLoader.m; sourceTree = "<group>"; };
 		D0BB824D1AB2483B00276D5C /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
@@ -163,6 +163,8 @@
 		D0DE0DD1184BAC7E0039DE0E /* ETRConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRConversationViewController.h; sourceTree = "<group>"; };
 		D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRConversationViewController.m; sourceTree = "<group>"; };
 		D0DE0DD4184BB1880039DE0E /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		D0E092771AB62B7800D190F8 /* ETRPreferenceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRPreferenceHelper.h; sourceTree = "<group>"; };
+		D0E092781AB62B7800D190F8 /* ETRPreferenceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRPreferenceHelper.m; sourceTree = "<group>"; };
 		D0E1970517E276DB00135B8C /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0E1970817E276DB00135B8C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D0E1970A17E276DB00135B8C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -298,18 +300,20 @@
 		D0BF1FDB18C3D4D800E17774 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				D048E2931AA65083001631CB /* ETRImageEditor.h */,
-				D048E2941AA65083001631CB /* ETRImageEditor.m */,
 				D0081F5618C546B200D0819A /* ETRAlertViewFactory.h */,
 				D0081F5718C546B200D0819A /* ETRAlertViewFactory.m */,
 				D01446C11A9FD90A00748378 /* ETRImageConnectionHandler.h */,
 				D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */,
+				D048E2931AA65083001631CB /* ETRImageEditor.h */,
+				D048E2941AA65083001631CB /* ETRImageEditor.m */,
 				D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */,
 				D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */,
-				D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */,
-				D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */,
+				D0E092771AB62B7800D190F8 /* ETRPreferenceHelper.h */,
+				D0E092781AB62B7800D190F8 /* ETRPreferenceHelper.m */,
 				D02E42541AB4B06C00A46CF5 /* ETRReadabilityHelper.h */,
 				D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */,
+				D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */,
+				D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -399,7 +403,6 @@
 				D0CF29DB1851FA460012AF7F /* DataModel */,
 				D0E1971717E276DB00135B8C /* ETRAppDelegate.h */,
 				D0E1971817E276DB00135B8C /* ETRAppDelegate.m */,
-				D07BF08618E3588700C70873 /* ETRSharedMacros.h */,
 				D0E1970717E276DB00135B8C /* Frameworks */,
 				D00E7AF61905AAFE003C501A /* Manager */,
 				D0DE0DD4184BB1880039DE0E /* Settings.bundle */,
@@ -595,6 +598,7 @@
 				D031339B1AAB5860004E981B /* ETRProfileHeaderEditorCell.m in Sources */,
 				D0F415A817F8C1D100C0FFD5 /* ETRUserListViewController.m in Sources */,
 				D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */,
+				D0E092791AB62B7800D190F8 /* ETRPreferenceHelper.m in Sources */,
 				D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */,
 				D0E31B611AA377F40008AF9F /* ETRRoom.m in Sources */,
 				D0529A0D1AA26FED002211A3 /* Realay.xcdatamodeld in Sources */,

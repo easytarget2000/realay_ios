@@ -8,6 +8,7 @@
 
 #import "ETRServerAPIHelper.h"
 
+#import "ETRAction.h"
 #import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
@@ -18,25 +19,41 @@
 #import "ETRSession.h"
 #import "ETRUser.h"
 
-#define kServerURL                  @"http://rldb.easy-target.org/"
+static short const ETRAPITimeOutInterval = 20;
 
-#define kTimeoutInterval            20
+static short const ETRDefaultSearchRadius = 20;
 
-#define kApiStatusKey               @"st"
-#define kApiCallRoomList            @"select_rooms"
-#define kApiCallGetImage            @"download_image"
+static NSString *const ETRAPIBaseURL = @"http://rldb.easy-target.org/";
 
-#define kDefaultSearchRadius        20
+static NSString *const ETRAPIStatusKey = @"st";
 
-static NSString *const getRoomsAPICall = @"get_rooms";
+static NSString *const ETRGetActionsAPICall = @"get_actions";
 
-static NSString *const getRoomsSuccessStatus = @"RS_OK";
+static NSString *const ETRGetActionsSuccessStatus = @"AS_OK";
 
-static NSString *const getActionsAPICall = @"get_actions";
+static NSString *const ETRGetActionsObjectTag = @"as";
 
-static NSString *const getActionsSuccessStatus = @"AS_OK";
+static NSString *const ETRPutActionAPICall = @"do_put_action";
 
-static NSString *const getActionsObjectTag = @"as";
+static NSString *const ETRPutActionSuccessStatus = @"INA_OK";
+
+static NSString *const ETRGetImageAPICall = @"get_image";
+
+static NSString *const ETRJoinRoomAPICall = @"do_join_room";
+
+static NSString *const ETRJoinRoomSuccessStatus = @"INS_U_OK";
+
+static NSString *const ETRGetRoomsAPICall = @"get_rooms";
+
+static NSString *const ETRGetRoomsSuccessStatus = @"RS_OK";
+
+static NSString *const ETRGetRoomUsersAPICall = @"get_room_users";
+
+static NSString *const ETRRoomUsersSuccessStatus = @"UIR_OK";
+
+static NSString *const ETRUserListObjectTag = @"us";
+
+static NSString *const ETRGetUserAPICall = @"get_user";
 
 static NSMutableArray *connections;
 
@@ -82,7 +99,7 @@ static NSMutableArray *connections;
     }
     
     // Prepare the URL to the give PHP file.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@", kServerURL, apiCall];
+    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
     NSURL *url = [NSURL URLWithString:
                   [URLString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     
@@ -93,7 +110,7 @@ static NSMutableArray *connections;
     [request setHTTPBody:[bodyString dataUsingEncoding:NSUTF8StringEncoding
                                   allowLossyConversion:YES]];
     [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:kTimeoutInterval];
+    [request setTimeoutInterval:ETRAPITimeOutInterval];
     
 #ifdef DEBUG
     NSLog(@"POST request: %@?%@", url, bodyString);
@@ -122,7 +139,7 @@ static NSMutableArray *connections;
                                        return;
                                    }
                                    
-                                   NSString *status = (NSString *)[JSONDict objectForKey:kApiStatusKey];
+                                   NSString *status = (NSString *)[JSONDict objectForKey:ETRAPIStatusKey];
                                    if (!status) {
                                        handler(nil);
                                        return;
@@ -173,9 +190,9 @@ static NSMutableArray *connections;
     bodyString = [NSMutableString stringWithFormat:@"lat=%f&lng=%f&dist=%d",
                   coordinate.latitude,
                   coordinate.longitude,
-                  kDefaultSearchRadius];
+                  ETRDefaultSearchRadius];
     
-    [ETRServerAPIHelper performAPICall:kApiCallRoomList
+    [ETRServerAPIHelper performAPICall:ETRGetRoomsAPICall
                               POSTbody:bodyString
                          successStatus:@"RS_OK"
                              objectTag:@"rs"
@@ -220,7 +237,7 @@ static NSMutableArray *connections;
     }
     
     // Prepare the URL to the download script.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@", kServerURL, @"download_image"];
+    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, @"download_image"];
     NSURL *URL = [NSURL URLWithString:URLString];
     
     // Prepare the POST request.
@@ -231,7 +248,7 @@ static NSMutableArray *connections;
     NSData *bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
     [request setHTTPBody:[NSMutableData dataWithData:bodyData]];
     [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:kTimeoutInterval];
+    [request setTimeoutInterval:ETRAPITimeOutInterval];
     
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
@@ -286,7 +303,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     _progressView = progressView;
     
     long roomID = [[room remoteID] longValue];
-    long localUserID = [[ETRLocalUserManager sharedManager] userID];
+    long localUserID = [ETRLocalUserManager userID];
     
     // Prepare the block that will be called at the end.
     // This will always call the
@@ -296,7 +313,10 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             return;
         }
         
-//        [progressView setProgress:0.9f];
+        [NSThread detachNewThreadSelector:@selector(updateProgress:)
+                                 toTarget:self
+                               withObject:@(0.9f)];
+        
         if (!receivedObject) {
             completionHandler(NO);
             return;
@@ -307,7 +327,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    [ETRCoreDataHelper handleMessageInDictionary:(NSDictionary *)jsonAction];
+                    [ETRCoreDataHelper handleActionFromDictionary:(NSDictionary *)jsonAction];
                 }
             }
 
@@ -349,7 +369,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             // Update the UI to show the upcoming step.
             [NSThread detachNewThreadSelector:@selector(updateProgress:)
                                      toTarget:self
-                                   withObject:@(0.8f)];
+                                   withObject:@(0.7f)];
             [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
                                      toTarget:self
                                    withObject:@"Loading messages..."];
@@ -359,10 +379,10 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             // TODO: Add IDs of blocked Users.
             NSString *getActionsBody;
             getActionsBody = [NSString stringWithFormat:getActionsFormat, roomID, localUserID, blockedIDs];
-            [ETRServerAPIHelper performAPICall:getActionsAPICall
+            [ETRServerAPIHelper performAPICall:ETRGetActionsAPICall
                                       POSTbody:getActionsBody
-                                 successStatus:getActionsSuccessStatus
-                                     objectTag:getActionsObjectTag
+                                 successStatus:ETRGetActionsSuccessStatus
+                                     objectTag:ETRGetActionsObjectTag
                              completionHandler:getMessagesCompletionHandler];
         }
     };
@@ -382,17 +402,17 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
                 // Update the UI to show the upcoming step.
                 [NSThread detachNewThreadSelector:@selector(updateProgress:)
                                          toTarget:self
-                                       withObject:@(0.8f)];
+                                       withObject:@(0.4f)];
                 [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
                                          toTarget:self
                                        withObject:@"Loading Users..."];
                 
                 NSString *userListBody;
                 userListBody = [NSString stringWithFormat:@"room_id=%ld", roomID];
-                [ETRServerAPIHelper performAPICall:@"get_room_users"
+                [ETRServerAPIHelper performAPICall:ETRGetRoomUsersAPICall
                                           POSTbody:userListBody
-                                     successStatus:@"UIR_OK"
-                                         objectTag:@"us"
+                                     successStatus:ETRRoomUsersSuccessStatus
+                                         objectTag:ETRUserListObjectTag
                                  completionHandler:getUsersCompletionHandler];
                 return;
             }
@@ -411,12 +431,57 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
                      completionHandler:joinBlock];
 }
 
-+ (void)getUserListInRoom:(ETRRoom *)room {
-    
-}
 
-+ (void)sendAction:(ETRAction *)action {
++ (void)putAction:(ETRAction *)outgoingAction {
+    if (!outgoingAction) {
+        return;
+    }
     
+    ETRRoom *sessionRoom = [ETRSession sessionRoom];
+    if (!sessionRoom) {
+        NSLog(@"ERROR: Cannot send an Action outside of a Session.");
+        return;
+    }
+    long roomID = [[sessionRoom remoteID] longValue];
+    
+    long recipientID;
+    if ([outgoingAction isPublicMessage]) {
+        recipientID = ETRActionPublicUserID;
+    } else if ([outgoingAction recipient]) {
+        recipientID = [[[outgoingAction recipient] remoteID] longValue];
+    } else {
+        NSLog(@"ERROR: Could not determine Recipient ID for outgoing Action.");
+        return;
+    }
+    
+    NSMutableString *bodyString;
+    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld&sender_id=%ld&recip_id=%ld&code=%d",
+                  roomID,
+                  [ETRLocalUserManager userID],
+                  recipientID,
+                  [[outgoingAction code] shortValue]];
+    
+    if ([outgoingAction messageContent]) {
+        [bodyString appendFormat:@"&message=%@", [outgoingAction messageContent]];
+    }
+    
+    [ETRServerAPIHelper performAPICall:ETRPutActionAPICall
+                              POSTbody:bodyString
+                         successStatus:ETRPutActionSuccessStatus
+                             objectTag:nil
+                     completionHandler:^(id<NSObject> receivedObject) {
+                         
+                         if ([receivedObject isKindOfClass:[NSNumber class]]) {
+                             NSNumber *didSucceed = (NSNumber *)receivedObject;
+                             if ([didSucceed boolValue]) {
+                                 NSLog(@"DEBUG: Did successfully send Action: %@", outgoingAction);
+                                 [ETRCoreDataHelper removeActionFromQueue:outgoingAction];
+                                 return;
+                             }
+                         }
+                         
+                         [ETRCoreDataHelper addActionToQueue:outgoingAction];
+                     }];
 }
 
 #pragma mark -

@@ -36,7 +36,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 + (void)sendLocalUserUpdate;
 
-+ (void)sendAction:(ETRAction *)action;
++ (void)putAction:(ETRAction *)outgoingAction;
 
 + (void)sendImage:(UIImage *)image completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 

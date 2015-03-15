@@ -186,21 +186,14 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    id destination = [segue destinationViewController];
     
-    if ([[segue identifier] isEqualToString:kSegueToConversation]) {
-        ETRConversationViewController *destination = [segue destinationViewController];
-        
-    } else if([[segue identifier] isEqualToString:kSegueToProfile]) {
-        // Just show my own user profile.
-        
-        ETRDetailsViewController *destination = [segue destinationViewController];
-        
-        if ([sender isMemberOfClass:[ETRUser class]]) {
-            [destination setUser:(ETRUser *)sender];
-        } else {
-            
+    if ([destination isKindOfClass:[ETRConversationViewController class]]) {
+        if ([sender isKindOfClass:[ETRUser class]]) {
+            ETRConversationViewController *conversation;
+            conversation = (ETRConversationViewController *)destination;
+            [conversation setPartner:(ETRUser *)sender];
         }
-        
     }
 }
 

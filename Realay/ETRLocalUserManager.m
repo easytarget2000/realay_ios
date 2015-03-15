@@ -81,10 +81,12 @@ static ETRLocalUserManager *sharedInstance = nil;
     }
 }
 
-- (long)userID {
-    if (![self user]) return -34;
++ (long)userID {
+    if (![[ETRLocalUserManager sharedManager] user]) {
+        return -34;
+    }
     
-    return [[[self user] remoteID] longValue];
+    return [[[[ETRLocalUserManager sharedManager] user] remoteID] longValue];
 }
 
 - (void)storeUserDefaults {

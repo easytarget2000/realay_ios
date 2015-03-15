@@ -15,16 +15,10 @@
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 
-#import "ETRSharedMacros.h"
-
 #define kTickInterval           3
 
 #define kFontSizeMsgSender      15
 #define kFontSizeMsgText        15
-
-#define kPHPInsertUserInRoom    @"insert_user_in_room"
-#define kPHPSelectActions       @"select_actions"
-#define kPHPSelectUserList      @"select_users_in_room"
 
 #define kTimeReturnKick         10
 #define kTimeReturnWarning1     5
@@ -194,7 +188,6 @@ static ETRSession *sharedInstance = nil;
  Check the user status and get all new actions from the server.
  */
 - (void)tick {
-    if (![self validateLocationTime]) return;
     
     // Request the JSON update data.
     NSDictionary *requestJSON;
@@ -204,7 +197,7 @@ static ETRSession *sharedInstance = nil;
      */
     NSMutableArray *notifications = [NSMutableArray array];
     NSArray *actionsJSON = [requestJSON objectForKey:@"actions"];
-    long localUserID = [[ETRLocalUserManager sharedManager] userID];
+    long localUserID = [ETRLocalUserManager userID];
     for (NSDictionary *action in actionsJSON) {
             // Action Type: MESSAGE
             

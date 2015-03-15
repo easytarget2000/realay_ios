@@ -10,8 +10,11 @@
 #import <CoreData/CoreData.h>
 
 @class ETRJSONDictionary;
+@class ETRAction;
 @class ETRRoom;
 @class ETRUser;
+
+extern long const ETRActionPublicUserID;
 
 @interface ETRCoreDataHelper : NSObject
 
@@ -23,7 +26,7 @@
 
 + (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
 
-+ (void)handleMessageInDictionary:(NSDictionary *)jsonDictionary;
++ (void)handleActionFromDictionary:(NSDictionary *)jsonDictionary;
 
 + (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
 
@@ -43,6 +46,10 @@
 + (void)dispatchPublicMessage:(NSString *)messageContent;
 
 + (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
+
++ (void)addActionToQueue:(ETRAction *)unsentAction;
+
++ (void)removeActionFromQueue:(ETRAction *)sentAction;
 
 @end
 

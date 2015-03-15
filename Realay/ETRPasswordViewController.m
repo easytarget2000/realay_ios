@@ -16,13 +16,12 @@
 #import "ETRRoom.h"
 #import "ETRSession.h"
 
-#import "ETRSharedMacros.h"
-
 #define DEBUG_NO_PW_CHECK       1
 
 static NSString *const ETRPassordToJoinSegue = @"passwordToJoinSegue";
 
 static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue";
+
 
 @implementation ETRPasswordViewController
 
@@ -78,7 +77,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
         // The right password was given.
         // If the user is already registered, attempt to join the room.
         // Otherwise let the user create a profile first.
-        if ([[ETRLocalUserManager sharedManager] userID] > 10) {
+        if ([ETRLocalUserManager userID] > 10) {
             [self performSegueWithIdentifier:ETRPassordToJoinSegue
                                       sender:self];
         } else {

@@ -17,7 +17,7 @@
 /*
  Same as user.iden
  */
-- (long)userID;
++ (long)userID;
 
 /*
  Stores the User object in the preferences

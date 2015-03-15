@@ -10,7 +10,10 @@
 
 #import "ETRSession.h"
 
-#import "ETRSharedMacros.h"
+#define kMarginOuter            8
+#define kMarginInner            4
+#define kMarginInnerBottom      12
+
 //#define DEBUG_LABEL_BOUNDS 1
 #define kHeightSenderLabel 18
 

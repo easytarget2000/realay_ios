@@ -8,7 +8,7 @@
         <attribute name="sentDate" attributeType="Date" syncable="YES"/>
         <relationship name="recipient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="receivedActions" inverseEntity="ETRUser" syncable="YES"/>
         <relationship name="room" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="actions" inverseEntity="ETRRoom" syncable="YES"/>
-        <relationship name="sender" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="sentActions" inverseEntity="ETRUser" syncable="YES"/>
+        <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="sentActions" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
     <entity name="ETRConversation" representedClassName="ETRConversation" syncable="YES">
         <attribute name="hasUnreadMessage" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>

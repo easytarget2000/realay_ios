@@ -8,8 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class ETRAction;
+
 @interface ETRActionManager : NSObject
 
-+ (void)setForegroundConversationID:(long)remotePartnerID;
+@property (nonatomic, readonly) long lastActionID;
+
+@property (nonatomic) long foregroundPartnerID;
+
++ (ETRActionManager *)sharedManager;
+
+- (void)handleReceivedAction:(ETRAction *)receivedAction;
 
 @end

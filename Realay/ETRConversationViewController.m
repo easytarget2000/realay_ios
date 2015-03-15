@@ -20,8 +20,6 @@
 #import "ETRSentMessageCell.h"
 #import "ETRSession.h"
 
-#import "ETRSharedMacros.h"
-
 static NSString *const ETRConversationToUserListSegue = @"conversationToUserListSegue";
 
 static NSString *const ETRConversationToProfileSegue = @"conversationToProfileSeuge";
@@ -34,6 +32,7 @@ static NSString *const ETRSentMessageCellIdentifier = @"sentMessageCell";
 
 static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
+
 @interface ETRConversationViewController ()
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
@@ -42,9 +41,8 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 @end
 
-@implementation ETRConversationViewController {
-    BOOL allowDisappear;
-}
+
+@implementation ETRConversationViewController
 
 # pragma mark - UIViewController
 
@@ -238,13 +236,10 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 }
 
 - (void)backButtonPressed:(id)sender {
-    allowDisappear = YES;
     [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
 }
 
 - (IBAction)moreButtonPressed:(id)sender {
-    allowDisappear = YES;
-    
     // The More button is a Profile button in private chats.
     if (_isPublic) {
         [self performSegueWithIdentifier:ETRConversationToUserListSegue
@@ -325,9 +320,7 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
                                                 animated:animated];
 
     }
-    
-    allowDisappear = YES;
-    
+
 }
 
 #pragma mark - UIAlertViewDelegate
@@ -345,7 +338,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {
-    allowDisappear = NO;
     [self resizeViewWithOptions:[notification userInfo]];
 }
 
@@ -377,7 +369,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     [[self view] setFrame:viewFrame];
 
     [UIView commitAnimations];
-    allowDisappear = YES;
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {

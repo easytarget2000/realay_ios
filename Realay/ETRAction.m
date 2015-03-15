@@ -13,12 +13,6 @@
 #import "ETRSession.h"
 #import "ETRUser.h"
 
-#import "ETRSharedMacros.h"
-
-#define kInfoMsgSenderId -20
-
-#define kActionIDUnknown -66
-
 @implementation ETRAction
 
 @dynamic remoteID;

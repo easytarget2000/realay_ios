@@ -475,27 +475,6 @@
         <scene sceneID="GjY-Xg-7SX">
             <objects>
                 <viewController storyboardIdentifier="MapViewController" title="Map" useStoryboardIdentifierAsRestorationIdentifier="YES" id="n1u-4b-9fV" customClass="ETRMapViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="GjY-Ve-eZV"/>
-                        <viewControllerLayoutGuide type="bottom" id="IcP-H6-8Fg"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="zuO-uv-2Fb">
-                        <rect key="frame" x="1" y="0.0" width="600" height="556"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u2N-ko-wDJ">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
-                                <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
-                            </view>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="u2N-ko-wDJ" secondAttribute="trailing" constant="-16" id="H0D-aG-jxP"/>
-                            <constraint firstItem="IcP-H6-8Fg" firstAttribute="top" secondItem="u2N-ko-wDJ" secondAttribute="bottom" id="jth-sr-x4F"/>
-                            <constraint firstItem="u2N-ko-wDJ" firstAttribute="leading" secondItem="zuO-uv-2Fb" secondAttribute="leadingMargin" constant="-16" id="lyg-Dc-mFH"/>
-                            <constraint firstItem="u2N-ko-wDJ" firstAttribute="top" secondItem="zuO-uv-2Fb" secondAttribute="top" id="sYE-Xm-yGF"/>
-                        </constraints>
-                    </view>
                     <toolbarItems>
                         <barButtonItem image="InfoBarButton" id="IUt-C5-m76">
                             <color key="tintColor" red="0.47843137254901963" green="0.72941176470588232" blue="0.22745098039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -540,7 +519,6 @@
                     <connections>
                         <outlet property="directionsButton" destination="8W6-tc-Zlz" id="Vca-TX-IwZ"/>
                         <outlet property="joinButton" destination="rkm-iu-uQI" id="ZuT-Ci-adW"/>
-                        <outlet property="mapSubView" destination="u2N-ko-wDJ" id="hbU-Hv-PHh"/>
                         <outlet property="mapTypeSegmentedControl" destination="iEa-LA-giE" id="LcB-jt-WS5"/>
                         <segue destination="UdR-EH-f9A" kind="show" identifier="mapToPasswordSegue" id="qhd-dG-Pzf"/>
                         <segue destination="IKO-ja-zch" kind="show" identifier="mapToDetailsSegue" id="HoA-4R-wry"/>
@@ -673,34 +651,62 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="exz-8g-RKA" userLabel="Input Area">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="exz-8g-RKA" userLabel="InputView">
                                 <rect key="frame" x="0.0" y="554" width="600" height="46"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JgC-tO-zw0">
-                                        <rect key="frame" x="556" y="8" width="36" height="30"/>
-                                        <state key="normal" title="Send">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5WY-Bs-cMN" userLabel="MessageTextField">
+                                        <rect key="frame" x="40" y="8" width="520" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" keyboardAppearance="light" returnKeyType="send"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JgC-tO-zw0" userLabel="SendButton">
+                                        <rect key="frame" x="568" y="11" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="OeZ-Po-LF0"/>
+                                        </constraints>
+                                        <state key="normal" image="Send">
                                             <color key="titleColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                         <connections>
                                             <action selector="sendButtonPressed:" destination="aXv-5O-iXY" eventType="touchUpInside" id="noF-pF-IDc"/>
                                         </connections>
                                     </button>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5WY-Bs-cMN">
-                                        <rect key="frame" x="8" y="8" width="540" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" keyboardAppearance="light" returnKeyType="send"/>
-                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lc8-Ms-xDo" userLabel="MediaButton">
+                                        <rect key="frame" x="8" y="11" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="32P-v9-Asi"/>
+                                            <constraint firstAttribute="width" constant="24" id="FMk-hQ-apD"/>
+                                        </constraints>
+                                        <color key="tintColor" red="0.29803921570000003" green="0.68627450980000004" blue="0.31372549020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" image="Camera">
+                                            <color key="titleColor" red="0.29803921570000003" green="0.68627450980000004" blue="0.31372549020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstItem="Lc8-Ms-xDo" firstAttribute="leading" secondItem="exz-8g-RKA" secondAttribute="leading" constant="8" id="3Tw-F9-tfO"/>
+                                    <constraint firstAttribute="centerY" secondItem="Lc8-Ms-xDo" secondAttribute="centerY" id="5PD-Mo-DBP"/>
+                                    <constraint firstItem="5WY-Bs-cMN" firstAttribute="leading" secondItem="Lc8-Ms-xDo" secondAttribute="trailing" constant="8" id="CV6-mW-6aF"/>
                                     <constraint firstItem="5WY-Bs-cMN" firstAttribute="leading" secondItem="exz-8g-RKA" secondAttribute="leading" constant="8" id="CeZ-NG-Yxe"/>
                                     <constraint firstAttribute="trailing" secondItem="JgC-tO-zw0" secondAttribute="trailing" constant="8" id="Cn4-R4-utx"/>
                                     <constraint firstItem="JgC-tO-zw0" firstAttribute="leading" secondItem="5WY-Bs-cMN" secondAttribute="trailing" constant="8" id="DUp-Lw-IYA"/>
                                     <constraint firstAttribute="bottom" secondItem="JgC-tO-zw0" secondAttribute="bottom" constant="8" id="GDj-m3-qtz"/>
+                                    <constraint firstAttribute="centerY" secondItem="JgC-tO-zw0" secondAttribute="centerY" id="OUn-qf-Hdz"/>
                                     <constraint firstAttribute="height" constant="46" id="Zzq-QI-g5E"/>
+                                    <constraint firstItem="5WY-Bs-cMN" firstAttribute="top" secondItem="exz-8g-RKA" secondAttribute="top" constant="8" id="ae5-Nj-IbY"/>
                                     <constraint firstAttribute="bottom" secondItem="5WY-Bs-cMN" secondAttribute="bottom" constant="8" id="eNd-9q-AB6"/>
+                                    <constraint firstAttribute="trailing" secondItem="Lc8-Ms-xDo" secondAttribute="trailing" constant="568" id="tKA-Eb-NqS"/>
                                 </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="tKA-Eb-NqS"/>
+                                        <exclude reference="CeZ-NG-Yxe"/>
+                                        <exclude reference="GDj-m3-qtz"/>
+                                    </mask>
+                                </variation>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="96" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="zqS-65-4Pd">
                                 <rect key="frame" x="0.0" y="64" width="600" height="490"/>
@@ -953,21 +959,23 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Camera" width="24" height="24"/>
         <image name="DirectionsBarButton" width="24" height="24"/>
         <image name="InfoBarButton" width="24" height="24"/>
         <image name="PlaceHolderProfileW" width="144" height="144"/>
         <image name="PlaceHolderRoomW" width="174" height="174"/>
         <image name="PlaceWhite" width="48" height="48"/>
         <image name="RadiusBlack" width="24" height="24"/>
+        <image name="Send" width="24" height="24"/>
         <image name="TimeBlack" width="18" height="18"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="rgb-Cz-5Pn"/>
         <segue reference="XME-mj-kcu"/>
-        <segue reference="pCv-oo-jLv"/>
-        <segue reference="gwZ-eE-zEK"/>
+        <segue reference="qhd-dG-Pzf"/>
+        <segue reference="dbC-HE-cjU"/>
+        <segue reference="HoA-4R-wry"/>
         <segue reference="ust-LK-7xz"/>
         <segue reference="NMs-mP-plo"/>
-        <segue reference="dbC-HE-cjU"/>
     </inferredMetricsTieBreakers>
 </document>

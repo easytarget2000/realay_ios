@@ -9,7 +9,6 @@
 #import "ETRImageConnectionHandler.h"
 
 #import "ETRImageEditor.h"
-#import "ETRSharedMacros.h"
 
 #define kDebugTag @"ETRImageConnectionHandler"
 
