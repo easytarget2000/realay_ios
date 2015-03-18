@@ -12,7 +12,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRDetailsViewController.h"
 #import "ETRServerAPIHelper.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 static NSString *const joinSegue = @"loginToJoinSegue";

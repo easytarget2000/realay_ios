@@ -26,6 +26,8 @@
 
 "Join" = "Join";
 
+"Leave" = "Leave";
+
 "location" = "location";
 
 "No" = "No";
@@ -59,6 +61,8 @@
 "twitter_name" = "twitter username";
 
 "Unknown_location" = "Your location is unknown.";
+
+"Unknown_User" = "Unknown User";
 
 "until" = "until";
 

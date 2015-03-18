@@ -16,7 +16,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 static short const ETRAPITimeOutInterval = 20;
@@ -33,9 +33,11 @@ static NSString *const ETRGetActionsSuccessStatus = @"AS_OK";
 
 static NSString *const ETRGetActionsObjectTag = @"as";
 
-static NSString *const ETRPutActionAPICall = @"do_put_action";
+static NSString *const ETRPutActionAPICall = @"put_action";
 
 static NSString *const ETRPutActionSuccessStatus = @"INA_OK";
+
+static NSString *const ETRPutMessageSuccessStatus = @"INM_OK";
 
 static NSString *const ETRGetImageAPICall = @"get_image";
 
@@ -54,6 +56,10 @@ static NSString *const ETRRoomUsersSuccessStatus = @"UIR_OK";
 static NSString *const ETRUserListObjectTag = @"us";
 
 static NSString *const ETRGetUserAPICall = @"get_user";
+
+static NSString *const ETRUserObjectTag = @"user";
+
+static NSString *const ETRGetUserSuccessStatus = @"SU_OK";
 
 static NSMutableArray *connections;
 
@@ -174,6 +180,11 @@ static NSMutableArray *connections;
 }
 
 + (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler {
+    NSString *connectionId = @"roomListUpdate";
+    if ([ETRServerAPIHelper didStartConnection:connectionId]) {
+        return;
+    }
+    
     CLLocation *location = [ETRLocationManager location];
     if (!location) {
         NSLog(@"WARNING: Not updating Room list because Location is unknown.");
@@ -194,9 +205,11 @@ static NSMutableArray *connections;
     
     [ETRServerAPIHelper performAPICall:ETRGetRoomsAPICall
                               POSTbody:bodyString
-                         successStatus:@"RS_OK"
+                         successStatus:ETRGetRoomsSuccessStatus
                              objectTag:@"rs"
                      completionHandler:^(NSObject *receivedObject) {
+                         [ETRServerAPIHelper didFinishConnection:connectionId];
+                         
                          // Check if an array of rooms was returned by this API call.
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
                              
@@ -322,7 +335,6 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             return;
         }
         
-        
         if ([receivedObject isKindOfClass:[NSArray class]]) {
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
@@ -336,7 +348,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
         if ([[NSThread currentThread] isCancelled]) {
             [NSThread exit];
         } else {
-            completionHandler([[ETRSession sharedManager] startSession]);
+            completionHandler([[ETRSessionManager sharedManager] startSession]);
         }
     };
     
@@ -424,6 +436,8 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     NSString *joinBody;
     joinBody = [NSString stringWithFormat:@"room_id=%ld&user_id=%ld", roomID, localUserID];
     
+    [ETRCoreDataHelper clearPublicActions];
+    
     [ETRServerAPIHelper performAPICall:@"do_join_room"
                               POSTbody:joinBody
                          successStatus:@"INS_U_OK"
@@ -437,7 +451,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
         return;
     }
     
-    ETRRoom *sessionRoom = [ETRSession sessionRoom];
+    ETRRoom *sessionRoom = [ETRSessionManager sessionRoom];
     if (!sessionRoom) {
         NSLog(@"ERROR: Cannot send an Action outside of a Session.");
         return;
@@ -454,27 +468,34 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
         return;
     }
     
+    long timestamp = [[outgoingAction sentDate] timeIntervalSince1970];
+    
     NSMutableString *bodyString;
-    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld&sender_id=%ld&recip_id=%ld&code=%d",
+    bodyString = [NSMutableString stringWithFormat:@"room_id=%ld&sender_id=%ld&recip_id=%ld&timestamp=%ld&code=%d",
                   roomID,
                   [ETRLocalUserManager userID],
                   recipientID,
+                  timestamp,
                   [[outgoingAction code] shortValue]];
     
-    if ([outgoingAction messageContent]) {
+    NSString *successStatus;
+    if ([outgoingAction isValidMessage]) {
         [bodyString appendFormat:@"&message=%@", [outgoingAction messageContent]];
+        successStatus = ETRPutMessageSuccessStatus;
+    } else {
+        successStatus = ETRPutActionSuccessStatus;
     }
     
     [ETRServerAPIHelper performAPICall:ETRPutActionAPICall
                               POSTbody:bodyString
-                         successStatus:ETRPutActionSuccessStatus
+                         successStatus:successStatus
                              objectTag:nil
                      completionHandler:^(id<NSObject> receivedObject) {
                          
                          if ([receivedObject isKindOfClass:[NSNumber class]]) {
                              NSNumber *didSucceed = (NSNumber *)receivedObject;
                              if ([didSucceed boolValue]) {
-                                 NSLog(@"DEBUG: Did successfully send Action: %@", outgoingAction);
+                                 NSLog(@"DEBUG: Did successfully send Action: %@", [outgoingAction messageContent]);
                                  [ETRCoreDataHelper removeActionFromQueue:outgoingAction];
                                  return;
                              }
@@ -485,7 +506,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
 }
 
 #pragma mark -
-#pragma mark Local User
+#pragma mark User
 
 /*
  Registers a new User at the database or retrieves the data
@@ -530,6 +551,30 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
 
 + (void)sendLocalUserUpdate {
     
+}
+
++ (void)getUserWithID:(long)remoteID {
+    if (remoteID < 10) {
+        return;
+    }
+    
+    NSString *connectionID = [NSString stringWithFormat:@"getUser:%ld", remoteID];
+    if ([ETRServerAPIHelper didStartConnection:connectionID]) {
+        return;
+    }
+    
+    NSString *body = [NSString stringWithFormat:@"user_id=%ld", remoteID];
+    [ETRServerAPIHelper performAPICall:ETRGetUserAPICall
+                              POSTbody:body
+                         successStatus:ETRGetUserSuccessStatus
+                             objectTag:ETRUserObjectTag
+                     completionHandler:^(id<NSObject> receivedObject) {
+                         if (receivedObject && [receivedObject isKindOfClass:[NSDictionary class]]) {
+                             NSDictionary *jsonDictionary;
+                             jsonDictionary = (NSDictionary *) receivedObject;
+                             [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
+                         }
+                     }];
 }
 
 #pragma mark -

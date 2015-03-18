@@ -22,18 +22,19 @@
 @dynamic address;
 @dynamic createdBy;
 @dynamic endDate;
+@dynamic imageID;
 @dynamic latitude;
 @dynamic longitude;
 @dynamic password;
 @dynamic queryDistance;
+@dynamic queryUserCount;
 @dynamic radius;
+@dynamic remoteID;
 @dynamic startTime;
 @dynamic summary;
 @dynamic title;
-@dynamic queryUserCount;
-@dynamic users;
 @dynamic actions;
-@dynamic imageID;
+@dynamic users;
 
 @synthesize location = _location;
 

@@ -34,6 +34,8 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 + (void)getUserListInRoom:(ETRRoom *)room;
 
++ (void)getUserWithID:(long)remoteID;
+
 + (void)sendLocalUserUpdate;
 
 + (void)putAction:(ETRAction *)outgoingAction;

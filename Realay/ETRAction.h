@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "ETRChatObject.h"
 
-@class ETRRoom, ETRUser;
+@class ETRConversation, ETRRoom, ETRUser;
+
 
 typedef NS_ENUM(short, ETRActionCode) {
     ETRActionCodePublicMessage  = 10,
@@ -18,26 +18,28 @@ typedef NS_ENUM(short, ETRActionCode) {
     ETRActionCodePrivateMedia   = 41
 };
 
-@interface ETRAction : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * remoteID;
-//@property (nonatomic, retain) NSNumber * isPublic;
-@property (nonatomic, retain) NSDate * sentDate;
+@interface ETRAction : ETRChatObject
+
 @property (nonatomic, retain) NSNumber * code;
-@property (nonatomic, retain) NSNumber * imageID;
-@property (nonatomic, retain) NSString * messageContent;
 @property (nonatomic, retain) NSNumber * isInQueue;
-@property (nonatomic, retain) ETRUser *sender;
+@property (nonatomic, retain) NSString * messageContent;
+@property (nonatomic, retain) NSNumber * remoteID;
+@property (nonatomic, retain) NSDate * sentDate;
 @property (nonatomic, retain) ETRUser *recipient;
 @property (nonatomic, retain) ETRRoom *room;
+@property (nonatomic, retain) ETRUser *sender;
+@property (nonatomic, retain) ETRConversation *conversation;
 
 //- (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
 //- (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
 
 - (BOOL)isPublicMessage;
 
+- (BOOL)isValidMessage;
+
 - (BOOL)isPhotoMessage;
 
-- (BOOL)isSentMessage;
+- (BOOL)isSentAction;
 
 @end

@@ -11,8 +11,8 @@
 
 @interface ETRChatObject : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * remoteID;
-@property (nonatomic, retain) NSNumber * imageID;
+@property (nonatomic, retain) NSNumber *remoteID;
+@property (nonatomic, retain) NSNumber *imageID;
 @property (strong, nonatomic) UIImage *lowResImage;
 
 - (NSString *)imageIDWithHiResFlag:(BOOL)doLoadHiRes;

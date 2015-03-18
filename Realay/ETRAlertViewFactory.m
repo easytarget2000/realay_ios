@@ -11,7 +11,7 @@
 #import "ETRLocationManager.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 @implementation ETRAlertViewFactory
@@ -62,7 +62,7 @@
         return;
     }
     
-    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
+    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom) {
         return;
     }
@@ -86,8 +86,8 @@
     NSString *titleFormat = NSLocalizedString(@"Want_leave", @"Want to leave %@?");
     
     NSString *roomTitle;
-    if ([[ETRSession sharedManager] room]) {
-        roomTitle = [[[ETRSession sharedManager] room] title];
+    if ([[ETRSessionManager sharedManager] room]) {
+        roomTitle = [[[ETRSessionManager sharedManager] room] title];
     } else {
         roomTitle = @"";
     }
@@ -119,7 +119,7 @@
  until stepping inside the region.
  */
 + (void)showDistanceLeftAlertView {
-    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
+    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom) {
         return;
     }

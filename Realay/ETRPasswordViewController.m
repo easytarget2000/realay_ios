@@ -14,7 +14,7 @@
 #import "ETRLocationManager.h"
 #import "ETRLoginViewController.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 #define DEBUG_NO_PW_CHECK       1
 
@@ -33,7 +33,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
     
     [[self passwordTextField] setDelegate:self];
     [[self passwordTextField] setText:@""];
-    [self setTitle:[[ETRSession sessionRoom] title]];
+    [self setTitle:[[ETRSessionManager sessionRoom] title]];
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
@@ -43,7 +43,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
 
 - (IBAction)joinButtonPressed:(id)sender {
     // Only perform a join action, if the user did not join yet.
-    if (![[ETRSession sharedManager] didBeginSession]) {
+    if (![[ETRSessionManager sharedManager] didBeginSession]) {
         // Show the password prompt, if the device location is inside the region.
         if ([ETRLocationManager isInSessionRegion]) {
            [self verifyPasswordAndJoin];
@@ -67,7 +67,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
     
     // Get the password values.
     NSString *typedPassword = [[self passwordTextField] text];
-    NSString *password = [[[ETRSession sharedManager] room] password];
+    NSString *password = [[[ETRSessionManager sharedManager] room] password];
     
 #ifdef DEBUG_NO_PW_CHECK
     typedPassword = password;

@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ETRUser;
+@class ETRAction, ETRUser;
 
 @interface ETRConversation : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * hasUnreadMessage;
 @property (nonatomic, retain) ETRUser *partner;
+@property (nonatomic, retain) ETRAction *lastMessage;
 
 @end

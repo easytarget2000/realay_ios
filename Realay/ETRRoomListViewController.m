@@ -20,7 +20,7 @@
 #import "ETRRoom.h"
 #import "ETRRoomListCell.h"
 #import "ETRServerAPIHelper.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 //#import "ETRSharedMacros.h"
 
@@ -63,25 +63,9 @@
     // Perform Fetch
     NSError *error = nil;
     [_fetchedResultsController performFetch:&error];
-    
     if (error) {
-        NSLog(@"Unable to perform fetch.");
-        NSLog(@"%@, %@", error, error.localizedDescription);
+        NSLog(@"ERROR: performFetch: %@", error);
     }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    NSInteger myControllerIndex;
-    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
-    
-//    // Refreshing:
-//    [[self refreshControl] addTarget:self
-//                              action:@selector(updateRoomsTable)
-//                    forControlEvents:UIControlEventValueChanged];
-    [[self tableView] reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -95,6 +79,20 @@
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:NO];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    //    NSInteger myControllerIndex;
+    //    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
+    //    [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
+    
+    //    // Refreshing:
+    //    [[self refreshControl] addTarget:self
+    //                              action:@selector(updateRoomsTable)
+    //                    forControlEvents:UIControlEventValueChanged];
+    [[self tableView] reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -272,7 +270,7 @@
     // Hide the selection, prepare the Session and go to the Room Map.
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
-    [[ETRSession sharedManager] prepareSessionInRoom:record navigationController:[self navigationController]];
+    [[ETRSessionManager sharedManager] prepareSessionInRoom:record navigationController:[self navigationController]];
     
     NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
     

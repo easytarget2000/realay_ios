@@ -16,7 +16,7 @@
 #import "ETRLocationManager.h"
 #import "ETRPasswordViewController.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 #import "ETRColorMacros.h"
 
@@ -38,11 +38,11 @@
     [super viewWillAppear:animated];
     
     // Basic GUI setup:
-    [self setTitle:[[ETRSession sessionRoom] title]];
+    [self setTitle:[[ETRSessionManager sessionRoom] title]];
     [[self navigationController] setToolbarHidden:NO animated:YES];
     
     // Hide the join button if the user is already in this room.
-    if ([[ETRSession sharedManager] didBeginSession]) {
+    if ([[ETRSessionManager sharedManager] didBeginSession]) {
         [[self navigationItem] setRightBarButtonItem:nil];
         [self setDirectionsButton:nil];
     } else {
@@ -63,10 +63,10 @@
     
     NSInteger myControllerIndex;
     myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedManager] setMapControllerIndex:myControllerIndex];
+    [[ETRSessionManager sharedManager] setMapControllerIndex:myControllerIndex];
     
     // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSession sharedManager] room]) {
+    if (![[ETRSessionManager sharedManager] room]) {
         [[self navigationController] popViewControllerAnimated:NO];
         NSLog(@"ERROR: No room set in manager.");
         return;
@@ -84,7 +84,7 @@
     [[self mapSubView] addSubview:_mapView];
     
     // Create the room marker.
-    ETRRoom *room = [[ETRSession sharedManager] room];
+    ETRRoom *room = [[ETRSessionManager sharedManager] room];
     if (!room) {
         NSLog(@"ERROR: Cannot start ETRMapViewController without a prepared Session Room.");
         return;
@@ -123,8 +123,8 @@
     if (myNavIndex == NSNotFound) {
         
         // If we didn't join this room, discard it.
-        if (![[ETRSession sharedManager] didBeginSession]) {
-            [[ETRSession sharedManager] endSession];
+        if (![[ETRSessionManager sharedManager] didBeginSession]) {
+            [[ETRSessionManager sharedManager] endSession];
 #ifdef DEBUG
             NSLog(@"INFO: Manager Room object reset.");
 #endif
@@ -146,7 +146,7 @@
     
     // Get data from the session manager.
     CLLocation *currentLocation = [ETRLocationManager location];
-    ETRRoom *room = [[ETRSession sharedManager] room];
+    ETRRoom *room = [[ETRSessionManager sharedManager] room];
     
     // Decide which camera to show.
     if (currentLocation) {
@@ -192,7 +192,7 @@
     NSString *URLString;
     
     NSURL *gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
-    NSString *address = [[[ETRSession sharedManager] room] address];
+    NSString *address = [[[ETRSessionManager sharedManager] room] address];
     if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
         URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
     } else {
@@ -212,12 +212,12 @@
 
 - (IBAction)joinButtonPressed:(id)sender {
     // Only perform a join action, if the user did not join yet.
-    if ([[ETRSession sharedManager] didBeginSession]) return;
+    if ([[ETRSessionManager sharedManager] didBeginSession]) return;
         
     if ([ETRLocationManager isInSessionRegion]) {
         // Show the password prompt, if the device location is inside the region.
         [self performSegueWithIdentifier:kSegueToNext sender:self];
-    } else if ([[ETRSession sharedManager] locationUpdateFails]){
+    } else if ([[ETRSessionManager sharedManager] locationUpdateFails]){
         // The user's location is unknown.
 //        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:0];
     } else {
@@ -230,7 +230,7 @@
     if ([[segue identifier] isEqualToString:kSegueToDetails]) {
         ETRDetailsViewController *destination;
         destination = [segue destinationViewController];
-        [destination setRoom:[[ETRSession sharedManager] room]];
+        [destination setRoom:[[ETRSessionManager sharedManager] room]];
     }
 }
 

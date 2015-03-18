@@ -11,7 +11,7 @@
 #import "ETRAppDelegate.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRServerAPIHelper.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 #define kDefsKeyUserID          @"LOCAL_USER_REMOTE_ID"
@@ -64,11 +64,8 @@ static ETRLocalUserManager *sharedInstance = nil;
         return nil;
     }
     
-    _user = [ETRCoreDataHelper userWithRemoteID:userID];
-    if (_user) {
-        return _user;
-    }
-
+    _user = [ETRCoreDataHelper userWithRemoteID:userID
+                          downloadIfUnavailable:YES];
     return _user;
 }
 

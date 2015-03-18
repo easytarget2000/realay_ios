@@ -14,7 +14,7 @@
 #import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 #define kSegueToConversation        @"userListToConversationSegue"
@@ -31,14 +31,14 @@
     
     NSInteger myControllerIndex;
     myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSession sharedManager] setUserListControllerIndex:myControllerIndex];
+    [[ETRSessionManager sharedManager] setUserListControllerIndex:myControllerIndex];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     // Navigation Bar:
-    [self setTitle:[[ETRSession sessionRoom] title]];
+    [self setTitle:[[ETRSessionManager sessionRoom] title]];
     
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
@@ -85,7 +85,7 @@
     if ([indexPath section] == 0) {
         // Section 0 contains the conversations.
         
-        if ([[[ETRSession sharedManager] sortedChatKeys] count] < 1) {
+        if ([[[ETRSessionManager sharedManager] sortedChatKeys] count] < 1) {
             // No conversation started yet.
             
             NSString *noConvos = NSLocalizedString(@"No_private_conversations", @"No PMs yet");
@@ -115,11 +115,11 @@
     
     switch (section) {
         case 0:     // Conversation section:
-            if ([[[ETRSession sharedManager] sortedChatKeys] count] < 2) return 1;
-            else return [[[ETRSession sharedManager] sortedChatKeys] count];
+            if ([[[ETRSessionManager sharedManager] sortedChatKeys] count] < 2) return 1;
+            else return [[[ETRSessionManager sharedManager] sortedChatKeys] count];
             break;
         case 1:     // User section
-            return [[[ETRSession sharedManager] sortedUserKeys] count];
+            return [[[ETRSessionManager sharedManager] sortedUserKeys] count];
         default:
             return 0;
             break;

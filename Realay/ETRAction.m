@@ -10,20 +10,20 @@
 
 #import "ETRLocalUserManager.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 @implementation ETRAction
 
-@dynamic remoteID;
-//@dynamic isPublic;
-@dynamic sentDate;
 @dynamic code;
+@dynamic isInQueue;
 @dynamic messageContent;
-@dynamic sender;
+@dynamic remoteID;
+@dynamic sentDate;
 @dynamic recipient;
 @dynamic room;
-@dynamic isInQueue;
+@dynamic sender;
+@dynamic conversation;
 
 //+ (ETRAction *)actionFromJSONDictionary:(NSDictionary *)JSONDict {
 //    if (!JSONDict) return nil;
@@ -60,8 +60,19 @@
     return (code == ETRActionCodePrivateMessage) || (code == ETRActionCodePrivateMedia);
 }
 
-- (BOOL)isSentMessage {
-    return [[self sender] isEqual:[[ETRLocalUserManager sharedManager] user]];
+- (BOOL)isSentAction {
+    long senderID = [[[self sender] remoteID] longValue];
+    return senderID == [ETRLocalUserManager userID];
+}
+
+- (BOOL)isValidMessage {
+    short code = [[self code] shortValue];
+    
+    if (code == ETRActionCodePublicMessage || code == ETRActionCodePrivateMessage) {
+        return [self messageContent] && [[self messageContent] length];
+    } else {
+        return NO;
+    }
 }
 
 - (void)setImageID:(NSNumber *)imageID {

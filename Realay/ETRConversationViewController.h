@@ -11,11 +11,12 @@
 @class ETRUser;
 
 @interface ETRConversationViewController : UIViewController
-    <UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *messagesTableView;
 
 @property (weak, nonatomic) IBOutlet UITextField *messageTextField;
+
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *exitButton;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *moreButton;
 
@@ -24,7 +25,10 @@
 @property (nonatomic) BOOL isPublic;
 
 - (IBAction)sendButtonPressed:(id)sender;
+
 - (IBAction)moreButtonPressed:(id)sender;
+
+- (IBAction)exitButtonPressed:(id)sender;
 
 @end
 

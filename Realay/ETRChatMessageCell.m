@@ -8,7 +8,7 @@
 
 #import "ETRChatMessageCell.h"
 
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 #define kMarginOuter            8
 #define kMarginInner            4
@@ -41,7 +41,7 @@
         [_nameLabel setBackgroundColor:[UIColor clearColor]];
         [_nameLabel setNumberOfLines:1];
         [_nameLabel setLineBreakMode:NSLineBreakByTruncatingMiddle];
-        UIFont *nameFont = [[ETRSession sharedManager] msgSenderFont];
+        UIFont *nameFont = [[ETRSessionManager sharedManager] msgSenderFont];
         [_nameLabel setFont:nameFont];
         [[self contentView] addSubview:_nameLabel];
         
@@ -51,7 +51,7 @@
         [_textLabel setBackgroundColor:[UIColor clearColor]];
         [_textLabel setNumberOfLines:0];
         [_textLabel setLineBreakMode:NSLineBreakByWordWrapping];
-        UIFont *textFont = [[ETRSession sharedManager] msgTextFont];
+        UIFont *textFont = [[ETRSessionManager sharedManager] msgTextFont];
         [_textLabel setFont:textFont];
         [[self contentView] addSubview:_textLabel];
     }
@@ -64,7 +64,7 @@
     if (![message messageContent]) return;
     
     // Calculate the size of the combined labels.
-    BOOL isMyMessage = [message isSentMessage];
+    BOOL isMyMessage = [message isSentAction];
     BOOL doShowSender = !isMyMessage && [message isPublicMessage];
     CGSize innerSize;
 //    innerSize = [message frameSizeForWidth:width hasNameLabel:doShowSender];
@@ -173,7 +173,7 @@
         NSString *senderName;
         // TODO: Get User data from Cache.
         if (senderName) {
-            UIFont *nameFont = [[ETRSession sharedManager] msgSenderFont];
+            UIFont *nameFont = [[ETRSessionManager sharedManager] msgSenderFont];
             nameSize = [senderName sizeWithAttributes:@{NSFontAttributeName:nameFont}];
         }
     }

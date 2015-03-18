@@ -12,7 +12,7 @@
 #import "ETRConversationViewController.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 static NSString *const joinSegue = @"joinToConversationSegue";
 
@@ -27,7 +27,7 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 - (void)viewDidLoad {
     [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
     
-    ETRRoom *preparedRoom = [[ETRSession sharedManager] room];
+    ETRRoom *preparedRoom = [[ETRSessionManager sharedManager] room];
     if (!preparedRoom) {
         [[self navigationController] popToRootViewControllerAnimated:YES];
         NSLog(@"ERROR: No Room prepared in SessionManager. Cancelling join procedure.");
@@ -62,17 +62,21 @@ static NSString *const joinSegue = @"joinToConversationSegue";
     showProgressInLabel:_statusLabel
            progressView:_progressView
       completionHandler:^(BOOL didSucceed) {
-          if (didSucceed) {
-              [[self statusLabel] setText:@"Done."];
-              [[self progressView] setProgress:1.0f];
-              [self performSegueWithIdentifier:joinSegue sender:nil];
-              return;
-          } else {
-              [ETRAlertViewFactory showGeneralErrorAlert];
-              [[self navigationController] popToRootViewControllerAnimated:YES];
-              return;
-          }
+          [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+                                   toTarget:self
+                                 withObject:@(didSucceed)];
       }];
+}
+
+- (void)handleJoinCompletion:(NSNumber *)didSucceed {
+        if ([didSucceed boolValue]) {
+            [[self statusLabel] setText:@"Done."];
+            [[self progressView] setProgress:1.0f];
+            [self performSegueWithIdentifier:joinSegue sender:nil];
+        } else {
+            [ETRAlertViewFactory showGeneralErrorAlert];
+            [[self navigationController] popToRootViewControllerAnimated:YES];
+        }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

@@ -15,11 +15,15 @@
 @interface ETRImageConnectionHandler()
 
 @property (retain, nonatomic) NSMutableData * activeDlData;
-@property (retain, nonatomic) NSURLConnection *imageConnection;
-@property (retain, nonatomic) ETRImageLoader *imageLoader;
+
+@property (retain, nonatomic) NSURLConnection * imageConnection;
+
+@property (retain, nonatomic) ETRImageLoader * imageLoader;
+
 @property (nonatomic) BOOL doLoadHiRes;
 
 @end
+
 
 @implementation ETRImageConnectionHandler
 

@@ -41,7 +41,7 @@ extern long const ETRActionPublicUserID;
 
 + (ETRRoom *)roomWithRemoteID:(long)remoteID;
 
-+ (ETRUser *)userWithRemoteID:(long)remoteID;
++ (ETRUser *)userWithRemoteID:(long)remoteID downloadIfUnavailable:(BOOL)doDownload;
 
 + (void)dispatchPublicMessage:(NSString *)messageContent;
 
@@ -50,6 +50,8 @@ extern long const ETRActionPublicUserID;
 + (void)addActionToQueue:(ETRAction *)unsentAction;
 
 + (void)removeActionFromQueue:(ETRAction *)sentAction;
+
++ (void)clearPublicActions;
 
 @end
 

@@ -16,10 +16,7 @@
 @class ETRAction;
 @class ETRRoom;
 
-# pragma mark - Delegate Protocols
-
-# pragma mark - Interface
-@interface ETRSession : NSObject
+@interface ETRSessionManager : NSObject
 
 /*
  Chat that does not need notifications.
@@ -92,7 +89,7 @@
 /* 
  The shared singleton instance:
   */
-+ (ETRSession *)sharedManager;
++ (ETRSessionManager *)sharedManager;
 
 + (ETRRoom *)sessionRoom;
 

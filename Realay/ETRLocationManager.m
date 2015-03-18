@@ -11,7 +11,7 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 static ETRLocationManager *sharedInstance;
 
@@ -44,7 +44,7 @@ static ETRLocationManager *sharedInstance;
 }
 
 + (BOOL)isInSessionRegion {
-    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
+    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
     return [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom] < 10;
 }
 

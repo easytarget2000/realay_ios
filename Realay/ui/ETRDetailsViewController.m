@@ -18,7 +18,7 @@
 #import "ETRProfileSocialCell.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 #import "ETRColorMacros.h"
@@ -86,7 +86,7 @@
     }
     
     if (_room) {
-        if ([[ETRSession sharedManager] didBeginSession]) {
+        if ([[ETRSessionManager sharedManager] didBeginSession]) {
             [self setBarButton:nil];
         } else {
             [[self barButton] setTitle:NSLocalizedString(@"Join", @"Join")];
@@ -341,7 +341,7 @@
 
 - (IBAction)barButtonPressed:(id)sender {
     if (_room) {
-        if (![[ETRSession sharedManager] didBeginSession]) {
+        if (![[ETRSessionManager sharedManager] didBeginSession]) {
             if ([ETRLocationManager isInSessionRegion]) {
                 [self performSegueWithIdentifier:kPasswordSegue sender:nil];
             } else {

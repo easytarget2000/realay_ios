@@ -14,5 +14,6 @@
 
 @dynamic hasUnreadMessage;
 @dynamic partner;
+@dynamic lastMessage;
 
 @end

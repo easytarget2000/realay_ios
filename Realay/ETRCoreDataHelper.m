@@ -13,7 +13,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 long const ETRActionPublicUserID = -10;
@@ -28,13 +28,11 @@ static NSString *const ETRActionSenderKey = @"sender";
 
 static NSString *const ETRActionRecipientKey = @"recipient";
 
-static NSString *const ETRActionDateKey = @"sentTime";
-
-static NSString *const ETRActionIsPublicKey = @"isPublic";
+static NSString *const ETRActionDateKey = @"sentDate";
 
 static NSString *const ETRActionRoomKey = @"room";
 
-@implementation ETRCoreDataHelper
+static 
 
 static NSManagedObjectContext *ManagedObjectContext;
 
@@ -49,6 +47,8 @@ static NSString *RoomEntityName;
 static NSEntityDescription *UserEntity;
 
 static NSString *UserEntityName;
+
+@implementation ETRCoreDataHelper
 
 #pragma mark -
 #pragma mark Accessories
@@ -165,7 +165,7 @@ static NSString *UserEntityName;
     [room setLongitude:@([longitude floatValue])];
     
     NSLog(@"Inserting Room: %@", [room description]);
-    [self saveContext];
+    [ETRCoreDataHelper saveContext];
 }
 
 + (ETRRoom *)roomWithRemoteID:(long)remoteID {
@@ -206,27 +206,60 @@ static NSString *UserEntityName;
 #pragma mark -
 #pragma mark Actions
 
++ (ETRAction *)actionWithRemoteID:(long)remoteID {
+    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper actionEntityName]];
+    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [fetch setPredicate:predicate];
+    NSArray *storedActions = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
+    
+    ETRAction *action;
+    if (storedActions && [storedActions count]) {
+        if ([storedActions[0] isKindOfClass:[ETRAction class]]) {
+            action = (ETRAction *)storedActions[0];
+        }
+    }
+    
+    return action;
+}
+
 + (void)handleActionFromDictionary:(NSDictionary *)jsonDictionary {
+    long remoteID = [jsonDictionary longValueForKey:@"a" withFallbackValue:-102];
+    if (remoteID < 10) {
+        NSLog(@"WARNING: Ignoring incoming Action with Remote ID %ld." , remoteID);
+        return;
+    }
+    
+    // Skip this Action, if an Object with this remote ID has already been stored locally.
+    // Actions should not change, so they will not be updated.
+    ETRAction *existingAction = [ETRCoreDataHelper actionWithRemoteID:remoteID];
+    if (existingAction) {
+        return;
+    }
+    
     // Incoming Actions are always unique. Just initialse a new one.
     ETRAction *receivedAction;
     receivedAction = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
                         insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
     
-    [receivedAction setRemoteID:@([jsonDictionary longValueForKey:@"a" withFallbackValue:-102])];
+    [receivedAction setRemoteID:@(remoteID)];
     
     long roomID = [jsonDictionary longValueForKey:@"r" withFallbackValue:-103];
     if (roomID < 10) {
         NSLog(@"ERROR: Received Action with Room ID %ld.", roomID);
         return;
     }
-    [receivedAction setRoom:[ETRCoreDataHelper roomWithRemoteID:roomID]];
+    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:roomID];
+    [receivedAction setRoom:room];
     
     // Sender and recipient IDs may be a valid User ID, i.e. positive long,
     // or -10, the pre-defined ID for public (as recipient ID) and admin (as sender ID) messages.
     
     long senderID = [jsonDictionary longValueForKey:@"sn" withFallbackValue:-104];
     if (senderID > 10) {
-        [receivedAction setSender:[ETRCoreDataHelper userWithRemoteID:senderID]];
+        ETRUser *sender = [ETRCoreDataHelper userWithRemoteID:senderID
+                                        downloadIfUnavailable:YES];
+        [receivedAction setSender:sender];
     } else if (senderID == ETRActionPublicUserID) {
         // TODO: Handle Server messages.
     } else {
@@ -235,9 +268,11 @@ static NSString *UserEntityName;
     
     long recipientID = [jsonDictionary longValueForKey:@"rc" withFallbackValue:-105];
     if (recipientID > 10) {
-        [receivedAction setRecipient:[ETRCoreDataHelper userWithRemoteID:recipientID]];
-    } else if (senderID != ETRActionPublicUserID) {
-        NSLog(@"WARNING: Received Action with recipient ID %ld", senderID);
+        ETRUser *recipient = [ETRCoreDataHelper userWithRemoteID:recipientID
+                                          downloadIfUnavailable:YES];
+        [receivedAction setRecipient:recipient];
+    } else if (recipientID != ETRActionPublicUserID) {
+        NSLog(@"WARNING: Received Action with recipient ID %ld", recipientID);
     }
     
     long timestamp = [jsonDictionary longValueForKey:@"t" withFallbackValue:1426439266];
@@ -246,17 +281,18 @@ static NSString *UserEntityName;
     [receivedAction setCode:@([jsonDictionary shortValueForKey:@"cd" withFallbackValue:-1])];
     
     [receivedAction setMessageContent:[jsonDictionary stringForKey:@"m"]];
+    
+    NSLog(@"DEBUG: Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
+    
     [ETRCoreDataHelper saveContext];
 }
 
 + (void)dispatchPublicMessage:(NSString *)messageContent {
-    // Outgoing messages are always unique. Just initalise a new one.
-    ETRAction *message = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
-                            insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    ETRAction *message = [ETRCoreDataHelper blankOutgoingAction];
+    if (!message) {
+        return;
+    }
     
-    [message setRoom:[[ETRSession sharedManager] room]];
-    [message setSender:[[ETRLocalUserManager sharedManager] user]];
-    [message setSentDate:[NSDate date]];
     [message setCode:@(ETRActionCodePublicMessage)];
     [message setMessageContent:messageContent];
     
@@ -267,21 +303,40 @@ static NSString *UserEntityName;
 }
 
 + (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient {
-    // Outgoing messages are always unique. Just initalise a new one.
-    ETRAction *message = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
-                            insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    ETRAction *message = [ETRCoreDataHelper blankOutgoingAction];
+    if (!message) {
+        return;
+    }
     
-    [message setRoom:[[ETRSession sharedManager] room]];
-    [message setSender:[[ETRLocalUserManager sharedManager] user]];
     [message setRecipient:recipient];
-    [message setSentDate:[NSDate date]];
     [message setCode:@(ETRActionCodePrivateMessage)];
     [message setMessageContent:messageContent];
+    [message setSentDate:[NSDate date]];
     
     // Immediately store them in the Context, so that they appear in the Conversation.
     [ETRCoreDataHelper saveContext];
     
     [ETRServerAPIHelper putAction:message];
+}
+
++ (ETRAction *)blankOutgoingAction {
+    // Outgoing messages are always unique. Just initalise a new one.
+    ETRAction *message = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
+                            insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    
+    ETRRoom *sessionRoom = [ETRSessionManager sessionRoom];
+    ETRUser *localUser = [[ETRLocalUserManager sharedManager] user];
+    if (!sessionRoom || !localUser) {
+        NSLog(@"ERROR: Cannot build blank outgoing Action.");
+        return nil;
+    }
+    
+    [message setRoom:sessionRoom];
+    [message setSender:localUser];
+    [message setSentDate:[NSDate date]];
+    [message setIsInQueue:@(NO)];
+
+    return message;
 }
 
 + (void)addActionToQueue:(ETRAction *)unsentAction {
@@ -310,8 +365,8 @@ static NSString *UserEntityName;
 }
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate {
-    ETRRoom *sessionRoom = [[ETRSession sharedManager] room];
-    if (!sessionRoom || ![[ETRSession sharedManager] didBeginSession]) {
+    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
@@ -319,12 +374,14 @@ static NSString *UserEntityName;
     NSFetchRequest *fetchRequest;
     fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
     
-    NSString *where = [NSString stringWithFormat:@"(%@.%@ == %@) AND (%@ == %@)",
-                       ETRActionRoomKey,
-                       ETRRemoteIDKey,
-                       [sessionRoom remoteID],
-                       ETRActionIsPublicKey,
-                       @(YES)];
+    NSString *where = [NSString stringWithFormat:@"%@ == %i OR %@ == %i",
+//                       ETRActionRoomKey,
+//                       ETRRemoteIDKey,
+//                       [[sessionRoom remoteID] longValue],
+                       ETRActionCodeKey,
+                       ETRActionCodePublicMessage,
+                       ETRActionCodeKey,
+                       ETRActionCodePublicMedia];
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
     [fetchRequest setPredicate:predicate];
@@ -351,6 +408,31 @@ static NSString *UserEntityName;
     return resultsController;
 }
 
++ (void)clearPublicActions {
+    NSFetchRequest * allPublicActions;
+    allPublicActions = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
+    
+    NSString *where = [NSString stringWithFormat:@"%@ == %i OR %@ == %i",
+                       ETRActionCodeKey,
+                       ETRActionCodePublicMessage,
+                       ETRActionCodeKey,
+                       ETRActionCodePublicMedia];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [allPublicActions setPredicate:predicate];
+    // Only fetch the ManagedObjectID.
+    [allPublicActions setIncludesPropertyValues:NO];
+    
+    NSError * error = nil;
+    NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:allPublicActions
+                                                                   error:&error];
+    //error handling goes here
+    for (NSManagedObject * action in actions) {
+        [[ETRCoreDataHelper context] deleteObject:action];
+    }
+    
+    [ETRCoreDataHelper saveContext];
+}
+
 #pragma mark -
 #pragma mark User Objects
 
@@ -363,15 +445,8 @@ static NSString *UserEntityName;
         return nil;
     }
     
-    // Check the context CoreData, if an object with this remote ID already exists.
-    ETRUser *user = [self userWithRemoteID:remoteID];
-    
-    if (!user) {
-        // The User was not stored in the local database yet, use the CoreData initializer to create a new object.
-        user = [[ETRUser alloc] initWithEntity:[ETRCoreDataHelper userEntity]
-                insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
-        [user setRemoteID:@(remoteID)];
-    }
+    // Get the existing Object or an empty one to fill.
+    ETRUser *user = [ETRCoreDataHelper userWithRemoteID:remoteID downloadIfUnavailable:NO];
     
     [user setImageID:@([jsonDictionary longValueForKey:@"i" withFallbackValue:-5])];
     [user setName:[jsonDictionary stringForKey:@"n"]];
@@ -383,7 +458,7 @@ static NSString *UserEntityName;
     [user setInstagram:[jsonDictionary stringForKey:@"ig"]];
     [user setTwitter:[jsonDictionary stringForKey:@"tw"]];
     
-//    NSLog(@"Inserting User: %@", [user description]);
+    NSLog(@"Inserting User: %@", [user description]);
     [ETRCoreDataHelper saveContext];
     return user;
 }
@@ -408,7 +483,7 @@ static NSString *UserEntityName;
     return copiedUser;
 }
 
-+ (ETRUser *)userWithRemoteID:(long)remoteID {
++ (ETRUser *)userWithRemoteID:(long)remoteID downloadIfUnavailable:(BOOL)doDownload {
     // Check the context CoreData, if an object with this remote ID exists.
     NSFetchRequest *fetch;
     fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
@@ -423,7 +498,17 @@ static NSString *UserEntityName;
         }
     }
     
-    return nil;
+    if (doDownload) {
+        [ETRServerAPIHelper getUserWithID:remoteID];
+    }
+    
+    ETRUser *newUser = [[ETRUser alloc] initWithEntity:[ETRCoreDataHelper userEntity]
+                        insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    [newUser setRemoteID:@(remoteID)];
+    [newUser setName:NSLocalizedString(@"Unknown_User", @"Name placeholder")];
+    [newUser setStatus:@"..."];
+    
+    return newUser;
 }
 
 @end

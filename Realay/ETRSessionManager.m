@@ -6,10 +6,11 @@
 //  Copyright (c) 2014 Michel Sievers. All rights reserved.
 //
 
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
 
 #import "ETRAction.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRRoom.h"
@@ -28,9 +29,9 @@
 #define kUserDefNotifPublic     @"userDefaultsNotificationPublic"
 #define kUserDefNotifOther      @"userDefaultsNotificationOther"
 
-static ETRSession *sharedInstance = nil;
+static ETRSessionManager *sharedInstance = nil;
 
-@implementation ETRSession {
+@implementation ETRSessionManager {
     NSMutableDictionary     *_allMyChats;           // All chat objects. key = chatID
     NSMutableSet            *_blockedUsers;         // Users that have been blocked
     NSInvocation            *_invocation;           // Invocation for action query timer.
@@ -47,11 +48,11 @@ static ETRSession *sharedInstance = nil;
     static BOOL initialized = NO;
     if (!initialized) {
         initialized = YES;
-        sharedInstance = [[ETRSession alloc] init];
+        sharedInstance = [[ETRSessionManager alloc] init];
     }
 }
 
-+ (ETRSession *)sharedManager {
++ (ETRSessionManager *)sharedManager {
     return sharedInstance;
 }
 
@@ -126,6 +127,9 @@ static ETRSession *sharedInstance = nil;
         NSLog(@"ERROR: No room list view controller on stack.");
         [navc popToRootViewControllerAnimated:YES];
     }
+    
+    // Remove all public Actions from the local DB.
+    [ETRCoreDataHelper clearPublicActions];
 }
 
 - (void)prepareSessionInRoom:(ETRRoom *)room

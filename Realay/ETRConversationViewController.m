@@ -15,10 +15,14 @@
 #import "ETRDetailsViewController.h"
 #import "ETRUser.h"
 #import "ETRUserListViewController.h"
+#import "ETRReceivedMessageCell.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRSentMessageCell.h"
-#import "ETRSession.h"
+#import "ETRSessionManager.h"
+#import "ETRUser.h"
+
+static CGFloat const ETREstimatedMessageRowHeight = 100.0f;
 
 static NSString *const ETRConversationToUserListSegue = @"conversationToUserListSegue";
 
@@ -34,6 +38,7 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 
 @interface ETRConversationViewController ()
+ <UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
@@ -61,16 +66,27 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
                                                   action:@selector(dismissKeyboard)];
     [[self view] addGestureRecognizer:tap];
     
-
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    if (![self verifySession]) {
-        return;
-    }
+    // Do not display empty cells at the end.
+    [[self messagesTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
+    [[self messagesTableView] setRowHeight:UITableViewAutomaticDimension];
+    [[self messagesTableView] setEstimatedRowHeight:ETREstimatedMessageRowHeight];
     
-    [[self messagesTableView] reloadData];
+
+    
+    // Initialize the Fetched Results Controller
+    // that is going to load and monitor message records.
+    if (_isPublic) {
+       _fetchedResultsController = [ETRCoreDataHelper publicMessagesResultsControllerWithDelegage:self];
+    } else if (_partner) {
+        _fetchedResultsController = [ETRCoreDataHelper messagesResultsControllerForPartner:_partner
+                                                                              withDelegate:self];
+        [[self exitButton] setEnabled:NO];
+    }
+    NSError *error = nil;
+    [_fetchedResultsController performFetch:&error];
+    if (error) {
+        NSLog(@"ERROR: performFetch: %@", error);
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -80,7 +96,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     // TODO: Assign Session & Location delegates to
     [[self messagesTableView] setDataSource:self];
     [[self messagesTableView] setDelegate:self];
-    [[self messagesTableView] reloadData];
     [[self messageTextField] setDelegate:self];
     
     // TODO: Tell Actions Manager that this View Controller is visible
@@ -108,12 +123,24 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     
     if (_isPublic) {
         ETRRoom *sessionRoom;
-        sessionRoom = [ETRSession sessionRoom];
+        sessionRoom = [ETRSessionManager sessionRoom];
         [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
         [[self navigationController] setTitle:[sessionRoom title]];
+    } else if (_partner) {
+        [[self navigationController] setTitle:[_partner name]];
     } else {
-        
+        [[self navigationController] popToRootViewControllerAnimated:YES];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (![self verifySession]) {
+        return;
+    }
+    
+    [[self messagesTableView] reloadData];
+//    [self scrollDownTableViewAnimated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -124,7 +151,7 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     [[self messageTextField] setDelegate:nil];
     
     // Show all notifications because no chat is visible.
-    [[ETRSession sharedManager] setActiveChatID:-1];
+    [[ETRSessionManager sharedManager] setActiveChatID:-1];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillShowNotification
@@ -137,22 +164,22 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    [[ETRSession sharedManager] didReceiveMemoryWarning];
+    [[ETRSessionManager sharedManager] didReceiveMemoryWarning];
     // TODO: Reset message limit.
 }
 
 - (BOOL)verifySession {
     if (!_isPublic && !_partner) {
         NSLog(@"ERROR: Private Conversation requires a partner User.");
-        [[ETRSession sharedManager] endSession];
+        [[ETRSessionManager sharedManager] endSession];
         [[self navigationController] popToRootViewControllerAnimated:YES];
         return NO;
     }
     
     // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSession sharedManager] room] && ![[ETRSession sharedManager] didBeginSession]) {
+    if (![[ETRSessionManager sharedManager] room] && ![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"ERROR: No Room object in manager or user did not join.");
-        [[ETRSession sharedManager] endSession];
+        [[ETRSessionManager sharedManager] endSession];
         [[self navigationController] popToRootViewControllerAnimated:YES];
         return NO;
     }
@@ -202,7 +229,9 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
             break;
         }
         case NSFetchedResultsChangeUpdate: {
-            // TODO: Determine if necessary.
+//            [[self messagesTableView] cellForRowAtIndexPath:indexPath];
+//            NSLog(@"DEBUG: Updated message record: %ld, %ld, %@", [indexPath row], [newIndexPath row], anObject);
+            break;
         }
         case NSFetchedResultsChangeMove: {
             [[self messagesTableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
@@ -211,10 +240,103 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
                                             withRowAnimation:UITableViewRowAnimationFade];
         }
     }
+    [[self messagesTableView] reloadData];
+    [self scrollDownTableViewAnimated:YES];
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
 
-#pragma mark - IBAction
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (!_fetchedResultsController || ![[_fetchedResultsController fetchedObjects] count]) {
+        return 0;
+    }
+    
+    id<NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
+    return [sectionInfo numberOfObjects];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([indexPath section] != 0) {
+        NSLog(@"ERROR: Invalid section in Conversation TableView: %ld", [indexPath row]);
+        return [[UITableViewCell alloc] init];
+    }
+    
+    if (!_fetchedResultsController || ![_fetchedResultsController fetchedObjects]) {
+        return [[UITableViewCell alloc] init];
+    }
+    
+//    id<NSObject> record = [_fetchedResultsController objectAtIndexPath:indexPath];
+//    if (!record || ![record isKindOfClass:[ETRAction class]]) {
+//        NSLog(@"ERROR: Invalid record type at: %ld", [indexPath row]);
+//        return [[UITableViewCell alloc] init];
+//    }
+    
+    ETRAction *action = [_fetchedResultsController objectAtIndexPath:indexPath];
+    
+    if ([action isSentAction]) {
+        if ([action isPhotoMessage]) {
+            return [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier
+                                                   forIndexPath:indexPath];
+        } else {
+            ETRSentMessageCell *cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
+                                                   forIndexPath:indexPath];
+            
+            [[cell messageLabel] setText:[action messageContent]];
+            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            [[cell timeLabel] setText:timestamp];
+            return cell;
+        }
+    } else {
+        ETRUser *sender = [action sender];
+        NSString *senderName;
+        if (sender && [sender name]) {
+            senderName = [sender name];
+        } else {
+            senderName = @"x";
+        }
+        
+        if ([action isPhotoMessage]) {
+            return [tableView dequeueReusableCellWithIdentifier:ETRReceivedMediaCellIdentifier
+                                                   forIndexPath:indexPath];
+        } else {
+            ETRReceivedMessageCell *cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
+                                                   forIndexPath:indexPath];
+            
+            [[cell nameLabel] setText:senderName];
+            [[cell messageLabel] setText:[action messageContent]];
+            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            [[cell timeLabel] setText:timestamp];
+            return cell;
+        }
+    }
+    
+}
+
+// Scroll to the bottom of a table.
+- (void)scrollDownTableViewAnimated:(BOOL)animated {
+    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
+    if (bottomRow >= 0) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+                                        atScrollPosition:UITableViewScrollPositionMiddle
+                                                animated:animated];
+    }
+}
+
+#pragma mark - UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        [[ETRSessionManager sharedManager] endSession];
+    }
+}
+
+#pragma mark -
+#pragma mark Input
 
 - (IBAction)sendButtonPressed:(id)sender {
     [self dismissKeyboard];
@@ -250,85 +372,8 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     }
 }
 
-#pragma mark -
-#pragma mark Table View Data Source Methods
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_fetchedResultsController || ![[_fetchedResultsController fetchedObjects] count]) {
-        return 1;
-    }
-    
-    id<NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([indexPath section] != 0) {
-        NSLog(@"ERROR: Invalid section in Conversation TableView: %ld", [indexPath row]);
-        return [[UITableViewCell alloc] init];
-    }
-    
-    if (!_fetchedResultsController || ![_fetchedResultsController fetchedObjects]) {
-        return [[UITableViewCell alloc] init];
-    }
-    
-    id<NSObject> record = [_fetchedResultsController objectAtIndexPath:indexPath];
-    if (!record || ![record isKindOfClass:[ETRAction class]]) {
-        NSLog(@"ERROR: Invalid record type at: %ld", [indexPath row]);
-        return [[UITableViewCell alloc] init];
-    }
-    
-    ETRAction *action = (ETRAction *)record;
-    
-    if ([action isPublicMessage]) {
-        if ([action isPhotoMessage]) {
-            return [tableView dequeueReusableCellWithIdentifier:ETRReceivedMediaCellIdentifier
-                                            forIndexPath:indexPath];
-        } else {
-            return [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
-                                                   forIndexPath:indexPath];
-        }
-    } else {
-        if ([action isPhotoMessage]) {
-            return [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier
-                                                   forIndexPath:indexPath];
-        } else {
-            ETRSentMessageCell *cell;
-            cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
-                                                   forIndexPath:indexPath];
-            
-            [[cell messageLabel] setText:[action messageContent]];
-            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
-            [[cell timeLabel] setText:timestamp];
-            return cell;
-        }
-    }
-    
-}
-
-// Scroll to the bottom of a table.
-- (void)scrollDownTableViewAnimated:(BOOL)animated {
-    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
-    if (bottomRow >= 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-                                        atScrollPosition:UITableViewScrollPositionMiddle
-                                                animated:animated];
-
-    }
-
-}
-
-#pragma mark - UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
-        [[ETRSession sharedManager] endSession];
-    }
+- (IBAction)exitButtonPressed:(id)sender {
+    [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
 }
 
 #pragma mark - Keyboard Notifications
@@ -395,5 +440,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
         }
     }
 }
+
 
 @end
