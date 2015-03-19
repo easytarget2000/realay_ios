@@ -17,8 +17,7 @@
 #import "ETRPasswordViewController.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
-
-#import "ETRColorMacros.h"
+#import "ETRUIConstants.h"
 
 #define kMapCloseZoom   14.0f
 #define kMapWideZoom    11.0f
@@ -34,8 +33,10 @@
 #pragma mark - UIViewController
 
 - (void)viewWillAppear:(BOOL)animated {
-    
     [super viewWillAppear:animated];
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[[self navigationController] navigationBar] setTranslucent:NO];
     
     // Basic GUI setup:
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
@@ -100,8 +101,8 @@
     // Add a radius circle to the marker.
     GMSCircle *circle = [[GMSCircle alloc] init];
     [circle setRadius:[[room radius] doubleValue]];
-    [circle setFillColor:[UIColor kPrimaryColorTransparent]];
-    [circle setStrokeColor:[UIColor kPrimaryColor]];
+    [circle setFillColor:[ETRUIConstants primaryTransparentColor]];
+    [circle setStrokeColor:[ETRUIConstants primaryColor]];
     [circle setPosition:[roomMarker position]];
     [circle setMap:_mapView];
 }

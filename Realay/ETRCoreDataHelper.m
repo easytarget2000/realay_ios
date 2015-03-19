@@ -32,8 +32,6 @@ static NSString *const ETRActionDateKey = @"sentDate";
 
 static NSString *const ETRActionRoomKey = @"room";
 
-static 
-
 static NSManagedObjectContext *ManagedObjectContext;
 
 static NSEntityDescription *ActionEntity;
@@ -185,7 +183,7 @@ static NSString *UserEntityName;
     return room;
 }
 
-+ (NSFetchedResultsController *)roomListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>) delegate {
++ (NSFetchedResultsController *)roomListResultsController {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
     
     // Add Sort Descriptors
@@ -199,7 +197,7 @@ static NSString *UserEntityName;
                                                                               cacheName:nil];
     
     // Configure Fetched Results Controller
-    [resultsController setDelegate:delegate];
+//    [resultsController setDelegate:delegate];
     return resultsController;
 }
 

@@ -32,6 +32,8 @@
 #define kSegueToCreateProfile   @"roomListToLoginSegue"
 #define kSegueToViewProfile     @"roomListToProfileSegue"
 
+static CGFloat const ETRRoomCellHeight = 380.0f;
+
 @interface ETRRoomListViewController () <NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
@@ -54,22 +56,24 @@
     
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-    [[self tableView] setRowHeight:UITableViewAutomaticDimension];
-    [[self tableView] setEstimatedRowHeight:kRoomCellHeight];
-        
-    // Initialize Fetched Results Controller
-    _fetchedResultsController = [ETRCoreDataHelper roomListResultsControllerWithDelegate:self];
+    [[self tableView] setRowHeight:ETRRoomCellHeight];
+//    [[self tableView] setEstimatedRowHeight:kRoomCellHeight];
     
+    // Initialize Fetched Results Controller
+    _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // (Re-)enable the Fetched Results Controller.
+    [_fetchedResultsController setDelegate:self];
     // Perform Fetch
     NSError *error = nil;
     [_fetchedResultsController performFetch:&error];
     if (error) {
         NSLog(@"ERROR: performFetch: %@", error);
     }
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
     
     // Refreshing:
     [[self refreshControl] addTarget:self
@@ -83,6 +87,9 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    // Disable the Fetched Results Controller.
+    [_fetchedResultsController setDelegate:nil];
     
     //    NSInteger myControllerIndex;
     //    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;

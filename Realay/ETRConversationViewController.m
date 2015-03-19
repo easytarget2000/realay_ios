@@ -20,6 +20,7 @@
 #import "ETRRoom.h"
 #import "ETRSentMessageCell.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
 
 static CGFloat const ETREstimatedMessageRowHeight = 100.0f;
@@ -305,6 +306,9 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
             ETRReceivedMessageCell *cell;
             cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
                                                    forIndexPath:indexPath];
+            
+            [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
+            [[cell iconView] setClipsToBounds:YES];
             
             [[cell nameLabel] setText:senderName];
             [[cell messageLabel] setText:[action messageContent]];

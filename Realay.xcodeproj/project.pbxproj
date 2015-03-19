@@ -20,6 +20,8 @@
 		D01446BF1A9F9E0D00748378 /* ETRCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446BE1A9F9E0D00748378 /* ETRCircleView.m */; };
 		D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */; };
 		D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C51A9FF04D00748378 /* ETRInformationCell.m */; };
+		D0190B351ABB726D0010E637 /* ETRUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D0190B341ABB726D0010E637 /* ETRUIConstants.m */; };
+		D0190B381ABB7B050010E637 /* ETRShadowView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0190B371ABB7B050010E637 /* ETRShadowView.m */; };
 		D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01A602518E35BF900730A1B /* ETRRoomListCell.m */; };
 		D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */; };
 		D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */; };
@@ -112,8 +114,11 @@
 		D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageConnectionHandler.m; sourceTree = "<group>"; };
 		D01446C41A9FF04D00748378 /* ETRInformationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRInformationCell.h; sourceTree = "<group>"; };
 		D01446C51A9FF04D00748378 /* ETRInformationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRInformationCell.m; sourceTree = "<group>"; };
+		D0190B331ABB726D0010E637 /* ETRUIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUIConstants.h; sourceTree = "<group>"; };
+		D0190B341ABB726D0010E637 /* ETRUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUIConstants.m; sourceTree = "<group>"; };
+		D0190B361ABB7B050010E637 /* ETRShadowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRShadowView.h; path = ui/elements/ETRShadowView.h; sourceTree = "<group>"; };
+		D0190B371ABB7B050010E637 /* ETRShadowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRShadowView.m; path = ui/elements/ETRShadowView.m; sourceTree = "<group>"; };
 		D01A602518E35BF900730A1B /* ETRRoomListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListCell.m; sourceTree = "<group>"; };
-		D01D3CF81AAF89AB00AE9393 /* ETRColorMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRColorMacros.h; sourceTree = "<group>"; };
 		D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRJoinViewController.h; path = ui/ETRJoinViewController.h; sourceTree = "<group>"; };
 		D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRJoinViewController.m; path = ui/ETRJoinViewController.m; sourceTree = "<group>"; };
 		D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRActionManager.h; path = manager/ETRActionManager.h; sourceTree = "<group>"; };
@@ -264,6 +269,8 @@
 			children = (
 				D01446BD1A9F9E0D00748378 /* ETRCircleView.h */,
 				D01446BE1A9F9E0D00748378 /* ETRCircleView.m */,
+				D0190B361ABB7B050010E637 /* ETRShadowView.h */,
+				D0190B371ABB7B050010E637 /* ETRShadowView.m */,
 			);
 			name = "Small Elements";
 			sourceTree = "<group>";
@@ -409,7 +416,6 @@
 				D0E1970F17E276DB00135B8C /* Supporting Files */,
 				D0F39EC517F1141F00D60257 /* UI */,
 				D0BF1FDB18C3D4D800E17774 /* Utils */,
-				D01D3CF81AAF89AB00AE9393 /* ETRColorMacros.h */,
 			);
 			path = Realay;
 			sourceTree = "<group>";
@@ -457,6 +463,8 @@
 				D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */,
 				D0EFD9B617E90E5000522146 /* ETRRoomListViewController.h */,
 				D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */,
+				D0190B331ABB726D0010E637 /* ETRUIConstants.h */,
+				D0190B341ABB726D0010E637 /* ETRUIConstants.m */,
 				D0F415A617F8C1D100C0FFD5 /* ETRUserListViewController.h */,
 				D0F415A717F8C1D100C0FFD5 /* ETRUserListViewController.m */,
 				D01F2A6D18622D6D00DC97F7 /* ETRWelcomeViewController.h */,
@@ -572,6 +580,7 @@
 				D0081F5818C546B200D0819A /* ETRAlertViewFactory.m in Sources */,
 				D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */,
 				D02E42561AB4B06C00A46CF5 /* ETRReadabilityHelper.m in Sources */,
+				D0190B351ABB726D0010E637 /* ETRUIConstants.m in Sources */,
 				D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */,
 				D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */,
 				D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */,
@@ -584,6 +593,7 @@
 				D03133981AAB582B004E981B /* ETRKeyValueEditorCell.m in Sources */,
 				D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */,
 				D0035C3A18B2AA1E00C5EEAF /* ETRLocalUserManager.m in Sources */,
+				D0190B381ABB7B050010E637 /* ETRShadowView.m in Sources */,
 				D01446BF1A9F9E0D00748378 /* ETRCircleView.m in Sources */,
 				D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */,
 				D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */,

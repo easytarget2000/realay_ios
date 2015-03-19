@@ -32,7 +32,7 @@ extern long const ETRActionPublicUserID;
 
 + (ETRUser *)copyUser:(ETRUser *)user;
 
-+ (NSFetchedResultsController *)roomListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>) delegate;
++ (NSFetchedResultsController *)roomListResultsController;
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate;
 

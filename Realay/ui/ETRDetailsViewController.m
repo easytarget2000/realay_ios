@@ -21,8 +21,6 @@
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
 
-#import "ETRColorMacros.h"
-
 #define kHeaderCellIdentifier           @"profileHeaderCell"
 #define kValueCellIdentifier            @"profileValueCell"
 #define kSocialMediaCellIdentifier      @"socialMediaCell"
@@ -61,8 +59,8 @@
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
 //    self.navigationController.navigationBar.translucent = YES;
-    self.navigationController.view.backgroundColor = [UIColor kPrimaryColorTransparent];
-    [[[self navigationController] navigationBar] setBackgroundColor:[UIColor kPrimaryColorTransparent]];
+//    self.navigationController.view.backgroundColor = [UIColor kPrimaryColorTransparent];
+//    [[[self navigationController] navigationBar] setBackgroundColor:[UIColor kPrimaryColorTransparent]];
 //    UIToolbar* blurredView = [[UIToolbar alloc] initWithFrame:self.navigationController.navigationBar.bounds];
 //    [blurredView setBarStyle:UIBarStyleBlack];
 //    [blurredView setBarTintColor:[UIColor redColor]];

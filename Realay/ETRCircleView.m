@@ -8,15 +8,13 @@
 
 #import "ETRCircleView.h"
 
-#import "ETRColorMacros.h"
-
 @implementation ETRCircleView
 
 - (void)drawRect:(CGRect)rect {
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextClearRect(context, rect);
     CGContextAddEllipseInRect(context, rect);
-    CGContextSetFillColor(context, CGColorGetComponents([[UIColor kAccentColor] CGColor]));
+    CGContextSetFillColor(context, CGColorGetComponents([[UIColor redColor] CGColor]));
     CGContextFillPath(context);
 }
 
