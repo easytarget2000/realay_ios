@@ -82,7 +82,6 @@
 		D0E4E8DF1AA0A94700ADF026 /* placeholder_map.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E4E8DE1AA0A94700ADF026 /* placeholder_map.png */; };
 		D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */; };
 		D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E87A5E18D79B73001D5371 /* ETRPasswordViewController.m */; };
-		D0EC763B18EDAB5200CB0BAE /* ETRChatMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0EC763A18EDAB5200CB0BAE /* ETRChatMessageCell.m */; };
 		D0EC763C18EDFC5C00CB0BAE /* ETRSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */; };
 		D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */; };
 		D0F2AB0118FFDA14008B7C32 /* empty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D0F2AB0018FFDA14008B7C32 /* empty.jpg */; };
@@ -206,8 +205,6 @@
 		D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRServerAPIHelper.m; sourceTree = "<group>"; };
 		D0E87A5D18D79B73001D5371 /* ETRPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRPasswordViewController.h; sourceTree = "<group>"; };
 		D0E87A5E18D79B73001D5371 /* ETRPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRPasswordViewController.m; sourceTree = "<group>"; };
-		D0EC763918EDAB5200CB0BAE /* ETRChatMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRChatMessageCell.h; sourceTree = "<group>"; };
-		D0EC763A18EDAB5200CB0BAE /* ETRChatMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRChatMessageCell.m; sourceTree = "<group>"; };
 		D0EFD9B617E90E5000522146 /* ETRRoomListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListViewController.h; sourceTree = "<group>"; };
 		D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListViewController.m; sourceTree = "<group>"; };
 		D0F0392918C379DF008DDA5F /* ETRSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionManager.h; sourceTree = "<group>"; };
@@ -278,28 +275,26 @@
 		D04352461AB3A8D200CF95AB /* TableCells */ = {
 			isa = PBXGroup;
 			children = (
-				D01446C41A9FF04D00748378 /* ETRInformationCell.h */,
-				D020733117EBB34400453B69 /* ETRRoomListCell.h */,
-				D01A602518E35BF900730A1B /* ETRRoomListCell.m */,
-				D01446C51A9FF04D00748378 /* ETRInformationCell.m */,
-				D03133991AAB5860004E981B /* ETRProfileHeaderEditorCell.h */,
-				D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */,
-				D00A16031AAA1E1E0036B25B /* ETRProfileButtonCell.h */,
-				D00A16041AAA1E1E0036B25B /* ETRProfileButtonCell.m */,
 				D00A15FD1AAA1DDF0036B25B /* ETRHeaderCell.h */,
 				D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */,
-				D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */,
-				D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */,
+				D01446C41A9FF04D00748378 /* ETRInformationCell.h */,
+				D01446C51A9FF04D00748378 /* ETRInformationCell.m */,
 				D00A16001AAA1DFA0036B25B /* ETRKeyValueCell.h */,
 				D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */,
 				D03133961AAB582B004E981B /* ETRKeyValueEditorCell.h */,
 				D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */,
-				D0EC763918EDAB5200CB0BAE /* ETRChatMessageCell.h */,
-				D0EC763A18EDAB5200CB0BAE /* ETRChatMessageCell.m */,
-				D04352471AB3AA9C00CF95AB /* ETRSentMessageCell.h */,
-				D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */,
+				D00A16031AAA1E1E0036B25B /* ETRProfileButtonCell.h */,
+				D00A16041AAA1E1E0036B25B /* ETRProfileButtonCell.m */,
+				D03133991AAB5860004E981B /* ETRProfileHeaderEditorCell.h */,
+				D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */,
+				D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */,
+				D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */,
 				D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */,
 				D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */,
+				D020733117EBB34400453B69 /* ETRRoomListCell.h */,
+				D01A602518E35BF900730A1B /* ETRRoomListCell.m */,
+				D04352471AB3AA9C00CF95AB /* ETRSentMessageCell.h */,
+				D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */,
 			);
 			name = TableCells;
 			sourceTree = "<group>";
@@ -588,7 +583,6 @@
 				D0D0CEED17E74EE70079017F /* ETRLoginViewController.m in Sources */,
 				D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */,
 				D0EC763C18EDFC5C00CB0BAE /* ETRSessionManager.m in Sources */,
-				D0EC763B18EDAB5200CB0BAE /* ETRChatMessageCell.m in Sources */,
 				D0E31B641AA377F40008AF9F /* ETRAction.m in Sources */,
 				D03133981AAB582B004E981B /* ETRKeyValueEditorCell.m in Sources */,
 				D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */,

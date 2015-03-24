@@ -48,6 +48,13 @@ static NSString *const joinSegue = @"joinToConversationSegue";
     [_joinThread start];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+}
+
 - (void)backButtonPressed:(id)sender {
     if (_joinThread) {
         [_joinThread cancel];

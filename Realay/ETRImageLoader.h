@@ -19,8 +19,6 @@
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject intoView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doShowHiRes;
 
-- (NSString *)imagefilePath:(BOOL)doLoadHiRes;
-
 - (void)startLoading;
 
 @end

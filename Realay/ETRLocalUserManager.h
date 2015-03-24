@@ -31,4 +31,6 @@
 
 - (BOOL)isLocalUser:(ETRUser *) user;
 
+- (void)setImage:(UIImage *)newUserImage withImageView:(UIImageView *)imageView;
+
 @end

@@ -10,4 +10,6 @@
 
 @interface ETRPreferenceHelper : NSObject
 
++ (BOOL)doUseMetricSystem;
+
 @end

@@ -65,11 +65,14 @@
         [ETRImageEditor cropImage:[_chatObject lowResImage]
                       applyToView:_targetImageView
                           withTag:_tag];
-        if (!_doShowHiRes) return;
+        if (!_doShowHiRes) {
+            // Only the low-resolution image was requested.
+            return;
+        }
     }
     
     // First, look for the low-res image in the file cache.
-    UIImage *cachedLoResImage = [UIImage imageWithContentsOfFile:[self imagefilePath:NO]];
+    UIImage *cachedLoResImage = [UIImage imageWithContentsOfFile:[_chatObject imageFilePath:NO]];
     if (cachedLoResImage) {
         [_chatObject setLowResImage:cachedLoResImage];
         [ETRImageEditor cropImage:cachedLoResImage
@@ -86,21 +89,12 @@
         return;
     }
     
-    UIImage *cachedHiResImage = [UIImage imageWithContentsOfFile:[self imagefilePath:YES]];
+    UIImage *cachedHiResImage = [UIImage imageWithContentsOfFile:[_chatObject imageFilePath:YES]];
     if (cachedHiResImage) {
         [ETRImageEditor cropImage:cachedHiResImage applyToView:_targetImageView withTag:_tag];
     } else {
         [ETRServerAPIHelper getImageForLoader:self doLoadHiRes:YES];
     }
-}
-
-- (NSString *)imagefilePath:(BOOL)doLoadHiRes {
-    if (!_chatObject) return nil;
-    
-    // Save image.
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *fileName = [NSString stringWithFormat:@"%@.jpg", [_chatObject imageIDWithHiResFlag:doLoadHiRes]];
-    return [[paths objectAtIndex:0] stringByAppendingPathComponent:fileName];
 }
 
 @end

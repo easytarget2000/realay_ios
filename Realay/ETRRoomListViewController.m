@@ -21,33 +21,37 @@
 #import "ETRRoomListCell.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
 
-//#import "ETRSharedMacros.h"
-
-#define kDefaultRangeInKm       15
-#define kInfoCellIdentifier     @"infoCell"
-#define kRoomCellHeight         380
-#define kRoomCellIdentifier     @"roomCell"
-#define kMapSegueIdentifier     @"roomListToMapSegue"
-#define kSegueToCreateProfile   @"roomListToLoginSegue"
-#define kSegueToViewProfile     @"roomListToProfileSegue"
 
 static CGFloat const ETRRoomCellHeight = 380.0f;
 
-@interface ETRRoomListViewController () <NSFetchedResultsControllerDelegate>
+static NSString *const ETRInfoCellIdentifier = @"infoCell";
 
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+static NSString *const ETRRoomCellIdentifier = @"roomCell";
+
+static NSString *const ETRRoomListToMapSegue = @"roomListToMapSegue";
+
+static NSString *const ETRRoomListToLoginSegue = @"roomListToLoginSegue";
+
+static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
+
+@interface ETRRoomListViewController () <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
+
+@property (weak, nonatomic) UIRefreshControl * refreshControl;
+
+@property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
 
 @end
+
 
 @implementation ETRRoomListViewController
 
 @synthesize fetchedResultsController = _fetchedResultsController;
 
-#pragma mark - UIViewController Overrides
+#pragma mark - 
+#pragma mark UIViewController Overrides
 
-#pragma mark -
-#pragma mark View Life Cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -57,8 +61,15 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     [[self tableView] setRowHeight:ETRRoomCellHeight];
-//    [[self tableView] setEstimatedRowHeight:kRoomCellHeight];
     
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self
+                       action:@selector(updateRoomsTable)
+             forControlEvents:UIControlEventValueChanged];
+    [refreshControl setTintColor:[ETRUIConstants accentColor]];
+    [[self tableView] addSubview:refreshControl];
+    [self setRefreshControl:refreshControl];
+        
     // Initialize Fetched Results Controller
     _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
 }
@@ -75,11 +86,6 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
         NSLog(@"ERROR: performFetch: %@", error);
     }
     
-    // Refreshing:
-    [[self refreshControl] addTarget:self
-                              action:@selector(updateRoomsTable)
-                    forControlEvents:UIControlEventValueChanged];
-    
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:NO];
@@ -87,18 +93,6 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    // Disable the Fetched Results Controller.
-    [_fetchedResultsController setDelegate:nil];
-    
-    //    NSInteger myControllerIndex;
-    //    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    //    [[ETRSession sharedManager] setRoomListControllerIndex:myControllerIndex];
-    
-    //    // Refreshing:
-    //    [[self refreshControl] addTarget:self
-    //                              action:@selector(updateRoomsTable)
-    //                    forControlEvents:UIControlEventValueChanged];
     [[self tableView] reloadData];
 }
 
@@ -106,6 +100,18 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
     [super viewWillDisappear:animated];
     if ([[self refreshControl] isRefreshing]) {
         [[self refreshControl] endRefreshing];
+    }
+    // Disable the Fetched Results Controller.
+    [_fetchedResultsController setDelegate:nil];
+}
+
+- (void)updateTableViewVisiblity {
+    if (_fetchedResultsController && [[_fetchedResultsController fetchedObjects] count]) {
+        [[self tableView] setHidden:NO];
+        [[self infoView] setHidden:YES];
+    } else {
+        [[self infoView] setHidden:NO];
+        [[self tableView] setHidden:YES];
     }
 }
 
@@ -116,6 +122,7 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self updateTableViewVisiblity];
     [[self refreshControl] endRefreshing];
     if ([self tableView]) {
         [[self tableView] endUpdates];
@@ -192,9 +199,9 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
 
 - (ETRRoomListCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
     ETRRoomListCell *cell;
-    cell = [[self tableView] dequeueReusableCellWithIdentifier:kRoomCellIdentifier forIndexPath:indexPath];
+    cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRRoomCellIdentifier forIndexPath:indexPath];
     if (!cell) {
-        cell = [[ETRRoomListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kRoomCellIdentifier];
+        cell = [[ETRRoomListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ETRRoomCellIdentifier];
     }
     
     [self configureRoomCell:cell atIndexPath:indexPath];
@@ -203,9 +210,6 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
 }
 
 - (void)configureRoomCell:(ETRRoomListCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    //[[[roomCell contentView] layer] setShadowOffset:CGSizeMake(1, -1)];
-    //[[[roomCell contentView] layer] setShadowOpacity:0.5f];
-    
     // Get the Room Record from the ResultsController
     // and apply its attributes to the cell views.
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
@@ -238,10 +242,10 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
 - (ETRInformationCell *)infoCellAtIndexPath:(NSIndexPath *)indexPath {
     
     ETRInformationCell *cell;
-    cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier
+    cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
                                                   forIndexPath:indexPath];
     if (!cell) {
-        cell = [[self tableView] dequeueReusableCellWithIdentifier:kInfoCellIdentifier];
+        cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier];
     }
     ETRInformationCell *infoCell = (ETRInformationCell *) cell;
     
@@ -281,7 +285,7 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
     
     NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
     
-    [self performSegueWithIdentifier:kMapSegueIdentifier sender:record];
+    [self performSegueWithIdentifier:ETRRoomListToMapSegue sender:record];
 }
 
 #pragma mark - UITableViewDataSource
@@ -322,22 +326,22 @@ static CGFloat const ETRRoomCellHeight = 380.0f;
 // Create or view my profile.
 - (IBAction)profileButtonPressed:(id)sender {
     if ([ETRLocalUserManager userID] > 10) {
-        [self performSegueWithIdentifier:kSegueToViewProfile sender:self];
+        [self performSegueWithIdentifier:ETRRoomListToProfileSegue sender:self];
     } else {
-        [self performSegueWithIdentifier:kSegueToCreateProfile sender:self];
+        [self performSegueWithIdentifier:ETRRoomListToLoginSegue sender:self];
     }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    if([[segue identifier] isEqualToString:kSegueToCreateProfile]) {
+    if([[segue identifier] isEqualToString:ETRRoomListToLoginSegue]) {
         // Create my profile before showing it.
         
         // Tell the Create Profile controller where to go next.
         ETRLoginViewController *destination = [segue destinationViewController];
         [destination showProfileOnLogin];
         
-    } else if([[segue identifier] isEqualToString:kSegueToViewProfile]) {
+    } else if([[segue identifier] isEqualToString:ETRRoomListToProfileSegue]) {
         // Just show my own user profile.
         
         ETRDetailsViewController *destination = [segue destinationViewController];

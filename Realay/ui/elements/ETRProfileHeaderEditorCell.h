@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class ETRProfileEditorViewController;
 @class ETRUser;
 
 @interface ETRProfileHeaderEditorCell : UITableViewCell
@@ -15,6 +16,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 
-- (void)setUpWithTag:(NSInteger)tag forUser:(ETRUser *)user;
+- (void)setUpWithTag:(NSInteger)tag
+             forUser:(ETRUser *)user
+    inViewController:(ETRProfileEditorViewController *)viewController;
 
 @end

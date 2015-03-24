@@ -94,7 +94,7 @@
         [loaderObject setLowResImage:image];
     }
     
-    [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[_imageLoader imagefilePath:_doLoadHiRes]
+    [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[[_imageLoader chatObject] imageFilePath:_doLoadHiRes]
                                              atomically:YES];
 }
 

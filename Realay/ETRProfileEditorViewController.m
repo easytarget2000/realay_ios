@@ -10,26 +10,31 @@
 
 #import "ETRAlertViewFactory.h"
 #import "ETRCoreDataHelper.h"
+#import "ETRImageEditor.h"
 #import "ETRLocalUserManager.h"
 #import "ETRProfileHeaderEditorCell.h"
 #import "ETRKeyValueEditorCell.h"
 #import "ETRUser.h"
 
-#define kHeaderEditorCellIdentifier @"headerEditorCell"
-#define kValueEditorCellIdentifier  @"valueEditorCell"
+static CGFloat const ETRHeaderCellHeight = 80.0f;
 
-#define kHeaderCellHeight           80.0f
-#define kValueCellHeight            64.0f
+static CGFloat const ETRValueCellHeight = 64.0f;
 
-#define kCellTagOffset              40
+static short const ETRCellTagOffset = 40;
 
-@interface ETRProfileEditorViewController ()
+static NSString *const ETRHeaderEditorCellIdentifier = @"headerEditorCell";
+
+static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
+
+
+@interface ETRProfileEditorViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate>
 
 @property (strong, nonatomic) ETRUser *localUserCopy;
 @property (nonatomic) BOOL didChangeAttribute;
 @property (nonatomic) NSInteger lastTouchedTextFieldTag;
 
 @end
+
 
 @implementation ETRProfileEditorViewController
 
@@ -54,6 +59,14 @@
     _didChangeAttribute = NO;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -66,9 +79,9 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([indexPath row] == 0) {
-        return kHeaderCellHeight;
+        return ETRHeaderCellHeight;
     } else {
-        return kValueCellHeight;
+        return ETRValueCellHeight;
     }
 }
 
@@ -77,48 +90,48 @@
     NSInteger row = [indexPath row];
     if (row == 0) {
         ETRProfileHeaderEditorCell *headerCell;
-        headerCell = [tableView dequeueReusableCellWithIdentifier:kHeaderEditorCellIdentifier
+        headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderEditorCellIdentifier
                                                      forIndexPath:indexPath];
-        [headerCell setUpWithTag:kCellTagOffset + 0 forUser:_localUserCopy];
+        [headerCell setUpWithTag:ETRCellTagOffset + 0 forUser:_localUserCopy inViewController:self];
         return headerCell;
     }
     
     ETRKeyValueEditorCell *valueCell;
-    valueCell = [tableView dequeueReusableCellWithIdentifier:kValueEditorCellIdentifier
+    valueCell = [tableView dequeueReusableCellWithIdentifier:ETRValueEditorCellIdentifier
                                                 forIndexPath:indexPath];
     switch (row) {
         case 1:
-            [valueCell setUpStatusEditorCellWithTag:kCellTagOffset + 1
+            [valueCell setUpStatusEditorCellWithTag:ETRCellTagOffset + 1
                                             forUser:_localUserCopy];
             break;
             
         case 2:
-            [valueCell setUpPhoneNumberEditorCellWithTag:kCellTagOffset + 2
+            [valueCell setUpPhoneNumberEditorCellWithTag:ETRCellTagOffset + 2
                                                  forUser:_localUserCopy];
             break;
             
         case 3:
-            [valueCell setUpEmailEditorCellWithTag:kCellTagOffset + 3
+            [valueCell setUpEmailEditorCellWithTag:ETRCellTagOffset + 3
                                            forUser:_localUserCopy];
             break;
             
         case 4:
-            [valueCell setUpWebsiteURLEditorCellWithTag:kCellTagOffset + 4
+            [valueCell setUpWebsiteURLEditorCellWithTag:ETRCellTagOffset + 4
                                                 forUser:_localUserCopy];
             break;
         
         case 5:
-            [valueCell setUpFacebookNameEditorCellWithTag:kCellTagOffset + 5
+            [valueCell setUpFacebookNameEditorCellWithTag:ETRCellTagOffset + 5
                                                   forUser:_localUserCopy];
             break;
         
         case 6:
-            [valueCell setUpInstagramNameEditorCellWithTag:kCellTagOffset + 6
+            [valueCell setUpInstagramNameEditorCellWithTag:ETRCellTagOffset + 6
                                                    forUser:_localUserCopy];
             break;
             
         case 7:
-            [valueCell setUpTwitterNameEditorCellWithTag:kCellTagOffset + 7
+            [valueCell setUpTwitterNameEditorCellWithTag:ETRCellTagOffset + 7
                                                  forUser:_localUserCopy];
             break;
     }
@@ -231,7 +244,7 @@
     NSString *enteredText;
     enteredText = [[textField text] stringByTrimmingCharactersInSet:trimSet];
     
-    switch ([textField tag] - kCellTagOffset) {
+    switch ([textField tag] - ETRCellTagOffset) {
         case 0: {
             if (![enteredText length]) {
                 [ETRAlertViewFactory showTypedNameTooShortAlert];
@@ -292,33 +305,39 @@
 }
 
 #pragma mark -
-#pragma mark Keyboard Scrolling
+#pragma mark Buttons
 
-- (void)keyboardWillShow:(NSNotification *)sender
-{
-    CGSize kbSize = [[[sender userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-    NSTimeInterval duration = [[[sender userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+- (void)imagePickerButtonPressed:(id)sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    [picker setDelegate:self];
+    [picker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+    [picker setAllowsEditing:YES];
     
-    [UIView animateWithDuration:duration animations:^{
-        UIEdgeInsets edgeInsets = UIEdgeInsetsMake(0, 0, kbSize.height, 0);
-        [[self tableView] setContentInset:edgeInsets];
-        [[self tableView] setScrollIndicatorInsets:edgeInsets];
-    }];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 
-- (void)keyboardWillHide:(NSNotification *)sender
-{
-    NSTimeInterval duration = [[[sender userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+- (void)cameraButtonPressed:(id)sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    [picker setDelegate:self];
+    [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
     
-    [UIView animateWithDuration:duration animations:^{
-        UIEdgeInsets edgeInsets = UIEdgeInsetsZero;
-        [[self tableView] setContentInset:edgeInsets];
-        [[self tableView] setScrollIndicatorInsets:edgeInsets];
-    }];
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [self dismissViewControllerAnimated:picker completion:nil];
+    
+    // Load the given image and display the progress in the header Cell's icon ImageView.
+    NSIndexPath * headerIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    ETRProfileHeaderEditorCell * headerCell;
+    headerCell = (ETRProfileHeaderEditorCell *)[[self tableView] cellForRowAtIndexPath:headerIndexPath];
+    
+    [[ETRLocalUserManager sharedManager] setImage:[ETRImageEditor imageFromPickerInfo:info]
+                                    withImageView:[headerCell iconImageView]];
 }
 
 - (void)saveButtonPressed:(id)sender {
-    NSInteger lastTouchedRow = _lastTouchedTextFieldTag - kCellTagOffset;
+    NSInteger lastTouchedRow = _lastTouchedTextFieldTag - ETRCellTagOffset;
     if (lastTouchedRow < 0) {
         return;
     }
@@ -362,7 +381,7 @@
             [localUser setStatus:[_localUserCopy status]];
         }
     }
-
+    
     if (![[_localUserCopy phone] isEqualToString:[localUser phone]]) {
         doSendUpdate = YES;
         [localUser setPhone:[_localUserCopy phone]];
@@ -395,6 +414,32 @@
     
     
     [[self navigationController] popViewControllerAnimated:YES];
+}
+
+#pragma mark -
+#pragma mark Keyboard Scrolling
+
+- (void)keyboardWillShow:(NSNotification *)sender
+{
+    CGSize kbSize = [[[sender userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    NSTimeInterval duration = [[[sender userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    [UIView animateWithDuration:duration animations:^{
+        UIEdgeInsets edgeInsets = UIEdgeInsetsMake(0, 0, kbSize.height, 0);
+        [[self tableView] setContentInset:edgeInsets];
+        [[self tableView] setScrollIndicatorInsets:edgeInsets];
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification *)sender
+{
+    NSTimeInterval duration = [[[sender userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    [UIView animateWithDuration:duration animations:^{
+        UIEdgeInsets edgeInsets = UIEdgeInsetsZero;
+        [[self tableView] setContentInset:edgeInsets];
+        [[self tableView] setScrollIndicatorInsets:edgeInsets];
+    }];
 }
 
 @end

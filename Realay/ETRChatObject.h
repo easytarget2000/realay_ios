@@ -15,6 +15,10 @@
 @property (nonatomic, retain) NSNumber *imageID;
 @property (strong, nonatomic) UIImage *lowResImage;
 
-- (NSString *)imageIDWithHiResFlag:(BOOL)doLoadHiRes;
+- (NSString *)imageFileName:(BOOL)doLoadHiRes;
+
+- (NSString *)imageFilePath:(BOOL)isHiRes;
+
+- (void)deleteImageFiles;
 
 @end

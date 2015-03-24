@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRProfileEditorViewController : UITableViewController <UITextFieldDelegate>
+@interface ETRProfileEditorViewController : UITableViewController 
 
 - (IBAction)saveButtonPressed:(id)sender;
+
+- (IBAction)imagePickerButtonPressed:(id)sender;
+
+- (IBAction)cameraButtonPressed:(id)sender;
 
 @end

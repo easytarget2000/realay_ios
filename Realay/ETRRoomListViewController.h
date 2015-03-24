@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRRoomListViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
+@interface ETRRoomListViewController : UIViewController
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIView *infoView;
 
 - (IBAction)profileButtonPressed:(id)sender;
 

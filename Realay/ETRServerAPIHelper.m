@@ -41,6 +41,10 @@ static NSString *const ETRPutMessageSuccessStatus = @"INM_OK";
 
 static NSString *const ETRGetImageAPICall = @"get_image";
 
+static NSString *const ETRPutImageAPICall = @"put_image";
+
+static NSString *const ETRPutImageSuccessStatus = @"II_OK";
+
 static NSString *const ETRJoinRoomAPICall = @"do_join_room";
 
 static NSString *const ETRJoinRoomSuccessStatus = @"INS_U_OK";
@@ -74,18 +78,26 @@ static NSMutableArray *connections;
 @implementation ETRServerAPIHelper
 
 + (BOOL)didStartConnection:(NSString *)connectionID {
+    if (!connectionID) {
+        return NO;
+    }
+    
     if (!connections) {
         connections = [NSMutableArray array];
     } else if ([connections containsObject:connectionID]) {
         NSLog(@"DEBUG: Not performing %@ because the same call has already been started.", connectionID);
-        return true;
+        return YES;
     }
     
     [connections addObject:connectionID];
-    return false;
+    return NO;
 }
 
 + (void)didFinishConnection:(NSString *)connectionID {
+    if (!connectionID) {
+        return;
+    }
+    
     if (!connections) {
         connections = [NSMutableArray array];
         return;
@@ -94,43 +106,26 @@ static NSMutableArray *connections;
     }
 }
 
-+ (void)performAPICall:(NSString *)apiCall
-              POSTbody:(NSString *)bodyString
-         successStatus:(NSString *)successStatus
-             objectTag:(NSString *)objectTag
-     completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
++ (void)performAPIRequest:(NSURLRequest *)request
+                   withID:(NSString *)connectionID
+            successStatus:(NSString *)successStatus
+                objectTag:(NSString *)objectTag
+        completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
     
-    if ([ETRServerAPIHelper didStartConnection:apiCall]) {
+    
+    if ([ETRServerAPIHelper didStartConnection:connectionID]) {
         return;
     }
-    
-    // Prepare the URL to the give PHP file.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
-    NSURL *url = [NSURL URLWithString:
-                  [URLString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-    
-    // Prepare the POST request with the given data string.
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:url];
-    bodyString = [NSString stringWithFormat:@"%@", bodyString];
-    [request setHTTPBody:[bodyString dataUsingEncoding:NSUTF8StringEncoding
-                                  allowLossyConversion:YES]];
-    [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:ETRAPITimeOutInterval];
-    
-#ifdef DEBUG
-    NSLog(@"POST request: %@?%@", url, bodyString);
-#endif
     
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response,
                                                NSData *data,
                                                NSError *connectionError) {
-                               [ETRServerAPIHelper didFinishConnection:apiCall];
+                               [ETRServerAPIHelper didFinishConnection:connectionID];
                                
                                if (!handler) {
-                                   NSLog(@"ERROR: No completionHandler given for API call: %@", apiCall);
+                                   NSLog(@"ERROR: No completionHandler given for API call: %@", connectionID);
                                    return;
                                }
                                
@@ -179,11 +174,46 @@ static NSMutableArray *connections;
                            }];
 }
 
++ (void)performAPICall:(NSString *)apiCall
+        POSTBodyString:(NSString *)bodyString
+         successStatus:(NSString *)successStatus
+             objectTag:(NSString *)objectTag
+     completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
+    
+    // Prepare the URL to the give PHP file.
+    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
+    NSURL *url = [NSURL URLWithString:
+                  [URLString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    
+    // Prepare the POST request with the given data string.
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:url];
+    
+    NSData * bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding
+                                 allowLossyConversion:YES];
+    [request setHTTPBody:bodyData];
+    [request setHTTPMethod:@"POST"];
+    [request setTimeoutInterval:ETRAPITimeOutInterval];
+        
+//    NSString * bodyString = [NSString stringWithFormat:@"%@", bodyString];
+    
+    
+#ifdef DEBUG
+    NSLog(@"POST request: %@?%@", apiCall, bodyString);
+#endif
+    
+    [ETRServerAPIHelper performAPIRequest:request
+                                   withID:apiCall
+                            successStatus:successStatus
+                                objectTag:objectTag
+                        completionHandler:handler];
+}
+
 + (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler {
     NSString *connectionId = @"roomListUpdate";
-    if ([ETRServerAPIHelper didStartConnection:connectionId]) {
-        return;
-    }
+//    if ([ETRServerAPIHelper didStartConnection:connectionId]) {
+//        return;
+//    }
     
     CLLocation *location = [ETRLocationManager location];
     if (!location) {
@@ -204,7 +234,7 @@ static NSMutableArray *connections;
                   ETRDefaultSearchRadius];
     
     [ETRServerAPIHelper performAPICall:ETRGetRoomsAPICall
-                              POSTbody:bodyString
+                              POSTBodyString:bodyString
                          successStatus:ETRGetRoomsSuccessStatus
                              objectTag:@"rs"
                      completionHandler:^(NSObject *receivedObject) {
@@ -244,7 +274,7 @@ static NSMutableArray *connections;
     ETRChatObject *chatObject = [imageLoader chatObject];
     if (!chatObject) return;
     if (![chatObject imageID]) return;
-    NSString *fileID = [chatObject imageIDWithHiResFlag:doLoadHiRes];
+    NSString *fileID = [chatObject imageFileName:doLoadHiRes];
     if ([ETRServerAPIHelper didStartConnection:fileID]) {
         return;
     }
@@ -290,14 +320,97 @@ static NSMutableArray *connections;
                                                  withTag:(int) [chatObject imageID]];
                                
                                ETRChatObject *loaderObject = [imageLoader chatObject];
-                               if (!doLoadHiRes && loaderObject) [loaderObject setLowResImage:image];
-                               [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[imageLoader imagefilePath:doLoadHiRes]
+                               if (!doLoadHiRes && loaderObject) {
+                                   [loaderObject setLowResImage:image];
+                               }
+                               [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[loaderObject imageFilePath:doLoadHiRes]
                                                                         atomically:YES];
                            }];
 }
 
-+ (void)sendImage:(UIImage *)image completionHandler:(void (^)(BOOL))completionHandler {
++ (void)putImageWithHiResData:(NSData *)hiResData
+                    loResData:(NSData *)loResData
+            completionHandler:(void (^)(NSNumber * imageID))completionHandler {
     
+    // Prepare the URL to the download script.
+    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, ETRPutImageAPICall];
+    NSURL *URL = [NSURL URLWithString:URLString];
+    
+    // Prepare the POST request.
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setHTTPMethod:@"POST"];
+    //    [request setTimeoutInterval:kHTTPTimeout];
+    [request setURL:URL];
+    
+    // Build a multi-field POST HTTP request.
+    NSString *boundary = @"0xKhTmLbOuNdArY";
+    NSString *boundaryReturned = [NSString stringWithFormat:@"\r\n--%@\r\n",boundary];
+    // Header:
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
+    [request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+    
+    NSMutableData *bodyData = [NSMutableData data];
+    [bodyData appendData:[[NSString stringWithFormat:@"--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    // The big image:
+    [bodyData appendData:[@"Content-Disposition: form-data; name=\"userfile\"; filename=\"upimg.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [bodyData appendData:[@"Content-Type: image/jpg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [bodyData appendData:hiResData];
+//    [bodyData appendData:[NSData dataWithData:UIImageJPEGRepresentation(image, 0.9f)]];
+    [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+    // The preview image:
+    [bodyData appendData:[@"Content-Disposition: form-data; name=\"userfile_s\"; filename=\"upimgs.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [bodyData appendData:[@"Content-Type: image/jpg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [bodyData appendData:loResData];
+//    [bodyData appendData:[NSData dataWithData:UIImageJPEGRepresentation(smallImage, 0.7f)]];
+    [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // Local User ID:
+    [bodyData appendData:[@"Content-Disposition: form-data; name=\"user\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    NSString *userID = [[[[ETRLocalUserManager sharedManager] user] remoteID] stringValue];
+    [bodyData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
+    [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // Session Room ID (optional parameter):
+    ETRRoom *sessionRoom = [ETRSessionManager sessionRoom];
+    if (sessionRoom) {
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"session\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString *roomID = [[sessionRoom remoteID] stringValue];
+        [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    
+    
+    [request setHTTPBody:bodyData];
+    [ETRServerAPIHelper performAPIRequest:request
+                                   withID:[loResData description]
+                            successStatus:ETRPutImageSuccessStatus
+                                objectTag:@"i"
+                        completionHandler:^(id<NSObject> receivedObject) {
+                         if (receivedObject && [receivedObject isKindOfClass:[NSString class]]) {
+                             NSLog(@"DEBUG: Put image got ID: %@", receivedObject);
+                             NSString * remoteImageID = (NSString *)receivedObject;
+                             completionHandler(@((long) [remoteImageID longLongValue]));
+                         } else {
+                             completionHandler(@(-19));
+                         }
+                     }];
+    
+//    [NSURLConnection sendAsynchronousRequest:request
+//                                       queue:[[NSOperationQueue alloc] init]
+//                           completionHandler:^(NSURLResponse *response,
+//                                               NSData *data,
+//                                               NSError *connectionError) {
+//                               
+//                               if (connectionError) {
+//                                   NSLog(@"ERROR: %@", connectionError);
+//                                   completionHandler(NO);
+//                                   return;
+//                               }
+//                               
+//                               NSLog(@"INFO: upload_image returns: %@",
+//                                     [NSString stringWithUTF8String:[data bytes]]);
+//                               completionHandler(YES);
+//                           }];
 }
 
 #pragma mark -
@@ -392,7 +505,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
             NSString *getActionsBody;
             getActionsBody = [NSString stringWithFormat:getActionsFormat, roomID, localUserID, blockedIDs];
             [ETRServerAPIHelper performAPICall:ETRGetActionsAPICall
-                                      POSTbody:getActionsBody
+                                      POSTBodyString:getActionsBody
                                  successStatus:ETRGetActionsSuccessStatus
                                      objectTag:ETRGetActionsObjectTag
                              completionHandler:getMessagesCompletionHandler];
@@ -422,7 +535,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
                 NSString *userListBody;
                 userListBody = [NSString stringWithFormat:@"room_id=%ld", roomID];
                 [ETRServerAPIHelper performAPICall:ETRGetRoomUsersAPICall
-                                          POSTbody:userListBody
+                                          POSTBodyString:userListBody
                                      successStatus:ETRRoomUsersSuccessStatus
                                          objectTag:ETRUserListObjectTag
                                  completionHandler:getUsersCompletionHandler];
@@ -438,9 +551,9 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     
     [ETRCoreDataHelper clearPublicActions];
     
-    [ETRServerAPIHelper performAPICall:@"do_join_room"
-                              POSTbody:joinBody
-                         successStatus:@"INS_U_OK"
+    [ETRServerAPIHelper performAPICall:ETRJoinRoomAPICall
+                        POSTBodyString:joinBody
+                         successStatus:ETRJoinRoomSuccessStatus
                              objectTag:nil
                      completionHandler:joinBlock];
 }
@@ -487,7 +600,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     }
     
     [ETRServerAPIHelper performAPICall:ETRPutActionAPICall
-                              POSTbody:bodyString
+                              POSTBodyString:bodyString
                          successStatus:successStatus
                              objectTag:nil
                      completionHandler:^(id<NSObject> receivedObject) {
@@ -526,7 +639,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     NSString *body = [NSString stringWithFormat:@"name=%@&device_id=%@&status=%@", name, uuid, status];
     
     [ETRServerAPIHelper performAPICall:@"get_local_user"
-                              POSTbody:body
+                              POSTBodyString:body
                          successStatus:@"SU_OK"
                              objectTag:@"user"
                      completionHandler:^(id<NSObject> receivedObject) {
@@ -559,13 +672,13 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
     }
     
     NSString *connectionID = [NSString stringWithFormat:@"getUser:%ld", remoteID];
-    if ([ETRServerAPIHelper didStartConnection:connectionID]) {
-        return;
-    }
+//    if ([ETRServerAPIHelper didStartConnection:connectionID]) {
+//        return;
+//    }
     
     NSString *body = [NSString stringWithFormat:@"user_id=%ld", remoteID];
     [ETRServerAPIHelper performAPICall:ETRGetUserAPICall
-                              POSTbody:body
+                              POSTBodyString:body
                          successStatus:ETRGetUserSuccessStatus
                              objectTag:ETRUserObjectTag
                      completionHandler:^(id<NSObject> receivedObject) {

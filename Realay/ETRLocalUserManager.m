@@ -8,8 +8,10 @@
 
 #import "ETRLocalUserManager.h"
 
+#import "ETRAlertViewFactory.h"
 #import "ETRAppDelegate.h"
 #import "ETRCoreDataHelper.h"
+#import "ETRImageEditor.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
@@ -100,83 +102,59 @@ static ETRLocalUserManager *sharedInstance = nil;
     [defaults synchronize];
 }
 
-- (void)updateImage:(UIImage *)image {
-    
-    // Only resize and crop to a useful square, if the size is not quite right.
-    if (image.size.width != kImageSize && image.size.height != kImageSize) {
-        
-        // Fit the cropped image into the standard size.
-        UIGraphicsBeginImageContextWithOptions((CGSizeMake(kImageSize, kImageSize)), NO, 0);
-        [image drawInRect:CGRectMake(0, 0, kImageSize, kImageSize)];
-        image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-    }
-    
-    // Follow the same procedure for the smaller, preview image.
-    UIImage *smallImage;
-    if (image.size.width != kImageSizeSmall && image.size.height != kImageSizeSmall) {
-        // Fit the cropped image into the standard size.
-        UIGraphicsBeginImageContextWithOptions((CGSizeMake(kImageSizeSmall, kImageSizeSmall)), NO, 0);
-        [image drawInRect:CGRectMake(0, 0, kImageSizeSmall, kImageSizeSmall)];
-        smallImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-    }
-    
-    // Prepare the URL to the download script.
-    NSString *URLString;
-    NSURL *URL = [NSURL URLWithString:URLString];
-    
-    // Prepare the POST request.
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setHTTPMethod:@"POST"];
-//    [request setTimeoutInterval:kHTTPTimeout];
-    [request setURL:URL];
-    
-    // Build a multi-field POST HTTP request.
-    NSString *boundary = @"0xKhTmLbOuNdArY";
-    NSString *boundaryReturned = [NSString stringWithFormat:@"\r\n--%@\r\n",boundary];
-    // Header:
-    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
-    [request addValue:contentType forHTTPHeaderField: @"Content-Type"];
-    
-    NSMutableData *bodyData = [NSMutableData data];
-    [bodyData appendData:[[NSString stringWithFormat:@"--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    // The big image:
-    [bodyData appendData:[@"Content-Disposition: form-data; name=\"userfile\"; filename=\"upimg.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    [bodyData appendData:[@"Content-Type: image/jpg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    [bodyData appendData:[NSData dataWithData:UIImageJPEGRepresentation(image, 0.9f)]];
-    [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
-    // The preview image:
-    [bodyData appendData:[@"Content-Disposition: form-data; name=\"userfile_s\"; filename=\"upimgs.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    [bodyData appendData:[@"Content-Type: image/jpg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    [bodyData appendData:[NSData dataWithData:UIImageJPEGRepresentation(smallImage, 0.7f)]];
-    [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
-
-#ifdef DEBUG
-    NSLog(@"INFO: User image upload started.");
-#endif
-    
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[[NSOperationQueue alloc] init]
-                           completionHandler:^(NSURLResponse *response,
-                                               NSData *data,
-                                               NSError *connectionError) {
-                               
-                               if (connectionError) {
-                                   NSLog(@"ERROR: %@", connectionError);
-                               }
-                               
-                               NSLog(@"INFO: upload_image returns: %@",
-                                     [NSString stringWithUTF8String:[data bytes]]);
-                           }];
-}
-
 - (BOOL)isLocalUser:(ETRUser *)user {
     if (!user || ![user remoteID] || !_user) {
         return NO;
     } else {
         return [[user remoteID] isEqualToNumber:[_user remoteID]];
     }
+}
+
+- (void)setImage:(UIImage *)newUserImage withImageView:(UIImageView *)imageView {
+    if (!newUserImage || ![self user]) {
+        return;
+    }
+    
+    if (imageView) {
+        [imageView setImage:newUserImage];
+    }
+    
+    
+    // Temporary image IDs are negative, random values.
+    long newImageID = arc4random() * LONG_MIN;
+    if (newImageID > 0L) {
+        newImageID *= -1L;
+    }
+    NSLog(@"DEBUG: New local User image ID: %ld", newImageID);
+    [_user setImageID:@(newImageID)];
+    
+    NSData * loResData = [ETRImageEditor cropLoResImage:newUserImage
+                                            writeToFile:[_user imageFilePath:NO]];
+    
+    NSData * hiResData = [ETRImageEditor cropHiResImage:newUserImage
+                                            writeToFile:[_user imageFilePath:YES]];
+    
+    [ETRServerAPIHelper putImageWithHiResData:hiResData
+                                    loResData:loResData
+                            completionHandler:^(NSNumber * imageID) {
+                                // If the image upload was successful,
+                                // a new image ID is given.
+                                // If it failed, the temporary image ID stays assigned
+                                // and will be reuploaded automatically later on.
+                                
+                                if ([imageID compare:@(10L)] == NSOrderedDescending) {
+                                    // Delete the old files, then set the new ID.
+                                    [_user deleteImageFiles];
+                                    [_user setImageID:imageID];
+                                    [ETRCoreDataHelper saveContext];
+                                    
+                                    // Store the data in the new files.
+                                    [loResData writeToFile:[_user imageFilePath:NO]
+                                                atomically:YES];
+                                    [hiResData writeToFile:[_user imageFilePath:YES]
+                                                atomically:YES];
+                                }
+                            }];
 }
 
 @end

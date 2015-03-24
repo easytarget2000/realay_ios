@@ -12,6 +12,10 @@
 
 + (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag;
 
-//+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView;
++ (UIImage *)imageFromPickerInfo:(NSDictionary *)info;
+
++ (NSData *)cropHiResImage:(UIImage *)image writeToFile:(NSString *)filePath;
+
++ (NSData *)cropLoResImage:(UIImage *)image writeToFile:(NSString *)filePath;
 
 @end

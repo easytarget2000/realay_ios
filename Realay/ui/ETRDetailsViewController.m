@@ -21,17 +21,18 @@
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
 
-#define kHeaderCellIdentifier           @"profileHeaderCell"
-#define kValueCellIdentifier            @"profileValueCell"
-#define kSocialMediaCellIdentifier      @"socialMediaCell"
-#define kButtonCellIdentifier           @"profileButtonCell"
+static NSString *const ETRHeaderCellIdentifier = @"profileHeaderCell";
 
-#define kEditorSegue                    @"profileToEditorSegue"
-#define kPasswordSegue                  @"detailsToPasswordSegue"
+static NSString *const ETRValueCellIdentifier = @"profileValueCell";
 
-#define kProfilePlaceholderImageName    @"PlaceholderProfileW"
+static NSString *const ETRSocialMediaCellIdentifier = @"profileSocialCell";
 
-//#define NSLocalizedString(key, comment) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
+static NSString *const ETRButtonCellIDentifier = @"profileButtonCell";
+
+static NSString *const ETRProfileToEditorSegue = @"profileToEditorSegue";
+
+static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
+
 
 @interface ETRDetailsViewController ()
 
@@ -45,6 +46,7 @@
 
 @end
 
+
 @implementation ETRDetailsViewController
 
 @synthesize room = _room;
@@ -52,19 +54,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    [[[self navigationController] navigationBar] setTranslucent:YES];
-    
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-                                                  forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage new];
-//    self.navigationController.navigationBar.translucent = YES;
-//    self.navigationController.view.backgroundColor = [UIColor kPrimaryColorTransparent];
-//    [[[self navigationController] navigationBar] setBackgroundColor:[UIColor kPrimaryColorTransparent]];
-//    UIToolbar* blurredView = [[UIToolbar alloc] initWithFrame:self.navigationController.navigationBar.bounds];
-//    [blurredView setBarStyle:UIBarStyleBlack];
-//    [blurredView setBarTintColor:[UIColor redColor]];
-//    [self.navigationController.navigationBar insertSubview:blurredView atIndex:0];
+
     
     [[self tableView] setRowHeight:UITableViewAutomaticDimension];
     [[self tableView] setEstimatedRowHeight:128.0f];
@@ -73,6 +63,19 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [[[self navigationController] navigationBar] setTranslucent:YES];
+    
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+    //    self.navigationController.navigationBar.translucent = YES;
+    //    self.navigationController.view.backgroundColor = [UIColor kPrimaryColorTransparent];
+    //    [[[self navigationController] navigationBar] setBackgroundColor:[UIColor kPrimaryColorTransparent]];
+    //    UIToolbar* blurredView = [[UIToolbar alloc] initWithFrame:self.navigationController.navigationBar.bounds];
+    //    [blurredView setBarStyle:UIBarStyleBlack];
+    //    [blurredView setBarTintColor:[UIColor redColor]];
+    //    [self.navigationController.navigationBar insertSubview:blurredView atIndex:0];
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
@@ -189,19 +192,16 @@
     
     if ([indexPath row] == 0) {     // Configure the header cell.
         ETRHeaderCell *headerCell;
-        headerCell = [tableView dequeueReusableCellWithIdentifier:kHeaderCellIdentifier
+        headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderCellIdentifier
                                                      forIndexPath:indexPath];
+        
+        // Reset the tag to allow image updates.
+        [[headerCell headerImageView] setTag:0];
+        
         if (_room) {
-            [[headerCell nameLabel] setText:[_room title]];
-            [ETRImageLoader loadImageForObject:_room
-                                      intoView:[headerCell headerImageView]
-                                   doLoadHiRes:YES];
+            [headerCell setUpWithRoom:_room];
         } else if (_user) {
-            [[headerCell nameLabel] setText:[_user name]];
-            [[headerCell imageView] setImage:[UIImage imageNamed:kProfilePlaceholderImageName]];
-            [ETRImageLoader loadImageForObject:_user
-                                      intoView:[headerCell headerImageView]
-                                   doLoadHiRes:YES];
+            [headerCell setUpWithUser:_user];
         }
         return headerCell;
     }
@@ -213,7 +213,7 @@
     }
     
     // Empty fallback cell:
-    return [tableView dequeueReusableCellWithIdentifier:kValueCellIdentifier
+    return [tableView dequeueReusableCellWithIdentifier:ETRValueCellIdentifier
                                            forIndexPath:indexPath];
 }
 
@@ -221,7 +221,7 @@
                                 forIndexPath:indexPath {
     
     ETRKeyValueCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:kValueCellIdentifier
+    cell = [tableView dequeueReusableCellWithIdentifier:ETRValueCellIdentifier
                                            forIndexPath:indexPath];
     
     switch ([indexPath row]) {
@@ -279,7 +279,7 @@
         // The last row contains the block button, if this is not the local User.
         if (row == ([tableView numberOfRowsInSection:0] - 1)) {
             ETRProfileButtonCell *blockButtonCell;
-            blockButtonCell = [tableView dequeueReusableCellWithIdentifier:kButtonCellIdentifier
+            blockButtonCell = [tableView dequeueReusableCellWithIdentifier:ETRButtonCellIDentifier
                                                               forIndexPath:indexPath];
             
             NSString *blockUser = NSLocalizedString(@"Block_User", @"Block User");
@@ -292,15 +292,16 @@
     if (row == _socialMediaRow) {
         // The cell for this row displays the social network buttons.
         ETRProfileSocialCell *socialMediaCell;
-        socialMediaCell = [tableView dequeueReusableCellWithIdentifier:kSocialMediaCellIdentifier
+        socialMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSocialMediaCellIdentifier
                                                           forIndexPath:indexPath];
+        [socialMediaCell setUpForUser:_user];
         return socialMediaCell;
     }
     
     // The cell for this row displays one specific attribute.
     
     ETRKeyValueCell *valueCell;
-    valueCell = [tableView dequeueReusableCellWithIdentifier:kValueCellIdentifier
+    valueCell = [tableView dequeueReusableCellWithIdentifier:ETRValueCellIdentifier
                                                 forIndexPath:indexPath];
     
     if (row == 1) {     // Configure the status cell.
@@ -341,14 +342,14 @@
     if (_room) {
         if (![[ETRSessionManager sharedManager] didBeginSession]) {
             if ([ETRLocationManager isInSessionRegion]) {
-                [self performSegueWithIdentifier:kPasswordSegue sender:nil];
+                [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
             } else {
                 [ETRAlertViewFactory showDistanceLeftAlertView];
             }
         }
     } else if (_user) {
         if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
-            [self performSegueWithIdentifier:kEditorSegue sender:nil];
+            [self performSegueWithIdentifier:ETRProfileToEditorSegue sender:nil];
         } else {
             // TODO: Implement adding contacts.
         }

@@ -8,9 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+@class ETRRoom;
+@class ETRUser;
+
 @interface ETRHeaderCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *headerImageView;
+
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+
+@property (weak, nonatomic) IBOutlet UIView *distanceContainer;
+
+@property (weak, nonatomic) IBOutlet UILabel *distanceView;
+
+@property (weak, nonatomic) IBOutlet UIImageView *placeIcon;
+
+- (void)setUpWithRoom:(ETRRoom *)room;
+
+- (void)setUpWithUser:(ETRUser *)user;
 
 @end

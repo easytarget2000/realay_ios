@@ -10,7 +10,6 @@
 
 #import "ETRAction.h"
 #import "ETRAlertViewFactory.h"
-#import "ETRChatMessageCell.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRUser.h"

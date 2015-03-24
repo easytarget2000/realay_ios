@@ -40,6 +40,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 + (void)putAction:(ETRAction *)outgoingAction;
 
-+ (void)sendImage:(UIImage *)image completionHandler:(void(^)(BOOL didSucceed))completionHandler;
-
++ (void)putImageWithHiResData:(NSData *)hiResData
+                    loResData:(NSData *)loResData
+            completionHandler:(void (^)(NSNumber * imageID))completionHandler;
 @end

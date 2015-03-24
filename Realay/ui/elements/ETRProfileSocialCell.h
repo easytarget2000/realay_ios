@@ -8,6 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@class ETRUser;
+
 @interface ETRProfileSocialCell : UITableViewCell
+
+@property (weak, nonatomic) IBOutlet UIImageView * facebookButton;
+
+@property (weak, nonatomic) IBOutlet UIImageView * instagramButton;
+
+@property (weak, nonatomic) IBOutlet UIImageView * twitterButton;
+
+- (void)setUpForUser:(ETRUser *)user;
 
 @end
