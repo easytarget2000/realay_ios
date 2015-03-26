@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C1510" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C1514" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ETRAction" representedClassName="ETRAction" syncable="YES">
         <attribute name="code" attributeType="Integer 16" defaultValueString="-1" syncable="YES"/>
         <attribute name="isInQueue" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -13,6 +13,7 @@
     </entity>
     <entity name="ETRConversation" representedClassName="ETRConversation" syncable="YES">
         <attribute name="hasUnreadMessage" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <relationship name="inRoom" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="conversations" inverseEntity="ETRRoom" syncable="YES"/>
         <relationship name="lastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="conversation" inverseEntity="ETRAction" syncable="YES"/>
         <relationship name="partner" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="inConversation" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
@@ -32,7 +33,8 @@
         <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" minValueString="1" syncable="YES"/>
         <relationship name="actions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="room" inverseEntity="ETRAction" syncable="YES"/>
-        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="lastKnownRoom" inverseEntity="ETRUser" syncable="YES"/>
+        <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRConversation" inverseName="inRoom" inverseEntity="ETRConversation" syncable="YES"/>
+        <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="inRoom" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
     <entity name="ETRUser" representedClassName="ETRUser" syncable="YES">
         <attribute name="facebook" optional="YES" attributeType="String" syncable="YES"/>
@@ -46,14 +48,14 @@
         <attribute name="twitter" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="inConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRConversation" inverseName="partner" inverseEntity="ETRConversation" syncable="YES"/>
-        <relationship name="lastKnownRoom" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="users" inverseEntity="ETRRoom" syncable="YES"/>
+        <relationship name="inRoom" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="users" inverseEntity="ETRRoom" syncable="YES"/>
         <relationship name="receivedActions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="recipient" inverseEntity="ETRAction" syncable="YES"/>
         <relationship name="sentActions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="sender" inverseEntity="ETRAction" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ETRAction" positionX="0" positionY="0" width="128" height="178"/>
-        <element name="ETRConversation" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="ETRRoom" positionX="0" positionY="0" width="128" height="285"/>
+        <element name="ETRAction" positionX="0" positionY="0" width="128" height="180"/>
+        <element name="ETRConversation" positionX="0" positionY="0" width="128" height="103"/>
+        <element name="ETRRoom" positionX="0" positionY="0" width="128" height="300"/>
         <element name="ETRUser" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
 </model>

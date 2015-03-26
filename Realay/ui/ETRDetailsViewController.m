@@ -344,7 +344,7 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
             if ([ETRLocationManager isInSessionRegion]) {
                 [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
             } else {
-                [ETRAlertViewFactory showDistanceLeftAlertView];
+                [ETRAlertViewFactory showRoomDistanceAlert];
             }
         }
     } else if (_user) {

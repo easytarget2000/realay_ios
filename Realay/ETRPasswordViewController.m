@@ -48,7 +48,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
         if ([ETRLocationManager isInSessionRegion]) {
            [self verifyPasswordAndJoin];
         } else {
-          [ETRAlertViewFactory showDistanceLeftAlertView];
+          [ETRAlertViewFactory showRoomDistanceAlert];
         }
     }
 }

@@ -18,7 +18,8 @@ static ETRLocationManager *sharedInstance;
 @interface ETRLocationManager()
 
 @property (nonatomic) BOOL doUpdateFast;
-@property (atomic, readwrite) BOOL didAuthorize;
+
+@property (nonatomic) BOOL didAuthorize;
 
 @end
 
@@ -44,8 +45,18 @@ static ETRLocationManager *sharedInstance;
 }
 
 + (BOOL)isInSessionRegion {
-    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
-    return [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom] < 10;
+    if ([ETRLocationManager didAuthorize]) {
+        ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+        return [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom] < 10;
+    } else {
+        return NO;
+    }
+}
+
++ (BOOL)didAuthorize {
+    // DEBUG:
+    return YES;
+//    return [[ETRLocationManager sharedManager] didAuthorize];
 }
 
 - (void)launch {    

@@ -35,6 +35,7 @@
 @dynamic title;
 @dynamic actions;
 @dynamic users;
+@dynamic conversations;
 
 @synthesize location = _location;
 

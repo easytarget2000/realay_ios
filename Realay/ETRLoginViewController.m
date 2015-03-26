@@ -97,18 +97,24 @@ static NSString *const profileSegue = @"loginToProfileSegue";
         
         [ETRServerAPIHelper loginUserWithName:typedName
                             completionHandler:^(ETRUser *localUser) {
-            if (localUser) {
-                if (_doStartSessionOnFinish) {
-                    [self performSegueWithIdentifier:joinSegue sender:nil];
-                } else {
-                    [self performSegueWithIdentifier:profileSegue sender:localUser];
-                }
-            } else {
-                [ETRAlertViewFactory showGeneralErrorAlert];
-            }
+                                [NSThread detachNewThreadSelector:@selector(handleLoginCompletion:)
+                                                         toTarget:self
+                                                       withObject:localUser];
         }];
     }
     
+}
+
+- (void)handleLoginCompletion:(ETRUser *)localUser {
+    if (localUser) {
+        if (_doStartSessionOnFinish) {
+            [self performSegueWithIdentifier:joinSegue sender:nil];
+        } else {
+            [self performSegueWithIdentifier:profileSegue sender:localUser];
+        }
+    } else {
+        [ETRAlertViewFactory showGeneralErrorAlert];
+    }
 }
 
 @end

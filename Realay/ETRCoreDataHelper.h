@@ -14,7 +14,9 @@
 @class ETRRoom;
 @class ETRUser;
 
+
 extern long const ETRActionPublicUserID;
+
 
 @interface ETRCoreDataHelper : NSObject
 
@@ -39,13 +41,17 @@ extern long const ETRActionPublicUserID;
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
                                                        withDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
++ (NSFetchedResultsController *)conversationResulsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
+
++ (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
+
 + (ETRRoom *)roomWithRemoteID:(long)remoteID;
 
 + (ETRUser *)userWithRemoteID:(long)remoteID downloadIfUnavailable:(BOOL)doDownload;
 
 + (void)dispatchPublicMessage:(NSString *)messageContent;
 
-+ (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
++ (void)dispatchMessage:(NSString *)messageContent inConversation:(ETRConversation *)conversation;
 
 + (void)addActionToQueue:(ETRAction *)unsentAction;
 
@@ -54,6 +60,7 @@ extern long const ETRActionPublicUserID;
 + (void)clearPublicActions;
 
 @end
+
 
 @interface NSDictionary (TypesafeJSON)
 

@@ -20,7 +20,7 @@
 @dynamic instagram;
 @dynamic facebook;
 @dynamic twitter;
-@dynamic lastKnownRoom;
+@dynamic inRoom;
 @dynamic sentActions;
 @dynamic receivedActions;
 @dynamic inConversation;

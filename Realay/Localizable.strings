@@ -32,13 +32,17 @@
 
 "No" = "No";
 
-"No_private_conversations" = "You dot not have any private conversations yet. Select a User to start one.";
+"No_other_people" = "There are currently no other people online in this place. Invite someone around you to join Realay.";
+
+"No_private_conversations" = "You currently do not have any private conversations in this Realay. Chose a person from the user list to start a 1-on-1 chat.";
 
 "OK" = "OK";
 
 "Ongoing" = "Ongoing";
 
 "phone" = "phone";
+
+"Private_Conversations" = "Private Conversations";
 
 "Return_to_area" = "Please make sure that your location can be estimated and return until %@.";
 
@@ -65,6 +69,8 @@
 "Unknown_User" = "Unknown User";
 
 "until" = "until";
+
+"Users_Around_You" = "Users Near You";
 
 "users_online" = "users currently online";
 

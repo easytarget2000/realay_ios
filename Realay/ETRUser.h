@@ -23,7 +23,7 @@
 @property (nonatomic, retain) NSString * twitter;
 @property (nonatomic, retain) NSString * website;
 @property (nonatomic, retain) ETRConversation *inConversation;
-@property (nonatomic, retain) ETRRoom *lastKnownRoom;
+@property (nonatomic, retain) ETRRoom *inRoom;
 @property (nonatomic, retain) ETRAction *receivedActions;
 @property (nonatomic, retain) ETRAction *sentActions;
 

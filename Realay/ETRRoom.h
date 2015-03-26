@@ -30,6 +30,7 @@
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSSet *actions;
 @property (nonatomic, retain) NSSet *users;
+@property (nonatomic, retain) NSSet *conversations;
 
 - (NSString *)description;
 

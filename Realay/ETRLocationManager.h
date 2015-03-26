@@ -8,7 +8,9 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+
 @class ETRRoom;
+
 
 @interface ETRLocationManager : CLLocationManager <CLLocationManagerDelegate>
 
@@ -18,9 +20,9 @@
 
 + (BOOL)isInSessionRegion;
 
-- (NSInteger)distanceToRoom:(ETRRoom *)room;
++ (BOOL)didAuthorize;
 
-@property (atomic, readonly) BOOL didAuthorize;
+- (NSInteger)distanceToRoom:(ETRRoom *)room;
 
 - (void)launch;
 

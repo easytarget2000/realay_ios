@@ -11,6 +11,7 @@
 @interface ETRUserListViewController : UITableViewController
 
 - (IBAction)mapButtonPressed:(id)sender;
+
 - (IBAction)profileButtonPressed:(id)sender;
 
 @end

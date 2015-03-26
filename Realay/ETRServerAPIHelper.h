@@ -38,6 +38,9 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 + (void)sendLocalUserUpdate;
 
++ (void)getActionsWithMinID:(long)lastActionID
+          completionHandler:(void (^)(id<NSObject> receivedObject))completionHandler;
+
 + (void)putAction:(ETRAction *)outgoingAction;
 
 + (void)putImageWithHiResData:(NSData *)hiResData

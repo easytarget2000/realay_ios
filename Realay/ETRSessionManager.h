@@ -34,15 +34,15 @@
   */
 @property (nonatomic) NSInteger mapControllerIndex;
 
-/*
- Font that is to be used for the sender label of a message:
-  */
-@property (strong, nonatomic, readonly) UIFont *msgSenderFont;
-
-/*
- Font that is to be used for the message itself:
-  */
-@property (strong, nonatomic, readonly) UIFont *msgTextFont;
+///*
+// Font that is to be used for the sender label of a message:
+//  */
+//@property (strong, nonatomic, readonly) UIFont *msgSenderFont;
+//
+///*
+// Font that is to be used for the message itself:
+//  */
+//@property (strong, nonatomic, readonly) UIFont *msgTextFont;
 
 /*
  Session is able to push/pop view controller.
@@ -50,19 +50,9 @@
 @property (strong, nonatomic) UINavigationController *navigationController;
 
 /*
- Number of failed location updates:
-  */
-@property (nonatomic, readonly) NSInteger locationUpdateFails;
-
-/*
  Room object of this session:
   */
 @property (strong, nonatomic, readonly) ETRRoom *room;
-
-/*
- Return to the view controller at this index when leaving.
-  */
-@property (nonatomic) NSInteger roomListControllerIndex;
 
 /*
  Return to the user/chat list controller when blocking someone.
@@ -84,7 +74,6 @@
   */
 @property (strong, nonatomic, readonly) NSMutableArray *sortedUserKeys;
 
-# pragma mark - Methods
 
 /* 
  The shared singleton instance:
@@ -113,30 +102,5 @@
  */
 - (void)prepareSessionInRoom:(ETRRoom *)room
         navigationController:(UINavigationController *)navigationController;
-
-/*
- Get all new actions from the database.
- */
-- (void)tick;
-
-/*
- Read the user settings.
- */
-- (void)refreshGUIAttributes;
-
-/*
- Used when app moves to the background.
- */
-- (void)switchToBackgroundSession;
-
-/*
- Used when the app moves back to the foreground.
- */
-- (void)switchToForegroundSession;
-
-/*
- Reset the location manager, so the room list can be queried.
- */
-- (void)resetLocationManager;
 
 @end

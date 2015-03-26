@@ -9,161 +9,250 @@
 #import "ETRUserListViewController.h"
 
 #import "ETRAction.h"
+#import "ETRActionManager.h"
 #import "ETRConversation.h"
 #import "ETRConversationViewController.h"
-#import "ETRDetailsViewController.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRImageLoader.h"
+#import "ETRInfoCell.h"
+#import "ETRMapViewController.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
+#import "ETRUserCell.h"
 
-#define kSegueToConversation        @"userListToConversationSegue"
-#define kSegueToMap                 @"userListToMapSegue"
-#define kSegueToProfile             @"userListToViewProfileSegue"
-#define kCellIdentifierConvo        @"conversationCell"
-#define kCellIdentifierUser         @"userCell"
-#define kCellIdentifierInfo         @"infoCell"
+static NSString *const ETRUsersToConversationSegue = @"usersToConversationSegue";
+
+static NSString *const ETRUsersToMapSegue = @"usersToMapSegue";
+
+static NSString *const ETRUserCellIdentifier = @"userCell";
+
+static NSString *const ETRInfoCellIdentifier = @"infoCell";
+
+static CGFloat const ETRUserRowHeight = 64.0f;
+
+
+@interface ETRUserListViewController () <NSFetchedResultsControllerDelegate>
+
+@property (strong, nonatomic) NSFetchedResultsController * conversationsResultsController;
+
+@property (strong, nonatomic) NSFetchedResultsController * usersResultsController;
+
+@end
+
 
 @implementation ETRUserListViewController
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    NSInteger myControllerIndex;
-    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSessionManager sharedManager] setUserListControllerIndex:myControllerIndex];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Navigation Bar:
-    [self setTitle:[[ETRSessionManager sessionRoom] title]];
+    // Enable the Fetched Results Controllers.
+    _conversationsResultsController = [ETRCoreDataHelper conversationResulsControllerWithDelegate:self];
+    _usersResultsController = [ETRCoreDataHelper userListResultsControllerWithDelegate:self];
+    
+    NSError *error = nil;
+    [_conversationsResultsController performFetch:&error];
+    if (error) {
+        NSLog(@"ERROR: performFetch: %@", error);
+    }
+    [_usersResultsController performFetch:&error];
+    if (error) {
+        NSLog(@"ERROR: performFetch: %@", error);
+    }
     
     // Do not display empty cells at the end.
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-    [[self tableView] setDelegate:self];
+    
+    [self setTitle:[[ETRSessionManager sessionRoom] title]];
+    [[self tableView] setRowHeight:ETRUserRowHeight];
     
     // Configure manual refresher.
-    [[self refreshControl] addTarget:self action:@selector(updateUserList) forControlEvents:UIControlEventValueChanged];
+    [[self refreshControl] addTarget:self
+                              action:@selector(updateUserList)
+                    forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[self navigationController] setToolbarHidden:NO animated:YES];
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [[self tableView] reloadData];
+    [[ETRActionManager sharedManager] setForegroundPartnerID:-9L];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[self tableView] reloadData];
     [[self refreshControl] endRefreshing];
 }
 
-- (void)dealloc {
-#ifdef DEBUG
-    NSLog(@"WARNING: ETRUserListViewController DEALLOC");
-#endif
+#pragma mark -
+#pragma mark Table
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [[self tableView] beginUpdates];
 }
 
-#pragma mark - UITableViewDataSource
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [[self refreshControl] endRefreshing];
+    [[self tableView] endUpdates];
+}
+
+- (void)controller:(NSFetchedResultsController *)controller
+   didChangeObject:(id)anObject
+       atIndexPath:(NSIndexPath *)indexPath
+     forChangeType:(NSFetchedResultsChangeType)type
+      newIndexPath:(NSIndexPath *)newIndexPath {
+    
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        }
+        case NSFetchedResultsChangeUpdate: {
+            UITableViewCell *cell = [[self tableView] cellForRowAtIndexPath:indexPath];
+            if (cell && [cell isKindOfClass:[ETRUserCell class]]) {
+                [self configureUserCell:(ETRUserCell *)cell atIndexPath:indexPath];
+            }
+            break;
+        }
+        case NSFetchedResultsChangeMove: {
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == 0) {
+        if (!_conversationsResultsController || ![[_conversationsResultsController fetchedObjects] count]) {
+            return 1;
+        } else {
+            return [[_conversationsResultsController fetchedObjects] count];
+        }
+    } else {
+        if (!_usersResultsController || ![[_usersResultsController fetchedObjects] count]) {
+            return 1;
+        } else {
+            return [[_usersResultsController fetchedObjects] count];
+        }
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-//    NSInteger row = [indexPath row];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellIdentifierInfo];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                      reuseIdentifier:kCellIdentifierInfo];
-    };
-    ETRUser *user;
-    
-    if ([indexPath section] == 0) {
-        // Section 0 contains the conversations.
-        
-        if ([[[ETRSessionManager sharedManager] sortedChatKeys] count] < 1) {
-            // No conversation started yet.
-            
-            NSString *noConvos = NSLocalizedString(@"No_private_conversations", @"No PMs yet");
-            [[cell textLabel] setText:noConvos];
-            [[cell textLabel] setAdjustsFontSizeToFitWidth:YES];
-            
-            // Do not do display any user-related views.
+    // Show an information Cell, if no Conversations have been started.
+    if (!_conversationsResultsController || ![[_conversationsResultsController fetchedObjects] count]) {
+        if ([indexPath section] == 0) {
+            ETRInfoCell * cell = [tableView dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
+                                                                 forIndexPath:indexPath];
+            [[cell infoLabel] setText:NSLocalizedString(@"No_private_conversations", @"No PMs, instructions")];
             return cell;
-            
-        } else {
-            // Give me a regular conversation cell if we have at least one conversation open.
-            
         }
-    } else {
-        // Section 1 contains the user cells.
-        
     }
     
+    // Show an information Cell, if no Users are online.
+    if (!_usersResultsController || ![[_usersResultsController fetchedObjects] count]) {
+        if ([indexPath section] == 1) {
+            ETRInfoCell * cell = [tableView dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
+                                                                 forIndexPath:indexPath];
+            [[cell infoLabel] setText:NSLocalizedString(@"No_other_people", @"No Users, invite")];
+            return cell;
+        }
+    }
     
-    [[cell textLabel] setText:[user name]];
-    [ETRImageLoader loadImageForObject:user intoView:[cell imageView] doLoadHiRes:NO];
-    
-    return cell;
+    ETRUserCell * userCell = [tableView dequeueReusableCellWithIdentifier:ETRUserCellIdentifier
+                                                         forIndexPath:indexPath];
+    [self configureUserCell:userCell atIndexPath:indexPath];
+    return userCell;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return ETRUserRowHeight;
+}
+
+- (void)configureUserCell:(ETRUserCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+    // Give the Image Views a circular shape.
+//    [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
+//    [[cell iconView] setClipsToBounds:YES];
     
-    switch (section) {
-        case 0:     // Conversation section:
-            if ([[[ETRSessionManager sharedManager] sortedChatKeys] count] < 2) return 1;
-            else return [[[ETRSessionManager sharedManager] sortedChatKeys] count];
-            break;
-        case 1:     // User section
-            return [[[ETRSessionManager sharedManager] sortedUserKeys] count];
-        default:
-            return 0;
-            break;
+    // Get the User object from the appropriate Fetched Results Controller
+    // and apply the data to the Cell elements.
+    ETRUser * user;
+    if ([indexPath section] == 0) {
+        ETRConversation * convo = [_conversationsResultsController objectAtIndexPath:indexPath];
+        user = [convo partner];
+        [[cell infoLabel] setText:[[convo lastMessage] messageContent]];
+    } else {
+        // The Index Path gives Section 1 but the Fetched Results Controller assumes its values are in Section 0.
+        NSIndexPath * alignedPath = [NSIndexPath indexPathForRow:[indexPath row] inSection:0];
+        user = [_usersResultsController objectAtIndexPath:alignedPath];
+        [[cell infoLabel] setText:[user status]];
     }
     
+    [[cell nameLabel] setText:[user name]];
+    [ETRImageLoader loadImageForObject:user intoView:[cell iconView] doLoadHiRes:NO];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    //TODO: Localization
-    NSString *convHeader = @"Private Conversations";
-    NSString *usersHeader = @"Users";
-    
-    switch (section) {
-        case 0:
-            if ([tableView numberOfSections] == 1) return usersHeader;
-            else return convHeader;
-            break;
-        case 1:
-            return usersHeader;
-        default:
-            return @"";
-            break;
+    if (section == 0) {
+        return NSLocalizedString(@"Private_Conversations", @"Private Chats");
+    } else {
+        return NSLocalizedString(@"Users_Around_You", @"All Session Users");
     }
 }
 
-#pragma mark - ETRChatViewControllerDelegate
-
-- (void)chatDidUpdateWithKey:(NSString *)chatKey {
-    [[self tableView] reloadData];
-}
-
-#pragma mark - ETRUserListDelegate
-
-- (void)didUpdateUserChatList {
-    [[self tableView] reloadData];
+- (void)updateUserList {
+    [[self refreshControl] endRefreshing];
 }
 
 #pragma mark - Navigation
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Hides the selection and if a valid selection was made,
+    // opens a Conversation View Controller with the selected partner User.
     
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    ETRConversation *selectedConversation;
-    [self performSegueWithIdentifier:kSegueToConversation sender:selectedConversation];
+    if ([indexPath section] == 0) {
+        // If the list only shows information cells and no Conversations, do not listen to selections.
+        if (![[_conversationsResultsController fetchedObjects] count]) {
+            [tableView deselectRowAtIndexPath:indexPath animated:NO];
+            return;
+        }
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+        ETRConversation * record = [_conversationsResultsController objectAtIndexPath:indexPath];
+        [self performSegueWithIdentifier:ETRUsersToConversationSegue sender:[record partner]];
+    } else {
+        // If the list only shows information cells and no Users, do not listen to selections.
+        if (![[_usersResultsController fetchedObjects] count]) {
+            [tableView deselectRowAtIndexPath:indexPath animated:NO];
+            return;
+        }
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+        ETRUser * record = [_usersResultsController objectAtIndexPath:indexPath];
+        [self performSegueWithIdentifier:ETRUsersToConversationSegue sender:record];
+    }
 }
 
 - (IBAction)mapButtonPressed:(id)sender {
@@ -178,11 +267,7 @@
 //        NSLog(@"ERROR: No map view controller on stack.");
 //    }
     
-    [self performSegueWithIdentifier:kSegueToMap sender:self];
-}
-
-- (IBAction)profileButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:kSegueToProfile sender:nil];
+    [self performSegueWithIdentifier:ETRUsersToMapSegue sender:self];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -194,7 +279,13 @@
             conversation = (ETRConversationViewController *)destination;
             [conversation setPartner:(ETRUser *)sender];
         }
+        return;
     }
+    
+    if ([destination isKindOfClass:[ETRMapViewController class]]) {
+        
+    }
+    
 }
 
 @end

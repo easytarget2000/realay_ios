@@ -12,6 +12,8 @@
 
 @interface ETRAlertViewFactory : NSObject
 
++ (void)showAuthorizationAlert;
+
 /*
  Displays a dialog in an alert view that asks to confirm a block action.
  The delegate will handle the YES button click.
@@ -39,7 +41,7 @@
  Displays an alert view that says the user cannot join the room
  until stepping inside the region.
  */
-+ (void)showDistanceLeftAlertView;
++ (void)showRoomDistanceAlert;
 
 /*
  Displays an alert view that says the typed name is not long enough to be used.

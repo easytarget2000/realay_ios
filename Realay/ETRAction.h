@@ -14,25 +14,37 @@
 typedef NS_ENUM(short, ETRActionCode) {
     ETRActionCodePublicMessage  = 10,
     ETRActionCodePrivateMessage = 11,
+    ETRActionCodeKick           = 16,
+    ETRActionCodeBan            = 19,
+    ETRActionCodeUserJoin       = 21,
+    ETRActionCodeUserUpdate     = 22,
+    ETRActionCodeServerMessage  = 28,
+    ETRActionCodeRoomUpdate     = 30,
     ETRActionCodePublicMedia    = 40,
-    ETRActionCodePrivateMedia   = 41
+    ETRActionCodePrivateMedia   = 41,
+    ETRActionCodeUserQuit       = 66
 };
 
 
 @interface ETRAction : ETRChatObject
 
 @property (nonatomic, retain) NSNumber * code;
-@property (nonatomic, retain) NSNumber * isInQueue;
-@property (nonatomic, retain) NSString * messageContent;
-@property (nonatomic, retain) NSNumber * remoteID;
-@property (nonatomic, retain) NSDate * sentDate;
-@property (nonatomic, retain) ETRUser *recipient;
-@property (nonatomic, retain) ETRRoom *room;
-@property (nonatomic, retain) ETRUser *sender;
-@property (nonatomic, retain) ETRConversation *conversation;
 
-//- (CGSize)frameSizeForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
-//- (CGFloat)rowHeightForWidth:(CGFloat)width hasNameLabel:(BOOL)hasNameLabel;
+@property (nonatomic, retain) NSNumber * isInQueue;
+
+@property (nonatomic, retain) NSString * messageContent;
+
+@property (nonatomic, retain) NSNumber * remoteID;
+
+@property (nonatomic, retain) NSDate * sentDate;
+
+@property (nonatomic, retain) ETRUser *recipient;
+
+@property (nonatomic, retain) ETRRoom *room;
+
+@property (nonatomic, retain) ETRUser *sender;
+
+@property (nonatomic, retain) ETRConversation *conversation;
 
 - (BOOL)isPublicMessage;
 

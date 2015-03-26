@@ -10,6 +10,7 @@
 
 @class ETRAction;
 
+
 @interface ETRActionManager : NSObject
 
 @property (nonatomic, readonly) long lastActionID;
@@ -18,6 +19,14 @@
 
 + (ETRActionManager *)sharedManager;
 
-- (void)handleReceivedAction:(ETRAction *)receivedAction;
+- (void)startSession;
+
+- (void)queryUpdates:(NSTimer *)timer;
+
+- (void)ackActionID:(long)remoteActionID;
+
+- (void)dispatchNotificationForAction:(ETRAction *)action;
+
+- (void)setForegroundPartnerID:(long)foregroundPartnerID;
 
 @end

@@ -40,9 +40,9 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 @interface ETRConversationViewController ()
  <UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, NSFetchedResultsControllerDelegate>
 
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
 
-@property (nonatomic,retain) UIRefreshControl *historyControl;
+@property (nonatomic,retain) UIRefreshControl * historyControl;
 
 @end
 
@@ -70,8 +70,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     [[self messagesTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     [[self messagesTableView] setRowHeight:UITableViewAutomaticDimension];
     [[self messagesTableView] setEstimatedRowHeight:ETREstimatedMessageRowHeight];
-    
-
     
     // Initialize the Fetched Results Controller
     // that is going to load and monitor message records.
@@ -140,7 +138,7 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     }
     
     [[self messagesTableView] reloadData];
-//    [self scrollDownTableViewAnimated:YES];
+    [self scrollDownTableViewAnimated:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -209,6 +207,7 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self historyControl] endRefreshing];
     [[self messagesTableView] endUpdates];
+    [self scrollDownTableViewAnimated:YES];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -324,8 +323,11 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
     if (bottomRow >= 0) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+//        CGRect rect = [[self messagesTableView] rectForRowAtIndexPath:indexPath];
+//        [[self messagesTableView] scrollRectToVisible:rect animated:YES];
+        
         [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-                                        atScrollPosition:UITableViewScrollPositionMiddle
+                                        atScrollPosition:UITableViewScrollPositionBottom
                                                 animated:animated];
     }
 }

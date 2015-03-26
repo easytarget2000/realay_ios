@@ -213,17 +213,19 @@
 
 - (IBAction)joinButtonPressed:(id)sender {
     // Only perform a join action, if the user did not join yet.
-    if ([[ETRSessionManager sharedManager] didBeginSession]) return;
-        
-    if ([ETRLocationManager isInSessionRegion]) {
+    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+        return;
+    }
+    
+    if (![ETRLocationManager didAuthorize]) {
+        // The location access has not been authorized.
+        [ETRAlertViewFactory showAuthorizationAlert];
+    } else if ([ETRLocationManager isInSessionRegion]) {
         // Show the password prompt, if the device location is inside the region.
         [self performSegueWithIdentifier:kSegueToNext sender:self];
-    } else if ([[ETRSessionManager sharedManager] locationUpdateFails]){
-        // The user's location is unknown.
-//        [ETRAlertViewFactory showNoLocationAlertViewWithMinutes:0];
     } else {
         // The user is outside of the radius.
-        [ETRAlertViewFactory showDistanceLeftAlertView];
+        [ETRAlertViewFactory showRoomDistanceAlert];
     }
 }
 

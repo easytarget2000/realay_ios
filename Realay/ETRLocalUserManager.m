@@ -121,7 +121,7 @@ static ETRLocalUserManager *sharedInstance = nil;
     
     
     // Temporary image IDs are negative, random values.
-    long newImageID = arc4random() * LONG_MIN;
+    long newImageID = drand48() * LONG_MIN;
     if (newImageID > 0L) {
         newImageID *= -1L;
     }
