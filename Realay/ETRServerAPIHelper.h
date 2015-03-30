@@ -13,7 +13,14 @@
 @class ETRUser;
 @class ETRImageLoader;
 
+
+extern NSString * ETRAPIBaseURL;
+
+
 @interface ETRServerAPIHelper : NSObject
+
+#pragma mark -
+#pragma mark Actions
 
 // Queries the list of rooms that are inside a given distance radius.
 + (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler;
@@ -46,4 +53,9 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 + (void)putImageWithHiResData:(NSData *)hiResData
                     loResData:(NSData *)loResData
             completionHandler:(void (^)(NSNumber * imageID))completionHandler;
+
++ (void)putImageWithHiResData:(NSData *)hiResData
+                    loResData:(NSData *)loResData
+                     inAction:(ETRAction *)action;
+
 @end

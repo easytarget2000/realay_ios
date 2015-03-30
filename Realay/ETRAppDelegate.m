@@ -11,8 +11,8 @@
 #import "ETRActionManager.h"
 //#import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
+#import "ETRReachabilityManager.h"
 #import "ETRSessionManager.h"
-//#import "ETRRoomListViewController.h"
 
 @implementation ETRAppDelegate
 
@@ -41,6 +41,9 @@
     
     // Prepare the random number generator seeed.
     srand48(time(0));
+    
+    // Initialise the Reachability Manager, in order to avoid delayed Reachability states later.
+    [ETRReachabilityManager sharedManager];
     
     return YES;
 }

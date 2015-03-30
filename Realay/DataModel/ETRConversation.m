@@ -27,7 +27,7 @@
     
     NSComparisonResult dateComparison;
     dateComparison = [[[self lastMessage] sentDate] compare:[message sentDate]];
-    if (dateComparison == NSOrderedDescending) {
+    if (dateComparison == NSOrderedAscending) {
         [self setLastMessage:message];
     }
 }

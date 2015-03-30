@@ -20,7 +20,9 @@ static NSTimeInterval const ETRFastestInterval = 2.5;
 
 static NSTimeInterval const ETRSlowestInterval = 10.0;
 
-static NSTimeInterval const ETRIdleInterval = 20.0;
+static NSTimeInterval const ETRTimeIntervalToIdle = 120.0;
+
+static NSTimeInterval const ETRIdleInterval = 40.0;
 
 static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
 
@@ -70,6 +72,7 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
 //    [_invocation setSelector:@selector(queryUpdates)];
 
     // Consider the join successful and start the query timer.
+    _lastActionDate = [NSDate date];
     [self dispatchQueryTimerWithResetInterval:YES];
     
     return;
@@ -85,16 +88,18 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
     if (doResetInterval || _queryInterval < ETRFastestInterval) {
         _queryInterval = ETRFastestInterval;
         _lastActionDate = [NSDate date];
+        NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
     } else if (_queryInterval > ETRSlowestInterval) {
-        if ([[NSDate date] timeIntervalSinceDate:_lastActionDate] > ETRIdleInterval) {
+        if ([[NSDate date] timeIntervalSinceDate:_lastActionDate] > ETRTimeIntervalToIdle) {
             _queryInterval = ETRIdleInterval;
+            NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
         }
     } else {
         NSTimeInterval random = drand48();
         _queryInterval += random * ETRMaxIntervalDifference;
+        NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
     }
     
-    NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSTimer scheduledTimerWithTimeInterval:_queryInterval
                                          target:self
@@ -134,6 +139,7 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
     if (_lastActionID < remoteActionID) {
         _lastActionID = remoteActionID;
     }
+    _lastActionDate = [NSDate date];
 }
 
 - (void)setForegroundPartnerID:(long)foregroundPartnerID {

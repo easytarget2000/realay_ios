@@ -12,23 +12,35 @@
 
 @interface ETRConversationViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet UITableView *messagesTableView;
+@property (weak, nonatomic) IBOutlet UITableView * messagesTableView;
 
-@property (weak, nonatomic) IBOutlet UITextField *messageTextField;
+@property (weak, nonatomic) IBOutlet UILabel *inputCover;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *exitButton;
+@property (weak, nonatomic) IBOutlet UITextField * messageTextField;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *moreButton;
+//@property (weak, nonatomic) IBOutlet UIBarButtonItem * exitButton;
 
-@property (strong, nonatomic) ETRUser *partner;
+@property (weak, nonatomic) IBOutlet UIButton *mediaButton;
+
+@property (weak, nonatomic) IBOutlet UIView *cameraButton;
+
+@property (weak, nonatomic) IBOutlet UIView *galleryButton;
+
+@property (weak, nonatomic) IBOutlet UIBarButtonItem * moreButton;
+
+@property (strong, nonatomic) ETRUser * partner;
 
 @property (nonatomic) BOOL isPublic;
 
 - (IBAction)sendButtonPressed:(id)sender;
 
-- (IBAction)moreButtonPressed:(id)sender;
+- (IBAction)mediaButtonPressed:(id)sender;
 
-- (IBAction)exitButtonPressed:(id)sender;
+- (IBAction)galleryButtonPressed:(id)sender;
+
+- (IBAction)cameraButtonPressed:(id)sender;
+
+- (IBAction)moreButtonPressed:(id)sender;
 
 @end
 

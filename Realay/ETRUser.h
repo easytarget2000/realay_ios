@@ -27,4 +27,6 @@
 @property (nonatomic, retain) ETRAction *receivedActions;
 @property (nonatomic, retain) ETRAction *sentActions;
 
+- (void)addToAddressBook;
+
 @end

@@ -9,9 +9,13 @@
 #import "ETRConversationViewController.h"
 
 #import "ETRAction.h"
+#import "ETRActionManager.h"
+#import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRConversation.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
+#import "ETRImageEditor.h"
 #import "ETRUser.h"
 #import "ETRUserListViewController.h"
 #import "ETRReceivedMessageCell.h"
@@ -26,7 +30,7 @@ static CGFloat const ETREstimatedMessageRowHeight = 100.0f;
 
 static NSString *const ETRConversationToUserListSegue = @"conversationToUserListSegue";
 
-static NSString *const ETRConversationToProfileSegue = @"conversationToProfileSeuge";
+static NSString *const ETRConversationToProfileSegue = @"conversationToProfileSegue";
 
 static NSString *const ETRReceivedMessageCellIdentifier = @"receivedMessageCell";
 
@@ -38,7 +42,15 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 
 @interface ETRConversationViewController ()
- <UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, NSFetchedResultsControllerDelegate>
+<
+NSFetchedResultsControllerDelegate,
+UIAlertViewDelegate,
+UIImagePickerControllerDelegate,
+UINavigationControllerDelegate,
+UITableViewDataSource,
+UITableViewDelegate,
+UITextFieldDelegate
+>
 
 @property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
 
@@ -53,9 +65,7 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    if (![self verifySession]) {
-        return;
-    }
+    [self verifySession];
      
     // Enable automatic scrolling.
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
@@ -74,11 +84,24 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     // Initialize the Fetched Results Controller
     // that is going to load and monitor message records.
     if (_isPublic) {
+        ETRRoom * sessionRoom;
+        sessionRoom = [ETRSessionManager sessionRoom];
+        [self setTitle:[sessionRoom title]];
        _fetchedResultsController = [ETRCoreDataHelper publicMessagesResultsControllerWithDelegage:self];
+        [[self navigationItem] setHidesBackButton:YES];
+        UIBarButtonItem * exitButton;
+        exitButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Leave", @"Exit Session")
+                                                      style:UIBarButtonItemStylePlain
+                                                     target:self
+                                                     action:@selector(exitButtonPressed:)];
+        
+//        [exitButton setTitle:NSLocalizedString(@"Leave", @"Exit Session")];
+        [[self navigationItem] setLeftBarButtonItem:exitButton];
     } else if (_partner) {
+        [self setTitle:[_partner name]];
         _fetchedResultsController = [ETRCoreDataHelper messagesResultsControllerForPartner:_partner
                                                                               withDelegate:self];
-        [[self exitButton] setEnabled:NO];
+        [[self moreButton] setTitle:NSLocalizedString(@"Profile", @"User Profile")];
     }
     NSError *error = nil;
     [_fetchedResultsController performFetch:&error];
@@ -92,12 +115,10 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     
     // Assign delegates.
     // TODO: Assign Session & Location delegates to
-    [[self messagesTableView] setDataSource:self];
-    [[self messagesTableView] setDelegate:self];
-    [[self messageTextField] setDelegate:self];
+//    [[self messagesTableView] setDataSource:self];
+//    [[self messagesTableView] setDelegate:self];
+//    [[self messageTextField] setDelegate:self];
     
-    // TODO: Tell Actions Manager that this View Controller is visible
-    // to avoid obsolete Notifications.
     
     // TODO: Prepare the appropriate back button TO this view controller.
     
@@ -111,8 +132,9 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     
-    // Just in case there is a toolbar wanting to be displayed:
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
     
     // Add a pull-down refreshControl
     [[self historyControl] addTarget:self
@@ -120,12 +142,13 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
                     forControlEvents:UIControlEventValueChanged];
     
     if (_isPublic) {
-        ETRRoom *sessionRoom;
+        ETRRoom * sessionRoom;
         sessionRoom = [ETRSessionManager sessionRoom];
-        [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
         [[self navigationController] setTitle:[sessionRoom title]];
+        [[ETRActionManager sharedManager] setForegroundPartnerID:-10];
     } else if (_partner) {
         [[self navigationController] setTitle:[_partner name]];
+        [[ETRActionManager sharedManager] setForegroundPartnerID:[[_partner remoteID] longValue]];
     } else {
         [[self navigationController] popToRootViewControllerAnimated:YES];
     }
@@ -133,16 +156,15 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    if (![self verifySession]) {
-        return;
-    }
-    
     [[self messagesTableView] reloadData];
     [self scrollDownTableViewAnimated:YES];
+    
+    [self verifySession];
+    [self updateInputCover];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    
+    [super viewWillDisappear:animated];
     [self dismissKeyboard];
     
     // Disable delegates.
@@ -157,7 +179,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
-    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -168,14 +189,14 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
 - (BOOL)verifySession {
     if (!_isPublic && !_partner) {
-        NSLog(@"ERROR: Private Conversation requires a partner User.");
+        NSLog(@"ERROR: No Conversation found.");
         [[ETRSessionManager sharedManager] endSession];
         [[self navigationController] popToRootViewControllerAnimated:YES];
         return NO;
     }
     
     // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSessionManager sharedManager] room] && ![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (![ETRSessionManager sessionRoom] || ![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"ERROR: No Room object in manager or user did not join.");
         [[ETRSessionManager sharedManager] endSession];
         [[self navigationController] popToRootViewControllerAnimated:YES];
@@ -183,6 +204,24 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     }
     
     return YES;
+}
+
+- (void)updateInputCover {
+    if (_partner) {
+        if (![[ETRSessionManager sessionRoom] isEqual:[_partner inRoom]]) {
+            NSString * hasLeftFormat = NSLocalizedString(@"has_left", @"%@ (person) quit %@ (room)");
+            ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
+            NSString * hasLeft;
+            hasLeft = [NSString stringWithFormat:hasLeftFormat, [_partner name], [sessionRoom title]];
+            [[self inputCover] setText:hasLeft];
+            [[self inputCover] setHidden:NO];
+            [[self inputView] setHidden:YES];
+            return;
+        }
+    }
+    
+    [[self inputView] setHidden:NO];
+    [[self inputCover] setHidden:YES];
 }
 
 #pragma mark -
@@ -289,12 +328,14 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
             return cell;
         }
     } else {
-        ETRUser *sender = [action sender];
-        NSString *senderName;
-        if (sender && [sender name]) {
-            senderName = [sender name];
-        } else {
-            senderName = @"x";
+        ETRUser * sender = [action sender];
+        NSString * senderName;
+        if (_isPublic) {
+            if (sender && [sender name]) {
+                senderName = [sender name];
+            } else {
+                senderName = @"x";
+            }
         }
         
         if ([action isPhotoMessage]) {
@@ -308,7 +349,11 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
             [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
             [[cell iconView] setClipsToBounds:YES];
             
-            [[cell nameLabel] setText:senderName];
+            if (_isPublic) {
+                [[cell nameLabel] setText:senderName];
+            } else {
+                [[cell nameLabel] removeFromSuperview];
+            }
             [[cell messageLabel] setText:[action messageContent]];
             NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
@@ -323,9 +368,6 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
     if (bottomRow >= 0) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-//        CGRect rect = [[self messagesTableView] rectForRowAtIndexPath:indexPath];
-//        [[self messagesTableView] scrollRectToVisible:rect animated:YES];
-        
         [[self messagesTableView] scrollToRowAtIndexPath:indexPath
                                         atScrollPosition:UITableViewScrollPositionBottom
                                                 animated:animated];
@@ -362,8 +404,59 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
     [[self messageTextField] setText:@""];
 }
 
-- (void)backButtonPressed:(id)sender {
-    [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
+- (IBAction)mediaButtonPressed:(id)sender {
+    [self toggleMediaMenu];
+}
+
+- (IBAction)galleryButtonPressed:(id)sender {
+    [self toggleMediaMenu];
+    
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    [picker setDelegate:self];
+    [picker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+    [picker setAllowsEditing:YES];
+    
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (IBAction)cameraButtonPressed:(id)sender {
+    [self toggleMediaMenu];
+    
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    [picker setDelegate:self];
+    [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
+    
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [self dismissViewControllerAnimated:picker completion:nil];
+    
+    if (_isPublic) {
+        [ETRCoreDataHelper dispatchPublicImageMessage:[ETRImageEditor imageFromPickerInfo:info]];
+    } else if (_partner) {
+        [ETRCoreDataHelper dispatchImageMessage:[ETRImageEditor imageFromPickerInfo:info]
+                                    toRecipient:_partner];
+    }
+}
+
+- (void)toggleMediaMenu {
+    // If the lower button, the camera button, is hidden, open the menu.
+    // If the upper button, the gallery button, is visible, close the menu.
+    
+    if ([[self cameraButton] isHidden]) {
+        // Expand the menu from the bottom.
+        [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
+            [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
+        }];
+    } else if(![[self galleryButton] isHidden]) {
+        // Collapse the menu from the top.
+        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
+            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
+        }];
+    } else {
+        
+    }
 }
 
 - (IBAction)moreButtonPressed:(id)sender {
@@ -373,11 +466,11 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
                                   sender:nil];
     } else {
         [self performSegueWithIdentifier:ETRConversationToProfileSegue
-                                  sender:nil];
+                                  sender:_partner];
     }
 }
 
-- (IBAction)exitButtonPressed:(id)sender {
+- (void)exitButtonPressed:(id)sender {
     [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
 }
 

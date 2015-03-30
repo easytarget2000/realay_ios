@@ -14,8 +14,11 @@
 @interface ETRDetailsViewController : UITableViewController
 
 @property (strong, nonatomic) ETRRoom * room;
+
 @property (strong, nonatomic) ETRUser * user;
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barButton;
+
 - (IBAction)barButtonPressed:(id)sender;
 
 @end

@@ -12,6 +12,7 @@
 #import "ETRActionManager.h"
 #import "ETRAppDelegate.h"
 #import "ETRConversation.h"
+#import "ETRImageEditor.h"
 #import "ETRLocalUserManager.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
@@ -47,6 +48,8 @@ static NSEntityDescription * ActionEntity;
 
 static NSString * ActionEntityName;
 
+static NSEntityDescription * ConversationEntity;
+
 static NSString * ConversationEntityName;
 
 static NSEntityDescription * RoomEntity;
@@ -69,28 +72,6 @@ static NSString * UserEntityName;
         ManagedObjectContext = [app managedObjectContext];
     }
     return ManagedObjectContext;
-}
-
-+ (NSEntityDescription *)actionEntity {
-    if (!ActionEntity) {
-        ActionEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper actionEntityName]
-                                   inManagedObjectContext:[ETRCoreDataHelper context]];
-    }
-    return ActionEntity;
-}
-
-+ (NSString *)actionEntityName {
-    if (!ActionEntityName) {
-        ActionEntityName = NSStringFromClass([ETRAction class]);
-    }
-    return ActionEntityName;
-}
-
-+ (NSString *)conversationEntityName {
-    if (!ConversationEntityName) {
-        ConversationEntityName = NSStringFromClass([ETRConversation class]);
-    }
-    return ConversationEntityName;
 }
 
 + (NSEntityDescription *)roomEntity {
@@ -134,94 +115,24 @@ static NSString * UserEntityName;
     }
 }
 
-#pragma mark -
-#pragma mark Rooms
-
-+ (void)insertRoomFromDictionary:(NSDictionary *)JSONDict {
-    
-    // Get the remote DB ID from the JSON data.
-    long remoteID = (long) [[JSONDict objectForKey:@"r"] longLongValue];
-    
-    // Check the context CoreData, if an object with this remote ID already exists.
-    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:remoteID];
-    if (!room) {
-        room = [[ETRRoom alloc] initWithEntity:[ETRCoreDataHelper roomEntity]
-                insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
-        [room setRemoteID:@(remoteID)];
-    }
-
-    [room setImageID:@((long) [[JSONDict objectForKey:@"i"] longLongValue])];
-    NSString *radius = (NSString *)[JSONDict objectForKey:@"rd"];
-    [room setRadius:@((short) [radius integerValue])];
-    NSString *userCount = (NSString *)[JSONDict objectForKey:@"ucn"];
-    [room setQueryUserCount:@((short) [userCount integerValue])];
-    
-    [room setTitle:(NSString *)[JSONDict objectForKey:@"tt"]];
-    [room setSummary:(NSString *)[JSONDict objectForKey:@"ds"]];
-    [room setPassword:(NSString *)[JSONDict objectForKey:@"pw"]];
-    if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
-        [room setAddress:(NSString *)[JSONDict objectForKey:@"ad"]];
-    }
-    
-    NSInteger startTimestamp = [(NSString *)[JSONDict objectForKey:@"st"] integerValue];
-    if (startTimestamp > 1000000000) {
-        [room setStartTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
-    }
-    
-    NSInteger endTimestamp = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
-    if (endTimestamp > 1000000000) {
-        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
-    }
-    
-    // We query the database with km values and only use metre integer precision.
-    NSString *distance = (NSString *)[JSONDict objectForKey:@"dst"];
-    [room setQueryDistance:@([distance integerValue] * 1000)];
-    NSString *latitude = (NSString *)[JSONDict objectForKey:@"lat"];
-    [room setLatitude:@([latitude floatValue])];
-    NSString *longitude = (NSString *)[JSONDict objectForKey:@"lng"];
-    [room setLongitude:@([longitude floatValue])];
-    
-    NSLog(@"Inserting Room: %@", [room description]);
-    [ETRCoreDataHelper saveContext];
-}
-
-+ (ETRRoom *)roomWithRemoteID:(long)remoteID {
-    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper roomEntityName]];
-    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetch setPredicate:predicate];
-    NSArray *existingRooms = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
-    
-    ETRRoom *room;
-    if (existingRooms && [existingRooms count]) {
-        if ([existingRooms[0] isKindOfClass:[ETRRoom class]]) {
-            room = (ETRRoom *)existingRooms[0];
-        }
-    }
-    
-    return room;
-}
-
-+ (NSFetchedResultsController *)roomListResultsController {
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
-    
-    // Add Sort Descriptors
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRRoomDistanceKey ascending:YES]]];
-    
-    // Initialize Fetched Results Controller
-    NSFetchedResultsController *resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                   managedObjectContext:[ETRCoreDataHelper context]
-                                                                     sectionNameKeyPath:nil
-                                                                              cacheName:nil];
-    
-    // Configure Fetched Results Controller
-//    [resultsController setDelegate:delegate];
-    return resultsController;
-}
 
 #pragma mark -
 #pragma mark Actions
+
++ (NSEntityDescription *)actionEntity {
+    if (!ActionEntity) {
+        ActionEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper actionEntityName]
+                                   inManagedObjectContext:[ETRCoreDataHelper context]];
+    }
+    return ActionEntity;
+}
+
++ (NSString *)actionEntityName {
+    if (!ActionEntityName) {
+        ActionEntityName = NSStringFromClass([ETRAction class]);
+    }
+    return ActionEntityName;
+}
 
 + (ETRAction *)actionWithRemoteID:(long)remoteID {
     NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper actionEntityName]];
@@ -261,7 +172,7 @@ static NSString * UserEntityName;
     } else if (senderID == ETRActionPublicUserID) {
         // TODO: Handle Server messages.
     } else {
-        NSLog(@"WARNING: Received Action with sender ID %ld", senderID);
+        NSLog(@"WARNING: Received Action with invalid sender ID: %@", jsonDictionary);
         return;
     }
     
@@ -271,13 +182,13 @@ static NSString * UserEntityName;
         recipient = [ETRCoreDataHelper userWithRemoteID:recipientID
                                   downloadIfUnavailable:YES];
     } else if (recipientID != ETRActionPublicUserID) {
-        NSLog(@"WARNING: Received Action with recipient ID %ld", recipientID);
+        NSLog(@"WARNING: Received Action with invalid recipient ID: %@", jsonDictionary);
         return;
     }
     
     long roomID = [jsonDictionary longValueForKey:@"r" withFallbackValue:-103];
     if (roomID < 10) {
-        NSLog(@"ERROR: Received Action with Room ID %ld.", roomID);
+        NSLog(@"ERROR: Received Action with invalid Room ID: %@", jsonDictionary);
         return;
     }
     ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:roomID];
@@ -300,7 +211,7 @@ static NSString * UserEntityName;
         case ETRActionCodeUserJoin:
             [sender setInRoom:room];
             return;
-        
+            
         case ETRActionCodeUserQuit:
             [sender setInRoom:nil];
             return;
@@ -339,7 +250,7 @@ static NSString * UserEntityName;
         [convo updateLastMessage:receivedAction];
     }
     
-//    NSLog(@"DEBUG: Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
+    //    NSLog(@"DEBUG: Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
     [[ETRActionManager sharedManager] dispatchNotificationForAction:receivedAction];
     [ETRCoreDataHelper saveContext];
 }
@@ -359,22 +270,66 @@ static NSString * UserEntityName;
     [ETRServerAPIHelper putAction:message];
 }
 
-+ (void)dispatchMessage:(NSString *)messageContent inConversation:(ETRConversation *)conversation {
++ (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient {
     ETRAction *message = [ETRCoreDataHelper blankOutgoingAction];
     if (!message) {
         return;
     }
     
-    [message setRecipient:[conversation partner]];
+    [message setRecipient:recipient];
     [message setCode:@(ETRActionCodePrivateMessage)];
     [message setMessageContent:messageContent];
     [message setSentDate:[NSDate date]];
     
     // Immediately store them in the Context, so that they appear in the Conversation.
-    [conversation setLastMessage:message];
+    [[ETRCoreDataHelper conversationWithPartner:recipient] setLastMessage:message];
     [ETRCoreDataHelper saveContext];
     
     [ETRServerAPIHelper putAction:message];
+}
+
++ (void)dispatchPublicImageMessage:(UIImage *)image {
+    ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
+    if (!message) {
+        return;
+    }
+    [message setCode:@(ETRActionCodePublicMedia)];
+    [ETRCoreDataHelper dispatchImage:image inAction:message];
+}
+
++ (void)dispatchImageMessage:(UIImage *)image toRecipient:(ETRUser *)recipient {
+    ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
+    if (!message) {
+        return;
+    }
+    [message setRecipient:recipient];
+    [message setCode:@(ETRActionCodePrivateMedia)];
+    [ETRCoreDataHelper dispatchImage:image inAction:message];
+}
+
++ (void)dispatchImage:(UIImage *)image inAction:(ETRAction *)mediaAction {
+    if (!image || !mediaAction) {
+        return;
+    }
+    [mediaAction setSentDate:[NSDate date]];
+    
+    // Temporary image IDs are negative, random values.
+    long newImageID = drand48() * LONG_MIN;
+    if (newImageID > 0L) {
+        newImageID *= -1L;
+    }
+    NSLog(@"DEBUG: New local User image ID: %ld", newImageID);
+    [mediaAction setImageID:@(newImageID)];
+    
+    NSData * loResData = [ETRImageEditor cropLoResImage:image
+                                            writeToFile:[mediaAction imageFilePath:NO]];
+    
+    NSData * hiResData = [ETRImageEditor cropHiResImage:image
+                                            writeToFile:[mediaAction imageFilePath:YES]];
+    
+    [ETRServerAPIHelper putImageWithHiResData:hiResData
+                                    loResData:loResData
+                                     inAction:mediaAction];
 }
 
 + (ETRAction *)blankOutgoingAction {
@@ -393,7 +348,7 @@ static NSString * UserEntityName;
     [message setSender:localUser];
     [message setSentDate:[NSDate date]];
     [message setIsInQueue:@(NO)];
-
+    
     return message;
 }
 
@@ -423,14 +378,16 @@ static NSString * UserEntityName;
 }
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate {
-    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
-
-    NSFetchRequest *fetchRequest;
-    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
+    
+    NSFetchRequest * fetchRequest;
+//    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
+    fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
     
     NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld AND (%@ == %i OR %@ == %i)",
                        ETRActionRoomKey,
@@ -441,8 +398,8 @@ static NSString * UserEntityName;
                        ETRActionCodeKey,
                        ETRActionCodePublicMedia];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetchRequest setPredicate:predicate];
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
     
     NSFetchedResultsController *resultsController;
@@ -450,18 +407,49 @@ static NSString * UserEntityName;
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
-    
-    // Configure Fetched Results Controller
     [resultsController setDelegate:delegate];
     return resultsController;
 }
 
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
                                                        withDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
-    NSFetchedResultsController *resultsController;
-
+    if (!partner) {
+        return nil;
+    }
     
-    // Configure Fetched Results Controller
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
+        NSLog(@"ERROR: Session is not prepared.");
+        return nil;
+    }
+    
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
+    
+//    NSString * predicateFormat = @"room = %@ AND (sender = %@ OR recipient = %@) AND (code = %i OR code = %i)";
+    long partnerID = [[partner remoteID] longValue];
+    
+    // TODO: Compare Object predicate vs. ID predicate.
+//    NSString * where = [NSString stringWithFormat:@"sender.%@ == %ld OR recipient.%@ == %ld",
+//                        ETRRemoteIDKey,
+//                        partnerID,
+//                        ETRRemoteIDKey,
+//                        partnerID,
+//                        ETRActionCodeKey,
+//                        ETRActionCodePrivateMessage,
+//                        ETRActionCodeKey,
+//                        ETRActionCodePrivateMedia];
+    
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"sender == %@ OR recipient == %@", partner, partner]];
+//    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
+
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
+    
+    NSFetchedResultsController * resultsController;
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                            managedObjectContext:[ETRCoreDataHelper context]
+                                                              sectionNameKeyPath:nil
+                                                                       cacheName:nil];
     [resultsController setDelegate:delegate];
     return resultsController;
 }
@@ -489,6 +477,187 @@ static NSString * UserEntityName;
     }
     
     [ETRCoreDataHelper saveContext];
+}
+
+
+#pragma mark -
+#pragma mark Converations
+
++ (NSEntityDescription *)conversationEntity {
+    if (!ConversationEntity) {
+        ConversationEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper conversationEntityName]
+                                         inManagedObjectContext:[ETRCoreDataHelper context]];
+    }
+    return ConversationEntity;
+}
+
++ (NSString *)conversationEntityName {
+    if (!ConversationEntityName) {
+        ConversationEntityName = NSStringFromClass([ETRConversation class]);
+    }
+    return ConversationEntityName;
+}
+
++ (ETRConversation *)conversationWithSender:(ETRUser *)sender recipient:(ETRUser *)recipient {
+    if (!sender || !recipient) {
+        NSLog(@"ERROR: Insufficient User objects given to determine Conversation.");
+        return nil;
+    }
+    
+    // Determine the partner User,
+    // i.e. if this message was sent from the local User or sent to them.
+    if ([[ETRLocalUserManager sharedManager] isLocalUser:sender]) {
+        return [ETRCoreDataHelper conversationWithPartner:recipient];
+    } else {
+        return [ETRCoreDataHelper conversationWithPartner:sender];
+    }
+}
+
++ (ETRConversation *)conversationWithPartner:(ETRUser *)partner {
+    // Find the appropriate Conversation by using the partner User's remote ID.
+    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper conversationEntityName]];
+    long partnerID = [[partner remoteID] longValue];
+    NSString * where;
+    where = [NSString stringWithFormat:@"%@.%@ == %ld", ETRConversationPartnerKey, ETRRemoteIDKey, partnerID];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
+    [fetch setPredicate:predicate];
+    NSArray * storedObjects = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
+    
+    ETRConversation * conversation;
+    if (storedObjects && [storedObjects count]) {
+        if ([storedObjects[0] isKindOfClass:[ETRConversation class]]) {
+            return (ETRConversation *)storedObjects[0];
+        }
+    }
+    
+    ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
+    if (!sessionRoom) {
+        NSLog(@"ERROR: Conversations require a Session Room.");
+        return nil;
+    }
+    
+    // The Conversation does not exist yet.
+    ETRConversation * convo = [[ETRConversation alloc] initWithEntity:[ETRCoreDataHelper conversationEntity]
+                                       insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    [convo setInRoom:sessionRoom];
+    [convo setPartner:partner];
+    return convo;
+}
+
+
++ (NSFetchedResultsController *)conversationResulsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
+    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
+        NSLog(@"ERROR: Session is not prepared.");
+        return nil;
+    }
+    
+    NSFetchRequest *fetchRequest;
+    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper conversationEntityName]];
+    
+    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld",
+                       ETRInRoomKey,
+                       ETRRemoteIDKey,
+                       [[sessionRoom remoteID] longValue]];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [fetchRequest setPredicate:predicate];
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"lastMessage.sentDate" ascending:YES]]];
+    
+    NSFetchedResultsController *resultsController;
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                            managedObjectContext:[ETRCoreDataHelper context]
+                                                              sectionNameKeyPath:nil
+                                                                       cacheName:nil];
+    // Configure Fetched Results Controller
+    [resultsController setDelegate:delegate];
+    return resultsController;
+}
+
+#pragma mark -
+#pragma mark Rooms
+
++ (void)insertRoomFromDictionary:(NSDictionary *)JSONDict {
+    
+    // Get the remote DB ID from the JSON data.
+    long remoteID = (long) [[JSONDict objectForKey:@"r"] longLongValue];
+    
+    // Check the context CoreData, if an object with this remote ID already exists.
+    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:remoteID];
+    
+    [room setImageID:@((long) [[JSONDict objectForKey:@"i"] longLongValue])];
+    NSString *radius = (NSString *)[JSONDict objectForKey:@"rd"];
+    [room setRadius:@((short) [radius integerValue])];
+    NSString *userCount = (NSString *)[JSONDict objectForKey:@"ucn"];
+    [room setQueryUserCount:@((short) [userCount integerValue])];
+    
+    [room setTitle:(NSString *)[JSONDict objectForKey:@"tt"]];
+    [room setSummary:(NSString *)[JSONDict objectForKey:@"ds"]];
+    [room setPassword:(NSString *)[JSONDict objectForKey:@"pw"]];
+    if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
+        [room setAddress:(NSString *)[JSONDict objectForKey:@"ad"]];
+    }
+    
+    NSInteger startTimestamp = [(NSString *)[JSONDict objectForKey:@"st"] integerValue];
+    if (startTimestamp > 1000000000) {
+        [room setStartTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+    }
+    
+    NSInteger endTimestamp = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
+    if (endTimestamp > 1000000000) {
+        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+    }
+    
+    // We query the database with km values and only use metre integer precision.
+    NSString *distance = (NSString *)[JSONDict objectForKey:@"dst"];
+    [room setQueryDistance:@([distance integerValue] * 1000)];
+    NSString *latitude = (NSString *)[JSONDict objectForKey:@"lat"];
+    [room setLatitude:@([latitude floatValue])];
+    NSString *longitude = (NSString *)[JSONDict objectForKey:@"lng"];
+    [room setLongitude:@([longitude floatValue])];
+    
+    NSLog(@"Inserting Room: %@", [room description]);
+    [ETRCoreDataHelper saveContext];
+}
+
++ (ETRRoom *)roomWithRemoteID:(long)remoteID {
+    //    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper roomEntityName]];
+    
+    NSFetchRequest * fetch = [[NSFetchRequest alloc] init];
+    [fetch setEntity:[ETRCoreDataHelper roomEntity]];
+    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [fetch setPredicate:predicate];
+    NSArray *existingRooms = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
+    
+    if (existingRooms && [existingRooms count]) {
+        if ([existingRooms[0] isKindOfClass:[ETRRoom class]]) {
+            return (ETRRoom *)existingRooms[0];
+        }
+    }
+    
+    ETRRoom * room = [[ETRRoom alloc] initWithEntity:[ETRCoreDataHelper roomEntity]
+                      insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    [room setRemoteID:@(remoteID)];
+    return room;
+}
+
++ (NSFetchedResultsController *)roomListResultsController {
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
+    
+    // Add Sort Descriptors
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRRoomDistanceKey ascending:YES]]];
+    
+    // Initialize Fetched Results Controller
+    NSFetchedResultsController *resultsController;
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                                   managedObjectContext:[ETRCoreDataHelper context]
+                                                                     sectionNameKeyPath:nil
+                                                                              cacheName:nil];
+    
+    // Configure Fetched Results Controller
+//    [resultsController setDelegate:delegate];
+    return resultsController;
 }
 
 #pragma mark -
@@ -596,72 +765,6 @@ static NSString * UserEntityName;
     [newUser setStatus:@"..."];
     
     return newUser;
-}
-
-#pragma mark -
-#pragma mark Converations
-
-+ (NSFetchedResultsController *)conversationResulsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
-    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
-    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
-        NSLog(@"ERROR: Session is not prepared.");
-        return nil;
-    }
-    
-    NSFetchRequest *fetchRequest;
-    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper conversationEntityName]];
-    
-    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld",
-                       ETRInRoomKey,
-                       ETRRemoteIDKey,
-                       [[sessionRoom remoteID] longValue]];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetchRequest setPredicate:predicate];
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"lastMessage.sentDate" ascending:YES]]];
-    
-    NSFetchedResultsController *resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                            managedObjectContext:[ETRCoreDataHelper context]
-                                                              sectionNameKeyPath:nil
-                                                                       cacheName:nil];
-    // Configure Fetched Results Controller
-    [resultsController setDelegate:delegate];
-    return resultsController;
-}
-
-+ (ETRConversation *)conversationWithSender:(ETRUser *)sender recipient:(ETRUser *)recipient {
-    if (!sender || !recipient) {
-        NSLog(@"ERROR: Insufficient User objects given to determine Conversation.");
-        return nil;
-    }
-    
-    // Determine the partner User,
-    // i.e. if this message was sent from the local User or sent to them.
-    ETRUser * partner;
-    if ([[ETRLocalUserManager sharedManager] isLocalUser:sender]) {
-        partner = recipient;
-    } else {
-        partner = sender;
-    }
-    
-    // Find the appropriate Conversation by using the partner User's remote ID.
-    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper conversationEntityName]];
-    long partnerID = [[partner remoteID] longValue];
-    NSString * where;
-    where = [NSString stringWithFormat:@"%@.%@ == %ld", ETRConversationPartnerKey, ETRRemoteIDKey, partnerID];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
-    [fetch setPredicate:predicate];
-    NSArray * storedObjects = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
-    
-    ETRConversation * conversation;
-    if (storedObjects && [storedObjects count]) {
-        if ([storedObjects[0] isKindOfClass:[ETRConversation class]]) {
-            conversation = (ETRConversation *)storedObjects[0];
-        }
-    }
-    
-    return conversation;
 }
 
 @end

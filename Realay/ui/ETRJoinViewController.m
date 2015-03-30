@@ -76,14 +76,14 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 }
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {
-        if ([didSucceed boolValue]) {
-            [[self statusLabel] setText:@"Done."];
-            [[self progressView] setProgress:1.0f];
-            [self performSegueWithIdentifier:joinSegue sender:nil];
-        } else {
-            [ETRAlertViewFactory showGeneralErrorAlert];
-            [[self navigationController] popToRootViewControllerAnimated:YES];
-        }
+    if ([didSucceed boolValue]) {
+        [[self statusLabel] setText:@"Done."];
+        [[self progressView] setProgress:1.0f];
+        [self performSegueWithIdentifier:joinSegue sender:nil];
+    } else {
+        [ETRAlertViewFactory showGeneralErrorAlert];
+        [[self navigationController] popToRootViewControllerAnimated:YES];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

@@ -76,7 +76,8 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
-    [[self navigationController] setToolbarHidden:YES];
+    [[self navigationController] setToolbarHidden:NO];
+    // CONTINUE HERE
     [[[self navigationController] navigationBar] setTranslucent:NO];
 }
 
@@ -250,7 +251,9 @@ static CGFloat const ETRUserRowHeight = 64.0f;
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
-        ETRUser * record = [_usersResultsController objectAtIndexPath:indexPath];
+        // The Index Path gives Section 1 but the Fetched Results Controller assumes its values are in Section 0.
+        NSIndexPath * alignedPath = [NSIndexPath indexPathForRow:[indexPath row] inSection:0];
+        ETRUser * record = [_usersResultsController objectAtIndexPath:alignedPath];
         [self performSegueWithIdentifier:ETRUsersToConversationSegue sender:record];
     }
 }
@@ -275,9 +278,9 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     
     if ([destination isKindOfClass:[ETRConversationViewController class]]) {
         if ([sender isKindOfClass:[ETRUser class]]) {
-            ETRConversationViewController *conversation;
-            conversation = (ETRConversationViewController *)destination;
-            [conversation setPartner:(ETRUser *)sender];
+            ETRConversationViewController *viewController;
+            viewController = (ETRConversationViewController *)destination;
+            [viewController setPartner:sender];
         }
         return;
     }

@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ETRJSONDictionary;
 @class ETRAction;
+@class ETRConversation;
+@class ETRJSONDictionary;
 @class ETRRoom;
 @class ETRUser;
 
@@ -20,44 +21,58 @@ extern long const ETRActionPublicUserID;
 
 @interface ETRCoreDataHelper : NSObject
 
-// TODO: Check JSON Dictionaries for non-optional values to avoid crashes.
-
-//+ (ETRCoreDataHelper *)helper;
-
 + (BOOL)saveContext;
 
-+ (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
+#pragma mark -
+#pragma mark Actions
 
 + (void)handleActionFromDictionary:(NSDictionary *)jsonDictionary;
 
-+ (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
++ (void)dispatchPublicMessage:(NSString *)messageContent;
 
-+ (ETRUser *)copyUser:(ETRUser *)user;
++ (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
 
-+ (NSFetchedResultsController *)roomListResultsController;
++ (void)dispatchPublicImageMessage:(UIImage *)image;
+
++ (void)dispatchImageMessage:(UIImage *)image toRecipient:(ETRUser *)recipient;
+
++ (void)clearPublicActions;
+
++ (void)addActionToQueue:(ETRAction *)unsentAction;
+
++ (void)removeActionFromQueue:(ETRAction *)sentAction;
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
                                                        withDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
+#pragma mark -
+#pragma mark Conversations
+
++ (ETRConversation *)conversationWithPartner:(ETRUser *)partner;
+
 + (NSFetchedResultsController *)conversationResulsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
-+ (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
+#pragma mark -
+#pragma mark Rooms
+
++ (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
 
 + (ETRRoom *)roomWithRemoteID:(long)remoteID;
 
++ (NSFetchedResultsController *)roomListResultsController;
+
+#pragma mark -
+#pragma mark Users
+
++ (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
+
 + (ETRUser *)userWithRemoteID:(long)remoteID downloadIfUnavailable:(BOOL)doDownload;
 
-+ (void)dispatchPublicMessage:(NSString *)messageContent;
++ (ETRUser *)copyUser:(ETRUser *)user;
 
-+ (void)dispatchMessage:(NSString *)messageContent inConversation:(ETRConversation *)conversation;
-
-+ (void)addActionToQueue:(ETRAction *)unsentAction;
-
-+ (void)removeActionFromQueue:(ETRAction *)sentAction;
-
-+ (void)clearPublicActions;
++ (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 @end
 

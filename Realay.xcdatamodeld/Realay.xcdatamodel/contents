@@ -13,8 +13,8 @@
     </entity>
     <entity name="ETRConversation" representedClassName="ETRConversation" syncable="YES">
         <attribute name="hasUnreadMessage" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <relationship name="inRoom" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="conversations" inverseEntity="ETRRoom" syncable="YES"/>
-        <relationship name="lastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="conversation" inverseEntity="ETRAction" syncable="YES"/>
+        <relationship name="inRoom" maxCount="1" deletionRule="Nullify" destinationEntity="ETRRoom" inverseName="conversations" inverseEntity="ETRRoom" syncable="YES"/>
+        <relationship name="lastMessage" maxCount="1" deletionRule="Nullify" destinationEntity="ETRAction" inverseName="conversation" inverseEntity="ETRAction" syncable="YES"/>
         <relationship name="partner" maxCount="1" deletionRule="Nullify" destinationEntity="ETRUser" inverseName="inConversation" inverseEntity="ETRUser" syncable="YES"/>
     </entity>
     <entity name="ETRRoom" representedClassName="ETRRoom" syncable="YES">
@@ -54,7 +54,7 @@
     </entity>
     <elements>
         <element name="ETRAction" positionX="0" positionY="0" width="128" height="180"/>
-        <element name="ETRConversation" positionX="0" positionY="0" width="128" height="103"/>
+        <element name="ETRConversation" positionX="0" positionY="0" width="128" height="105"/>
         <element name="ETRRoom" positionX="0" positionY="0" width="128" height="300"/>
         <element name="ETRUser" positionX="0" positionY="0" width="128" height="255"/>
     </elements>

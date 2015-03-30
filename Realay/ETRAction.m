@@ -57,7 +57,7 @@
 
 - (BOOL)isPhotoMessage {
     short code = [[self code] shortValue];
-    return (code == ETRActionCodePrivateMessage) || (code == ETRActionCodePrivateMedia);
+    return (code == ETRActionCodePublicMedia) || (code == ETRActionCodePrivateMedia);
 }
 
 - (BOOL)isSentAction {

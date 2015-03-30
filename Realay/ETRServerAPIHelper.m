@@ -15,6 +15,7 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
+#import "ETRReachabilityManager.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
@@ -23,7 +24,7 @@ static short const ETRAPITimeOutInterval = 20;
 
 static short const ETRDefaultSearchRadius = 20;
 
-static NSString *const ETRAPIBaseURL = @"http://rldb.easy-target.org/";
+NSString * ETRAPIBaseURL = @"http://rldb.easy-target.org/";
 
 static NSString *const ETRAPIStatusKey = @"st";
 
@@ -79,6 +80,9 @@ static NSMutableArray *connections;
 
 @implementation ETRServerAPIHelper
 
+#pragma mark -
+#pragma mark Basic Connection Handling
+
 + (BOOL)didStartConnection:(NSString *)connectionID {
     if (!connectionID) {
         return NO;
@@ -113,7 +117,11 @@ static NSMutableArray *connections;
             successStatus:(NSString *)successStatus
                 objectTag:(NSString *)objectTag
         completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
-    
+    if (![ETRReachabilityManager isReachable]) {
+        NSLog(@"WARNING: Reachability is negative.");
+        handler(@(NO));
+        return;
+    }
     
     if ([ETRServerAPIHelper didStartConnection:connectionID]) {
         return;
@@ -200,9 +208,8 @@ static NSMutableArray *connections;
         
 //    NSString * bodyString = [NSString stringWithFormat:@"%@", bodyString];
     
-    
 #ifdef DEBUG
-    NSLog(@"POST request: %@?%@", apiCall, bodyString);
+    NSLog(@"DEBUG: API: %@?%@", apiCall, bodyString);
 #endif
     
     [ETRServerAPIHelper performAPIRequest:request
@@ -211,6 +218,9 @@ static NSMutableArray *connections;
                                 objectTag:objectTag
                         completionHandler:handler];
 }
+
+#pragma mark -
+#pragma mark Rooms
 
 + (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler {
 //    if ([ETRServerAPIHelper didStartConnection:connectionId]) {
@@ -333,7 +343,55 @@ static NSMutableArray *connections;
 
 + (void)putImageWithHiResData:(NSData *)hiResData
                     loResData:(NSData *)loResData
+            completionHandler:(void (^)(NSNumber *))completionHandler {
+    // Forward data to all-mighty function.
+    [ETRServerAPIHelper putImageWithHiResData:hiResData
+                                    loResData:loResData
+                                     inAction:nil
+                            completionHandler:completionHandler];
+}
+
++ (void)putImageWithHiResData:(NSData *)hiResData
+                    loResData:(NSData *)loResData
+                     inAction:(ETRAction *)action {
+    // Forward data to all-mighty function.
+    [ETRServerAPIHelper putImageWithHiResData:hiResData
+                                    loResData:loResData
+                                     inAction:action
+                            completionHandler:^(NSNumber * imageID) {
+                                // If the image upload was successful,
+                                // a new image ID is given.
+                                // If it failed, the temporary image ID stays assigned
+                                // and will be reuploaded automatically later on.
+                                
+                                if ([imageID compare:@(10L)] == NSOrderedDescending && action) {
+                                    // Delete the old files, then set the new ID.
+                                    [action deleteImageFiles];
+                                    [action setImageID:imageID];
+                                    [ETRCoreDataHelper saveContext];
+                                    
+                                    // Store the data in the new files.
+                                    [loResData writeToFile:[action imageFilePath:NO]
+                                                atomically:YES];
+                                    [hiResData writeToFile:[action imageFilePath:YES]
+                                                atomically:YES];
+                                    
+                                    [ETRCoreDataHelper saveContext];
+                                }
+                            }];
+    
+    
+}
+
++ (void)putImageWithHiResData:(NSData *)hiResData
+                    loResData:(NSData *)loResData
+                     inAction:(ETRAction *)action
             completionHandler:(void (^)(NSNumber * imageID))completionHandler {
+    if (![ETRReachabilityManager isReachable]) {
+        NSLog(@"WARNING: Reachability is negative.");
+        completionHandler(@(-11L));
+        return;
+    }
     
     // Prepare the URL to the download script.
     NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, ETRPutImageAPICall];
@@ -374,10 +432,47 @@ static NSMutableArray *connections;
     [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
     
     // Session Room ID (optional parameter):
-    ETRRoom *sessionRoom = [ETRSessionManager sessionRoom];
-    if (sessionRoom) {
+    // room=? for Actions
+    // session=? for Profile image uploads
+    ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
+    
+    if (action) {
+        // If an Action object (media message) was given, untangle the data into paramaters.
+        
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"room\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString * roomID = [[sessionRoom remoteID] stringValue];
+        [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"sender\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString * senderID = [[[action sender] remoteID]stringValue];
+        [bodyData appendData:[senderID dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"recipient\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString * recipientID;
+        if ([action isPublicMessage]) {
+            recipientID = [NSString stringWithFormat:@"%ld", ETRActionPublicUserID];
+        } else {
+            recipientID = [[[action recipient] remoteID] stringValue];
+        }
+        [bodyData appendData:[recipientID dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"code\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString * code = [[action code] stringValue];
+        [bodyData appendData:[code dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"time\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString * timestamp = [NSString stringWithFormat:@"%ld", (long) [[action sentDate] timeIntervalSince1970]];
+        [bodyData appendData:[timestamp dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+    } else if (sessionRoom) {
+        // The User is in a session but this upload does not send a "media message" Action.
+        
         [bodyData appendData:[@"Content-Disposition: form-data; name=\"session\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-        NSString *roomID = [[sessionRoom remoteID] stringValue];
+        NSString * roomID = [[sessionRoom remoteID] stringValue];
         [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
         [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
     }
@@ -651,7 +746,7 @@ completionHandler:(void(^)(BOOL didSucceed))completionHandler {
 }
 
 #pragma mark -
-#pragma mark User
+#pragma mark Users
 
 /*
  Registers a new User at the database or retrieves the data

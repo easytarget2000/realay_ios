@@ -92,6 +92,14 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
         } else {
             [[self barButton] setTitle:NSLocalizedString(@"Join", @"Join")];
         }
+    } else if (_user) {
+        if (![[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
+            UIBarButtonItem * addButton;
+            addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                      target:self
+                                                                      action:@selector(barButtonPressed:)];
+            [[self navigationItem] setRightBarButtonItem:addButton];
+        }
     }
 }
 
@@ -351,7 +359,7 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
         if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
             [self performSegueWithIdentifier:ETRProfileToEditorSegue sender:nil];
         } else {
-            // TODO: Implement adding contacts.
+            [_user addToAddressBook];
         }
     }
 }
