@@ -16,11 +16,14 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageEditor.h"
+#import "ETRImageLoader.h"
 #import "ETRUser.h"
 #import "ETRUserListViewController.h"
+#import "ETRReceivedMediaCell.h"
 #import "ETRReceivedMessageCell.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
+#import "ETRSentMediaCell.h"
 #import "ETRSentMessageCell.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
@@ -160,7 +163,7 @@ UITextFieldDelegate
     [self scrollDownTableViewAnimated:YES];
     
     [self verifySession];
-    [self updateInputCover];
+    [self updateInputContainer];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -206,7 +209,7 @@ UITextFieldDelegate
     return YES;
 }
 
-- (void)updateInputCover {
+- (void)updateInputContainer {
     if (_partner) {
         if (![[ETRSessionManager sessionRoom] isEqual:[_partner inRoom]]) {
             NSString * hasLeftFormat = NSLocalizedString(@"has_left", @"%@ (person) quit %@ (room)");
@@ -215,12 +218,12 @@ UITextFieldDelegate
             hasLeft = [NSString stringWithFormat:hasLeftFormat, [_partner name], [sessionRoom title]];
             [[self inputCover] setText:hasLeft];
             [[self inputCover] setHidden:NO];
-            [[self inputView] setHidden:YES];
+            [[self inputContainer] setHidden:YES];
             return;
         }
     }
     
-    [[self inputView] setHidden:NO];
+    [[self inputContainer] setHidden:NO];
     [[self inputCover] setHidden:YES];
 }
 
@@ -315,10 +318,15 @@ UITextFieldDelegate
     
     if ([action isSentAction]) {
         if ([action isPhotoMessage]) {
-            return [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier
+            ETRSentMediaCell * cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier
                                                    forIndexPath:indexPath];
+            [ETRImageLoader loadImageForObject:action intoView:[cell iconView] doLoadHiRes:NO];
+            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            [[cell timeLabel] setText:timestamp];
+            return cell;
         } else {
-            ETRSentMessageCell *cell;
+            ETRSentMessageCell * cell;
             cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
@@ -339,16 +347,35 @@ UITextFieldDelegate
         }
         
         if ([action isPhotoMessage]) {
-            return [tableView dequeueReusableCellWithIdentifier:ETRReceivedMediaCellIdentifier
+            ETRReceivedMediaCell * cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMediaCellIdentifier
                                                    forIndexPath:indexPath];
+            [ETRImageLoader loadImageForObject:[action sender]
+                                      intoView:[cell userIconView]
+                                   doLoadHiRes:NO];
+            if (_isPublic) {
+                [[cell nameLabel] setText:senderName];
+            } else {
+                [[cell nameLabel] removeFromSuperview];
+            }
+//            [ETRImageLoader loadImageForObject:action
+//                                      intoView:[cell iconView]
+//                                   doLoadHiRes:NO];
+            
+            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            [[cell timeLabel] setText:timestamp];
+            return cell;
         } else {
             ETRReceivedMessageCell *cell;
             cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
-            [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
-            [[cell iconView] setClipsToBounds:YES];
+//            [[[cell userIconView] layer] setCornerRadius:ETRIconViewCornerRadius];
+//            [[cell userIconView] setClipsToBounds:YES];
             
+//            [ETRImageLoader loadImageForObject:[action sender]
+//                                      intoView:[cell userIconView]
+//                                   doLoadHiRes:NO];
             if (_isPublic) {
                 [[cell nameLabel] setText:senderName];
             } else {
@@ -367,10 +394,10 @@ UITextFieldDelegate
 - (void)scrollDownTableViewAnimated:(BOOL)animated {
     NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
     if (bottomRow >= 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-                                        atScrollPosition:UITableViewScrollPositionBottom
-                                                animated:animated];
+//        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+//        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+//                                        atScrollPosition:UITableViewScrollPositionBottom
+//                                                animated:animated];
     }
 }
 
@@ -405,11 +432,25 @@ UITextFieldDelegate
 }
 
 - (IBAction)mediaButtonPressed:(id)sender {
-    [self toggleMediaMenu];
+    // If the lower button, the camera button, is hidden, open the menu.
+    // If the upper button, the gallery button, is visible, close the menu.
+    
+    if ([[self cameraButton] isHidden]) {
+        // Expand the menu from the bottom.
+        [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
+            [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
+        }];
+    } else if(![[self galleryButton] isHidden]) {
+        // Collapse the menu from the top.
+        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
+            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
+        }];
+    }
 }
 
 - (IBAction)galleryButtonPressed:(id)sender {
-    [self toggleMediaMenu];
+    [[self galleryButton] setHidden:YES];
+    [[self cameraButton] setHidden:YES];
     
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
     [picker setDelegate:self];
@@ -420,7 +461,8 @@ UITextFieldDelegate
 }
 
 - (IBAction)cameraButtonPressed:(id)sender {
-    [self toggleMediaMenu];
+    [[self galleryButton] setHidden:YES];
+    [[self cameraButton] setHidden:YES];
     
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
     [picker setDelegate:self];
@@ -440,24 +482,9 @@ UITextFieldDelegate
     }
 }
 
-- (void)toggleMediaMenu {
-    // If the lower button, the camera button, is hidden, open the menu.
-    // If the upper button, the gallery button, is visible, close the menu.
-    
-    if ([[self cameraButton] isHidden]) {
-        // Expand the menu from the bottom.
-        [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
-            [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
-        }];
-    } else if(![[self galleryButton] isHidden]) {
-        // Collapse the menu from the top.
-        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
-            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
-        }];
-    } else {
-        
-    }
-}
+//- (void)toggleMediaMenu {
+//
+//}
 
 - (IBAction)moreButtonPressed:(id)sender {
     // The More button is a Profile button in private chats.

@@ -16,6 +16,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *inputCover;
 
+@property (weak, nonatomic) IBOutlet UIView *inputContainer;
+
 @property (weak, nonatomic) IBOutlet UITextField * messageTextField;
 
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem * exitButton;

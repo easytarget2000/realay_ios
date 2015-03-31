@@ -26,7 +26,9 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
 @implementation ETRImageEditor
 
 + (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag {
-    if (!image || !targetImageView) return;
+    if (!image || !targetImageView) {
+        return;
+    }
     
     NSInteger targetImageViewTag = [targetImageView tag];
     if (tag < 100 || targetImageViewTag == tag || targetImageViewTag < 100) {

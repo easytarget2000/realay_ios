@@ -36,6 +36,8 @@
 		D04352491AB3AA9C00CF95AB /* ETRSentMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */; };
 		D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = D048E2941AA65083001631CB /* ETRImageEditor.m */; };
 		D0529A0D1AA26FED002211A3 /* Realay.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D0529A0B1AA26FED002211A3 /* Realay.xcdatamodeld */; };
+		D0586CEF1ACB11E200C55E4C /* ETRSentMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */; };
+		D0586CF21ACB11F100C55E4C /* ETRReceivedMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */; };
 		D06E464C18D3945A00833C94 /* LeftBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464A18D3945A00833C94 /* LeftBubble.png */; };
 		D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464B18D3945A00833C94 /* LeftBubble@2x.png */; };
 		D06E465018D3966D00833C94 /* RightBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464E18D3966D00833C94 /* RightBubble.png */; };
@@ -148,6 +150,10 @@
 		D048E2931AA65083001631CB /* ETRImageEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageEditor.h; sourceTree = "<group>"; };
 		D048E2941AA65083001631CB /* ETRImageEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageEditor.m; sourceTree = "<group>"; };
 		D0529A0C1AA26FED002211A3 /* Realay.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Realay.xcdatamodel; sourceTree = "<group>"; };
+		D0586CED1ACB11E200C55E4C /* ETRSentMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRSentMediaCell.h; path = ui/TableCells/ETRSentMediaCell.h; sourceTree = "<group>"; };
+		D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRSentMediaCell.m; path = ui/TableCells/ETRSentMediaCell.m; sourceTree = "<group>"; };
+		D0586CF01ACB11F100C55E4C /* ETRReceivedMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReceivedMediaCell.h; sourceTree = "<group>"; };
+		D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReceivedMediaCell.m; sourceTree = "<group>"; };
 		D05E3205189EB7E300F3A94C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D06E464A18D3945A00833C94 /* LeftBubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LeftBubble.png; sourceTree = "<group>"; };
 		D06E464B18D3945A00833C94 /* LeftBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LeftBubble@2x.png"; sourceTree = "<group>"; };
@@ -297,6 +303,8 @@
 			children = (
 				D00A15FD1AAA1DDF0036B25B /* ETRHeaderCell.h */,
 				D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */,
+				D0B3D4681AC481290070F282 /* ETRInfoCell.h */,
+				D0B3D4691AC481290070F282 /* ETRInfoCell.m */,
 				D01446C41A9FF04D00748378 /* ETRInformationCell.h */,
 				D01446C51A9FF04D00748378 /* ETRInformationCell.m */,
 				D00A16001AAA1DFA0036B25B /* ETRKeyValueCell.h */,
@@ -309,16 +317,18 @@
 				D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */,
 				D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */,
 				D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */,
+				D0586CF01ACB11F100C55E4C /* ETRReceivedMediaCell.h */,
+				D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */,
 				D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */,
 				D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */,
 				D020733117EBB34400453B69 /* ETRRoomListCell.h */,
 				D01A602518E35BF900730A1B /* ETRRoomListCell.m */,
+				D0586CED1ACB11E200C55E4C /* ETRSentMediaCell.h */,
+				D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */,
 				D04352471AB3AA9C00CF95AB /* ETRSentMessageCell.h */,
 				D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */,
 				D0C821C71AC21B2C00549EEA /* ETRUserCell.h */,
 				D0C821C81AC21B2C00549EEA /* ETRUserCell.m */,
-				D0B3D4681AC481290070F282 /* ETRInfoCell.h */,
-				D0B3D4691AC481290070F282 /* ETRInfoCell.m */,
 			);
 			name = TableCells;
 			sourceTree = "<group>";
@@ -593,6 +603,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D00A16051AAA1E1E0036B25B /* ETRProfileButtonCell.m in Sources */,
+				D0586CF21ACB11F100C55E4C /* ETRReceivedMediaCell.m in Sources */,
 				D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */,
 				D01446B61A9F573900748378 /* ETRChatObject.m in Sources */,
 				D0E1971517E276DB00135B8C /* main.m in Sources */,
@@ -611,6 +622,7 @@
 				D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */,
 				D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */,
 				D0E31B5E1AA377F30008AF9F /* ETRUser.m in Sources */,
+				D0586CEF1ACB11E200C55E4C /* ETRSentMediaCell.m in Sources */,
 				D0917D0B1AC583FE00136D31 /* ETRReachabilityManager.m in Sources */,
 				D0D0CEED17E74EE70079017F /* ETRLoginViewController.m in Sources */,
 				D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */,

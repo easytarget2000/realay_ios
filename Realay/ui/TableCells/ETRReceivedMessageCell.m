@@ -10,14 +10,8 @@
 
 @implementation ETRReceivedMessageCell
 
-- (void)layoutSubviews {
-
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (void)prepareForReuse {
+    [[self userIconView] setTag:0];
 }
 
 @end

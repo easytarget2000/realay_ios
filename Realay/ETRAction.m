@@ -50,6 +50,8 @@
 #pragma mark -
 #pragma mark Derived Values
 
+@synthesize imageID = _imageID;
+
 - (BOOL)isPublicMessage {
     short code = [[self code] shortValue];
     return (code == ETRActionCodePublicMessage) || (code == ETRActionCodePublicMedia);
@@ -75,16 +77,14 @@
     }
 }
 
-- (void)setImageID:(NSNumber *)imageID {
-    [self setImageID:imageID];
-}
-
 - (NSNumber *)imageID {
-    if ([self imageID]) return [self imageID];
+    if (_imageID) {
+      return _imageID;
+    }
     
     [self setImageID:@((long) [[self messageContent] longLongValue])];
     
-    return [self imageID];
+    return _imageID;
 }
 
 @end

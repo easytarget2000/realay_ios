@@ -10,9 +10,12 @@
 
 @interface ETRImageLoader : NSObject
 
-@property (strong, nonatomic, readonly) void (^completionHandler)(void);
-@property (strong, nonatomic, readonly) ETRChatObject *chatObject;
+//@property (strong, nonatomic, readonly) void (^completionHandler)(void);
+
+@property (weak, nonatomic, readonly) ETRChatObject *chatObject;
+
 @property (weak, nonatomic, readonly) UIImageView *targetImageView;
+
 @property (nonatomic, readonly) NSInteger tag;
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject doLoadHiRes:(BOOL)doLoadHiRes;

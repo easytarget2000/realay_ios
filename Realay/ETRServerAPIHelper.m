@@ -435,14 +435,22 @@ static NSMutableArray *connections;
     // room=? for Actions
     // session=? for Profile image uploads
     ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
+    if (sessionRoom) {
+        // The User is in a session but this upload does not send a "media message" Action.
+        
+        [bodyData appendData:[@"Content-Disposition: form-data; name=\"session\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        NSString * roomID = [[sessionRoom remoteID] stringValue];
+        [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+    }
     
     if (action) {
         // If an Action object (media message) was given, untangle the data into paramaters.
         
-        [bodyData appendData:[@"Content-Disposition: form-data; name=\"room\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-        NSString * roomID = [[sessionRoom remoteID] stringValue];
-        [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
-        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
+//        [bodyData appendData:[@"Content-Disposition: form-data; name=\"room\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+//        NSString * roomID = [[sessionRoom remoteID] stringValue];
+//        [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
+//        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
 
         [bodyData appendData:[@"Content-Disposition: form-data; name=\"sender\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         NSString * senderID = [[[action sender] remoteID]stringValue];
@@ -468,15 +476,7 @@ static NSMutableArray *connections;
         NSString * timestamp = [NSString stringWithFormat:@"%ld", (long) [[action sentDate] timeIntervalSince1970]];
         [bodyData appendData:[timestamp dataUsingEncoding:NSUTF8StringEncoding]];
         [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
-    } else if (sessionRoom) {
-        // The User is in a session but this upload does not send a "media message" Action.
-        
-        [bodyData appendData:[@"Content-Disposition: form-data; name=\"session\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-        NSString * roomID = [[sessionRoom remoteID] stringValue];
-        [bodyData appendData:[roomID dataUsingEncoding:NSUTF8StringEncoding]];
-        [bodyData appendData:[boundaryReturned dataUsingEncoding:NSUTF8StringEncoding]];
     }
-    
     
     [request setHTTPBody:bodyData];
     [ETRServerAPIHelper performAPIRequest:request

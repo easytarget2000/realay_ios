@@ -28,7 +28,7 @@
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject
                                                       targetImageView:nil
                                                           doLoadHiRes:doLoadHiRes];
-    [NSThread detachNewThreadSelector:@selector(startLoading)
+    [NSThread detachNewThreadSelector:@selector(startLoadingImage:)
                              toTarget:instance
                            withObject:nil];
 }
@@ -37,12 +37,12 @@
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject
                                                       targetImageView:targetImageView
                                                           doLoadHiRes:(BOOL)doShowHiRes];
-    [NSThread detachNewThreadSelector:@selector(startLoading)
+    [NSThread detachNewThreadSelector:@selector(startLoadingImage:)
                              toTarget:instance
                            withObject:nil];
 }
 
-- (void)startLoading {
+- (void)startLoadingImage:(id)sender {
     if (!_chatObject) {
       return;
     }
@@ -56,8 +56,9 @@
         }
     }
     
-    if ([[_chatObject imageID] longValue] < 100) {
-        NSLog(@"WARNING: Not loading image with ID %@.", [_chatObject imageID]);
+    long imageID = [[_chatObject imageID] longValue];
+    if (imageID < 100 && imageID > -100) {
+//        NSLog(@"WARNING: Not loading image with ID %@.", [_chatObject imageID]);
         return;
     }
     
