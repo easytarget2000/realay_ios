@@ -338,7 +338,7 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
         // Create my profile before showing it.
         
         // Tell the Create Profile controller where to go next.
-        ETRLoginViewController *destination = [segue destinationViewController];
+        ETRLoginViewController * destination = [segue destinationViewController];
         [destination showProfileOnLogin];
         
     } else if([[segue identifier] isEqualToString:ETRRoomListToProfileSegue]) {

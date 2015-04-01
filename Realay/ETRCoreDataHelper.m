@@ -427,7 +427,7 @@ static NSString * UserEntityName;
     [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
     
 //    NSString * predicateFormat = @"room = %@ AND (sender = %@ OR recipient = %@) AND (code = %i OR code = %i)";
-    long partnerID = [[partner remoteID] longValue];
+//    long partnerID = [[partner remoteID] longValue];
     
     // TODO: Compare Object predicate vs. ID predicate.
 //    NSString * where = [NSString stringWithFormat:@"sender.%@ == %ld OR recipient.%@ == %ld",
@@ -523,7 +523,6 @@ static NSString * UserEntityName;
     [fetch setPredicate:predicate];
     NSArray * storedObjects = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
     
-    ETRConversation * conversation;
     if (storedObjects && [storedObjects count]) {
         if ([storedObjects[0] isKindOfClass:[ETRConversation class]]) {
             return (ETRConversation *)storedObjects[0];

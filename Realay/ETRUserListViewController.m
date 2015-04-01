@@ -13,8 +13,10 @@
 #import "ETRConversation.h"
 #import "ETRConversationViewController.h"
 #import "ETRCoreDataHelper.h"
+#import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRInfoCell.h"
+#import "ETRLocalUserManager.h"
 #import "ETRMapViewController.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
@@ -25,6 +27,8 @@
 static NSString *const ETRUsersToConversationSegue = @"usersToConversationSegue";
 
 static NSString *const ETRUsersToMapSegue = @"usersToMapSegue";
+
+static NSString *const ETRUsersToProfileSegue = @"usersToProfileSegue";
 
 static NSString *const ETRUserCellIdentifier = @"userCell";
 
@@ -71,13 +75,28 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     [[self refreshControl] addTarget:self
                               action:@selector(updateUserList)
                     forControlEvents:UIControlEventValueChanged];
+    
+    // Create the Map and Profile BarButtons and place them in the NavigationBar.
+    UIImage * mapButtonIcon = [UIImage imageNamed:@"Map"];
+    UIBarButtonItem * mapButton = [[UIBarButtonItem alloc] initWithImage:mapButtonIcon
+                                                     landscapeImagePhone:mapButtonIcon
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:self
+                                                                  action:@selector(mapButtonPressed:)];
+    UIImage * profileButtonIcon = [UIImage imageNamed:@"Profile"];
+    UIBarButtonItem * profileButton = [[UIBarButtonItem alloc] initWithImage:profileButtonIcon
+                                                         landscapeImagePhone:profileButtonIcon
+                                                                       style:UIBarButtonItemStylePlain target:self
+                                                                      action:@selector(profileButtonPressed:)];
+    
+    NSArray * rightBarButtons = [[NSArray alloc] initWithObjects:profileButton, mapButton, nil];
+    [[self navigationItem] setRightBarButtonItems:rightBarButtons];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
-    [[self navigationController] setToolbarHidden:NO];
-    // CONTINUE HERE
+    [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:NO];
 }
 
@@ -273,6 +292,11 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     [self performSegueWithIdentifier:ETRUsersToMapSegue sender:self];
 }
 
+- (IBAction)profileButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:ETRUsersToProfileSegue
+                              sender:[[ETRLocalUserManager sharedManager] user]];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     id destination = [segue destinationViewController];
     
@@ -285,10 +309,17 @@ static CGFloat const ETRUserRowHeight = 64.0f;
         return;
     }
     
-    if ([destination isKindOfClass:[ETRMapViewController class]]) {
-        
-    }
+//    if ([destination isKindOfClass:[ETRMapViewController class]]) {
+//        return;
+//    }
     
+    if ([destination isKindOfClass:[ETRDetailsViewController class]]) {
+        if (sender && [sender isKindOfClass:[ETRUser class]]) {
+            ETRDetailsViewController * profileViewController;
+            profileViewController = (ETRDetailsViewController *)destination;
+            [profileViewController setUser:(ETRUser *)sender];
+        }
+    }
 }
 
 @end

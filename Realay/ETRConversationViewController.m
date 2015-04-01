@@ -97,9 +97,11 @@ UITextFieldDelegate
                                                       style:UIBarButtonItemStylePlain
                                                      target:self
                                                      action:@selector(exitButtonPressed:)];
-        
-//        [exitButton setTitle:NSLocalizedString(@"Leave", @"Exit Session")];
         [[self navigationItem] setLeftBarButtonItem:exitButton];
+        
+        // Only public Conversations get a BackBarButton that has a title (in the _next_ ViewController).
+        NSString * returnTitle = NSLocalizedString(@"Chat", @"(Public) Chat");
+        [[[self navigationItem] backBarButtonItem] setTitle:returnTitle];
     } else if (_partner) {
         [self setTitle:[_partner name]];
         _fetchedResultsController = [ETRCoreDataHelper messagesResultsControllerForPartner:_partner
@@ -390,6 +392,10 @@ UITextFieldDelegate
     
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self hideMediaMenu];
+}
+
 // Scroll to the bottom of a table.
 - (void)scrollDownTableViewAnimated:(BOOL)animated {
     NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
@@ -433,18 +439,14 @@ UITextFieldDelegate
 
 - (IBAction)mediaButtonPressed:(id)sender {
     // If the lower button, the camera button, is hidden, open the menu.
-    // If the upper button, the gallery button, is visible, close the menu.
     
     if ([[self cameraButton] isHidden]) {
         // Expand the menu from the bottom.
         [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
             [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
         }];
-    } else if(![[self galleryButton] isHidden]) {
-        // Collapse the menu from the top.
-        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
-            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
-        }];
+    } else {
+        [self hideMediaMenu];
     }
 }
 
@@ -482,9 +484,17 @@ UITextFieldDelegate
     }
 }
 
-//- (void)toggleMediaMenu {
-//
-//}
+/*
+ Closes the menu, if the upper button, the gallery button, is visible
+*/
+- (void)hideMediaMenu {
+    if(![[self galleryButton] isHidden]) {
+        // Collapse the menu from the top.
+        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
+            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
+        }];
+    }
+}
 
 - (IBAction)moreButtonPressed:(id)sender {
     // The More button is a Profile button in private chats.
@@ -505,6 +515,7 @@ UITextFieldDelegate
 
 - (void)dismissKeyboard {
     [[self messageTextField] resignFirstResponder];
+    [self hideMediaMenu];
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {
