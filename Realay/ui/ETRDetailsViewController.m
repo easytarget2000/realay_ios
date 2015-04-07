@@ -86,21 +86,26 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
         return;
     }
     
-    if (_room) {
-        if ([[ETRSessionManager sharedManager] didBeginSession]) {
-            [self setBarButton:nil];
-        } else {
-            [[self barButton] setTitle:NSLocalizedString(@"Join", @"Join")];
-        }
+    UIBarButtonItem * barButton;
+    if (_room && ![[ETRSessionManager sharedManager] didBeginSession]) {
+        barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Join", @"Join")
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(barButtonPressed:)];
     } else if (_user) {
-        if (![[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
-            UIBarButtonItem * addButton;
-            addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+        if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
+            // Edit Button:
+            barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
                                                                       target:self
                                                                       action:@selector(barButtonPressed:)];
-            [[self navigationItem] setRightBarButtonItem:addButton];
+        } else {
+            // Add Contact Button:
+            barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                      target:self
+                                                                      action:@selector(barButtonPressed:)];
         }
     }
+    [[self navigationItem] setRightBarButtonItem:barButton];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

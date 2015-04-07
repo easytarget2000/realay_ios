@@ -360,9 +360,9 @@ UITextFieldDelegate
             } else {
                 [[cell nameLabel] removeFromSuperview];
             }
-//            [ETRImageLoader loadImageForObject:action
-//                                      intoView:[cell iconView]
-//                                   doLoadHiRes:NO];
+            [ETRImageLoader loadImageForObject:action
+                                      intoView:[cell iconView]
+                                   doLoadHiRes:NO];
             
             NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
@@ -375,9 +375,9 @@ UITextFieldDelegate
 //            [[[cell userIconView] layer] setCornerRadius:ETRIconViewCornerRadius];
 //            [[cell userIconView] setClipsToBounds:YES];
             
-//            [ETRImageLoader loadImageForObject:[action sender]
-//                                      intoView:[cell userIconView]
-//                                   doLoadHiRes:NO];
+            [ETRImageLoader loadImageForObject:[action sender]
+                                      intoView:[cell userIconView]
+                                   doLoadHiRes:NO];
             if (_isPublic) {
                 [[cell nameLabel] setText:senderName];
             } else {
@@ -400,10 +400,10 @@ UITextFieldDelegate
 - (void)scrollDownTableViewAnimated:(BOOL)animated {
     NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
     if (bottomRow >= 0) {
-//        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-//        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-//                                        atScrollPosition:UITableViewScrollPositionBottom
-//                                                animated:animated];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+                                        atScrollPosition:UITableViewScrollPositionBottom
+                                                animated:animated];
     }
 }
 

@@ -39,8 +39,12 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         
         // Adjust the size if needed.
         UIImage * croppedImage = [ETRImageEditor cropImage:image toSize:targetImageView.frame.size];
-        [targetImageView setImage:croppedImage];
-        
+        if (targetImageView) {
+            // Verifying reference for quick scrolling of Image Views inside of reusable cells.
+            [targetImageView setImage:croppedImage];
+        } else {
+            NSLog(@"DEBUG: Lost Image View reference midway.");
+        }
     } else {
         NSLog(@"DEBUG: Not applying image because tags are unequal: %ld != %ld", [targetImageView tag], tag);
     }
