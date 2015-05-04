@@ -339,6 +339,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 - (void)saveButtonPressed:(id)sender {
     NSInteger lastTouchedRow = _lastTouchedTextFieldTag - ETRCellTagOffset;
     if (lastTouchedRow < 0) {
+        [[self navigationController] popViewControllerAnimated:YES];
         return;
     }
     

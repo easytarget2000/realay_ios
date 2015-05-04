@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class ETRChatObject;
+
 @interface ETRImageEditor : NSObject
 
 + (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag;

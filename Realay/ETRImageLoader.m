@@ -8,8 +8,13 @@
 
 #import "ETRImageLoader.h"
 
+#import "ETRChatObject.h"
 #import "ETRImageEditor.h"
 #import "ETRServerAPIHelper.h"
+
+NSString *const ETRKeyIntendedObject = @"intended_object";
+
+NSString *const ETRKeyDidLoadHiRes = @"hi_res";
 
 @implementation ETRImageLoader {
     BOOL _doShowHiRes;
@@ -20,7 +25,7 @@
     _chatObject = chatObject;
     _targetImageView = targetImageView;
     _doShowHiRes = doLoadHiRes;
-    _tag = (int) [chatObject imageID];
+//    _tag = (int) [chatObject imageID];
     return self;
 }
 
@@ -48,24 +53,20 @@
     }
     
     if (_targetImageView) {
-        NSInteger tag = [_targetImageView tag];
-        if (tag > 100) {
-            NSLog(@"DEBUG: ImageView already has tag %i.", (int) tag);
-        } else {
-            [_targetImageView setTag:tag];
-        }
+        [_targetImageView setTag:[[_chatObject remoteID] intValue]];
     }
     
     long imageID = [[_chatObject imageID] longValue];
     if (imageID < 100 && imageID > -100) {
-//        NSLog(@"WARNING: Not loading image with ID %@.", [_chatObject imageID]);
+        NSLog(@"ERROR: Not loading image with ID %@.", [_chatObject imageID]);
         return;
     }
     
     if ([_chatObject lowResImage]) {
         [ETRImageEditor cropImage:[_chatObject lowResImage]
                       applyToView:_targetImageView
-                          withTag:_tag];
+                          withTag:[[_chatObject remoteID] intValue]];
+        
         if (!_doShowHiRes) {
             // Only the low-resolution image was requested.
             return;
@@ -78,7 +79,7 @@
         [_chatObject setLowResImage:cachedLoResImage];
         [ETRImageEditor cropImage:cachedLoResImage
                       applyToView:_targetImageView
-                          withTag:_tag];
+                          withTag:[[_chatObject remoteID] intValue]];
     } else {
         // If the low-res image has not been stored as a file, download it.
         // This will also place it into the Object and View.
@@ -92,7 +93,9 @@
     
     UIImage *cachedHiResImage = [UIImage imageWithContentsOfFile:[_chatObject imageFilePath:YES]];
     if (cachedHiResImage) {
-        [ETRImageEditor cropImage:cachedHiResImage applyToView:_targetImageView withTag:_tag];
+        [ETRImageEditor cropImage:cachedHiResImage
+                      applyToView:_targetImageView
+                          withTag:[[_chatObject remoteID] intValue]];
     } else {
         [ETRServerAPIHelper getImageForLoader:self doLoadHiRes:YES];
     }

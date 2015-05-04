@@ -8,6 +8,7 @@
 
 #import "ETRImageConnectionHandler.h"
 
+#import "ETRChatObject.h"
 #import "ETRImageEditor.h"
 
 #define kDebugTag @"ETRImageConnectionHandler"
@@ -84,17 +85,19 @@
     }
     
     // Display the image and store the image file and the low-res image inside of the Object.
+    ETRChatObject * loaderObject = [_imageLoader chatObject];
     UIImageView *loaderImageView = [_imageLoader targetImageView];
-    [ETRImageEditor cropImage:image applyToView:loaderImageView withTag:[_imageLoader tag]];
+    [ETRImageEditor cropImage:image
+                  applyToView:loaderImageView
+                      withTag:[[loaderObject remoteID] intValue]];
     
     
     // Store the image as a file and the low-res image in the Object.
-    ETRChatObject *loaderObject = [_imageLoader chatObject];
     if (!_doLoadHiRes && loaderObject) {
         [loaderObject setLowResImage:image];
     }
     
-    [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[[_imageLoader chatObject] imageFilePath:_doLoadHiRes]
+    [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[loaderObject imageFilePath:_doLoadHiRes]
                                              atomically:YES];
 }
 

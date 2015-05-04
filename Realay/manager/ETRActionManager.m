@@ -115,7 +115,11 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
         return;
     }
     
+    // TODO: Track ping times.
+    BOOL doPerformPing = YES;
+    
     [ETRServerAPIHelper getActionsWithMinID:_lastActionID
+                                performPing:doPerformPing
                           completionHandler:^(id<NSObject> receivedObject) {
                               BOOL doResetInterval = NO;
                               if ([receivedObject isKindOfClass:[NSArray class]]) {

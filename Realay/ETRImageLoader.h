@@ -6,7 +6,13 @@
 //  Copyright (c) 2014 Michel Sievers. All rights reserved.
 //
 
-#import "ETRChatObject.h"
+@class ETRChatObject;
+
+
+extern NSString *const ETRKeyIntendedObject;
+
+extern NSString *const ETRKeyDidLoadHiRes;
+
 
 @interface ETRImageLoader : NSObject
 

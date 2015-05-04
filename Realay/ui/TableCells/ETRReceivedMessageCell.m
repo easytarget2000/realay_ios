@@ -8,10 +8,13 @@
 
 #import "ETRReceivedMessageCell.h"
 
+#import "ETRImageLoader.h"
+
 @implementation ETRReceivedMessageCell
 
 - (void)prepareForReuse {
     [[self userIconView] setTag:0];
+    [[self userIconView] setImage:[UIImage imageNamed:@"PlaceholderProfileW"]];
 }
 
 @end

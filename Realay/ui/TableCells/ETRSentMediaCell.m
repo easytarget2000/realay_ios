@@ -8,6 +8,8 @@
 
 #import "ETRSentMediaCell.h"
 
+#import "ETRImageLoader.h"
+
 @implementation ETRSentMediaCell
 
 - (void)awakeFromNib {
@@ -18,6 +20,11 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+- (void)prepareForReuse {
+    [[self iconView] setTag:0];
+    [[self iconView] setImage:[UIImage imageNamed:@"Camera"]];
 }
 
 @end

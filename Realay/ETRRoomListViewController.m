@@ -74,6 +74,10 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
 }
 
+- (UIStatusBarStyle) preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
@@ -234,7 +238,6 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
         [[cell distanceLabel] setText:formattedDistance];
     }
     
-    //    [self startIconDownload:currentRoom forIndexPath:indexPath];
     [ETRImageLoader loadImageForObject:record intoView:[cell headerImageView] doLoadHiRes:YES];
     [[cell headerImageView] setTag:[indexPath row]];
 }

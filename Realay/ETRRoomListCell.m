@@ -10,4 +10,9 @@
 
 @implementation ETRRoomListCell
 
+- (void)prepareForReuse {
+    [[self headerImageView] setTag:0];
+    [[self headerImageView] setImage:[UIImage imageNamed:@"PlaceholderRoomW"]];
+}
+
 @end

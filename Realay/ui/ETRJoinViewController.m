@@ -63,16 +63,15 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 }
 
 - (void)startJoinThreadforRoom:(ETRRoom *)room {
-    ETRServerAPIHelper *apiHelper = [[ETRServerAPIHelper alloc] init];
+    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
 
-    [apiHelper joinRoom:room
-    showProgressInLabel:_statusLabel
-           progressView:_progressView
-      completionHandler:^(BOOL didSucceed) {
-          [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
-                                   toTarget:self
-                                 withObject:@(didSucceed)];
-      }];
+    [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
+                                          progressView:_progressView
+                                     completionHandler:^(BOOL didSucceed) {
+                                         [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+                                                                  toTarget:self
+                                                                withObject:@(didSucceed)];
+                                     }];
 }
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {

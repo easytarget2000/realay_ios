@@ -82,7 +82,7 @@
 
 "Want_block" = "Do you want to block %@?";
 
-"Want_leave" = "Do you want to leave %@?";
+"Want_leave" = "Do you want to leave %@?\n\nYou will no longer receive any messages.";
 
 "website" = "website";
 

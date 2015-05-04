@@ -12,4 +12,6 @@
 
 + (BOOL)doUseMetricSystem;
 
++ (NSString *)authID;
+
 @end

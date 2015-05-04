@@ -8,6 +8,9 @@
 
 #import "ETRImageEditor.h"
 
+#import "ETRChatObject.h"
+#import "ETRImageLoader.h"
+
 static CGSize const ETRHiResImageSize = {
     .width = 1080.0f,
     .height = 1080.0f
@@ -26,27 +29,18 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
 @implementation ETRImageEditor
 
 + (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag {
+    
     if (!image || !targetImageView) {
         return;
     }
     
-    NSInteger targetImageViewTag = [targetImageView tag];
-    if (tag < 100 || targetImageViewTag == tag || targetImageViewTag < 100) {
-        if (tag > 100 && targetImageViewTag < 100) {
-           [targetImageView setTag:tag];
-        }
-        // TODO: Check that image currently in this View is smaller before replacing it.
-        
-        // Adjust the size if needed.
-        UIImage * croppedImage = [ETRImageEditor cropImage:image toSize:targetImageView.frame.size];
-        if (targetImageView) {
-            // Verifying reference for quick scrolling of Image Views inside of reusable cells.
-            [targetImageView setImage:croppedImage];
-        } else {
-            NSLog(@"DEBUG: Lost Image View reference midway.");
-        }
+    // Adjust the size if needed.
+    UIImage * croppedImage = [ETRImageEditor cropImage:image toSize:targetImageView.frame.size];
+    if (targetImageView && [targetImageView tag] == tag) {
+        // Verifying reference for quick scrolling of Image Views inside of reusable cells.
+        [targetImageView setImage:croppedImage];
     } else {
-        NSLog(@"DEBUG: Not applying image because tags are unequal: %ld != %ld", [targetImageView tag], tag);
+        NSLog(@"DEBUG: Image View reference changed midway.");
     }
 }
 
@@ -88,17 +82,46 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         return nil;
     }
     
-    if (image.size.width != size.width || image.size.height != size.height) {
-        UIGraphicsBeginImageContext(size);
-        CGRect imageRect = CGRectMake(0.0f, 0.0f, size.width, size.height);
-        [image drawInRect:imageRect];
-        UIImage *croppedImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return croppedImage;
-    } else {
-        // The image already has the requested dimensions.
-        return image;
+//    if (image.size.width != size.width || image.size.height != size.width) {
+//        UIGraphicsBeginImageContext(size);
+//        CGRect imageRect = CGRectMake(0.0f, 0.0f, size.width, size.width);
+//        [image drawInRect:imageRect];
+//        UIImage * croppedImage = UIGraphicsGetImageFromCurrentImageContext();
+//        UIGraphicsEndImageContext();
+//        return croppedImage;
+//    } else {
+//        // The image already has the requested dimensions.
+//        return image;
+//    }
+    
+    //If scale factor is not touched, no scaling will occur.
+    CGFloat scaleFactor = 1.0f;
+    
+    //Decide which factor to use to scale the image (factor = targetSize / imageSize)
+    if (image.size.width > size.width || image.size.height > size.height) {
+        if (!((scaleFactor = (size.width / image.size.width)) > (size.height / image.size.height))) {
+            scaleFactor = size.height / image.size.height;
+        }
     }
+
+    
+    UIGraphicsBeginImageContext(size);
+    
+    // Create the Rect in which the image will be drawn.
+    CGFloat x = (size.width - image.size.width * scaleFactor) * 0.5f;
+    CGFloat y = (size.height -  image.size.height * scaleFactor) * 0.5f;
+    CGFloat width = image.size.width * scaleFactor;
+    CGFloat height = image.size.height * scaleFactor;
+    CGRect rect = CGRectMake(x, y, width, height);
+    
+    //Draw the image into the Rect.
+    [image drawInRect:rect];
+    
+    //Save the image, ending the image context.
+    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return scaledImage;
 }
 
 @end
