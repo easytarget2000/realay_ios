@@ -9,13 +9,14 @@
 #import "ETRServerAPIHelper.h"
 
 #import "ETRAction.h"
+#import "ETRActionManager.h"
 #import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
-#import "ETRPreferenceHelper.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRReachabilityManager.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
@@ -49,6 +50,8 @@ static NSString *const ETRGetLastActionIDAPICall = @"get_last_action_id";
 
 static NSString *const ETRGetLastActionIDSuccessStatus = @"GLA_YES";
 
+static NSString *const ETRGetActionIDObjectTag = @"a";
+
 static NSString *const ETRPutActionAPICall = @"put_action";
 
 static NSString *const ETRAPIParamRecipient = @"recipient";
@@ -74,6 +77,10 @@ static NSString *const ETRPutRoomImageSuccessStatus = @"IIR_YES";
 static NSString *const ETRGetRoomsAPICall = @"get_rooms";
 
 static NSString *const ETRGetRoomsSuccessStatus = @"RS_YES";
+
+static NSString *const ETRDoUpdateUserAPICall = @"do_update_user";
+
+static NSString *const ETRDoUpdateUserSuccessStatus = @"UU_YES";
 
 static NSString *const ETRGetUserAPICall = @"get_user";
 
@@ -108,185 +115,6 @@ static NSMutableArray *connections;
 @implementation ETRServerAPIHelper
 
 #pragma mark -
-#pragma mark Basic Connection Handling
-
-+ (BOOL)didStartConnection:(NSString *)connectionID {
-    if (!connectionID) {
-        return NO;
-    }
-    
-    if (!connections) {
-        connections = [NSMutableArray array];
-    } else if ([connections containsObject:connectionID]) {
-        NSLog(@"DEBUG: Not performing %@ because the same call has already been started.", connectionID);
-        return YES;
-    }
-    
-    [connections addObject:connectionID];
-    return NO;
-}
-
-+ (void)didFinishConnection:(NSString *)connectionID {
-    if (!connectionID) {
-        return;
-    }
-    
-    if (!connections) {
-        connections = [NSMutableArray array];
-        return;
-    } else if ([connections containsObject:connectionID]){
-        [connections removeObject:connectionID];
-    }
-}
-
-+ (void)performAPIRequest:(NSURLRequest *)request
-                   withID:(NSString *)connectionID
-            successStatus:(NSString *)successStatus
-                objectTag:(NSString *)objectTag
-        completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
-    if (![ETRReachabilityManager isReachable]) {
-        NSLog(@"WARNING: Reachability is negative.");
-        handler(@(NO));
-        return;
-    }
-    
-    if ([ETRServerAPIHelper didStartConnection:connectionID]) {
-        return;
-    }
-    
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[[NSOperationQueue alloc] init]
-                           completionHandler:^(NSURLResponse *response,
-                                               NSData *data,
-                                               NSError *connectionError) {
-                               [ETRServerAPIHelper didFinishConnection:connectionID];
-                               
-                               if (!handler) {
-                                   NSLog(@"ERROR: No completionHandler given for API call: %@", connectionID);
-                                   return;
-                               }
-                               
-                               if (!connectionError && data) {
-                                   NSError *error;
-                                   NSDictionary *JSONDict = [NSJSONSerialization JSONObjectWithData:data
-                                                                                            options:kNilOptions
-                                                                                              error:&error];
-                                   if (error) {
-                                       NSLog(@"ERROR: performApiCall: %@", error);
-                                       handler(nil);
-                                       return;
-                                   }
-                                   
-                                   NSString *status = (NSString *)[JSONDict objectForKey:ETRAPIStatusKey];
-                                   if (!status) {
-                                       NSLog(@"ERROR: No Status found in response.");
-                                       handler(nil);
-                                       return;
-                                   }
-                                   
-                                   if ([status isEqualToString:successStatus]) {
-                                       // The call returned a success status code.
-                                       if (!objectTag) {
-                                           handler([NSNumber numberWithBool:YES]);
-                                       } else {
-                                           id<NSObject> receivedObject = [JSONDict objectForKey:objectTag];
-                                           if (!receivedObject) {
-                                               handler([NSNumber numberWithBool:YES]);
-                                           } else {
-                                               handler(receivedObject);
-                                           }
-                                       }
-                                       
-                                       return;
-                                   } else {
-                                       NSLog(@"ERROR: %@", status);
-                                   }
-                               }
-                               
-                               // Something went wrong.
-                               // If an Object was expected, return nil.
-                               // If a boolean was expected, return NO.
-                               if (!objectTag) {
-                                   handler([NSNumber numberWithBool:NO]);
-                               } else {
-                                   handler(nil);
-                               }
-                           }];
-}
-
-+ (void)performAPICall:(NSString *)apiCall
-                withID:(NSString *)connectionID
-             paramDict:(NSDictionary *)paramDict
-         successStatus:(NSString *)successStatus
-             objectTag:(NSString *)objectTag
-     completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
-    
-    // Prepare the URL to the give PHP file.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
-    NSURL *url = [NSURL URLWithString:
-                  [URLString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-    
-    // Prepare the POST request with the given data string.
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:url];
-    
-    // Go through the NSString:NSString Dictionary and build the "param1=value1&param2=value2..." body.
-    NSMutableString * bodyString;
-    for (NSString * param in [paramDict allKeys]) {
-        if (bodyString) {
-            [bodyString appendString:@"&"];
-        } else {
-            bodyString = [NSMutableString string];
-        }
-        [bodyString appendString:param];
-        [bodyString appendString:@"="];
-        
-        [bodyString appendString:(NSString *) [paramDict valueForKey:param]];
-//        id <NSObject> value = [paramDict valueForKey:param];
-//        if ([value isMemberOfClass:[NSString class]]) {
-//            [bodyString appendString:(NSString *) value];
-//        }
-    }
-    
-#ifdef DEBUG
-    NSLog(@"DEBUG: API: %@?%@", apiCall, bodyString);
-#endif
-    
-    NSData * bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding
-                                 allowLossyConversion:YES];
-    [request setHTTPBody:bodyData];
-    [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:ETRAPITimeOutInterval];
-        
-//    NSString * bodyString = [NSString stringWithFormat:@"%@", bodyString];
-    
-
-    
-    [ETRServerAPIHelper performAPIRequest:request
-                                   withID:connectionID
-                            successStatus:successStatus
-                                objectTag:objectTag
-                        completionHandler:handler];
-}
-
-+ (NSDictionary *)sessionAuthDictionary {
-    ETRRoom * preparedRoom = [ETRSessionManager sessionRoom];
-    if (!preparedRoom) {
-        NSLog(@"ERROR: Cannot build auth Dictionary outside of Session.");
-        return nil;
-    }
-    
-    NSString * sessionID = [NSString stringWithFormat:@"%ld", [[preparedRoom remoteID] longValue]];
-    NSString * senderID = [NSString stringWithFormat:@"%ld", [ETRLocalUserManager userID]];
-    
-    NSMutableDictionary * authParams = [NSMutableDictionary dictionary];
-    [authParams setObject:senderID forKey:ETRAPIParamSender];
-    [authParams setObject:sessionID forKey:ETRAPIParamSession];
-    
-    return authParams;
-}
-
-#pragma mark -
 #pragma mark Actions
 
 - (void)joinRoomAndShowProgressInLabel:(UILabel *)label
@@ -303,7 +131,19 @@ static NSMutableArray *connections;
     _progressView = progressView;
     
     // Prepare the block that will be called at the end.
-    // This will always call the
+    void (^getlastActionIDCompletionHandler) (long) = ^(long lastActionID) {
+        if ([[NSThread currentThread] isCancelled]) {
+            [NSThread exit];
+        } else {
+            if (lastActionID > 100L) {
+                completionHandler([[ETRSessionManager sharedManager] startSession]);
+                [[ETRActionManager sharedManager] ackknowledgeActionID:lastActionID];
+            } else {
+                completionHandler(NO);
+            }
+        }
+    };
+    
     void (^getMessagesCompletionHandler) (id<NSObject>) = ^(id<NSObject> receivedObject) {
         if ([[NSThread currentThread] isCancelled]) {
             [NSThread exit];
@@ -326,14 +166,10 @@ static NSMutableArray *connections;
                     [ETRCoreDataHelper handleActionFromDictionary:(NSDictionary *)jsonAction];
                 }
             }
-            
         }
         
-        if ([[NSThread currentThread] isCancelled]) {
-            [NSThread exit];
-        } else {
-            completionHandler([[ETRSessionManager sharedManager] startSession]);
-        }
+        
+        [ETRServerAPIHelper getLastActionIDAndPerform:getlastActionIDCompletionHandler];
     };
     
     // Prepare the block that will be called at at the end of getting the User list.
@@ -350,14 +186,12 @@ static NSMutableArray *connections;
             // Update the UI to show the upcoming step.
             [NSThread detachNewThreadSelector:@selector(updateProgress:)
                                      toTarget:self
-                                   withObject:@(0.7f)];
+                                   withObject:@(0.55f)];
             [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
                                      toTarget:self
                                    withObject:@"Loading messages..."];
             
-            [ETRServerAPIHelper getActionsWithMinID:0
-                                        performPing:NO
-                                  completionHandler:getMessagesCompletionHandler];
+            [ETRServerAPIHelper getActionsAndPerform:getMessagesCompletionHandler];
         }
     };
     
@@ -371,7 +205,7 @@ static NSMutableArray *connections;
         
         // Fetch a boolean from the received Object to see if the request did succeed.
         if (receivedObject && [receivedObject isKindOfClass:[NSNumber class]]) {
-            NSNumber *didSucceed = (NSNumber *) receivedObject;
+            NSNumber * didSucceed = (NSNumber *) receivedObject;
             if ([didSucceed boolValue]) {
                 // Update the UI to show the upcoming step.
                 [NSThread detachNewThreadSelector:@selector(updateProgress:)
@@ -392,7 +226,7 @@ static NSMutableArray *connections;
     [ETRCoreDataHelper clearPublicActions];
     
     NSMutableDictionary * joinParams = [NSMutableDictionary dictionaryWithDictionary:authParams];
-    [joinParams setObject:[ETRPreferenceHelper authID] forKey:ETRAPIParamAuth];
+    [joinParams setObject:[ETRDefaultsHelper authID] forKey:ETRAPIParamAuth];
     
     [ETRServerAPIHelper performAPICall:ETRJoinRoomAPICall
                                 withID:ETRJoinRoomAPICall
@@ -402,30 +236,52 @@ static NSMutableArray *connections;
                      completionHandler:joinBlock];
 }
 
-+ (void)getActionsWithMinID:(long)lastActionID
-                performPing:(BOOL)doPerformPing
-          completionHandler:(void (^)(id<NSObject>))completionHandler {
-    
-    ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
-    if (!sessionRoom) {
-        NSLog(@"ERROR: No Session found in which to look for new Actions.");
++ (void)getLastActionIDAndPerform:(void (^)(long))completionHandler {
+    NSDictionary * authDict = [ETRServerAPIHelper sessionAuthDictionary];
+    if (!authDict) {
+        completionHandler(-8);
         return;
     }
     
+    [ETRServerAPIHelper performAPICall:ETRGetLastActionIDAPICall
+                                withID:ETRGetLastActionIDAPICall
+                             paramDict:authDict
+                         successStatus:ETRGetLastActionIDSuccessStatus
+                             objectTag:ETRGetActionIDObjectTag
+                     completionHandler:^(id<NSObject> receivedObject) {
+                         if (receivedObject && [receivedObject isKindOfClass:[NSString class]]) {
+                             NSString * lastActionID = (NSString *)receivedObject;
+                             completionHandler((long) [lastActionID longLongValue]);
+                         } else {
+                             completionHandler(-9);
+                         }
+                     }];
+}
+
++ (void)getActionsAndPerform:(void (^)(id<NSObject>))completionHandler {
+    
     NSDictionary * authDict = [ETRServerAPIHelper sessionAuthDictionary];
+    if (!authDict) {
+        return;
+    }
+    
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionaryWithDictionary:authDict];
+    
+    ETRActionManager * actionMan = [ETRActionManager sharedManager];
     
     NSString * blockedIDs = @"0";
     [paramDict setObject:blockedIDs forKey:@"blocked"];
-    if (lastActionID < 100) {
-        // No valid last Action ID was given, this query is the initial one.
+    
+    long lastActionID = [actionMan lastActionID];
+    
+    if (lastActionID < 100L) {
+        // This query is the initial one, only relevant messages are queried.
         [paramDict setObject:@"1" forKey:@"initial"];
-        
     } else {
         [paramDict setObject:[NSString stringWithFormat:@"%ld", lastActionID] forKey:@"last"];
     }
     
-    if (doPerformPing) {
+    if ([actionMan doSendPing]) {
         [paramDict setObject:@"1" forKey:@"ping"];
     }
     
@@ -548,7 +404,7 @@ static NSMutableArray *connections;
                                // and the low-res image inside of the Object.
                                [ETRImageEditor cropImage:image
                                              applyToView:[imageLoader targetImageView]
-                                                 withTag:[[chatObject remoteID] intValue]];
+                                                 isHiRes:doLoadHiRes];
                                
                                ETRChatObject *loaderObject = [imageLoader chatObject];
                                if (!doLoadHiRes && loaderObject) {
@@ -668,7 +524,7 @@ static NSMutableArray *connections;
     } else {
         // If no Action was given, this API Call is part of a profile picture change.
         
-        [params setObject:[ETRPreferenceHelper authID] forKey:ETRAPIParamAuth];
+        [params setObject:[ETRDefaultsHelper authID] forKey:ETRAPIParamAuth];
         ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
         if (sessionRoom) {
             [params setObject:[[sessionRoom remoteID] stringValue] forKey:ETRAPIParamSession];
@@ -745,13 +601,13 @@ static NSMutableArray *connections;
                                      [ETRCoreDataHelper insertRoomFromDictionary:(NSDictionary *) jsonRoom];
                                  }
                              }
+                             
+                             [ETRDefaultsHelper acknowledgeRoomListUpdateAtLocation:location];
+                             
                              if (completionHandler) {
                                  completionHandler([jsonRooms count]);
-                                 return;
                              }
-                         }
-                         
-                         if (completionHandler) {
+                         } else if (completionHandler) {
                              completionHandler(NO);
                          }
                      }];
@@ -771,7 +627,7 @@ static NSMutableArray *connections;
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:name forKey:@"name"];
-    [paramDict setObject:[ETRPreferenceHelper authID] forKey:ETRAPIParamAuth];
+    [paramDict setObject:[ETRDefaultsHelper authID] forKey:ETRAPIParamAuth];
     NSString * status = NSLocalizedString(@"send_me_realhey", @"Default status message");
     [paramDict setObject:status forKey:@"status"];
     
@@ -801,7 +657,50 @@ static NSMutableArray *connections;
 }
 
 + (void)sendLocalUserUpdate {
+    ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
+    if (!localUser) {
+        return;
+    }
     
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:[[localUser remoteID] stringValue] forKey:ETRAPIParamSender];
+    [paramDict setObject:[ETRDefaultsHelper authID] forKey:ETRAPIParamAuth];
+    [paramDict setObject:[localUser name] forKey:@"name"];
+    
+    if ([localUser status]) {
+      [paramDict setObject:[localUser status] forKey:@"status"];
+    }
+    if ([localUser mail]) {
+        [paramDict setObject:[localUser mail] forKey:@"email"];
+    }
+    if ([localUser phone]) {
+        [paramDict setObject:[localUser phone] forKey:@"phone"];
+    }
+    if ([localUser website]) {
+        [paramDict setObject:[localUser website] forKey:@"website"];
+    }
+    if ([localUser facebook]) {
+        [paramDict setObject:[localUser facebook] forKey:@"website"];
+    }
+    if ([localUser instagram]) {
+        [paramDict setObject:[localUser instagram] forKey:@"ig"];
+    }
+    if ([localUser twitter]) {
+        [paramDict setObject:[localUser twitter] forKey:@"twitter"];
+    }
+
+    [ETRServerAPIHelper performAPICall:ETRDoUpdateUserAPICall
+                                withID:ETRDoUpdateUserAPICall
+                             paramDict:paramDict
+                         successStatus:ETRDoUpdateUserSuccessStatus
+                             objectTag:nil
+                     completionHandler:^(id<NSObject> receivedObject) {
+                         if (receivedObject && [receivedObject isKindOfClass:[NSNumber class]]) {
+                             if ([((NSNumber *) receivedObject) boolValue]) {
+                                 // TODO: Remove all User Update Actions from the queue.
+                             }
+                         }
+                     }];
 }
 
 
@@ -824,11 +723,11 @@ static NSMutableArray *connections;
                          successStatus:ETRSessionUsersSuccessStatus
                              objectTag:ETRUserListObjectTag
                      completionHandler:^(id<NSObject> receivedObject) {
-                        
+                         // Remove all User relationships in this Room, then add the current ones.
+                         [sessionRoom setUsers:[NSSet set]];
+                         [ETRCoreDataHelper saveContext];
+                         
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
-                             // Remove all User relationships in this Room, then add the current ones.
-                             [sessionRoom setUsers:[NSSet set]];
-                             
                              NSArray *jsonUsers = (NSArray *) receivedObject;
                              for (NSObject *jsonUser in jsonUsers) {
                                  if ([jsonUser isKindOfClass:[NSDictionary class]]) {
@@ -839,6 +738,8 @@ static NSMutableArray *connections;
                                      }
                                  }
                              }
+                             
+                             [[ETRSessionManager sharedManager] acknowledegeUserListUpdate];
                              
                              if (handler) {
                                  handler(YES);
@@ -870,12 +771,194 @@ static NSMutableArray *connections;
                              objectTag:ETRUserObjectTag
                      completionHandler:^(id<NSObject> receivedObject) {
                          if (receivedObject && [receivedObject isKindOfClass:[NSDictionary class]]) {
-                             NSDictionary *jsonDictionary;
+                             NSDictionary * jsonDictionary;
                              jsonDictionary = (NSDictionary *) receivedObject;
                              [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
                          }
                      }];
 }
+
+#pragma mark -
+#pragma mark Basic Connection Handling
+
++ (BOOL)didStartConnection:(NSString *)connectionID {
+    if (!connectionID) {
+        return NO;
+    }
+    
+    if (!connections) {
+        connections = [NSMutableArray array];
+    } else if ([connections containsObject:connectionID]) {
+        NSLog(@"DEBUG: Not performing %@ because the same call has already been started.", connectionID);
+        return YES;
+    }
+    
+    [connections addObject:connectionID];
+    return NO;
+}
+
++ (void)didFinishConnection:(NSString *)connectionID {
+    if (!connectionID) {
+        return;
+    }
+    
+    if (!connections) {
+        connections = [NSMutableArray array];
+        return;
+    } else if ([connections containsObject:connectionID]){
+        [connections removeObject:connectionID];
+    }
+}
+
++ (void)performAPIRequest:(NSURLRequest *)request
+                   withID:(NSString *)connectionID
+            successStatus:(NSString *)successStatus
+                objectTag:(NSString *)objectTag
+        completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
+    if (![ETRReachabilityManager isReachable]) {
+        NSLog(@"WARNING: Reachability is negative.");
+        handler(@(NO));
+        return;
+    }
+    
+    if ([ETRServerAPIHelper didStartConnection:connectionID]) {
+        return;
+    }
+    
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[[NSOperationQueue alloc] init]
+                           completionHandler:^(NSURLResponse *response,
+                                               NSData *data,
+                                               NSError *connectionError) {
+                               [ETRServerAPIHelper didFinishConnection:connectionID];
+                               
+                               if (!handler) {
+                                   NSLog(@"ERROR: No completionHandler given for API call: %@", connectionID);
+                                   return;
+                               }
+                               
+                               if (!connectionError && data) {
+                                   NSError *error;
+                                   NSDictionary *JSONDict = [NSJSONSerialization JSONObjectWithData:data
+                                                                                            options:kNilOptions
+                                                                                              error:&error];
+                                   if (error) {
+                                       NSLog(@"ERROR: performApiCall: %@", error);
+                                       handler(nil);
+                                       return;
+                                   }
+                                   
+                                   NSString *status = (NSString *)[JSONDict objectForKey:ETRAPIStatusKey];
+                                   if (!status) {
+                                       NSLog(@"ERROR: No Status found in response.");
+                                       handler(nil);
+                                       return;
+                                   }
+                                   
+                                   if ([status isEqualToString:successStatus]) {
+                                       // The call returned a success status code.
+                                       if (!objectTag) {
+                                           handler(@(YES));
+                                       } else {
+                                           id<NSObject> receivedObject = [JSONDict objectForKey:objectTag];
+                                           if (!receivedObject) {
+                                               handler(@(YES));
+                                           } else {
+                                               handler(receivedObject);
+                                           }
+                                       }
+                                       
+                                       return;
+                                   } else {
+                                       NSLog(@"ERROR: %@", status);
+                                       handler(@(NO));
+                                       return;
+                                   }
+                               }
+                               
+                               // Something went wrong.
+                               // If an Object was expected, return nil.
+                               // If a boolean was expected, return NO.
+                               if (!objectTag) {
+                                   handler(@(NO));
+                               } else {
+                                   handler(nil);
+                               }
+                           }];
+}
+
++ (void)performAPICall:(NSString *)apiCall
+                withID:(NSString *)connectionID
+             paramDict:(NSDictionary *)paramDict
+         successStatus:(NSString *)successStatus
+             objectTag:(NSString *)objectTag
+     completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
+    
+    // Prepare the URL to the give PHP file.
+    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
+    NSURL *url = [NSURL URLWithString:
+                  [URLString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    
+    // Prepare the POST request with the given data string.
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:url];
+    
+    // Go through the NSString:NSString Dictionary and build the "param1=value1&param2=value2..." body.
+    NSMutableString * bodyString;
+    for (NSString * param in [paramDict allKeys]) {
+        if (bodyString) {
+            [bodyString appendString:@"&"];
+        } else {
+            bodyString = [NSMutableString string];
+        }
+        [bodyString appendString:param];
+        [bodyString appendString:@"="];
+        
+        [bodyString appendString:(NSString *) [paramDict valueForKey:param]];
+        //        id <NSObject> value = [paramDict valueForKey:param];
+        //        if ([value isMemberOfClass:[NSString class]]) {
+        //            [bodyString appendString:(NSString *) value];
+        //        }
+    }
+    
+#ifdef DEBUG
+    NSLog(@"DEBUG: API: %@?%@", apiCall, bodyString);
+#endif
+    
+    NSData * bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding
+                                 allowLossyConversion:YES];
+    [request setHTTPBody:bodyData];
+    [request setHTTPMethod:@"POST"];
+    [request setTimeoutInterval:ETRAPITimeOutInterval];
+    
+    //    NSString * bodyString = [NSString stringWithFormat:@"%@", bodyString];
+    
+    
+    
+    [ETRServerAPIHelper performAPIRequest:request
+                                   withID:connectionID
+                            successStatus:successStatus
+                                objectTag:objectTag
+                        completionHandler:handler];
+}
+
++ (NSDictionary *)sessionAuthDictionary {
+    ETRRoom * preparedRoom = [ETRSessionManager sessionRoom];
+    if (!preparedRoom) {
+        NSLog(@"ERROR: Cannot build auth Dictionary outside of Session.");
+        return nil;
+    }
+    
+    NSString * sessionID = [NSString stringWithFormat:@"%ld", [[preparedRoom remoteID] longValue]];
+    NSString * senderID = [NSString stringWithFormat:@"%ld", [ETRLocalUserManager userID]];
+    
+    NSMutableDictionary * authParams = [NSMutableDictionary dictionary];
+    [authParams setObject:senderID forKey:ETRAPIParamSender];
+    [authParams setObject:sessionID forKey:ETRAPIParamSession];
+    
+    return authParams;
+}
+
 
 #pragma mark -
 #pragma mark UI Updates

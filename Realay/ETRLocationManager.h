@@ -24,6 +24,4 @@
 
 - (NSInteger)distanceToRoom:(ETRRoom *)room;
 
-- (void)launch;
-
 @end

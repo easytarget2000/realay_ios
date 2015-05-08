@@ -8,17 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+@class ETRAction;
 @class ETRUser;
+
 
 @interface ETRAlertViewFactory : NSObject
 
+/*
+ 
+ */
 + (void)showAuthorizationAlert;
 
 /*
- Displays a dialog in an alert view that asks to confirm a block action.
- The delegate will handle the YES button click.
+ 
  */
-+ (void)showBlockConfirmViewForUser:(ETRUser *)user withDelegate:(id)delegate;
++ (void)showHasLeftViewForUser:(ETRUser *)user;
 
 /*
  Displays an alert view that gives the reason why the user was kicked from the room.
@@ -29,13 +33,19 @@
  Displays a dialog in an alert view if the user wants to leave the room.
  The delegate will handle the OK button click.
  */
-+ (void)showLeaveConfirmViewWithDelegate:(id)delegate;
+- (void)showLeaveConfirmView;
 
 /*
  Displays a warning in an alert view saying that the device location cannot be found
  and how many minutes are left.
  */
 + (void)showLocationWarningWithKickDate:(NSDate *)kickDate;
+
+/*
+ 
+ */
+- (void)showMenuForMessage:(ETRAction *)message calledByViewController:(UIViewController *)viewController;
+
 
 /*
  Displays an alert view that says the user cannot join the room

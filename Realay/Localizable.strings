@@ -8,6 +8,10 @@
 
 "Before_join" = "Before you can join, you need to be within the radius of this place.\n\nThe circle on the map displays the area of a Realay.";
 
+"Block" = "Block";
+
+"Block_Report" = "Block & Report";
+
 "Block_User" = "Block User";
 
 "Blocking_hides" = "This person and their messages will be hidden from you.";
@@ -15,6 +19,8 @@
 "Cancel" = "Cancel";
 
 "Chat" = "Chat";
+
+"Copy_Message" = "Copy Message";
 
 "Current_distance" = "You are currently %@ away.";
 
@@ -36,8 +42,6 @@
 
 "No" = "No";
 
-"No_other_people" = "There are currently no other people online in this place. Invite someone around you to join Realay.";
-
 "No_private_conversations" = "You currently do not have any private conversations in this Realay. Chose a person from the user list to start a 1-on-1 chat.";
 
 "OK" = "OK";
@@ -45,6 +49,8 @@
 "Ongoing" = "Ongoing";
 
 "phone" = "phone";
+
+"Private_Conversation" = "Private Conversation";
 
 "Private_Conversations" = "Private Conversations";
 
@@ -57,6 +63,8 @@
 "send_me_realhey" = "Send me a RealHey!";
 
 "Session_terminated" = "Your session has been terminated.";
+
+"Show_Profile" = "Show Profile";
 
 "size" = "size";
 

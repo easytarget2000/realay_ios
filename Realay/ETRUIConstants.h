@@ -12,6 +12,12 @@
 
 extern CGFloat const ETRIconViewCornerRadius;
 
+extern NSString *const ETRViewControllerIDConversation;
+
+extern NSString *const ETRViewControllerIDDetails;
+
+extern NSString *const ETRViewControllerIDJoin;
+
 + (UIColor *)primaryColor;
 
 + (UIColor *)primaryTransparentColor;

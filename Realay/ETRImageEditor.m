@@ -1,4 +1,4 @@
-//
+ //
 //  ETRImageEditor.m
 //  Realay
 //
@@ -25,23 +25,34 @@ static CGFloat const ETRHiResImageQuality = 0.9f;
 
 static CGFloat const ETRLoResImageQuality = 0.6f;
 
+/*
+ Tag value for UIImageView Objects;
+ To be used as a flag which states the View already holds a hi-res Image.
+ */
+static NSInteger const ETRImageViewTagHiRes = 9212;
+
 
 @implementation ETRImageEditor
 
-+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag {
++ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView isHiRes:(BOOL)isHiRes {
     
     if (!image || !targetImageView) {
         return;
     }
     
-    // Adjust the size if needed.
-    UIImage * croppedImage = [ETRImageEditor cropImage:image toSize:targetImageView.frame.size];
-    if (targetImageView && [targetImageView tag] == tag) {
-        // Verifying reference for quick scrolling of Image Views inside of reusable cells.
-        [targetImageView setImage:croppedImage];
-    } else {
-        NSLog(@"DEBUG: Image View reference changed midway.");
+    if (isHiRes) {
+        // Store that this Image View already shows a hi-res Image.
+        // The Tag has to be reset for reuse!
+        [targetImageView setTag:ETRImageViewTagHiRes];
+    } else if ([targetImageView tag] == ETRImageViewTagHiRes) {
+        // Do not override lo-res images.
+        return;
     }
+    
+    
+    // Adjust the size if needed.
+    UIImage * croppedImage = [ETRImageEditor scaleCropImage:image toSize:targetImageView.frame.size];
+    [targetImageView setImage:croppedImage];
 }
 
 + (UIImage *)imageFromPickerInfo:(NSDictionary *)info {
@@ -63,65 +74,72 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
 }
 
 + (NSData *)cropHiResImage:(UIImage *)image writeToFile:(NSString *)filePath {
-    UIImage * hiResImage = [ETRImageEditor cropImage:image toSize:ETRHiResImageSize];
+    UIImage * hiResImage = [ETRImageEditor scaleCropImage:image toSize:ETRHiResImageSize];
     NSData * hiResData = UIImageJPEGRepresentation(hiResImage, ETRHiResImageQuality);
     [hiResData writeToFile:filePath atomically:YES];
     return hiResData;
 }
 
 + (NSData *)cropLoResImage:(UIImage *)image writeToFile:(NSString *)filePath {
-    UIImage * loResImage = [ETRImageEditor cropImage:image toSize:ETRLoResImageSize];
+    UIImage * loResImage = [ETRImageEditor scaleCropImage:image toSize:ETRLoResImageSize];
     NSData * loResData = UIImageJPEGRepresentation(loResImage, ETRLoResImageQuality);
     [loResData writeToFile:filePath atomically:YES];
     return loResData;
 }
 
-+ (UIImage *)cropImage:(UIImage *)image toSize:(CGSize)size {
-    if (!image) {
-        NSLog(@"ERROR: Nil image given to be cropped.");
-        return nil;
++ (UIImage *)scaleCropImage:(UIImage *)image toSize:(CGSize)targetSize {
+    
+    CGSize imageSize = [image size];
+    if (imageSize.width == targetSize.width && imageSize.height == targetSize.width) {
+        return image;
     }
     
-//    if (image.size.width != size.width || image.size.height != size.width) {
-//        UIGraphicsBeginImageContext(size);
-//        CGRect imageRect = CGRectMake(0.0f, 0.0f, size.width, size.width);
-//        [image drawInRect:imageRect];
-//        UIImage * croppedImage = UIGraphicsGetImageFromCurrentImageContext();
-//        UIGraphicsEndImageContext();
-//        return croppedImage;
-//    } else {
-//        // The image already has the requested dimensions.
-//        return image;
-//    }
-    
-    //If scale factor is not touched, no scaling will occur.
-    CGFloat scaleFactor = 1.0f;
-    
-    //Decide which factor to use to scale the image (factor = targetSize / imageSize)
-    if (image.size.width > size.width || image.size.height > size.height) {
-        if (!((scaleFactor = (size.width / image.size.width)) > (size.height / image.size.height))) {
-            scaleFactor = size.height / image.size.height;
-        }
+    CGFloat shortestImageSide;
+    if (imageSize.width > imageSize.height) {
+        shortestImageSide = imageSize.height;
+    } else {
+        shortestImageSide = imageSize.width;
     }
-
     
-    UIGraphicsBeginImageContext(size);
+    CGFloat resizeFactor;
+    if (targetSize.width > targetSize.height) {
+        resizeFactor = targetSize.width / shortestImageSide;
+    } else {
+        resizeFactor = targetSize.height / shortestImageSide;
+    }
     
-    // Create the Rect in which the image will be drawn.
-    CGFloat x = (size.width - image.size.width * scaleFactor) * 0.5f;
-    CGFloat y = (size.height -  image.size.height * scaleFactor) * 0.5f;
-    CGFloat width = image.size.width * scaleFactor;
-    CGFloat height = image.size.height * scaleFactor;
-    CGRect rect = CGRectMake(x, y, width, height);
+    CGSize scaleSize = imageSize;
+    scaleSize.width *= resizeFactor;
+    scaleSize.height *= resizeFactor;
     
-    //Draw the image into the Rect.
-    [image drawInRect:rect];
+    UIGraphicsBeginImageContext(scaleSize);
     
-    //Save the image, ending the image context.
-    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    CGContextRef scaleContext = UIGraphicsGetCurrentContext();
+    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [image CGImage]);
+    UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    
     UIGraphicsEndImageContext();
     
-    return scaledImage;
+    CGFloat cropX = 0.0f;
+    CGFloat cropY = 0.0f;
+//    if (targetSize.width > targetSize.height) {
+//        cropY = -(scaleSize.height * 0.5f) - (targetSize.height * 0.5f);
+//    } else {
+//        cropX = -(scaleSize.width * 0.5f) - (targetSize.width * 0.5f);
+//    }
+    
+    CGRect cropRect = CGRectMake(cropX, cropY, targetSize.width, targetSize.height);
+
+    UIGraphicsBeginImageContext(cropRect.size);
+    
+    CGContextRef cropContext = UIGraphicsGetCurrentContext();
+    CGContextDrawImage(cropContext, cropRect, [scaledImage CGImage]);
+    UIImage * outputImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return outputImage;
 }
+
 
 @end

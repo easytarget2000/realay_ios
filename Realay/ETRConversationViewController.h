@@ -14,19 +14,19 @@
 
 @property (weak, nonatomic) IBOutlet UITableView * messagesTableView;
 
-@property (weak, nonatomic) IBOutlet UILabel *inputCover;
+// TODO: Replace inputCover with UIView * cover;
 
-@property (weak, nonatomic) IBOutlet UIView *inputContainer;
+@property (weak, nonatomic) IBOutlet UILabel * inputCover;
 
 @property (weak, nonatomic) IBOutlet UITextField * messageTextField;
 
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem * exitButton;
 
-@property (weak, nonatomic) IBOutlet UIButton *mediaButton;
+@property (weak, nonatomic) IBOutlet UIButton * mediaButton;
 
-@property (weak, nonatomic) IBOutlet UIView *cameraButton;
+@property (weak, nonatomic) IBOutlet UIView * cameraButton;
 
-@property (weak, nonatomic) IBOutlet UIView *galleryButton;
+@property (weak, nonatomic) IBOutlet UIView * galleryButton;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem * moreButton;
 

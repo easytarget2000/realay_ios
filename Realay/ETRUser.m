@@ -22,6 +22,7 @@
 @dynamic instagram;
 @dynamic facebook;
 @dynamic twitter;
+@dynamic isBlocked;
 @dynamic inRoom;
 @dynamic sentActions;
 @dynamic receivedActions;

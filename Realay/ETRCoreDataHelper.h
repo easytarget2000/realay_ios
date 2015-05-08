@@ -59,7 +59,7 @@ extern long const ETRActionPublicUserID;
 
 + (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
 
-+ (ETRRoom *)roomWithRemoteID:(long)remoteID;
++ (ETRRoom *)roomWithRemoteID:(NSNumber *)remoteID;
 
 + (NSFetchedResultsController *)roomListResultsController;
 
@@ -68,11 +68,14 @@ extern long const ETRActionPublicUserID;
 
 + (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
 
-+ (ETRUser *)userWithRemoteID:(long)remoteID downloadIfUnavailable:(BOOL)doDownload;
++ (ETRUser *)userWithRemoteID:(long)remoteID
+          doLoadIfUnavailable:(BOOL)doLoadIfUnavailable;
 
 + (ETRUser *)copyUser:(ETRUser *)user;
 
 + (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
+
++ (NSFetchedResultsController *)blockedUserListControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 @end
 

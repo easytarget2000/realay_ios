@@ -9,10 +9,13 @@
 #import "ETRAppDelegate.h"
 
 #import "ETRActionManager.h"
-//#import "ETRLocalUserManager.h"
+#import "ETRConversationViewController.h"
 #import "ETRLocationManager.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRReachabilityManager.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
+
 
 @implementation ETRAppDelegate
 
@@ -21,13 +24,16 @@
     // Google Maps API Key:
     [GMSServices provideAPIKey:@"AIzaSyBi51VpGsRlkDh7rz-1-cv73DOS7aE_yGA"];
     
+    // Initialise the Reachability and Location Managers, in order to avoid delayed Reachability states later.
+    ETRReachabilityManager * reachMan = [ETRReachabilityManager sharedManager];
+    ETRLocationManager * locMan = [ETRLocationManager sharedManager];
+
     // Additional GUI setup:
     [[self window] setTintColor:[UIColor whiteColor]];
     
     // Register for background fetches.
     [[UIApplication sharedApplication] setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
     
-    [[ETRLocationManager sharedManager] launch];
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
@@ -42,8 +48,22 @@
     // Prepare the random number generator seeed.
     srand48(time(0));
     
-    // Initialise the Reachability Manager, in order to avoid delayed Reachability states later.
-    [ETRReachabilityManager sharedManager];
+    UIStoryboard * storyboard = [[[self window] rootViewController] storyboard];
+    ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
+    
+    // TODO: Use Navigation Controller to enable jumpbacks.
+    
+//    if ([sessionMan didBeginSession] && [sessionMan room]) {
+//        ETRConversationViewController * conversationViewController;
+//        conversationViewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDConversation];
+//        [conversationViewController setIsPublic:YES];
+//        [[self window] setRootViewController:conversationViewController];
+//        [[self window] makeKeyAndVisible];
+//    } else if ([sessionMan restoreSession]) {
+//        UIViewController * joinViewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDJoin];
+//        [[self window] setRootViewController:joinViewController];
+//        [[self window] makeKeyAndVisible];
+//    }
     
     return YES;
 }
@@ -74,6 +94,8 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
+    
+    [ETRDefaultsHelper removePublicMessageInputTexts];
 }
 
 #pragma mark - Fetch

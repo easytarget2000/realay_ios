@@ -1,9 +1,9 @@
 //
-//  UserListViewController.m
+//  ETRUserListViewController.m
 //  Realay
 //
-//  Created by Michel on 29.09.13.
-//  Copyright (c) 2013 Michel Sievers. All rights reserved.
+//  Created by Michel on 06/05/15.
+//  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
 #import "ETRUserListViewController.h"
@@ -24,6 +24,7 @@
 #import "ETRUser.h"
 #import "ETRUserCell.h"
 
+
 static NSString *const ETRUsersToConversationSegue = @"usersToConversationSegue";
 
 static NSString *const ETRUsersToMapSegue = @"usersToMapSegue";
@@ -37,7 +38,9 @@ static NSString *const ETRInfoCellIdentifier = @"infoCell";
 static CGFloat const ETRUserRowHeight = 64.0f;
 
 
-@interface ETRUserListViewController () <NSFetchedResultsControllerDelegate>
+@interface ETRUserListViewController () <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
+
+@property (weak, nonatomic) UIRefreshControl * refreshControl;
 
 @property (strong, nonatomic) NSFetchedResultsController * conversationsResultsController;
 
@@ -66,15 +69,19 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     }
     
     // Do not display empty cells at the end.
-    [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
+    [[self usersTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
-    [[self tableView] setRowHeight:ETRUserRowHeight];
-    
+    [[self usersTableView] setRowHeight:ETRUserRowHeight];
+        
     // Configure manual refresher.
-    [[self refreshControl] addTarget:self
-                              action:@selector(updateUserList)
-                    forControlEvents:UIControlEventValueChanged];
+    UIRefreshControl * refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self
+                       action:@selector(updateUserList)
+             forControlEvents:UIControlEventValueChanged];
+    [refreshControl setTintColor:[ETRUIConstants accentColor]];
+    [[self usersTableView] addSubview:refreshControl];
+    [self setRefreshControl:refreshControl];
     
     // Create the Map and Profile BarButtons and place them in the NavigationBar.
     UIImage * mapButtonIcon = [UIImage imageNamed:@"Map"];
@@ -102,7 +109,7 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [[self tableView] reloadData];
+    [[self usersTableView] reloadData];
     [[ETRActionManager sharedManager] setForegroundPartnerID:-9L];
 }
 
@@ -115,12 +122,12 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 #pragma mark Table
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
-    [[self tableView] beginUpdates];
+    [[self usersTableView] beginUpdates];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self refreshControl] endRefreshing];
-    [[self tableView] endUpdates];
+    [[self usersTableView] endUpdates];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -131,27 +138,27 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     
     switch (type) {
         case NSFetchedResultsChangeInsert: {
-            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+            [[self usersTableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case NSFetchedResultsChangeDelete: {
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+            [[self usersTableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case NSFetchedResultsChangeUpdate: {
-            UITableViewCell *cell = [[self tableView] cellForRowAtIndexPath:indexPath];
+            UITableViewCell *cell = [[self usersTableView] cellForRowAtIndexPath:indexPath];
             if (cell && [cell isKindOfClass:[ETRUserCell class]]) {
                 [self configureUserCell:(ETRUserCell *)cell atIndexPath:indexPath];
             }
             break;
         }
         case NSFetchedResultsChangeMove: {
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
-            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+            [[self usersTableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
+            [[self usersTableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
         }
     }
 }
@@ -163,13 +170,13 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
         if (!_conversationsResultsController || ![[_conversationsResultsController fetchedObjects] count]) {
-            return 1;
+            return 0;
         } else {
             return [[_conversationsResultsController fetchedObjects] count];
         }
     } else {
         if (!_usersResultsController || ![[_usersResultsController fetchedObjects] count]) {
-            return 1;
+            return 0;
         } else {
             return [[_usersResultsController fetchedObjects] count];
         }
@@ -179,28 +186,13 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    // Show an information Cell, if no Conversations have been started.
-    if (!_conversationsResultsController || ![[_conversationsResultsController fetchedObjects] count]) {
-        if ([indexPath section] == 0) {
-            ETRInfoCell * cell = [tableView dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
-                                                                 forIndexPath:indexPath];
-            [[cell infoLabel] setText:NSLocalizedString(@"No_private_conversations", @"No PMs, instructions")];
-            return cell;
-        }
-    }
-    
-    // Show an information Cell, if no Users are online.
-    if (!_usersResultsController || ![[_usersResultsController fetchedObjects] count]) {
-        if ([indexPath section] == 1) {
-            ETRInfoCell * cell = [tableView dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
-                                                                 forIndexPath:indexPath];
-            [[cell infoLabel] setText:NSLocalizedString(@"No_other_people", @"No Users, invite")];
-            return cell;
-        }
-    }
-    
+//    if (!_conversationsResultsController || ![[_conversationsResultsController fetchedObjects] count]) {
+//        return nil;
+//    } else if (!_usersResultsController || ![[_usersResultsController fetchedObjects] count]) {
+//        return nil;
+//    }
     ETRUserCell * userCell = [tableView dequeueReusableCellWithIdentifier:ETRUserCellIdentifier
-                                                         forIndexPath:indexPath];
+                                                             forIndexPath:indexPath];
     [self configureUserCell:userCell atIndexPath:indexPath];
     return userCell;
 }
@@ -211,8 +203,8 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 
 - (void)configureUserCell:(ETRUserCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     // Give the Image Views a circular shape.
-//    [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
-//    [[cell iconView] setClipsToBounds:YES];
+    //    [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
+    //    [[cell iconView] setClipsToBounds:YES];
     
     // Get the User object from the appropriate Fetched Results Controller
     // and apply the data to the Cell elements.
@@ -278,16 +270,16 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 }
 
 - (IBAction)mapButtonPressed:(id)sender {
-//    NSInteger mapControllerIndex = [[ETRManager sharedManager] mapControllerIndex];
-//    UINavigationController *navc = [self navigationController];
-//    UIViewController *mapController = [[navc viewControllers] objectAtIndex:mapControllerIndex];
-//    
-//    if (mapController) {
-////        [navc popToViewController:mapController animated:YES];
-//
-//    } else {
-//        NSLog(@"ERROR: No map view controller on stack.");
-//    }
+    //    NSInteger mapControllerIndex = [[ETRManager sharedManager] mapControllerIndex];
+    //    UINavigationController *navc = [self navigationController];
+    //    UIViewController *mapController = [[navc viewControllers] objectAtIndex:mapControllerIndex];
+    //
+    //    if (mapController) {
+    ////        [navc popToViewController:mapController animated:YES];
+    //
+    //    } else {
+    //        NSLog(@"ERROR: No map view controller on stack.");
+    //    }
     
     [self performSegueWithIdentifier:ETRUsersToMapSegue sender:self];
 }
@@ -309,9 +301,9 @@ static CGFloat const ETRUserRowHeight = 64.0f;
         return;
     }
     
-//    if ([destination isKindOfClass:[ETRMapViewController class]]) {
-//        return;
-//    }
+    //    if ([destination isKindOfClass:[ETRMapViewController class]]) {
+    //        return;
+    //    }
     
     if ([destination isKindOfClass:[ETRDetailsViewController class]]) {
         if (sender && [sender isKindOfClass:[ETRUser class]]) {

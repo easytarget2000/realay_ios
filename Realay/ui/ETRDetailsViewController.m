@@ -354,11 +354,20 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
 - (IBAction)barButtonPressed:(id)sender {
     if (_room) {
         if (![[ETRSessionManager sharedManager] didBeginSession]) {
-            if ([ETRLocationManager isInSessionRegion]) {
+#ifdef DEBUG_JOIN
+            [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
+#else
+            if (![ETRLocationManager didAuthorize]) {
+                // The location access has not been authorized.
+                [ETRAlertViewFactory showAuthorizationAlert];
+            } else if ([ETRLocationManager isInSessionRegion]) {
+                // Show the password prompt, if the device location is inside the region.
                 [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
             } else {
+                // The user is outside of the radius.
                 [ETRAlertViewFactory showRoomDistanceAlert];
             }
+#endif
         }
     } else if (_user) {
         if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {

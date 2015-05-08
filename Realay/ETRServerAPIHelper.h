@@ -26,9 +26,7 @@ extern NSString * ETRAPIBaseURL;
                           progressView:(UIProgressView *)progressView
                      completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
-+ (void)getActionsWithMinID:(long)lastActionID
-                performPing:(BOOL)doPerformPing
-          completionHandler:(void (^)(id<NSObject> receivedObject))completionHandler;
++ (void)getActionsAndPerform:(void (^)(id<NSObject>))completionHandler;
 
 + (void)putAction:(ETRAction *)outgoingAction;
 

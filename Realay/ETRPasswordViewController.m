@@ -35,13 +35,17 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
     [[self passwordTextField] setText:@""];
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
     
-    // Just in case there is a toolbar wanting to be displayed:
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[[self navigationController] navigationBar] setTranslucent:NO];
     [[self navigationController] setToolbarHidden:YES];
 }
 
 #pragma mark - IBAction
 
 - (IBAction)joinButtonPressed:(id)sender {
+#ifdef DEBUG_JOIN
+    [self verifyPasswordAndJoin];
+#else
     // Only perform a join action, if the user did not join yet.
     if (![[ETRSessionManager sharedManager] didBeginSession]) {
         // Show the password prompt, if the device location is inside the region.
@@ -51,6 +55,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
           [ETRAlertViewFactory showRoomDistanceAlert];
         }
     }
+#endif
 }
 
 #pragma mark - UITextFieldDelegate
@@ -66,10 +71,10 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
     [[self passwordTextField] resignFirstResponder];
     
     // Get the password values.
-    NSString *typedPassword = [[self passwordTextField] text];
-    NSString *password = [[[ETRSessionManager sharedManager] room] password];
+    NSString * typedPassword = [[self passwordTextField] text];
+    NSString * password = [[[ETRSessionManager sharedManager] room] password];
     
-#ifdef DEBUG_NO_PW_CHECK
+#ifdef DEBUG_JOIN
     typedPassword = password;
 #endif
     

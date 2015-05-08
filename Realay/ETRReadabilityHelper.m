@@ -8,7 +8,7 @@
 
 #import "ETRReadabilityHelper.h"
 
-#import "ETRPreferenceHelper.h"
+#import "ETRDefaultsHelper.h"
 
 static CGFloat const kYardInMetre = 1.09361f;
 
@@ -119,7 +119,7 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
  15000 returns "15 km" or "8 mi"
  */
 + (NSString *)formattedIntegerLength:(NSInteger)meters {
-    if ([ETRPreferenceHelper doUseMetricSystem]) {
+    if ([ETRDefaultsHelper doUseMetricSystem]) {
         if (meters < kMaxShowMetre) {
             NSString *unit = NSLocalizedString(@"unit_metre", @"m");
             return [NSString stringWithFormat:@"%ld %@", meters, unit];

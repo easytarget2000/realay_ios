@@ -14,6 +14,7 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 
@@ -30,7 +31,16 @@
 #define kUserDefNotifPublic     @"userDefaultsNotificationPublic"
 #define kUserDefNotifOther      @"userDefaultsNotificationOther"
 
-static ETRSessionManager *sharedInstance = nil;
+static ETRSessionManager * sharedInstance = nil;
+
+static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
+
+
+@interface ETRSessionManager()
+
+@property (nonatomic) CFAbsoluteTime lastUserListUpdate;
+
+@end
 
 @implementation ETRSessionManager {
     UINavigationController  *_navCon;               // Navigation Controller for quit-pops
@@ -43,6 +53,7 @@ static ETRSessionManager *sharedInstance = nil;
     if (!initialized) {
         initialized = YES;
         sharedInstance = [[ETRSessionManager alloc] init];
+        [sharedInstance setLastUserListUpdate:0.0];
     }
 }
 
@@ -78,6 +89,7 @@ static ETRSessionManager *sharedInstance = nil;
     // Consider the join successful so far and start the Action Manager.
     [[ETRActionManager sharedManager] startSession];
     _didBeginSession = YES;
+    [ETRDefaultsHelper storeSession:[_room remoteID]];
     return YES;
 }
 
@@ -89,6 +101,22 @@ static ETRSessionManager *sharedInstance = nil;
 
     // Remove all public Actions from the local DB.
     [ETRCoreDataHelper clearPublicActions];
+    [ETRDefaultsHelper removeSession];
+    [ETRDefaultsHelper removePublicMessageInputTexts];
+}
+
+/*
+ Attempts to restore the last Session Room from Defaults;
+ Does not start the Session;
+ Start the Join View Controller to continue, if returning YES.
+ 
+ Return: YES, if the Room has been restored
+ */
+- (BOOL)restoreSession {
+    if (!_room) {
+        _room = [ETRDefaultsHelper restoreSession];
+    }
+    return _room != nil;
 }
 
 - (void)prepareSessionInRoom:(ETRRoom *)room
@@ -107,6 +135,23 @@ static ETRSessionManager *sharedInstance = nil;
     
     // Adjust the location manager for a higher accuracy.
     // TODO: Increase location update speed?
+}
+
+#pragma mark -
+#pragma mark Regular User List Update
+
+/*
+ 
+ */
+- (void)acknowledegeUserListUpdate {
+    _lastUserListUpdate = CFAbsoluteTimeGetCurrent();
+}
+
+/*
+ 
+ */
+- (BOOL)doUpdateUserList {
+    return CFAbsoluteTimeGetCurrent() - _lastUserListUpdate > ETRUserListRefreshInterval;
 }
 
 @end

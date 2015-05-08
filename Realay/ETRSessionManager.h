@@ -98,9 +98,31 @@
 - (void)endSession;
 
 /*
+ Attempts to restore the last Session Room from Defaults;
+ Does not start the Session;
+ Start the Join View Controller to continue, if returning YES.
+ 
+ Return: YES, if the Room has been restored
+ */
+- (BOOL)restoreSession;
+
+/*
  Prepare the session manager so it can join a room later.
  */
 - (void)prepareSessionInRoom:(ETRRoom *)room
         navigationController:(UINavigationController *)navigationController;
+
+#pragma mark -
+#pragma mark Regular User List Update
+
+/*
+ 
+ */
+- (void)acknowledegeUserListUpdate;
+
+/*
+ 
+ */
+- (BOOL)doUpdateUserList;
 
 @end

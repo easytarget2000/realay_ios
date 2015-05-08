@@ -17,16 +17,20 @@
 
 @property (nonatomic) long foregroundPartnerID;
 
+//@property (readonly, nonatomic) BOOL didFirstQuery;
+
 + (ETRActionManager *)sharedManager;
 
 - (void)startSession;
 
 - (void)queryUpdates:(NSTimer *)timer;
 
-- (void)ackActionID:(long)remoteActionID;
+- (void)ackknowledgeActionID:(long)remoteActionID;
 
 - (void)dispatchNotificationForAction:(ETRAction *)action;
 
 - (void)setForegroundPartnerID:(long)foregroundPartnerID;
+
+- (BOOL)doSendPing;
 
 @end

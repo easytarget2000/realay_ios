@@ -42,6 +42,8 @@ static NSString *const ETRInRoomKey = @"inRoom";
 
 static NSString *const ETRUserNameKey = @"name";
 
+static NSString *const ETRUserIsBlockedKey = @"isBlocked";
+
 static NSManagedObjectContext * ManagedObjectContext;
 
 static NSEntityDescription * ActionEntity;
@@ -109,9 +111,9 @@ static NSString * UserEntityName;
     NSError *error;
     if (![[ETRCoreDataHelper context] save:&error] || error) {
         NSLog(@"ERROR: Could not save context: %@", error);
-        return true;
-    } else {
         return false;
+    } else {
+        return true;
     }
 }
 
@@ -159,7 +161,7 @@ static NSString * UserEntityName;
     }
     
     // Acknowledge this Action's ID.
-    [[ETRActionManager sharedManager] ackActionID:remoteID];
+    [[ETRActionManager sharedManager] ackknowledgeActionID:remoteID];
     
     // Sender and recipient IDs may be a valid User ID, i.e. positive long,
     // or -10, the pre-defined ID for public (as recipient ID) and admin (as sender ID) messages.
@@ -168,7 +170,7 @@ static NSString * UserEntityName;
     ETRUser * sender;
     if (senderID > 10) {
         sender = [ETRCoreDataHelper userWithRemoteID:senderID
-                               downloadIfUnavailable:YES];
+                                 doLoadIfUnavailable:YES];
     } else if (senderID == ETRActionPublicUserID) {
         // TODO: Handle Server messages.
     } else {
@@ -180,7 +182,7 @@ static NSString * UserEntityName;
     ETRUser * recipient;
     if (recipientID > 10) {
         recipient = [ETRCoreDataHelper userWithRemoteID:recipientID
-                                  downloadIfUnavailable:YES];
+                                    doLoadIfUnavailable:YES];
     } else if (recipientID != ETRActionPublicUserID) {
         NSLog(@"WARNING: Received Action with invalid recipient ID: %@", jsonDictionary);
         return;
@@ -191,7 +193,7 @@ static NSString * UserEntityName;
         NSLog(@"ERROR: Received Action with invalid Room ID: %@", jsonDictionary);
         return;
     }
-    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:roomID];
+    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:@(roomID)];
     
     // Actions that are not messages do not need to be added to the local database.
     short code = [jsonDictionary shortValueForKey:@"cd" withFallbackValue:-1];
@@ -385,18 +387,20 @@ static NSString * UserEntityName;
     }
     
     NSFetchRequest * fetchRequest;
-//    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
     fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
     
-    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld AND (%@ == %i OR %@ == %i)",
-                       ETRActionRoomKey,
-                       ETRRemoteIDKey,
-                       [[sessionRoom remoteID] longValue],
-                       ETRActionCodeKey,
-                       ETRActionCodePublicMessage,
-                       ETRActionCodeKey,
-                       ETRActionCodePublicMedia];
+    NSString * where = [NSString stringWithFormat:@"%@.%@ == %ld AND (%@ == %i OR %@ == %i) AND %@.%@ != %@",
+                        ETRActionRoomKey,
+                        ETRRemoteIDKey,
+                        [[sessionRoom remoteID] longValue],
+                        ETRActionCodeKey,
+                        ETRActionCodePublicMessage,
+                        ETRActionCodeKey,
+                        ETRActionCodePublicMedia,
+                        ETRActionSenderKey,
+                        ETRUserIsBlockedKey,
+                        @(YES)];
     
 //    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
     [fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
@@ -426,23 +430,17 @@ static NSString * UserEntityName;
     NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
     
-//    NSString * predicateFormat = @"room = %@ AND (sender = %@ OR recipient = %@) AND (code = %i OR code = %i)";
-//    long partnerID = [[partner remoteID] longValue];
-    
     // TODO: Compare Object predicate vs. ID predicate.
-//    NSString * where = [NSString stringWithFormat:@"sender.%@ == %ld OR recipient.%@ == %ld",
-//                        ETRRemoteIDKey,
-//                        partnerID,
-//                        ETRRemoteIDKey,
-//                        partnerID,
-//                        ETRActionCodeKey,
-//                        ETRActionCodePrivateMessage,
-//                        ETRActionCodeKey,
-//                        ETRActionCodePrivateMedia];
+//    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"sender == %@ OR recipient == %@", partner, partner]];
-//    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
-
+    ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
+    
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@)",
+                                partner,
+                                localUser,
+                                partner,
+                                localUser]];
+    
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
     
     NSFetchedResultsController * resultsController;
@@ -450,6 +448,10 @@ static NSString * UserEntityName;
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
+    
+//    CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - startTime;
+//    NSLog(@"DEBUG: Fetched Results Controller %@ in %f ms.", [partner remoteID], duration);
+
     [resultsController setDelegate:delegate];
     return resultsController;
 }
@@ -579,10 +581,10 @@ static NSString * UserEntityName;
 + (void)insertRoomFromDictionary:(NSDictionary *)JSONDict {
     
     // Get the remote DB ID from the JSON data.
-    long remoteID = (long) [[JSONDict objectForKey:@"r"] longLongValue];
+    long remoteID = [[JSONDict objectForKey:@"r"] longLongValue];
     
     // Check the context CoreData, if an object with this remote ID already exists.
-    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:remoteID];
+    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:@(remoteID)];
     
     [room setImageID:@((long) [[JSONDict objectForKey:@"i"] longLongValue])];
     NSString *radius = (NSString *)[JSONDict objectForKey:@"rd"];
@@ -619,13 +621,13 @@ static NSString * UserEntityName;
     [ETRCoreDataHelper saveContext];
 }
 
-+ (ETRRoom *)roomWithRemoteID:(long)remoteID {
++ (ETRRoom *)roomWithRemoteID:(NSNumber *)remoteID {
     //    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper roomEntityName]];
     
     NSFetchRequest * fetch = [[NSFetchRequest alloc] init];
     [fetch setEntity:[ETRCoreDataHelper roomEntity]];
-    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    NSString * where = [NSString stringWithFormat:@"%@ == %@", ETRRemoteIDKey, remoteID];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
     [fetch setPredicate:predicate];
     NSArray *existingRooms = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
     
@@ -637,7 +639,7 @@ static NSString * UserEntityName;
     
     ETRRoom * room = [[ETRRoom alloc] initWithEntity:[ETRCoreDataHelper roomEntity]
                       insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
-    [room setRemoteID:@(remoteID)];
+    [room setRemoteID:remoteID];
     return room;
 }
 
@@ -663,7 +665,7 @@ static NSString * UserEntityName;
 #pragma mark User Objects
 
 + (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
-    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
@@ -672,12 +674,13 @@ static NSString * UserEntityName;
     NSFetchRequest *fetchRequest;
     fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
     
-    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld",
-                       ETRInRoomKey,
-                       ETRRemoteIDKey,
-                       [[sessionRoom remoteID] longValue]];
+//    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld AND %@ != 1",
+//                       ETRInRoomKey,
+//                       ETRRemoteIDKey,
+//                       [[sessionRoom remoteID] longValue],
+//                       ETRUserIsBlockedKey];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"inRoom == %@ AND isBlocked != 1", sessionRoom];
     [fetchRequest setPredicate:predicate];
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
     
@@ -687,6 +690,25 @@ static NSString * UserEntityName;
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
     // Configure Fetched Results Controller
+    [resultsController setDelegate:delegate];
+    return resultsController;
+}
+
++ (NSFetchedResultsController *)blockedUserListControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
+    NSFetchRequest *fetchRequest;
+    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
+    
+    NSString *where = [NSString stringWithFormat:@"%@ == %@", ETRUserIsBlockedKey, @(YES)];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
+    [fetchRequest setPredicate:predicate];
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
+    
+    NSFetchedResultsController *resultsController;
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                            managedObjectContext:[ETRCoreDataHelper context]
+                                                              sectionNameKeyPath:nil
+                                                                       cacheName:nil];
+    
     [resultsController setDelegate:delegate];
     return resultsController;
 }
@@ -701,7 +723,7 @@ static NSString * UserEntityName;
     }
     
     // Get the existing Object or an empty one to fill.
-    ETRUser *user = [ETRCoreDataHelper userWithRemoteID:remoteID downloadIfUnavailable:NO];
+    ETRUser * user = [ETRCoreDataHelper userWithRemoteID:remoteID doLoadIfUnavailable:NO];
     
     [user setImageID:@([jsonDictionary longValueForKey:@"i" withFallbackValue:-5])];
     [user setName:[jsonDictionary stringForKey:@"n"]];
@@ -738,7 +760,9 @@ static NSString * UserEntityName;
     return copiedUser;
 }
 
-+ (ETRUser *)userWithRemoteID:(long)remoteID downloadIfUnavailable:(BOOL)doDownload {
++ (ETRUser *)userWithRemoteID:(long)remoteID
+          doLoadIfUnavailable:(BOOL)doLoadIfUnavailable{
+    
     // Check the context CoreData, if an object with this remote ID exists.
     NSFetchRequest *fetch;
     fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
@@ -753,7 +777,7 @@ static NSString * UserEntityName;
         }
     }
     
-    if (doDownload) {
+    if (doLoadIfUnavailable) {
         [ETRServerAPIHelper getUserWithID:remoteID];
     }
     
@@ -784,7 +808,7 @@ static NSString * UserEntityName;
 }
 
 - (long)longValueForKey:(id)key withFallbackValue:(long)fallbackValue {
-    NSString *value = [self stringForKey:key];
+    NSString * value = [self stringForKey:key];
     if (value) {
         return (long) [value longLongValue];
     } else {

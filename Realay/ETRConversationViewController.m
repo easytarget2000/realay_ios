@@ -14,6 +14,7 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRConversation.h"
 #import "ETRCoreDataHelper.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
@@ -28,6 +29,7 @@
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
+
 
 static CGFloat const ETREstimatedMessageRowHeight = 100.0f;
 
@@ -47,13 +49,14 @@ static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 @interface ETRConversationViewController ()
 <
 NSFetchedResultsControllerDelegate,
-UIAlertViewDelegate,
 UIImagePickerControllerDelegate,
 UINavigationControllerDelegate,
 UITableViewDataSource,
 UITableViewDelegate,
 UITextFieldDelegate
 >
+
+@property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
 
 @property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
 
@@ -83,6 +86,13 @@ UITextFieldDelegate
     [[self messagesTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     [[self messagesTableView] setRowHeight:UITableViewAutomaticDimension];
     [[self messagesTableView] setEstimatedRowHeight:ETREstimatedMessageRowHeight];
+    
+    // Add a long press Recognizer to the Table.
+    UILongPressGestureRecognizer * recognizer;
+    recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    [recognizer setMinimumPressDuration:0.8];
+//    [recognizer setDelegate:self];
+    [[self messagesTableView] addGestureRecognizer:recognizer];
     
     // Initialize the Fetched Results Controller
     // that is going to load and monitor message records.
@@ -124,7 +134,6 @@ UITextFieldDelegate
 //    [[self messagesTableView] setDelegate:self];
 //    [[self messageTextField] setDelegate:self];
     
-    
     // TODO: Prepare the appropriate back button TO this view controller.
     
     // Listen for keyboard changes.
@@ -146,17 +155,25 @@ UITextFieldDelegate
                               action:@selector(updateRoomsTable)
                     forControlEvents:UIControlEventValueChanged];
     
+    NSNumber * conversationID;
     if (_isPublic) {
         ETRRoom * sessionRoom;
         sessionRoom = [ETRSessionManager sessionRoom];
         [[self navigationController] setTitle:[sessionRoom title]];
-        [[ETRActionManager sharedManager] setForegroundPartnerID:-10];
+        conversationID = @(ETRActionPublicUserID);
     } else if (_partner) {
         [[self navigationController] setTitle:[_partner name]];
-        [[ETRActionManager sharedManager] setForegroundPartnerID:[[_partner remoteID] longValue]];
+        conversationID = [_partner remoteID];
     } else {
         [[self navigationController] popToRootViewControllerAnimated:YES];
+        return;
     }
+         
+    [[ETRActionManager sharedManager] setForegroundPartnerID:[conversationID longValue]];
+         
+    // Restore any unsent message input.
+    NSString * lastText = [ETRDefaultsHelper messageInputTextForConversationID:conversationID];
+    [[self messageTextField] setText:lastText];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -165,7 +182,7 @@ UITextFieldDelegate
     [self scrollDownTableViewAnimated:YES];
     
     [self verifySession];
-    [self updateInputContainer];
+    [self updateConversationStatus];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -184,6 +201,16 @@ UITextFieldDelegate
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
+    
+    // Store unset message input.
+    NSNumber * conversationID;
+    if (_isPublic) {
+        conversationID = @(ETRActionPublicUserID);
+    } else if (_partner) {
+        conversationID = [_partner remoteID];
+    }
+    [ETRDefaultsHelper storeMessageInputText:[[self messageTextField] text]
+                           forConversationID:conversationID];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -211,22 +238,16 @@ UITextFieldDelegate
     return YES;
 }
 
-- (void)updateInputContainer {
+- (BOOL)updateConversationStatus {
     if (_partner) {
         if (![[ETRSessionManager sessionRoom] isEqual:[_partner inRoom]]) {
-            NSString * hasLeftFormat = NSLocalizedString(@"has_left", @"%@ (person) quit %@ (room)");
-            ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
-            NSString * hasLeft;
-            hasLeft = [NSString stringWithFormat:hasLeftFormat, [_partner name], [sessionRoom title]];
-            [[self inputCover] setText:hasLeft];
-            [[self inputCover] setHidden:NO];
-            [[self inputContainer] setHidden:YES];
-            return;
+            [ETRAlertViewFactory showHasLeftViewForUser:_partner];
+            return NO;
         }
     }
     
-    [[self inputContainer] setHidden:NO];
     [[self inputCover] setHidden:YES];
+    return YES;
 }
 
 #pragma mark -
@@ -375,9 +396,9 @@ UITextFieldDelegate
 //            [[[cell userIconView] layer] setCornerRadius:ETRIconViewCornerRadius];
 //            [[cell userIconView] setClipsToBounds:YES];
             
-            [ETRImageLoader loadImageForObject:[action sender]
-                                      intoView:[cell userIconView]
-                                   doLoadHiRes:NO];
+//            [ETRImageLoader loadImageForObject:[action sender]
+//                                      intoView:[cell userIconView]
+//                                   doLoadHiRes:NO];
             if (_isPublic) {
                 [[cell nameLabel] setText:senderName];
             } else {
@@ -393,33 +414,46 @@ UITextFieldDelegate
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [self hideMediaMenu];
 }
 
 // Scroll to the bottom of a table.
 - (void)scrollDownTableViewAnimated:(BOOL)animated {
-    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
-    if (bottomRow >= 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-                                        atScrollPosition:UITableViewScrollPositionBottom
-                                                animated:animated];
-    }
+//    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
+//    if (bottomRow >= 0) {
+//        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+//        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+//                                        atScrollPosition:UITableViewScrollPositionBottom
+//                                                animated:animated];
+//    }
 }
 
-#pragma mark - UIAlertViewDelegate
+#pragma mark - Alert Views
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
-        [[ETRSessionManager sharedManager] endSession];
+-(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer {
+    if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
+        CGPoint point = [gestureRecognizer locationInView:[self messagesTableView]];
+        NSIndexPath * indexPath = [[self messagesTableView] indexPathForRowAtPoint:point];
+        
+        ETRAction * record = [_fetchedResultsController objectAtIndexPath:indexPath];
+        _alertViewFactory = [[ETRAlertViewFactory alloc] init];
+        [_alertViewFactory showMenuForMessage:record calledByViewController:self];
     }
+
 }
+
+
 
 #pragma mark -
 #pragma mark Input
 
 - (IBAction)sendButtonPressed:(id)sender {
     [self dismissKeyboard];
+    
+    if (![self updateConversationStatus]) {
+        return;
+    }
     
     // Get the message from the text field.
     NSString *typedString = [[[self messageTextField] text]
@@ -441,6 +475,10 @@ UITextFieldDelegate
     // If the lower button, the camera button, is hidden, open the menu.
     
     if ([[self cameraButton] isHidden]) {
+        if (![self updateConversationStatus]) {
+            return;
+        }
+        
         // Expand the menu from the bottom.
         [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
             [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
@@ -488,6 +526,8 @@ UITextFieldDelegate
  Closes the menu, if the upper button, the gallery button, is visible
 */
 - (void)hideMediaMenu {
+    [self updateConversationStatus];
+    
     if(![[self galleryButton] isHidden]) {
         // Collapse the menu from the top.
         [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
@@ -508,7 +548,8 @@ UITextFieldDelegate
 }
 
 - (void)exitButtonPressed:(id)sender {
-    [ETRAlertViewFactory showLeaveConfirmViewWithDelegate:self];
+    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
+    [_alertViewFactory showLeaveConfirmView];
 }
 
 #pragma mark - Keyboard Notifications

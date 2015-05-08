@@ -12,7 +12,9 @@
 
 @interface ETRImageEditor : NSObject
 
-+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView withTag:(NSInteger)tag;
++ (void)cropImage:(UIImage *)image
+      applyToView:(UIImageView *)targetImageView
+          isHiRes:(BOOL)isHiRes;
 
 + (UIImage *)imageFromPickerInfo:(NSDictionary *)info;
 

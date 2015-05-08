@@ -38,7 +38,10 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
                            withObject:nil];
 }
 
-+ (void)loadImageForObject:(ETRChatObject *)chatObject intoView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doShowHiRes {
++ (void)loadImageForObject:(ETRChatObject *)chatObject
+                  intoView:(UIImageView *)targetImageView
+               doLoadHiRes:(BOOL)doShowHiRes {
+    
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject
                                                       targetImageView:targetImageView
                                                           doLoadHiRes:(BOOL)doShowHiRes];
@@ -51,6 +54,8 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
     if (!_chatObject) {
       return;
     }
+    
+//    NSLog(@"DEBUG: Started loading image for Object: %@", [_chatObject remoteID]);
     
     if (_targetImageView) {
         [_targetImageView setTag:[[_chatObject remoteID] intValue]];
@@ -65,7 +70,7 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
     if ([_chatObject lowResImage]) {
         [ETRImageEditor cropImage:[_chatObject lowResImage]
                       applyToView:_targetImageView
-                          withTag:[[_chatObject remoteID] intValue]];
+                          isHiRes:NO];
         
         if (!_doShowHiRes) {
             // Only the low-resolution image was requested.
@@ -79,7 +84,7 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
         [_chatObject setLowResImage:cachedLoResImage];
         [ETRImageEditor cropImage:cachedLoResImage
                       applyToView:_targetImageView
-                          withTag:[[_chatObject remoteID] intValue]];
+                          isHiRes:NO];
     } else {
         // If the low-res image has not been stored as a file, download it.
         // This will also place it into the Object and View.
@@ -95,7 +100,7 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
     if (cachedHiResImage) {
         [ETRImageEditor cropImage:cachedHiResImage
                       applyToView:_targetImageView
-                          withTag:[[_chatObject remoteID] intValue]];
+                          isHiRes:YES];
     } else {
         [ETRServerAPIHelper getImageForLoader:self doLoadHiRes:YES];
     }

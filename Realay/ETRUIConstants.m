@@ -8,6 +8,12 @@
 
 #import "ETRUIConstants.h"
 
+NSString *const ETRViewControllerIDConversation = @"conversationViewController";
+
+NSString *const ETRViewControllerIDDetails = @"detailsViewController";
+
+NSString *const ETRViewControllerIDJoin = @"joinViewController";
+
 static UIColor * PrimaryColor;
 
 static UIColor * PrimaryTransparentColor;

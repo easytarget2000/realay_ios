@@ -14,6 +14,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRProfileHeaderEditorCell.h"
 #import "ETRKeyValueEditorCell.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRUser.h"
 
 static CGFloat const ETRHeaderCellHeight = 80.0f;
@@ -411,6 +412,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     if (doSendUpdate && [ETRCoreDataHelper saveContext]) {
         // TODO: Add Action to query with Action Code "User update".
         // This will fetch the local User object and upload it to the server.
+        [ETRServerAPIHelper sendLocalUserUpdate];
     }
     
     

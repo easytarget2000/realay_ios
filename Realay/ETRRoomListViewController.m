@@ -62,7 +62,7 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     [[self tableView] setRowHeight:ETRRoomCellHeight];
     
-    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    UIRefreshControl * refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self
                        action:@selector(updateRoomsTable)
              forControlEvents:UIControlEventValueChanged];
@@ -73,6 +73,8 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     // Initialize Fetched Results Controller
     _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
 }
+
+// TODO: Make sure the Status Bar Color is always white, especially after returning from media selection.
 
 - (UIStatusBarStyle) preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;

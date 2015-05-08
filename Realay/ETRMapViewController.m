@@ -19,18 +19,22 @@
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
 
-#define kMapCloseZoom   14.0f
-#define kMapWideZoom    11.0f
 
-#define kSegueToNext    @"mapToPasswordSegue"
-#define kSegueToDetails @"mapToDetailsSegue"
+static CGFloat const ETRMapCloseZoom = 14.0f;
+
+static CGFloat const ETRMapWideZoom = 11.0f;
+
+static NSString *const ETRMapToPasswordSegue = @"mapToPasswordSegue";
+
+static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
 
 
 @implementation ETRMapViewController {
     GMSMapView *_mapView;   // Google Maps SDK Object
 }
 
-#pragma mark - UIViewController
+#pragma mark -
+#pragma mark UIViewController
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -156,7 +160,7 @@
             // Zoom in on the region, not the user, if the user is inside.
             
             // TODO: Determine a useful zoom level for different region radii.
-            CGFloat zoom = kMapCloseZoom;
+            CGFloat zoom = ETRMapCloseZoom;
 //            if ([room radius] < 250) zoom = 16;
             
             return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
@@ -173,7 +177,7 @@
         // Just show where approximately the region is if the device location is unknown.
         // TODO: Use different zoom levels depending on the size of the radius.
         return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
-                                              zoom:kMapWideZoom];
+                                              zoom:ETRMapWideZoom];
     }
 }
 
@@ -208,7 +212,7 @@
 }
 
 - (IBAction)detailsButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:kSegueToDetails sender:self];
+    [self performSegueWithIdentifier:ETRMapToDetailsSegue sender:self];
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
@@ -217,20 +221,24 @@
         return;
     }
     
+#ifdef DEBUG_JOIN
+    [self performSegueWithIdentifier:ETRMapToPasswordSegue sender:nil];
+#else
     if (![ETRLocationManager didAuthorize]) {
         // The location access has not been authorized.
         [ETRAlertViewFactory showAuthorizationAlert];
     } else if ([ETRLocationManager isInSessionRegion]) {
         // Show the password prompt, if the device location is inside the region.
-        [self performSegueWithIdentifier:kSegueToNext sender:self];
+        [self performSegueWithIdentifier:ETRMapToPasswordSegue sender:self];
     } else {
         // The user is outside of the radius.
         [ETRAlertViewFactory showRoomDistanceAlert];
     }
+#endif
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:kSegueToDetails]) {
+    if ([[segue identifier] isEqualToString:ETRMapToDetailsSegue]) {
         ETRDetailsViewController *destination;
         destination = [segue destinationViewController];
         [destination setRoom:[[ETRSessionManager sharedManager] room]];

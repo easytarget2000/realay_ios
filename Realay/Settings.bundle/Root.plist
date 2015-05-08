@@ -14,7 +14,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Public Messages</string>
+			<string>Public_Messages</string>
 			<key>Key</key>
 			<string>userDefaultsNotificationPublic</string>
 			<key>DefaultValue</key>
@@ -24,7 +24,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Private Messages</string>
+			<string>Private_Messages</string>
 			<key>Key</key>
 			<string>userDefaultsNotificationPrivate</string>
 			<key>DefaultValue</key>
@@ -32,7 +32,7 @@
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
+			<string>Toggle_Switch</string>
 			<key>Title</key>
 			<string>Other</string>
 			<key>Key</key>

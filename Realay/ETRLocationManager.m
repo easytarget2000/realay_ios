@@ -9,11 +9,16 @@
 #import "ETRLocationManager.h"
 
 #import "ETRAlertViewFactory.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 
-static ETRLocationManager *sharedInstance;
+static CFTimeInterval const ETRScheduleInterval = 10.0 * 60.0;
+
+static ETRLocationManager * SharedInstance;
+
 
 @interface ETRLocationManager()
 
@@ -23,30 +28,71 @@ static ETRLocationManager *sharedInstance;
 
 @end
 
+
 @implementation ETRLocationManager
 
 @synthesize didAuthorize = _didAuthorize;
 @synthesize doUpdateFast = _doUpdateFast;
+@synthesize location = _location;
 
 + (void)initialize {
     static BOOL initialized = NO;
     if (!initialized) {
         initialized = YES;
-        sharedInstance = [[ETRLocationManager alloc] init];
+        SharedInstance = [[ETRLocationManager alloc] init];
+        [SharedInstance setDelegate:SharedInstance];
+        [SharedInstance launch:nil];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSTimer scheduledTimerWithTimeInterval:ETRScheduleInterval
+                                             target:SharedInstance
+                                           selector:@selector(launch:)
+                                           userInfo:nil
+                                            repeats:YES];
+        });
     }
 }
 
 + (ETRLocationManager *)sharedManager {
-    return sharedInstance;
+    return SharedInstance;
 }
 
 + (CLLocation *)location {
-    return [[ETRLocationManager sharedManager] location];
+    ETRLocationManager * managerInstance;
+    managerInstance = [ETRLocationManager sharedManager];
+    
+    CLLocation * location = [managerInstance location];
+    if (!location) {
+        location = [ETRDefaultsHelper lastUpdateLocation];
+        [managerInstance launch:nil];
+    }
+    return location;
+}
+
+- (void)setLocation:(CLLocation *)location {
+    _location = location;
+    
+#ifdef DEBUG
+    NSLog(
+          @"DEBUG: New Location: %g, %g, %g, %g",
+          _location.coordinate.latitude,
+          _location.coordinate.longitude,
+          [_location horizontalAccuracy],
+          [_location verticalAccuracy]
+          );
+#endif
+    
+    if ([ETRDefaultsHelper doUpdateRoomListAtLocation:_location]) {
+        [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
+    }
+    
+    [self stopUpdatingLocation];
+    [self startMonitoringSignificantLocationChanges];
 }
 
 + (BOOL)isInSessionRegion {
     if ([ETRLocationManager didAuthorize]) {
-        ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+        ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
         return [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom] < 10;
     } else {
         return NO;
@@ -54,12 +100,11 @@ static ETRLocationManager *sharedInstance;
 }
 
 + (BOOL)didAuthorize {
-    // DEBUG:
-    return YES;
-//    return [[ETRLocationManager sharedManager] didAuthorize];
+//    return YES;
+    return [[ETRLocationManager sharedManager] didAuthorize];
 }
 
-- (void)launch {    
+- (void)launch:(NSTimer *)timer {
 //    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
 //        [self startMonitoringSignificantLocationChanges];
 //        [super startUpdatingLocation];
@@ -68,14 +113,10 @@ static ETRLocationManager *sharedInstance;
     
     if ([self respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
         [self requestWhenInUseAuthorization];
-    } else {
-        [self startMonitoringSignificantLocationChanges];
     }
     
     if ([self respondsToSelector:@selector(requestAlwaysAuthorization)]) {
         [self requestAlwaysAuthorization];
-    } else {
-        [self startMonitoringSignificantLocationChanges];
     }
     
     [super startUpdatingLocation];
@@ -85,7 +126,7 @@ static ETRLocationManager *sharedInstance;
 #pragma mark CLLocationManagerDelegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    [self launch];
+    [self launch:nil];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
@@ -94,9 +135,9 @@ static ETRLocationManager *sharedInstance;
         return;
     }
     
-    CLLocation *newLocation = locations[0];
+    [self setLocation:locations[0]];
     
-    NSLog(@"didUpdateLocations: Interval: %g", [[[self location] timestamp] timeIntervalSinceDate:[newLocation timestamp]]);
+    NSLog(@"didUpdateLocations: Interval: %g", [[NSDate date] timeIntervalSinceDate:[_location timestamp]]);
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {

@@ -8,13 +8,39 @@
 
 #import "ETRAlertViewFactory.h"
 
+#import "ETRAction.h"
+#import "ETRConversationViewController.h"
+#import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
 
+typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
+    ETRAlertViewTagLeave = 91,
+    ETRAlertViewTagMessageMenu = 68,
+    ETRAlertViewTagBlock = 65
+};
+
+
+@interface ETRAlertViewFactory () <UIAlertViewDelegate>
+
+@property (strong, nonatomic) ETRUser * selectedUser;
+
+@property (strong, nonatomic) ETRAction * selectedMessage;
+
+@property (strong, nonatomic) UIViewController * viewController;
+
+@end
+
+
 @implementation ETRAlertViewFactory
+
+
+#pragma mark -
+#pragma mark Constructors
 
 + (void)showGeneralErrorAlert {
     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Something_wrong", @"Something wrong.")
@@ -32,19 +58,39 @@
  Displays a dialog in an alert view that asks to confirm a block action.
  The delegate will handle the YES button click.
  */
-+ (void)showBlockConfirmViewForUser:(ETRUser *)user withDelegate:(id)delegate {
-    if (!user) {
+- (void)showBlockConfirmViewForUser:(ETRUser *)user {
+    _selectedUser = user;
+    if (!_selectedUser) {
         return;
     }
-    
+        
     NSString *titleFormat = NSLocalizedString(@"Want_block", @"Want block %@?");
-    NSString *userName = [user name];
+    NSString *userName = [_selectedUser name];
     
-    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, userName]
-                                message:NSLocalizedString(@"Blocking_hides", @"Hidden user")
-                               delegate:delegate
-                      cancelButtonTitle:NSLocalizedString(@"No", "Negative")
-                      otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil] show];
+    NSString * blockReport  = NSLocalizedString(@"Block_Report", "Block & Send Report");
+    NSString * blockOnly    = NSLocalizedString(@"Block", "Only block");
+    
+    UIAlertView * alertView;
+    alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, userName]
+                                           message:NSLocalizedString(@"Blocking_hides", @"Hidden user")
+                                          delegate:self
+                                 cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
+                                 otherButtonTitles:blockReport, blockOnly, nil];
+    [alertView setTag:ETRAlertViewTagBlock];
+    [alertView show];
+}
+
++ (void)showHasLeftViewForUser:(ETRUser *)user {
+    NSString * message;
+    message = [NSString stringWithFormat:NSLocalizedString(@"has_left", @"%User has left %Room."),
+               [user name],
+               [[ETRSessionManager sessionRoom] title]];
+    
+    [[[UIAlertView alloc] initWithTitle:nil
+                               message:message
+                              delegate:self
+                     cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
+                     otherButtonTitles:nil] show];
 }
 
 /*
@@ -86,7 +132,7 @@
  Displays a dialog in an alert view if the user wants to leave the room.
  The delegate will handle the OK button click.
  */
-+ (void)showLeaveConfirmViewWithDelegate:(id)delegate {
+- (void)showLeaveConfirmView {
     NSString *titleFormat = NSLocalizedString(@"Want_leave", @"Want to leave %@?");
     
     NSString *roomTitle;
@@ -96,11 +142,49 @@
         roomTitle = @"";
     }
     
-    [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, roomTitle]
-                                message:nil
-                               delegate:delegate
-                      cancelButtonTitle:NSLocalizedString(@"No", "Negative")
-                      otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil] show];
+    UIAlertView * alertView;
+    alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, roomTitle]
+                                           message:nil
+                                          delegate:self
+                                 cancelButtonTitle:NSLocalizedString(@"No", "Negative")
+                                 otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil];
+    [alertView setTag:ETRAlertViewTagLeave];
+    [alertView show];
+}
+
+/*
+ 
+ */
+- (void)showMenuForMessage:(ETRAction *)message calledByViewController:(UIViewController *)viewController {
+    // Do not show a menu, if the Action is an outgoing Media Action.
+    if (!message || ([message isSentAction] && [message isPhotoMessage])) {
+        return;
+    }
+    
+    _selectedMessage = message;
+    _viewController = viewController;
+    
+    NSString * copyMessage = NSLocalizedString(@"Copy_Message", @"Copy message to clipboard");
+    
+    NSMutableArray * buttonTitles = [NSMutableArray arrayWithObjects:copyMessage, nil];
+    
+    if (![_selectedMessage isSentAction] && [_selectedMessage isPublicMessage]) {
+        [buttonTitles addObject:NSLocalizedString(@"Private_Conversation", @"Open Private Chat")];
+        [buttonTitles addObject:NSLocalizedString(@"Show_Profile", @"User Details")];
+    }
+    
+    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                         message:nil
+                                                        delegate:self
+                                               cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
+                                               otherButtonTitles:nil];
+    
+    for (NSString * title in buttonTitles)  {
+        [alertView addButtonWithTitle:title];
+    }
+    
+    [alertView setTag:ETRAlertViewTagMessageMenu];
+    [alertView show];
 }
 
 /*
@@ -157,6 +241,77 @@
                                delegate:nil
                       cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
+}
+
+#pragma mark -
+#pragma mark UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        return;
+    }
+    
+    switch ([alertView tag]) {
+        case ETRAlertViewTagBlock:
+            if (_selectedUser) {
+                NSLog(@"ERROR: Cannot perform next blocking step. User reference lost.");
+            } else {
+                [_selectedUser setIsBlocked:@(YES)];
+            }
+            break;
+            
+        case ETRAlertViewTagLeave:
+            [[ETRSessionManager sharedManager] endSession];
+            break;
+            
+        case ETRAlertViewTagMessageMenu:
+            if (!_selectedMessage) {
+                return;
+            }
+            
+            BOOL isPhotoMessage = [_selectedMessage isPhotoMessage];
+            
+            // Photo Messages do not have the first entry "Copy Message".
+            
+            if ((buttonIndex == 1 && !isPhotoMessage)) {
+                [[UIPasteboard generalPasteboard] setString:[_selectedMessage messageContent]];
+            } else if ((buttonIndex == 1 && isPhotoMessage) || buttonIndex == 2) {
+                // Open the private conversation.
+                
+                ETRUser * user = [_selectedMessage sender];
+                if (!_viewController || ![_selectedMessage sender]) {
+                    break;
+                }
+                
+                ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
+                
+                if ([[user inRoom] isEqual:sessionRoom]) {
+                    UIStoryboard * storyBoard = [_viewController storyboard];
+                    ETRConversationViewController * conversationViewController;
+                    conversationViewController = [storyBoard instantiateViewControllerWithIdentifier:ETRViewControllerIDConversation];
+                    
+                    [conversationViewController setPartner:user];
+                    [[_viewController navigationController] pushViewController:conversationViewController
+                                                                      animated:YES];
+                } else {
+                    [ETRAlertViewFactory showHasLeftViewForUser:user];
+                }
+            } else if ((buttonIndex == 2 && isPhotoMessage) || buttonIndex == 3) {
+                // Show User profile.
+                
+                if (!_viewController || ![_selectedMessage sender]) {
+                    break;
+                }
+                
+                UIStoryboard * storyBoard = [_viewController storyboard];
+                ETRDetailsViewController * profileViewController;
+                profileViewController = [storyBoard instantiateViewControllerWithIdentifier:ETRViewControllerIDDetails];
+                
+                [profileViewController setUser:[_selectedMessage sender]];
+                [[_viewController navigationController] pushViewController:profileViewController
+                                                                  animated:YES];
+            }
+    }
 }
 
 @end

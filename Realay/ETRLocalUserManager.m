@@ -66,8 +66,7 @@ static ETRLocalUserManager *sharedInstance = nil;
         return nil;
     }
     
-    _user = [ETRCoreDataHelper userWithRemoteID:userID
-                          downloadIfUnavailable:YES];
+    _user = [ETRCoreDataHelper userWithRemoteID:userID doLoadIfUnavailable:NO];
     return _user;
 }
 

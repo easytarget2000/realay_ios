@@ -95,7 +95,7 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue destinationViewController] isKindOfClass:[ETRConversationViewController class]]) {
-        ETRConversationViewController *destination;
+        ETRConversationViewController * destination;
         destination = (ETRConversationViewController *)[segue destinationViewController];
         [destination setIsPublic:YES];
     }

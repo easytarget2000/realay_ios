@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSString * status;
 @property (nonatomic, retain) NSString * twitter;
 @property (nonatomic, retain) NSString * website;
+@property (nonatomic, retain) NSNumber * isBlocked;
 @property (nonatomic, retain) ETRConversation *inConversation;
 @property (nonatomic, retain) ETRRoom *inRoom;
 @property (nonatomic, retain) ETRAction *receivedActions;

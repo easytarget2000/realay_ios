@@ -83,7 +83,7 @@
 - (void)reachabilityDidChange:(NSNotification *)note {
 //    Reachability * curReach = [note object];
 //    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
-    NSLog(@"DEBUG: Reachability did change.");
+    NSLog(@"DEBUG: Reachability did change. %@", note);
 }
 
 

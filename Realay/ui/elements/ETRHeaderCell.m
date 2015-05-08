@@ -18,37 +18,23 @@ static NSString *const ETRRoomPlaceholderImageName = @"PlaceholderRoomW";
 
 @implementation ETRHeaderCell
 
-- (void)awakeFromNib {
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
-
 - (void)setUpWithRoom:(ETRRoom *)room {
-    if (!room) {
-        return;
+    if (room) {
+        [[self nameLabel] setText:[room title]];
+        [ETRImageLoader loadImageForObject:room
+                                  intoView:[self headerImageView]
+                               doLoadHiRes:YES];
     }
-    
-    [[self nameLabel] setText:[room title]];
-    [ETRImageLoader loadImageForObject:room
-                              intoView:[self headerImageView]
-                           doLoadHiRes:YES];
 }
 
 - (void)setUpWithUser:(ETRUser *)user {
-    if (!user) {
-        return;
+    if (user) {
+        [[self nameLabel] setText:[user name]];
+        [[self headerImageView] setImage:[UIImage imageNamed:ETRProfilePlaceholderImageName]];
+        [ETRImageLoader loadImageForObject:user
+                                  intoView:[self headerImageView]
+                               doLoadHiRes:YES];
     }
-    
-    [[self nameLabel] setText:[user name]];
-    [[self headerImageView] setImage:[UIImage imageNamed:ETRProfilePlaceholderImageName]];
-    [ETRImageLoader loadImageForObject:user
-                              intoView:[self headerImageView]
-                           doLoadHiRes:YES];
 }
 
 @end

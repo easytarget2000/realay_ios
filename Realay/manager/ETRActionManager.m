@@ -20,11 +20,14 @@ static NSTimeInterval const ETRFastestInterval = 2.5;
 
 static NSTimeInterval const ETRSlowestInterval = 10.0;
 
-static NSTimeInterval const ETRTimeIntervalToIdle = 120.0;
+static CFTimeInterval const ETRTimeIntervalToIdle = 120.0;
 
 static NSTimeInterval const ETRIdleInterval = 40.0;
 
 static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
+
+static CFTimeInterval const ETRPingInterval = 40.0;
+
 
 @interface ETRActionManager ()
 
@@ -41,7 +44,9 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
 
 //@property (strong, nonatomic) NSTimer * updateTimer;          // Action query update timer
 
-@property (strong, nonatomic) NSDate * lastActionDate;
+@property (nonatomic) CFAbsoluteTime lastActionTime;
+
+@property (nonatomic) CFAbsoluteTime lastPingTime;
 
 @end
 
@@ -65,14 +70,8 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
 #pragma mark Session Lifecycle
 
 - (void)startSession {
-//    // Prepare the invocation for the timer that queries new actions from the DB.
-//    NSMethodSignature * updateSignature = [self methodSignatureForSelector:@selector(queryUpdates)];
-//    _invocation = [NSInvocation invocationWithMethodSignature:updateSignature];
-//    [_invocation setTarget:self];
-//    [_invocation setSelector:@selector(queryUpdates)];
-
     // Consider the join successful and start the query timer.
-    _lastActionDate = [NSDate date];
+    _lastActionTime = CFAbsoluteTimeGetCurrent();
     [self dispatchQueryTimerWithResetInterval:YES];
     
     return;
@@ -81,16 +80,16 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
 - (void)endSession {
 //    [_updateTimer invalidate];
 //    _updateTimer = nil;
-    _lastActionID = 50L;
+    _lastActionID = 0L;
 }
 
 - (void)dispatchQueryTimerWithResetInterval:(BOOL)doResetInterval {
     if (doResetInterval || _queryInterval < ETRFastestInterval) {
         _queryInterval = ETRFastestInterval;
-        _lastActionDate = [NSDate date];
+        _lastActionTime = CFAbsoluteTimeGetCurrent();
         NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
     } else if (_queryInterval > ETRSlowestInterval) {
-        if ([[NSDate date] timeIntervalSinceDate:_lastActionDate] > ETRTimeIntervalToIdle) {
+        if (CFAbsoluteTimeGetCurrent() - _lastActionTime > ETRTimeIntervalToIdle) {
             _queryInterval = ETRIdleInterval;
             NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
         }
@@ -115,35 +114,34 @@ static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
         return;
     }
     
-    // TODO: Track ping times.
-    BOOL doPerformPing = YES;
-    
-    [ETRServerAPIHelper getActionsWithMinID:_lastActionID
-                                performPing:doPerformPing
-                          completionHandler:^(id<NSObject> receivedObject) {
-                              BOOL doResetInterval = NO;
-                              if ([receivedObject isKindOfClass:[NSArray class]]) {
-                                  NSArray *jsonActions = (NSArray *) receivedObject;
-                                  for (NSObject *jsonAction in jsonActions) {
-                                      if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                                          [ETRCoreDataHelper handleActionFromDictionary:(NSDictionary *)jsonAction];
-                                          doResetInterval = YES;
-                                      }
-                                  }
-                              }
-                              
-                              [self dispatchQueryTimerWithResetInterval:doResetInterval];
-                          }];
+    [ETRServerAPIHelper getActionsAndPerform:^(id<NSObject> receivedObject) {
+        BOOL doResetInterval = NO;
+        if ([receivedObject isKindOfClass:[NSArray class]]) {
+            NSArray *jsonActions = (NSArray *) receivedObject;
+            for (NSObject *jsonAction in jsonActions) {
+                if ([jsonAction isKindOfClass:[NSDictionary class]]) {
+                    [ETRCoreDataHelper handleActionFromDictionary:(NSDictionary *)jsonAction];
+                    doResetInterval = YES;
+                }
+            }
+        }
+        
+        [self dispatchQueryTimerWithResetInterval:doResetInterval];
+    }];
+}
+
+- (BOOL)doSendPing {
+    return CFAbsoluteTimeGetCurrent() - _lastPingTime > ETRPingInterval;
 }
 
 #pragma mark -
 #pragma mark Action Processing
 
-- (void)ackActionID:(long)remoteActionID {
+- (void)ackknowledgeActionID:(long)remoteActionID {
     if (_lastActionID < remoteActionID) {
         _lastActionID = remoteActionID;
     }
-    _lastActionDate = [NSDate date];
+    _lastActionTime = CFAbsoluteTimeGetCurrent();
 }
 
 - (void)setForegroundPartnerID:(long)foregroundPartnerID {
