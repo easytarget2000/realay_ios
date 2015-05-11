@@ -179,15 +179,12 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
     if ([_user facebook] && [[_user facebook] length]) {
         return YES;
     }
-    
     if ([_user instagram] && [[_user instagram] length]) {
         return YES;
     }
-    
     if ([_user twitter] && [[_user twitter] length]) {
         return YES;
     }
-    
     return NO;
 }
 
@@ -218,7 +215,7 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
                                            forIndexPath:indexPath];
 }
 
-- (ETRKeyValueCell  *)roomCellInTableView:(UITableView *)tableView
+- (ETRKeyValueCell *)roomCellInTableView:(UITableView *)tableView
                                 forIndexPath:indexPath {
     
     ETRKeyValueCell *cell;

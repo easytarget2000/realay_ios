@@ -46,6 +46,8 @@ extern long const ETRActionPublicUserID;
 
 + (void)removeUserUpdateActionsFromQueue;
 
++ (ETRAction *)blankOutgoingAction;
+
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner

@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
-@interface ETRMapViewController : UIViewController
+@interface ETRMapViewController : ETRBaseViewController
 
 //@property (nonatomic) CLLocationCoordinate2D initialDeviceCoordinate;
 @property (weak, nonatomic) IBOutlet UIView             *mapSubView;    // View for GMap

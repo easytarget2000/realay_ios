@@ -6,9 +6,10 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
-@interface ETRJoinViewController : UIViewController
+
+@interface ETRJoinViewController : ETRBaseViewController
 
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 

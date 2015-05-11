@@ -47,7 +47,7 @@
 /*
  Session is able to push/pop view controller.
   */
-@property (strong, nonatomic) UINavigationController *navigationController;
+@property (strong, nonatomic) UINavigationController * navigationController;
 
 /*
  Room object of this session:
@@ -62,17 +62,17 @@
 /*
  All user objects in this session:
   */
-@property (strong, nonatomic, readonly) NSMutableArray *users;
+@property (strong, nonatomic, readonly) NSMutableArray * users;
 
 /*
  Keys of all chats sorted by last message date:
   */
-@property (strong, nonatomic, readonly) NSMutableArray *sortedChatKeys;
+@property (strong, nonatomic, readonly) NSMutableArray * sortedChatKeys;
 
 /*
  Keys of all users sorted by name:
   */
-@property (strong, nonatomic, readonly) NSMutableArray *sortedUserKeys;
+@property (strong, nonatomic, readonly) NSMutableArray * sortedUserKeys;
 
 
 /* 
@@ -81,11 +81,6 @@
 + (ETRSessionManager *)sharedManager;
 
 + (ETRRoom *)sessionRoom;
-
-/*
- To be called by view controllers receiving memory warnings.
- */
-- (void)didReceiveMemoryWarning;
 
 /*
  Become a member of a room and start a new session.

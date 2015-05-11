@@ -30,6 +30,8 @@ extern NSString * ETRAPIBaseURL;
 
 + (void)putAction:(ETRAction *)outgoingAction;
 
++ (void)endSession;
+
 #pragma mark -
 #pragma mark Images
 

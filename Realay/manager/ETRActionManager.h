@@ -23,6 +23,8 @@
 
 - (void)startSession;
 
+- (void)endSession;
+
 - (void)queryUpdates:(NSTimer *)timer;
 
 - (void)ackknowledgeActionID:(long)remoteActionID;

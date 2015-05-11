@@ -90,7 +90,6 @@ UITextFieldDelegate
     UILongPressGestureRecognizer * recognizer;
     recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
     [recognizer setMinimumPressDuration:0.8];
-//    [recognizer setDelegate:self];
     [[self messagesTableView] addGestureRecognizer:recognizer];
     
     // Initialize the Fetched Results Controller
@@ -126,14 +125,6 @@ UITextFieldDelegate
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    // Assign delegates.
-    // TODO: Assign Session & Location delegates to
-//    [[self messagesTableView] setDataSource:self];
-//    [[self messagesTableView] setDelegate:self];
-//    [[self messageTextField] setDelegate:self];
-    
-    // TODO: Prepare the appropriate back button TO this view controller.
     
     // Listen for keyboard changes.
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -214,7 +205,6 @@ UITextFieldDelegate
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    [[ETRSessionManager sharedManager] didReceiveMemoryWarning];
     // TODO: Reset message limit.
 }
 
@@ -264,14 +254,17 @@ UITextFieldDelegate
 
 #pragma mark -
 #pragma mark Fetched Results Controller Delegate Methods
+
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [[self messagesTableView] beginUpdates];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self historyControl] endRefreshing];
+    [[self messagesTableView] beginUpdates];
+
     [[self messagesTableView] endUpdates];
-    [self scrollDownTableViewAnimated:YES];
+//    [self scrollDownTableViewAnimated:YES];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -280,7 +273,8 @@ UITextFieldDelegate
      forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath {
     
-    NSLog(@"DEBUG: didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
+    NSLog(@"didChangeObject.");
+//    NSLog(@"DEBUG: didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
     
     switch (type) {
         case NSFetchedResultsChangeInsert: {
@@ -332,13 +326,7 @@ UITextFieldDelegate
         return [[UITableViewCell alloc] init];
     }
     
-//    id<NSObject> record = [_fetchedResultsController objectAtIndexPath:indexPath];
-//    if (!record || ![record isKindOfClass:[ETRAction class]]) {
-//        NSLog(@"ERROR: Invalid record type at: %ld", [indexPath row]);
-//        return [[UITableViewCell alloc] init];
-//    }
-    
-    ETRAction *action = [_fetchedResultsController objectAtIndexPath:indexPath];
+    ETRAction * action = [_fetchedResultsController objectAtIndexPath:indexPath];
     
     if ([action isSentAction]) {
         if ([action isPhotoMessage]) {
@@ -399,9 +387,6 @@ UITextFieldDelegate
             cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
-//            [[[cell userIconView] layer] setCornerRadius:ETRIconViewCornerRadius];
-//            [[cell userIconView] setClipsToBounds:YES];
-            
             [ETRImageLoader loadImageForObject:[action sender]
                                       intoView:[cell userIconView]
                               placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
@@ -427,13 +412,13 @@ UITextFieldDelegate
 
 // Scroll to the bottom of a table.
 - (void)scrollDownTableViewAnimated:(BOOL)animated {
-//    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
-//    if (bottomRow >= 0) {
-//        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-//        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-//                                        atScrollPosition:UITableViewScrollPositionBottom
-//                                                animated:animated];
-//    }
+    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
+    if (bottomRow >= 0) {
+        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+                                        atScrollPosition:UITableViewScrollPositionBottom
+                                                animated:animated];
+    }
 }
 
 #pragma mark - Alert Views

@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
-@interface ETRLoginViewController : UIViewController <UITextFieldDelegate>
+@interface ETRLoginViewController : ETRBaseViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;

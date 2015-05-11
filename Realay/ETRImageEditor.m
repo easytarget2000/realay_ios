@@ -40,20 +40,26 @@ static NSInteger const ETRImageViewTagHiRes = 9212;
         return;
     }
     
-    if (isHiRes) {
-        // Store that this Image View already shows a hi-res Image.
-        // The Tag has to be reset for reuse!
-        [targetImageView setTag:ETRImageViewTagHiRes];
-    } else if ([targetImageView tag] == ETRImageViewTagHiRes) {
-        // Do not override lo-res images.
-        return;
-    }
-    
-    
-    // Adjust the size if needed.
-    UIImage * croppedImage = [ETRImageEditor scaleCropImage:image toSize:targetImageView.frame.size];
-    [targetImageView setImage:croppedImage];
-//    [targetImageView setImage:image];
+    dispatch_async(
+                   dispatch_get_main_queue(),
+                   ^{
+                       if (isHiRes) {
+                           // Store that this Image View already shows a hi-res Image.
+                           // The Tag has to be reset for reuse!
+                           [targetImageView setTag:ETRImageViewTagHiRes];
+                       } else if ([targetImageView tag] == ETRImageViewTagHiRes) {
+                           // Do not override lo-res images.
+                           return;
+                       }
+                       
+                       
+                       // Adjust the size if needed.
+                       UIImage * croppedImage;
+                       croppedImage = [ETRImageEditor scaleCropImage:image
+                                                              toSize:targetImageView.frame.size];
+                       [targetImageView setImage:croppedImage];
+                       //    [targetImageView setImage:image];
+                   });
 }
 
 + (UIImage *)imageFromPickerInfo:(NSDictionary *)info {

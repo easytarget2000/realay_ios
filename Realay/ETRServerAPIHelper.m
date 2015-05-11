@@ -304,7 +304,7 @@ static NSMutableArray *connections;
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionaryWithDictionary:authDict];
     
     long recipientID;
-    if ([outgoingAction isPublicMessage]) {
+    if ([outgoingAction isPublicAction]) {
         recipientID = ETRActionPublicUserID;
     } else if ([outgoingAction recipient]) {
         recipientID = [[[outgoingAction recipient] remoteID] longValue];
@@ -345,6 +345,12 @@ static NSMutableArray *connections;
                          
                          [ETRCoreDataHelper addActionToQueue:outgoingAction];
                      }];
+}
+
++ (void)endSession {
+    ETRAction * exitAction = [ETRCoreDataHelper blankOutgoingAction];
+    [exitAction setCode:@(ETRActionCodeUserQuit)];
+    [ETRServerAPIHelper putAction:exitAction];
 }
 
 #pragma mark -
@@ -396,7 +402,7 @@ static NSMutableArray *connections;
                                data = nil;
                                
                                if (!image) {
-                                   NSLog(@"ERROR: No image in connection data.");
+//                                   NSLog(@"ERROR: No image in connection data.");
                                    return;
                                }
                                
@@ -510,7 +516,7 @@ static NSMutableArray *connections;
         [params setObject:[[[action room] remoteID] stringValue] forKey:ETRAPIParamSession];
         
         NSString * recipientID;
-        if ([action isPublicMessage]) {
+        if ([action isPublicAction]) {
             recipientID = [NSString stringWithFormat:@"%ld", ETRActionPublicUserID];
         } else {
             recipientID = [[[action recipient] remoteID] stringValue];
@@ -638,9 +644,9 @@ static NSMutableArray *connections;
                              objectTag:ETRUserObjectTag
                      completionHandler:^(id<NSObject> receivedObject) {
                          if (receivedObject && [receivedObject isKindOfClass:[NSDictionary class]]) {
-                             NSDictionary *jsonDictionary;
+                             NSDictionary * jsonDictionary;
                              jsonDictionary = (NSDictionary *) receivedObject;
-                             ETRUser *localUser;
+                             ETRUser * localUser;
                              localUser = [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
                              
                              if (localUser) {
@@ -931,10 +937,6 @@ static NSMutableArray *connections;
     [request setHTTPBody:bodyData];
     [request setHTTPMethod:@"POST"];
     [request setTimeoutInterval:ETRAPITimeOutInterval];
-    
-    //    NSString * bodyString = [NSString stringWithFormat:@"%@", bodyString];
-    
-    
     
     [ETRServerAPIHelper performAPIRequest:request
                                    withID:connectionID

@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
 
-@interface ETRUserListViewController : UIViewController
+@interface ETRUserListViewController : ETRBaseViewController
 
 @property (strong, nonatomic) IBOutlet UITableView * usersTableView;
 

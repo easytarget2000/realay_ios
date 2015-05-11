@@ -77,7 +77,7 @@ placeHolderImage:(UIImage *)placeHolderImage
     
     long imageID = [[_chatObject imageID] longValue];
     if (imageID < 100 && imageID > -100) {
-        NSLog(@"ERROR: Not loading image with ID %@.", [_chatObject imageID]);
+//        NSLog(@"ERROR: Not loading image with ID %@.", [_chatObject imageID]);
         return;
     }
     

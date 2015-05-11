@@ -25,8 +25,8 @@
     [GMSServices provideAPIKey:@"AIzaSyBi51VpGsRlkDh7rz-1-cv73DOS7aE_yGA"];
     
     // Initialise the Reachability and Location Managers, in order to avoid delayed Reachability states later.
-    ETRReachabilityManager * reachMan = [ETRReachabilityManager sharedManager];
-    ETRLocationManager * locMan = [ETRLocationManager sharedManager];
+    [ETRReachabilityManager sharedManager];
+    [ETRLocationManager sharedManager];
 
     // Additional GUI setup:
     [[self window] setTintColor:[UIColor whiteColor]];
@@ -48,11 +48,9 @@
     // Prepare the random number generator seeed.
     srand48(time(0));
     
-    UIStoryboard * storyboard = [[[self window] rootViewController] storyboard];
-    ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
-    
-    // TODO: Use Navigation Controller to enable jumpbacks.
-    
+//    UIStoryboard * storyboard = [[[self window] rootViewController] storyboard];
+//    ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
+//    
 //    if ([sessionMan didBeginSession] && [sessionMan room]) {
 //        ETRConversationViewController * conversationViewController;
 //        conversationViewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDConversation];

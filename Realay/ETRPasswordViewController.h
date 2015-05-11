@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Easy Target. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
-@interface ETRPasswordViewController : UIViewController <UITextFieldDelegate>
+@interface ETRPasswordViewController : ETRBaseViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 

@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
+
 
 @class ETRUser;
 
-@interface ETRConversationViewController : UIViewController
+
+@interface ETRConversationViewController : ETRBaseViewController
 
 @property (weak, nonatomic) IBOutlet UITableView * messagesTableView;
 

@@ -16,8 +16,6 @@
 #import "ETRSessionManager.h"
 
 
-static NSString *const ETRPassordToJoinSegue = @"passwordToJoinSegue";
-
 static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue";
 
 
@@ -81,8 +79,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
         // If the user is already registered, attempt to join the room.
         // Otherwise let the user create a profile first.
         if ([ETRLocalUserManager userID] > 10) {
-            [self performSegueWithIdentifier:ETRPassordToJoinSegue
-                                      sender:self];
+            [super pushToJoinViewController];
         } else {
             [self performSegueWithIdentifier:ETRPasswordToLoginSegue
                                       sender:self];

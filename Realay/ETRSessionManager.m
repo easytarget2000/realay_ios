@@ -18,18 +18,6 @@
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 
-#define kTickInterval           3
-
-#define kFontSizeMsgSender      15
-#define kFontSizeMsgText        15
-
-#define kTimeReturnKick         10
-#define kTimeReturnWarning1     5
-#define kTimeReturnWarning2     8
-
-#define kUserDefNotifPrivate    @"userDefaultsNotifcationPrivate"
-#define kUserDefNotifPublic     @"userDefaultsNotificationPublic"
-#define kUserDefNotifOther      @"userDefaultsNotificationOther"
 
 static ETRSessionManager * sharedInstance = nil;
 
@@ -42,11 +30,11 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
 
 @end
 
-@implementation ETRSessionManager {
-    UINavigationController  *_navCon;               // Navigation Controller for quit-pops
-}
 
-#pragma mark - Singleton Sharing
+@implementation ETRSessionManager
+
+#pragma mark -
+#pragma mark Singleton Sharing
 
 + (void)initialize {
     static BOOL initialized = NO;
@@ -63,10 +51,6 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
 
 + (ETRRoom *)sessionRoom {
     return [sharedInstance room];
-}
-
-- (void)didReceiveMemoryWarning {
-    //TODO: Implementation
 }
 
 #pragma mark - Session State
@@ -93,16 +77,19 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     return YES;
 }
 
-- (void)endSession {
-    _didBeginSession = NO;
-    [[self navigationController] popToRootViewControllerAnimated:YES];
+- (void)endSession; {
+    [ETRServerAPIHelper endSession];
     
-    //TODO: update_user_in_room.php
-
+    _room = nil;
+    [ETRDefaultsHelper removeSession];
+    
+    _didBeginSession = NO;
+    
     // Remove all public Actions from the local DB.
     [ETRCoreDataHelper clearPublicActions];
-    [ETRDefaultsHelper removeSession];
+    [[ETRActionManager sharedManager] endSession];
     [ETRDefaultsHelper removePublicMessageInputTexts];
+    [_navigationController popToRootViewControllerAnimated:YES];
 }
 
 /*

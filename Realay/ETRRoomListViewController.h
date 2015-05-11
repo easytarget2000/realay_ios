@@ -6,13 +6,16 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
-@interface ETRRoomListViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIView *infoView;
-@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
+@interface ETRRoomListViewController : ETRBaseViewController
+
+@property (weak, nonatomic) IBOutlet UITableView * tableView;
+
+@property (weak, nonatomic) IBOutlet UIView * infoView;
+
+@property (weak, nonatomic) IBOutlet UILabel * infoLabel;
 
 - (IBAction)profileButtonPressed:(id)sender;
 

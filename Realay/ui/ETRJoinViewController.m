@@ -11,14 +11,17 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRConversationViewController.h"
 #import "ETRRoom.h"
+#import "ETRUIConstants.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 
-static NSString *const joinSegue = @"joinToConversationSegue";
+//static NSString *const joinSegue = @"joinToConversationSegue";
 
 @interface ETRJoinViewController ()
 
-@property (strong, nonatomic) NSThread *joinThread;
+@property (strong, nonatomic) NSThread * joinThread;
+
+@property (atomic) BOOL isCanceled;
 
 @end
 
@@ -27,7 +30,7 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 - (void)viewDidLoad {
     [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
     
-    ETRRoom *preparedRoom = [[ETRSessionManager sharedManager] room];
+    ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
     if (!preparedRoom) {
         [[self navigationController] popToRootViewControllerAnimated:YES];
         NSLog(@"ERROR: No Room prepared in SessionManager. Cancelling join procedure.");
@@ -38,7 +41,7 @@ static NSString *const joinSegue = @"joinToConversationSegue";
         return;
     }
     
-    NSString *entering = [NSString stringWithFormat:@"Entering %@...", [preparedRoom title]];
+    NSString * entering = [NSString stringWithFormat:@"Entering %@...", [preparedRoom title]];
     [[self statusLabel] setText:entering];
     [[self progressView] setProgress:0.1f];
     
@@ -65,6 +68,8 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 - (void)startJoinThreadforRoom:(ETRRoom *)room {
     ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
 
+    _isCanceled = NO;
+    
     [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
                                           progressView:_progressView
                                      completionHandler:^(BOOL didSucceed) {
@@ -75,10 +80,14 @@ static NSString *const joinSegue = @"joinToConversationSegue";
 }
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {
+    if (_isCanceled) {
+        return;
+    }
+    
     if ([didSucceed boolValue]) {
         [[self statusLabel] setText:@"Done."];
         [[self progressView] setProgress:1.0f];
-        [self performSegueWithIdentifier:joinSegue sender:nil];
+        [super pushToPublicConversationViewController];
     } else {
         [ETRAlertViewFactory showGeneralErrorAlert];
         [[self navigationController] popToRootViewControllerAnimated:YES];
@@ -89,16 +98,16 @@ static NSString *const joinSegue = @"joinToConversationSegue";
     // TODO: Cancel if back/cancel button pressed.
     
     if ([self isMovingFromParentViewController] || [self isBeingDismissed]) {
-        // Do your stuff here
+        _isCanceled = YES;
     }
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue destinationViewController] isKindOfClass:[ETRConversationViewController class]]) {
-        ETRConversationViewController * destination;
-        destination = (ETRConversationViewController *)[segue destinationViewController];
-        [destination setIsPublic:YES];
-    }
-}
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    if ([[segue destinationViewController] isKindOfClass:[ETRConversationViewController class]]) {
+//        ETRConversationViewController * destination;
+//        destination = (ETRConversationViewController *)[segue destinationViewController];
+//        [destination setIsPublic:YES];
+//    }
+//}
 
 @end

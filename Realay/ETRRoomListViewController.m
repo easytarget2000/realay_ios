@@ -85,19 +85,13 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     
 }
 
-// TODO: Make sure the Status Bar Color is always white, especially after returning from media selection.
-
-- (UIStatusBarStyle) preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     // (Re-)enable the Fetched Results Controller.
     [_fetchedResultsController setDelegate:self];
     // Perform Fetch
-    NSError *error = nil;
+    NSError * error = nil;
     [_fetchedResultsController performFetch:&error];
     if (error) {
         NSLog(@"ERROR: performFetch: %@", error);
@@ -110,7 +104,15 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [[self tableView] reloadData];
+    
+    ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
+    if ([sessionMan didBeginSession] && [sessionMan room]) {
+        [super pushToPublicConversationViewController];
+    } else if ([sessionMan restoreSession]) {
+        [super pushToJoinViewController];
+    } else {
+        [[self tableView] reloadData];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -131,9 +133,7 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self refreshControl] endRefreshing];
-    if ([self tableView]) {
-        [[self tableView] endUpdates];
-    }
+    [[self tableView] endUpdates];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -144,33 +144,34 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     
     switch (type) {
         case NSFetchedResultsChangeInsert: {
-            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+            [[self tableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case NSFetchedResultsChangeDelete: {
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+            [[self tableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
         case NSFetchedResultsChangeUpdate: {
-            UITableViewCell *cell = [[self tableView] cellForRowAtIndexPath:indexPath];
+            UITableViewCell * cell = [[self tableView] cellForRowAtIndexPath:indexPath];
             if (cell && [cell isKindOfClass:[ETRRoomListCell class]]) {
                 [self configureRoomCell:(ETRRoomListCell *)cell atIndexPath:indexPath];
             }
             break;
         }
         case NSFetchedResultsChangeMove: {
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
-            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+            [[self tableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
+            [[self tableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                    withRowAnimation:UITableViewRowAnimationFade];
         }
     }
 }
 
 #pragma mark -
 #pragma mark Table View Data Source Methods
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if (!_fetchedResultsController) {
         return 0;

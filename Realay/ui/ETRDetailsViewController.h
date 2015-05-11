@@ -11,6 +11,8 @@
 @class ETRRoom;
 @class ETRUser;
 
+// TODO: Morph into ETRBaseViewController child.
+
 @interface ETRDetailsViewController : UITableViewController
 
 @property (strong, nonatomic) ETRRoom * room;

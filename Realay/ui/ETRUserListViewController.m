@@ -72,7 +72,12 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     // Do not display empty cells at the end.
     [[self usersTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
     
+    // The title is the current Room
+    // and the back-button TO this View Controller is supposed to be empty.
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
+    [[[self navigationItem] backBarButtonItem] setTitle:@""];
+    
+    // The User list has a fixed row height.
     [[self usersTableView] setRowHeight:ETRUserRowHeight];
         
     // Configure manual refresher.

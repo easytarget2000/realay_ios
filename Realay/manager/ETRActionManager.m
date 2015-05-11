@@ -14,7 +14,7 @@
 #import "ETRSessionManager.h"
 
 
-static ETRActionManager *sharedInstance = nil;
+static ETRActionManager * sharedInstance = nil;
 
 static NSTimeInterval const ETRFastestInterval = 2.5;
 
@@ -42,8 +42,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 
 @property (strong, nonatomic) UINavigationController * navCon;               // Navigation Controller for quit-pops
 
-//@property (strong, nonatomic) NSTimer * updateTimer;          // Action query update timer
-
 @property (nonatomic) CFAbsoluteTime lastActionTime;
 
 @property (nonatomic) CFAbsoluteTime lastPingTime;
@@ -53,6 +51,9 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 
 @implementation ETRActionManager
 
+#pragma mark -
+#pragma mark Singleton Instantiation
+
 + (void)initialize {
     static BOOL initialized = NO;
     if (!initialized) {
@@ -60,7 +61,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         sharedInstance = [[ETRActionManager alloc] init];
     }
 }
-
 
 + (ETRActionManager *)sharedManager {
     return sharedInstance;
@@ -78,8 +78,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 }
 
 - (void)endSession {
-//    [_updateTimer invalidate];
-//    _updateTimer = nil;
     _lastActionID = 0L;
 }
 
@@ -99,13 +97,15 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [NSTimer scheduledTimerWithTimeInterval:_queryInterval
-                                         target:self
-                                       selector:@selector(queryUpdates:)
-                                       userInfo:nil
-                                        repeats:NO];
-    });
+    dispatch_async(
+                   dispatch_get_main_queue(),
+                   ^{
+                       [NSTimer scheduledTimerWithTimeInterval:_queryInterval
+                                                        target:self
+                                                      selector:@selector(queryUpdates:)
+                                                      userInfo:nil
+                                                       repeats:NO];
+                   });
 }
 
 - (void)queryUpdates:(NSTimer *)timer {

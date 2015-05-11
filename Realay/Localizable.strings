@@ -30,6 +30,8 @@
 
 "facebook_id" = "facebook id";
 
+"For_an_uninterrupted" = "For an uninterrupted experience, please allow Realay to always verify your location and request new messages in the background.";
+
 "has_left" = "%@ has left %@.";
 
 "instagram_name" = "instagram username";
@@ -65,6 +67,8 @@
 "send_me_realhey" = "Send me a RealHey!";
 
 "Session_terminated" = "Your session has been terminated.";
+
+"Settings" = "Settings";
 
 "Show_Profile" = "Show Profile";
 

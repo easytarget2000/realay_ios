@@ -52,9 +52,17 @@
 
 @synthesize imageID = _imageID;
 
-- (BOOL)isPublicMessage {
+- (BOOL)isPublicAction {
     short code = [[self code] shortValue];
-    return (code == ETRActionCodePublicMessage) || (code == ETRActionCodePublicMedia);
+    if (code == ETRActionCodePublicMessage || code == ETRActionCodePublicMedia) {
+        return YES;
+    } else if (code == ETRActionCodeUserJoin || code == ETRActionCodeUserQuit) {
+        return YES;
+    } else if (code == ETRActionCodeUserUpdate) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (BOOL)isPhotoMessage {

@@ -12,9 +12,10 @@
 
 #import "ETRServerAPIHelper.h"
 
+
 @interface ETRReachabilityManager ()
 
-@property (strong, nonatomic) Reachability *reachability;
+@property (strong, nonatomic) Reachability * reachability;
 
 @end
 
@@ -23,6 +24,7 @@
 
 #pragma mark -
 #pragma mark Default Manager
+
 + (ETRReachabilityManager *)sharedManager {
     static ETRReachabilityManager *_sharedManager = nil;
     static dispatch_once_t onceToken;
@@ -35,6 +37,7 @@
 
 #pragma mark -
 #pragma mark Private Initialization
+
 - (id)init {
     self = [super init];
     if (self) {
@@ -52,6 +55,7 @@
 
 #pragma mark -
 #pragma mark Memory Management
+
 - (void)dealloc {
     // Stop Notifier
     if (_reachability) {
@@ -61,6 +65,7 @@
 
 #pragma mark -
 #pragma mark Class Methods
+
 + (BOOL)isReachable {
     
     Reachability * reachability = [[ETRReachabilityManager sharedManager] reachability];

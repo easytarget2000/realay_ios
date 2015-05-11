@@ -20,8 +20,8 @@
 
 + (BOOL)isInSessionRegion;
 
-+ (BOOL)didAuthorize;
-
 - (NSInteger)distanceToRoom:(ETRRoom *)room;
+
+- (BOOL)didAuthorize;
 
 @end
