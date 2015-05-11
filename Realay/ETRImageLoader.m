@@ -10,6 +10,7 @@
 
 #import "ETRChatObject.h"
 #import "ETRImageEditor.h"
+#import "ETRImageView.h"
 #import "ETRServerAPIHelper.h"
 
 NSString *const ETRKeyIntendedObject = @"intended_object";
@@ -20,18 +21,29 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
     BOOL _doShowHiRes;
 }
 
-- initWithObject:(ETRChatObject *)chatObject targetImageView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doLoadHiRes{
+- initWithObject:(ETRChatObject *)chatObject
+ targetImageView:(ETRImageView *)targetImageView
+placeHolderImage:(UIImage *)placeHolderImage
+     doLoadHiRes:(BOOL)doLoadHiRes {
+    
     self = [super init];
     _chatObject = chatObject;
-    _targetImageView = targetImageView;
     _doShowHiRes = doLoadHiRes;
-//    _tag = (int) [chatObject imageID];
+    
+    if (targetImageView) {
+        _targetImageView = targetImageView;
+        // TODO: Check if this ImageView already contains the desired Image.
+        if (placeHolderImage) {
+            [_targetImageView setImage:placeHolderImage];
+        }
+    }
     return self;
 }
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject doLoadHiRes:(BOOL)doLoadHiRes {
     ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject
                                                       targetImageView:nil
+                                                     placeHolderImage:nil
                                                           doLoadHiRes:doLoadHiRes];
     [NSThread detachNewThreadSelector:@selector(startLoadingImage:)
                              toTarget:instance
@@ -39,11 +51,13 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
 }
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject
-                  intoView:(UIImageView *)targetImageView
+                  intoView:(ETRImageView *)targetImageView
+          placeHolderImage:(UIImage *)placeHolderImage
                doLoadHiRes:(BOOL)doShowHiRes {
     
-    ETRImageLoader *instance = [[ETRImageLoader alloc] initWithObject:chatObject
+    ETRImageLoader * instance = [[ETRImageLoader alloc] initWithObject:chatObject
                                                       targetImageView:targetImageView
+                                                      placeHolderImage:placeHolderImage
                                                           doLoadHiRes:(BOOL)doShowHiRes];
     [NSThread detachNewThreadSelector:@selector(startLoadingImage:)
                              toTarget:instance
@@ -105,5 +119,7 @@ NSString *const ETRKeyDidLoadHiRes = @"hi_res";
         [ETRServerAPIHelper getImageForLoader:self doLoadHiRes:YES];
     }
 }
+
+
 
 @end

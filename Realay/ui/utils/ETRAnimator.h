@@ -12,4 +12,9 @@
 
 + (void)toggleBounceInView:(UIView *)view completion:(void(^)(void))completion;
 
+#pragma mark -
+#pragma mark Fading
+
++ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear;
+
 @end

@@ -7,6 +7,7 @@
 //
 
 @class ETRChatObject;
+@class ETRImageView;
 
 
 extern NSString *const ETRKeyIntendedObject;
@@ -20,14 +21,15 @@ extern NSString *const ETRKeyDidLoadHiRes;
 
 @property (weak, nonatomic, readonly) ETRChatObject *chatObject;
 
-@property (weak, nonatomic, readonly) UIImageView *targetImageView;
+@property (weak, nonatomic, readonly) ETRImageView *targetImageView;
 
 @property (nonatomic, readonly) NSInteger tag;
 
 + (void)loadImageForObject:(ETRChatObject *)chatObject doLoadHiRes:(BOOL)doLoadHiRes;
 
-+ (void)loadImageForObject:(ETRChatObject *)chatObject intoView:(UIImageView *)targetImageView doLoadHiRes:(BOOL)doShowHiRes;
-
-//- (void)startLoading;
++ (void)loadImageForObject:(ETRChatObject *)chatObject
+                  intoView:(ETRImageView *)targetImageView
+          placeHolderImage:(UIImage *)placeHolderImage
+               doLoadHiRes:(BOOL)doShowHiRes;
 
 @end

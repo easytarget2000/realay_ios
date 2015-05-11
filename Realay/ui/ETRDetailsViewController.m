@@ -8,12 +8,12 @@
 
 #import "ETRDetailsViewController.h"
 
-#import "ETRAlertViewFactory.h"
+//#import "ETRAlertViewFactory.h"
 #import "ETRHeaderCell.h"
 #import "ETRImageLoader.h"
 #import "ETRKeyValueCell.h"
 #import "ETRLocalUserManager.h"
-#import "ETRLocationManager.h"
+//#import "ETRLocationManager.h"
 #import "ETRProfileButtonCell.h"
 #import "ETRProfileSocialCell.h"
 #import "ETRReadabilityHelper.h"
@@ -64,18 +64,11 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [[[self navigationController] navigationBar] setTranslucent:YES];
-    
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-                                                  forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage new];
-    //    self.navigationController.navigationBar.translucent = YES;
-    //    self.navigationController.view.backgroundColor = [UIColor kPrimaryColorTransparent];
-    //    [[[self navigationController] navigationBar] setBackgroundColor:[UIColor kPrimaryColorTransparent]];
-    //    UIToolbar* blurredView = [[UIToolbar alloc] initWithFrame:self.navigationController.navigationBar.bounds];
-    //    [blurredView setBarStyle:UIBarStyleBlack];
-    //    [blurredView setBarTintColor:[UIColor redColor]];
-    //    [self.navigationController.navigationBar insertSubview:blurredView atIndex:0];
+    UINavigationBar * navigationBar = [[self navigationController] navigationBar];
+    [navigationBar setTranslucent:YES];
+    [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    [navigationBar setShadowImage:[UIImage new]];
+
     
     // Just in case there is a toolbar wanting to be displayed:
     [[self navigationController] setToolbarHidden:YES];
@@ -118,9 +111,7 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
     
     CGRect rect = self.navigationController.navigationBar.frame;
     
-    float y = -rect.origin.y;
-    
-    self.tableView.contentInset = UIEdgeInsetsMake(y ,0,0,0);
+    [[self tableView] setContentInset:UIEdgeInsetsMake(-rect.origin.y, 0.0f, 0.0f, 0.0f)];
 }
 
 #pragma mark - Table view data source
@@ -207,9 +198,6 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
         ETRHeaderCell *headerCell;
         headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderCellIdentifier
                                                      forIndexPath:indexPath];
-        
-        // Reset the tag to allow image updates.
-        [[headerCell headerImageView] setTag:0];
         
         if (_room) {
             [headerCell setUpWithRoom:_room];

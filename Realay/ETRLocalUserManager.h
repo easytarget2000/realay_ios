@@ -6,7 +6,9 @@
 //  Copyright (c) 2014 Michel Sievers. All rights reserved.
 //
 
+@class ETRImageView;
 @class ETRUser;
+
 
 @interface ETRLocalUserManager : NSObject
 
@@ -31,6 +33,6 @@
 
 - (BOOL)isLocalUser:(ETRUser *) user;
 
-- (void)setImage:(UIImage *)newUserImage withImageView:(UIImageView *)imageView;
+- (void)setImage:(UIImage *)newUserImage withImageView:(ETRImageView *)imageView;
 
 @end

@@ -8,8 +8,9 @@
 
 #import "ETRRoomListViewController.h"
 
-#import "ETRAlertViewFactory.h"
+#import "ETRAnimator.h"
 #import "ETRCoreDataHelper.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRInformationCell.h"
@@ -55,6 +56,9 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Initialize Fetched Results Controller
+    _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
+    
     // Do not go back.
     [[self navigationItem] setHidesBackButton:YES];
     
@@ -70,8 +74,15 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     [[self tableView] addSubview:refreshControl];
     [self setRefreshControl:refreshControl];
         
-    // Initialize Fetched Results Controller
-    _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
+
+    if (![ETRDefaultsHelper didRunOnce]) {
+        [[self infoView] setHidden:NO];
+        [[self infoLabel] setHidden:NO];
+        [self setTitle:@""];
+    } else {
+        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
+    }
+    
 }
 
 // TODO: Make sure the Status Bar Color is always white, especially after returning from media selection.
@@ -111,24 +122,14 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     [_fetchedResultsController setDelegate:nil];
 }
 
-- (void)updateTableViewVisiblity {
-    if (_fetchedResultsController && [[_fetchedResultsController fetchedObjects] count]) {
-        [[self tableView] setHidden:NO];
-        [[self infoView] setHidden:YES];
-    } else {
-        [[self infoView] setHidden:NO];
-        [[self tableView] setHidden:YES];
-    }
-}
-
 #pragma mark -
 #pragma mark Fetched Results Controller Delegate Methods
+
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [[self tableView] beginUpdates];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    [self updateTableViewVisiblity];
     [[self refreshControl] endRefreshing];
     if ([self tableView]) {
         [[self tableView] endUpdates];
@@ -179,12 +180,23 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_fetchedResultsController || ![[_fetchedResultsController fetchedObjects] count]) {
-        return 0;
+    NSInteger numberOfRows;
+    
+    if (!_fetchedResultsController) {
+        numberOfRows = 0;
+    } else {
+        numberOfRows = [[_fetchedResultsController fetchedObjects] count];
     }
     
-    id<NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];
+    if (numberOfRows < 1) {
+        [self setTitle:@""];
+        [ETRAnimator fadeView:[self infoView] doAppear:YES];
+    } else {
+        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
+        [ETRAnimator fadeView:[self infoView] doAppear:NO];
+    }
+    
+    return numberOfRows;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -235,24 +247,26 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     } else {
         [[cell placeIcon] setHidden:YES];
         [[cell distanceLabel] setHidden:NO];
-        NSString *formattedDistance;
+        NSString * formattedDistance;
         formattedDistance = [ETRReadabilityHelper formattedIntegerLength:distance];
         [[cell distanceLabel] setText:formattedDistance];
     }
     
-    [ETRImageLoader loadImageForObject:record intoView:[cell headerImageView] doLoadHiRes:YES];
-    [[cell headerImageView] setTag:[indexPath row]];
+    [ETRImageLoader loadImageForObject:record
+                              intoView:[cell headerImageView]
+                      placeHolderImage:[UIImage imageNamed:ETRImageNameRoomPlaceholder]
+                           doLoadHiRes:YES];
 }
 
 - (ETRInformationCell *)infoCellAtIndexPath:(NSIndexPath *)indexPath {
     
-    ETRInformationCell *cell;
+    ETRInformationCell * cell;
     cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
                                                   forIndexPath:indexPath];
     if (!cell) {
         cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier];
     }
-    ETRInformationCell *infoCell = (ETRInformationCell *) cell;
+    ETRInformationCell * infoCell = (ETRInformationCell *) cell;
     
     // TODO: Button to location menu
     // TODO: Localization
@@ -266,7 +280,7 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     //            [[loadingCell textLabel] setText:statusNoRooms];
     //            [_activityIndicator stopAnimating];
     //        } else {
-    NSString *searching = @"Searching for Realays...";
+    NSString * searching = @"Searching for Realays...";
     [[infoCell infoLabel] setText:searching];
     //        }
     

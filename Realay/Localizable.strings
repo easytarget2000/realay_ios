@@ -40,6 +40,8 @@
 
 "location" = "location";
 
+"Near_You" = "Near You";
+
 "No" = "No";
 
 "No_private_conversations" = "You currently do not have any private conversations in this Realay. Chose a person from the user list to start a 1-on-1 chat.";

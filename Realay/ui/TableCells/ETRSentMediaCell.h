@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+
+@class ETRImageView;
+
+
 @interface ETRSentMediaCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *iconView;
+@property (weak, nonatomic) IBOutlet ETRImageView *iconView;
 
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 

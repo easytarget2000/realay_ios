@@ -22,9 +22,4 @@
     // Configure the view for the selected state
 }
 
-- (void)prepareForReuse {
-    [[self iconView] setTag:0];
-    [[self iconView] setImage:[UIImage imageNamed:@"Camera"]];
-}
-
 @end

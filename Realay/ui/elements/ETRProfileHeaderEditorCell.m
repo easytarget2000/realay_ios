@@ -9,7 +9,9 @@
 #import "ETRProfileHeaderEditorCell.h"
 
 #import "ETRImageLoader.h"
+#import "ETRImageView.h"
 #import "ETRProfileEditorViewController.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
 
 /*
@@ -36,9 +38,13 @@ static CGFloat const ETRIconButtonCornerRadius = 32.0f;
     
     _viewController = viewController;
     
+    // TODO: Move this to Storyboard.
     [[[self iconImageView] layer] setCornerRadius:ETRIconButtonCornerRadius];
     [[self iconImageView] setClipsToBounds:YES];
-    [ETRImageLoader loadImageForObject:user intoView:[self iconImageView] doLoadHiRes:NO];
+    [ETRImageLoader loadImageForObject:user
+                              intoView:[self iconImageView]
+                      placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
+                           doLoadHiRes:NO];
     
     [[self nameField] setTag:tag];
     [[self nameField] setText:[user name]];

@@ -11,10 +11,7 @@
 #import "ETRImageLoader.h"
 #import "ETRRoom.h"
 #import "ETRUser.h"
-
-static NSString *const ETRProfilePlaceholderImageName = @"PlaceholderProfileW";
-
-static NSString *const ETRRoomPlaceholderImageName = @"PlaceholderRoomW";
+#import "ETRUIConstants.h"
 
 @implementation ETRHeaderCell
 
@@ -23,6 +20,7 @@ static NSString *const ETRRoomPlaceholderImageName = @"PlaceholderRoomW";
         [[self nameLabel] setText:[room title]];
         [ETRImageLoader loadImageForObject:room
                                   intoView:[self headerImageView]
+                          placeHolderImage:[UIImage imageNamed:ETRImageNameRoomPlaceholder]
                                doLoadHiRes:YES];
     }
 }
@@ -30,9 +28,9 @@ static NSString *const ETRRoomPlaceholderImageName = @"PlaceholderRoomW";
 - (void)setUpWithUser:(ETRUser *)user {
     if (user) {
         [[self nameLabel] setText:[user name]];
-        [[self headerImageView] setImage:[UIImage imageNamed:ETRProfilePlaceholderImageName]];
         [ETRImageLoader loadImageForObject:user
                                   intoView:[self headerImageView]
+                          placeHolderImage:[UIImage imageNamed:ETRImageNameProfilePlaceholder]
                                doLoadHiRes:YES];
     }
 }

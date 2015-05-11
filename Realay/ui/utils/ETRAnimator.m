@@ -8,7 +8,9 @@
 
 #import "ETRAnimator.h"
 
-static NSTimeInterval const ETRScaleDuration = 0.5;
+static NSTimeInterval const ETRAnimationDurationScale = 0.7;
+
+static NSTimeInterval const ETRAnimationDurationFade = 0.7;
 
 @implementation ETRAnimator
 
@@ -22,7 +24,7 @@ static NSTimeInterval const ETRScaleDuration = 0.5;
     NSTimeInterval shortDuration = 0.3;
     CGFloat settleScale;
     if (doAppear) {
-        blowupDuration = ETRScaleDuration;
+        blowupDuration = ETRAnimationDurationScale;
         settleDuration = shortDuration;
         settleScale = 1.0f;
         
@@ -30,13 +32,13 @@ static NSTimeInterval const ETRScaleDuration = 0.5;
         [view setHidden:NO];
     } else {
         blowupDuration = shortDuration;
-        settleDuration = ETRScaleDuration;
+        settleDuration = ETRAnimationDurationScale;
         settleScale = 0.1f;
     }
     
     // Perform the blowup animation.
     [UIView animateWithDuration:blowupDuration
-                          delay:0.0
+                          delay:0.1
                         options:(UIViewAnimationOptionCurveLinear | UIViewAnimationOptionTransitionFlipFromBottom)
                      animations:^{
                          [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, blowupScale, blowupScale)];
@@ -45,7 +47,7 @@ static NSTimeInterval const ETRScaleDuration = 0.5;
      ];
     
     [UIView animateWithDuration:settleDuration
-                          delay:blowupDuration
+                          delay:blowupDuration + 0.1
                         options:(UIViewAnimationOptionCurveLinear | UIViewAnimationOptionTransitionFlipFromBottom)
                      animations:^{
                          [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, settleScale, settleScale)];
@@ -61,6 +63,43 @@ static NSTimeInterval const ETRScaleDuration = 0.5;
                              }
                          }
                      }];
+}
+
+#pragma mark -
+#pragma mark Fading
+
++ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear {
+
+    if (doAppear) {
+        if (![view isHidden] && [view alpha] > 0.9f) {
+            return;
+        }
+        
+//        [view setAlpha:0.0f];
+        [view setHidden:NO];
+        
+        [UIView animateWithDuration:ETRAnimationDurationFade
+                              delay:0.0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             [view setAlpha:1.0f];
+                         }
+                         completion:nil];
+    } else {
+        if ([view isHidden]) {
+            return;
+        }
+        
+        [UIView animateWithDuration:ETRAnimationDurationFade
+                              delay:0.0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             [view setAlpha:0.0f];
+                         }
+                         completion:^(BOOL finished) {
+                             [view setHidden:YES];
+                         }];
+    }
 }
 
 @end

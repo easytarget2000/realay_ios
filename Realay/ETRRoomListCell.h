@@ -8,16 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+@class ETRImageView;
+
 
 @interface ETRRoomListCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *headerImageView;
+@property (weak, nonatomic) IBOutlet ETRImageView *headerImageView;
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *distanceLabel;
 
-@property (weak, nonatomic) IBOutlet UIImageView *placeIcon;
+@property (weak, nonatomic) IBOutlet UIImageView * placeIcon;
 
 @property (weak, nonatomic) IBOutlet UILabel *sizeLabel;
 

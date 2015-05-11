@@ -18,6 +18,14 @@ extern NSString *const ETRViewControllerIDDetails;
 
 extern NSString *const ETRViewControllerIDJoin;
 
+extern NSString *const ETRImageNameImagePlaceholder;
+
+extern NSString *const ETRImageNameProfilePlaceholder;
+
+extern NSString *const ETRImageNameRoomPlaceholder;
+
+extern NSString *const ETRImageNameUserIcon;
+
 + (UIColor *)primaryColor;
 
 + (UIColor *)primaryTransparentColor;

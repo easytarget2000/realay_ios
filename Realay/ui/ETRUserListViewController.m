@@ -10,14 +10,15 @@
 
 #import "ETRAction.h"
 #import "ETRActionManager.h"
+#import "ETRAnimator.h"
 #import "ETRConversation.h"
 #import "ETRConversationViewController.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
-#import "ETRInfoCell.h"
+//#import "ETRInfoCell.h"
 #import "ETRLocalUserManager.h"
-#import "ETRMapViewController.h"
+//#import "ETRMapViewController.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
@@ -164,23 +165,34 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    if (_conversationsResultsController && [[_conversationsResultsController fetchedObjects] count]) {
+        return 2;
+    } else {
+        return 1;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0) {
-        if (!_conversationsResultsController || ![[_conversationsResultsController fetchedObjects] count]) {
-            return 0;
+    NSInteger numberOfSections = [tableView numberOfSections];
+    
+    NSInteger numberOfRows;
+    if (section == 0 && numberOfSections > 1) {
+        if (!_conversationsResultsController) {
+            numberOfRows = 0;
         } else {
-            return [[_conversationsResultsController fetchedObjects] count];
+            numberOfRows = [[_conversationsResultsController fetchedObjects] count];
         }
     } else {
-        if (!_usersResultsController || ![[_usersResultsController fetchedObjects] count]) {
-            return 0;
+        if (!_usersResultsController) {
+            numberOfRows = 0;
         } else {
-            return [[_usersResultsController fetchedObjects] count];
+            numberOfRows = [[_usersResultsController fetchedObjects] count];
         }
     }
+    
+    [ETRAnimator fadeView:[self infoView] doAppear:(numberOfRows < 1)];
+    
+    return numberOfRows;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -206,10 +218,12 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     //    [[[cell iconView] layer] setCornerRadius:ETRIconViewCornerRadius];
     //    [[cell iconView] setClipsToBounds:YES];
     
+    NSInteger numberOfSections = [[self usersTableView] numberOfSections];
+    
     // Get the User object from the appropriate Fetched Results Controller
     // and apply the data to the Cell elements.
     ETRUser * user;
-    if ([indexPath section] == 0) {
+    if ([indexPath section] == 0 && numberOfSections > 1) {
         ETRConversation * convo = [_conversationsResultsController objectAtIndexPath:indexPath];
         user = [convo partner];
         [[cell infoLabel] setText:[[convo lastMessage] messageContent]];
@@ -221,7 +235,10 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     }
     
     [[cell nameLabel] setText:[user name]];
-    [ETRImageLoader loadImageForObject:user intoView:[cell iconView] doLoadHiRes:NO];
+    [ETRImageLoader loadImageForObject:user
+                              intoView:[cell iconView]
+                      placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
+                           doLoadHiRes:NO];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {

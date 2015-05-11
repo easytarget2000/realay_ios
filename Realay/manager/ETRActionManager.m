@@ -110,7 +110,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 
 - (void)queryUpdates:(NSTimer *)timer {
     if (![[ETRSessionManager sharedManager] didBeginSession]) {
-        NSLog(@"WARNING: Attempted to query Actions outside of Session.");
+        NSLog(@"DEBUG: Attempted to query Actions outside of Session.");
         return;
     }
     

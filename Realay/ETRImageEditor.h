@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 
 @class ETRChatObject;
+@class ETRImageView;
 
 @interface ETRImageEditor : NSObject
 
 + (void)cropImage:(UIImage *)image
-      applyToView:(UIImageView *)targetImageView
+      applyToView:(ETRImageView *)targetImageView
           isHiRes:(BOOL)isHiRes;
 
 + (UIImage *)imageFromPickerInfo:(NSDictionary *)info;

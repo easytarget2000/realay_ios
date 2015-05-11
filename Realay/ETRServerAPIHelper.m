@@ -623,7 +623,7 @@ static NSMutableArray *connections;
  that matches the combination of the given name and device ID;
  stores the new User object through the Local User Manager when finished
  */
-+ (void)loginUserWithName:(NSString *)name completionHandler:(void(^)(ETRUser *))onSuccessBlock {
++ (void)loginUserWithName:(NSString *)name completionHandler:(void(^)(BOOL))onSuccessBlock {
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:name forKey:@"name"];
@@ -646,12 +646,12 @@ static NSMutableArray *connections;
                              if (localUser) {
                                  [[ETRLocalUserManager sharedManager] setUser:localUser];
                                  [[ETRLocalUserManager sharedManager] storeUserDefaults];
-                                 onSuccessBlock(localUser);
+                                 onSuccessBlock(YES);
                                  return;
                              }
                          }
                          
-                         onSuccessBlock(nil);
+                         onSuccessBlock(NO);
                          
                      }];
 }
@@ -697,7 +697,7 @@ static NSMutableArray *connections;
                      completionHandler:^(id<NSObject> receivedObject) {
                          if (receivedObject && [receivedObject isKindOfClass:[NSNumber class]]) {
                              if ([((NSNumber *) receivedObject) boolValue]) {
-                                 // TODO: Remove all User Update Actions from the queue.
+                                 [ETRCoreDataHelper removeUserUpdateActionsFromQueue];
                              }
                          }
                      }];
@@ -753,16 +753,17 @@ static NSMutableArray *connections;
                      }];
 }
 
-+ (void)getUserWithID:(long)remoteID {
-    if (remoteID < 10) {
++ (void)getUserWithID:(NSNumber *)remoteID {
+    if (!remoteID || [remoteID longValue] < 100L) {
         return;
     }
     
     NSDictionary * authParams = [ETRServerAPIHelper sessionAuthDictionary];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionaryWithDictionary:authParams];
-    [paramDict setObject:[NSString stringWithFormat:@"%ld", remoteID] forKey:@"user"];
+    NSString * remoteIDString = [remoteID stringValue];
+    [paramDict setObject:remoteIDString forKey:@"user"];
     
-    NSString * connectionID = [NSString stringWithFormat:@"getUser:%ld", remoteID];
+    NSString * connectionID = [NSString stringWithFormat:@"getUser:%@", remoteIDString];
     
     [ETRServerAPIHelper performAPICall:ETRGetUserAPICall
                                 withID:connectionID

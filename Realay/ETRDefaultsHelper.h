@@ -14,9 +14,21 @@
 
 @interface ETRDefaultsHelper : NSObject
 
-+ (BOOL)doUseMetricSystem;
+#pragma mark -
+#pragma mark General
+
++ (BOOL)didRunOnce;
+
++ (NSNumber *)localUserID;
+
++ (void)storeLocalUserID:(NSNumber *)remoteID;
 
 + (NSString *)authID;
+
+#pragma mark -
+#pragma mark Settings
+
++ (BOOL)doUseMetricSystem;
 
 #pragma mark -
 #pragma mark Location & Room Updates

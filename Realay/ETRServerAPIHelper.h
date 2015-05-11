@@ -59,11 +59,11 @@ extern NSString * ETRAPIBaseURL;
  that matches the combination of the given name and device ID;
  stores the new User object through the Local User Manager when finished
  */
-+ (void)loginUserWithName:(NSString *)name completionHandler:(void(^)(ETRUser *))onSuccessBlock;
++ (void)loginUserWithName:(NSString *)name completionHandler:(void(^)(BOOL))handler;
 
-+ (void)getSessionUsersWithCompletionHandler:(void (^)(BOOL)) handler;
++ (void)getSessionUsersWithCompletionHandler:(void (^)(BOOL))handler;
 
-+ (void)getUserWithID:(long)remoteID;
++ (void)getUserWithID:(NSNumber *)remoteID;
 
 + (void)sendLocalUserUpdate;
 

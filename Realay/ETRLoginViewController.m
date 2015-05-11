@@ -12,7 +12,6 @@
 #import "ETRLocalUserManager.h"
 #import "ETRDetailsViewController.h"
 #import "ETRServerAPIHelper.h"
-#import "ETRSessionManager.h"
 #import "ETRUser.h"
 
 static NSString *const joinSegue = @"loginToJoinSegue";
@@ -73,13 +72,13 @@ static NSString *const profileSegue = @"loginToProfileSegue";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:joinSegue] && [sender isKindOfClass:[ETRUser class]]) {
-        ETRDetailsViewController *destination = [segue destinationViewController];
-        [destination setUser:(ETRUser *) sender];
+        ETRDetailsViewController * destination = [segue destinationViewController];
+        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
     }
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
-    NSString *typedName;
+    NSString * typedName;
     typedName = [[_nameTextField text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if ([typedName length] < 1) {
@@ -96,21 +95,20 @@ static NSString *const profileSegue = @"loginToProfileSegue";
         [[self nameTextField] resignFirstResponder];
         
         [ETRServerAPIHelper loginUserWithName:typedName
-                            completionHandler:^(ETRUser *localUser) {
+                            completionHandler:^(BOOL didSucceed) {
                                 [NSThread detachNewThreadSelector:@selector(handleLoginCompletion:)
                                                          toTarget:self
-                                                       withObject:localUser];
-        }];
+                                                       withObject:@(didSucceed)];
+                            }];
     }
-    
 }
 
-- (void)handleLoginCompletion:(ETRUser *)localUser {
-    if (localUser) {
+- (void)handleLoginCompletion:(NSNumber *)didSucceed {
+    if ([didSucceed boolValue]) {
         if (_doStartSessionOnFinish) {
             [self performSegueWithIdentifier:joinSegue sender:nil];
         } else {
-            [self performSegueWithIdentifier:profileSegue sender:localUser];
+            [self performSegueWithIdentifier:profileSegue sender:nil];
         }
     } else {
         [ETRAlertViewFactory showGeneralErrorAlert];

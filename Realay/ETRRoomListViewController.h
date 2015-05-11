@@ -12,6 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *infoView;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 
 - (IBAction)profileButtonPressed:(id)sender;
 

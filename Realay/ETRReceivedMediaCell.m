@@ -12,11 +12,4 @@
 
 @implementation ETRReceivedMediaCell
 
-- (void)prepareForReuse {
-    [[self userIconView] setTag:0];
-    [[self userIconView] setImage:[UIImage imageNamed:@"PlaceholderProfileW"]];
-    [[self iconView] setTag:0];
-    [[self iconView] setImage:[UIImage imageNamed:@"Camera"]];
-}
-
 @end

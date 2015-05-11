@@ -26,7 +26,6 @@
 		D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01A602518E35BF900730A1B /* ETRRoomListCell.m */; };
 		D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */; };
 		D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */; };
-		D01F2A6F18622D6D00DC97F7 /* ETRWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01F2A6E18622D6D00DC97F7 /* ETRWelcomeViewController.m */; };
 		D02465C81AF92CD80049CDB4 /* ETRBlockedUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */; };
 		D026A9AB1AB8D0D0006FB920 /* ETRReceivedMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */; };
 		D02E42561AB4B06C00A46CF5 /* ETRReadabilityHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */; };
@@ -95,6 +94,7 @@
 		D0EC763C18EDFC5C00CB0BAE /* ETRSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */; };
 		D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */; };
 		D0F2AB0118FFDA14008B7C32 /* empty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D0F2AB0018FFDA14008B7C32 /* empty.jpg */; };
+		D0FF65F61AFEA06100C8572D /* ETRImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0FF65F51AFEA06100C8572D /* ETRImageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -133,8 +133,6 @@
 		D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRJoinViewController.m; path = ui/ETRJoinViewController.m; sourceTree = "<group>"; };
 		D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRActionManager.h; path = manager/ETRActionManager.h; sourceTree = "<group>"; };
 		D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRActionManager.m; path = manager/ETRActionManager.m; sourceTree = "<group>"; };
-		D01F2A6D18622D6D00DC97F7 /* ETRWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRWelcomeViewController.h; sourceTree = "<group>"; };
-		D01F2A6E18622D6D00DC97F7 /* ETRWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRWelcomeViewController.m; sourceTree = "<group>"; };
 		D020733117EBB34400453B69 /* ETRRoomListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListCell.h; sourceTree = "<group>"; };
 		D02465C61AF92CD80049CDB4 /* ETRBlockedUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRBlockedUsersViewController.h; sourceTree = "<group>"; };
 		D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBlockedUsersViewController.m; sourceTree = "<group>"; };
@@ -239,6 +237,8 @@
 		D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionManager.m; sourceTree = "<group>"; };
 		D0F2AB0018FFDA14008B7C32 /* empty.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = empty.jpg; sourceTree = "<group>"; };
 		D0F63EA318DA2B740082A468 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
+		D0FF65F41AFEA06100C8572D /* ETRImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRImageView.h; path = ui/elements/ETRImageView.h; sourceTree = "<group>"; };
+		D0FF65F51AFEA06100C8572D /* ETRImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRImageView.m; path = ui/elements/ETRImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,6 +297,8 @@
 				D01446BE1A9F9E0D00748378 /* ETRCircleView.m */,
 				D0190B361ABB7B050010E637 /* ETRShadowView.h */,
 				D0190B371ABB7B050010E637 /* ETRShadowView.m */,
+				D0FF65F41AFEA06100C8572D /* ETRImageView.h */,
+				D0FF65F51AFEA06100C8572D /* ETRImageView.m */,
 			);
 			name = "Small Elements";
 			sourceTree = "<group>";
@@ -505,8 +507,6 @@
 				D0190B341ABB726D0010E637 /* ETRUIConstants.m */,
 				D013BB8C1AFAAD2000DA1895 /* ETRUserListViewController.h */,
 				D013BB8D1AFAAD2000DA1895 /* ETRUserListViewController.m */,
-				D01F2A6D18622D6D00DC97F7 /* ETRWelcomeViewController.h */,
-				D01F2A6E18622D6D00DC97F7 /* ETRWelcomeViewController.m */,
 				D01446B71A9F78F500748378 /* Images.xcassets */,
 				D0BB824D1AB2483B00276D5C /* Localizable.strings */,
 				D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */,
@@ -617,6 +617,7 @@
 				D0C821C91AC21B2C00549EEA /* ETRUserCell.m in Sources */,
 				D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */,
 				D0E1971917E276DB00135B8C /* ETRAppDelegate.m in Sources */,
+				D0FF65F61AFEA06100C8572D /* ETRImageView.m in Sources */,
 				D0917D111AC588E200136D31 /* Reachability.m in Sources */,
 				D026A9AB1AB8D0D0006FB920 /* ETRReceivedMessageCell.m in Sources */,
 				D0081F5818C546B200D0819A /* ETRAlertViewFactory.m in Sources */,
@@ -646,7 +647,6 @@
 				D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */,
 				D00A16081AAA1E330036B25B /* ETRProfileSocialCell.m in Sources */,
 				D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */,
-				D01F2A6F18622D6D00DC97F7 /* ETRWelcomeViewController.m in Sources */,
 				D0B3D46A1AC481290070F282 /* ETRInfoCell.m in Sources */,
 				D00A160B1AAA25BC0036B25B /* ETRDetailsViewController.m in Sources */,
 				D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */,

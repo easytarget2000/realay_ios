@@ -8,13 +8,11 @@
 
 #import "ETRMapViewController.h"
 
-//#import <CoreLocation/CoreLocation.h>
 #import <GoogleMaps/GoogleMaps.h>
 
 #import "ETRAlertViewFactory.h"
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
-#import "ETRPasswordViewController.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"

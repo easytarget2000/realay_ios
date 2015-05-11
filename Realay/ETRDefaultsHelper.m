@@ -16,7 +16,7 @@
 
 static NSString *const ETRDefaultsKeyAuthID = @"auth_id";
 
-static NSString *const ETRDefaultsKeySession = @"session_r";
+static NSString *const ETRDefaultsKeyDidRunOnce = @"did_run";
 
 static NSString *const ETRDefaultsKeyInputTexts = @"input_texts";
 
@@ -30,6 +30,10 @@ static NSString *const ETRDefaultsKeyLastUpdateLng = @"last_update_lng";
 
 static NSString *const ETRDefaultsKeyLastUpdateTime = @"last_update_time";
 
+static NSString *const ETRDefaultsKeySession = @"session_r";
+
+static NSString *const ETRDefaultsKeyUserID = @"local_user";
+
 static CFTimeInterval const ETRRoomListUpdateInterval = 20.0 * 60.0;
 
 static CLLocationDistance const ETRRoomListUpdateDistance = 500.0;
@@ -39,15 +43,34 @@ static CLLocation * LastUpdateLocation;
 
 @implementation ETRDefaultsHelper
 
-+ (BOOL)doUseMetricSystem {
-    NSLocale *locale = [NSLocale currentLocale];
-    
-    id localeMeasurement = [locale objectForKey:NSLocaleUsesMetricSystem];
-    if (localeMeasurement && [localeMeasurement isKindOfClass:[NSNumber class]]) {
-        return [localeMeasurement boolValue];
+#pragma mark -
+#pragma mark General
+
++ (BOOL)didRunOnce {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    BOOL didRunOnce = [defaults boolForKey:ETRDefaultsKeyDidRunOnce];
+    if (!didRunOnce) {
+        [defaults setBool:YES forKey:ETRDefaultsKeyDidRunOnce];
+        [defaults synchronize];
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
++ (NSNumber *)localUserID {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults objectForKey:ETRDefaultsKeyUserID];
+}
+
++ (void)storeLocalUserID:(NSNumber *)remoteID {
+    if (!remoteID || [remoteID longValue] < 100L) {
+        return;
     }
     
-    return YES;
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:remoteID forKey:ETRDefaultsKeyUserID];
+    [defaults synchronize];
 }
 
 + (NSString *)authID {
@@ -70,6 +93,22 @@ static CLLocation * LastUpdateLocation;
     
     return userID;
 }
+
+#pragma mark -
+#pragma mark Settings
+
++ (BOOL)doUseMetricSystem {
+    NSLocale *locale = [NSLocale currentLocale];
+    
+    id localeMeasurement = [locale objectForKey:NSLocaleUsesMetricSystem];
+    if (localeMeasurement && [localeMeasurement isKindOfClass:[NSNumber class]]) {
+        return [localeMeasurement boolValue];
+    }
+    
+    return YES;
+}
+
+
 
 #pragma mark -
 #pragma mark Location & Room Updates

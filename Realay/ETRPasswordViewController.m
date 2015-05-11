@@ -9,14 +9,12 @@
 #import "ETRPasswordViewController.h"
 
 #import "ETRAlertViewFactory.h"
-#import "ETRConversationViewController.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRLoginViewController.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 
-#define DEBUG_NO_PW_CHECK       1
 
 static NSString *const ETRPassordToJoinSegue = @"passwordToJoinSegue";
 

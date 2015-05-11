@@ -14,6 +14,15 @@ NSString *const ETRViewControllerIDDetails = @"detailsViewController";
 
 NSString *const ETRViewControllerIDJoin = @"joinViewController";
 
+NSString *const ETRImageNameProfilePlaceholder = @"PlaceholderProfileW";
+
+NSString *const ETRImageNameRoomPlaceholder = @"PlaceholderRoomW";
+
+// TODO: Use smaller Image for User Icons than profile placeholder.
+NSString *const ETRImageNameUserIcon = @"PlaceholderProfileW";
+
+NSString *const ETRImageNameImagePlaceholder = @"Camera";
+
 static UIColor * PrimaryColor;
 
 static UIColor * PrimaryTransparentColor;

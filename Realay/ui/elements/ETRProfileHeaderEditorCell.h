@@ -10,11 +10,13 @@
 
 @class ETRProfileEditorViewController;
 @class ETRUser;
+@class ETRImageView;
+
 
 @interface ETRProfileHeaderEditorCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UITextField *nameField;
-@property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
+@property (weak, nonatomic) IBOutlet UITextField * nameField;
+@property (weak, nonatomic) IBOutlet ETRImageView * iconImageView;
 
 - (void)setUpWithTag:(NSInteger)tag
              forUser:(ETRUser *)user

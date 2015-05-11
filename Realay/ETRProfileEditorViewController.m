@@ -86,6 +86,19 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     }
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    
+    if ([indexPath row] > 0) {
+        ETRKeyValueEditorCell * valueCell;
+        valueCell = (ETRKeyValueEditorCell *) [tableView cellForRowAtIndexPath:indexPath];
+        
+        if (valueCell) {
+            [[valueCell valueField] becomeFirstResponder];
+        }
+    }
+}
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger row = [indexPath row];
@@ -361,7 +374,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     // Check differences between the local User duplicate and the original
     // in order to determine, if the database entries need to be updated.
     BOOL doSendUpdate = NO;
-    ETRUser *localUser = [[ETRLocalUserManager sharedManager] user];
+    ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
     if (![[_localUserCopy imageID] isEqualToNumber:[localUser imageID]]) {
         // Do not send an update API call for image changes.
@@ -382,6 +395,11 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
             doSendUpdate = YES;
             [localUser setStatus:[_localUserCopy status]];
         }
+    }
+    
+    if (![[_localUserCopy mail] isEqualToString:[localUser mail]]) {
+        doSendUpdate = YES;
+        [localUser setMail:[_localUserCopy mail]];
     }
     
     if (![[_localUserCopy phone] isEqualToString:[localUser phone]]) {

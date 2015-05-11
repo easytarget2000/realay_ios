@@ -36,11 +36,15 @@ extern long const ETRActionPublicUserID;
 
 + (void)dispatchImageMessage:(UIImage *)image toRecipient:(ETRUser *)recipient;
 
++ (void)dispatchUserUpdateAction;
+
 + (void)clearPublicActions;
 
 + (void)addActionToQueue:(ETRAction *)unsentAction;
 
 + (void)removeActionFromQueue:(ETRAction *)sentAction;
+
++ (void)removeUserUpdateActionsFromQueue;
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate;
 
@@ -68,7 +72,7 @@ extern long const ETRActionPublicUserID;
 
 + (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary;
 
-+ (ETRUser *)userWithRemoteID:(long)remoteID
++ (ETRUser *)userWithRemoteID:(NSNumber *)remoteID
           doLoadIfUnavailable:(BOOL)doLoadIfUnavailable;
 
 + (ETRUser *)copyUser:(ETRUser *)user;

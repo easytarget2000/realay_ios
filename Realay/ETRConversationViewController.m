@@ -19,7 +19,6 @@
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
 #import "ETRUser.h"
-#import "ETRUserListViewController.h"
 #import "ETRReceivedMediaCell.h"
 #import "ETRReceivedMessageCell.h"
 #import "ETRReadabilityHelper.h"
@@ -281,6 +280,8 @@ UITextFieldDelegate
      forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath {
     
+    NSLog(@"DEBUG: didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
+    
     switch (type) {
         case NSFetchedResultsChangeInsert: {
             [[self messagesTableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
@@ -293,8 +294,8 @@ UITextFieldDelegate
             break;
         }
         case NSFetchedResultsChangeUpdate: {
-//            [[self messagesTableView] cellForRowAtIndexPath:indexPath];
-//            NSLog(@"DEBUG: Updated message record: %ld, %ld, %@", [indexPath row], [newIndexPath row], anObject);
+            [[self messagesTableView] cellForRowAtIndexPath:indexPath];
+            NSLog(@"DEBUG: Updated message record: %ld, %ld, %@", [indexPath row], [newIndexPath row], anObject);
             break;
         }
         case NSFetchedResultsChangeMove: {
@@ -344,7 +345,10 @@ UITextFieldDelegate
             ETRSentMediaCell * cell;
             cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier
                                                    forIndexPath:indexPath];
-            [ETRImageLoader loadImageForObject:action intoView:[cell iconView] doLoadHiRes:NO];
+            [ETRImageLoader loadImageForObject:action
+                                      intoView:[cell iconView]
+                              placeHolderImage:[UIImage imageNamed:ETRImageNameImagePlaceholder]
+                                   doLoadHiRes:NO];
             NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
@@ -375,6 +379,7 @@ UITextFieldDelegate
                                                    forIndexPath:indexPath];
             [ETRImageLoader loadImageForObject:[action sender]
                                       intoView:[cell userIconView]
+                              placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
                                    doLoadHiRes:NO];
             if (_isPublic) {
                 [[cell nameLabel] setText:senderName];
@@ -383,6 +388,7 @@ UITextFieldDelegate
             }
             [ETRImageLoader loadImageForObject:action
                                       intoView:[cell iconView]
+                              placeHolderImage:[UIImage imageNamed:ETRImageNameImagePlaceholder]
                                    doLoadHiRes:NO];
             
             NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
@@ -396,9 +402,10 @@ UITextFieldDelegate
 //            [[[cell userIconView] layer] setCornerRadius:ETRIconViewCornerRadius];
 //            [[cell userIconView] setClipsToBounds:YES];
             
-//            [ETRImageLoader loadImageForObject:[action sender]
-//                                      intoView:[cell userIconView]
-//                                   doLoadHiRes:NO];
+            [ETRImageLoader loadImageForObject:[action sender]
+                                      intoView:[cell userIconView]
+                              placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
+                                   doLoadHiRes:NO];
             if (_isPublic) {
                 [[cell nameLabel] setText:senderName];
             } else {

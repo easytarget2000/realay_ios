@@ -12,8 +12,6 @@
 	<dict>
 		<key>1D24BD6C66C0BF7E2655675D7943FD8A4C9C4F34</key>
 		<string>https://bitbucket.org/easytargetmixel/realayclientios.git</string>
-		<key>a51ea77e-9456-47dc-8945-9de78ff25df7++9346</key>
-		<string>svn+ssh://svn.code.sf.net/p/gorgorealay/ios/iOS/Realay</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Realay.xcodeproj</string>
@@ -21,13 +19,6 @@
 	<dict>
 		<key>1D24BD6C66C0BF7E2655675D7943FD8A4C9C4F34</key>
 		<string>../..</string>
-		<key>a51ea77e-9456-47dc-8945-9de78ff25df7++9346</key>
-		<string>../../../ios</string>
-	</dict>
-	<key>IDESourceControlProjectRepositoryRootDictionary</key>
-	<dict>
-		<key>a51ea77e-9456-47dc-8945-9de78ff25df7++9346</key>
-		<string>svn+ssh://svn.code.sf.net/p/gorgorealay/ios</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://bitbucket.org/easytargetmixel/realayclientios.git</string>
@@ -37,14 +28,6 @@
 	<string>1D24BD6C66C0BF7E2655675D7943FD8A4C9C4F34</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.subversion</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>a51ea77e-9456-47dc-8945-9de78ff25df7++9346</string>
-			<key>IDESourceControlWCCName</key>
-			<string>ios</string>
-		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
