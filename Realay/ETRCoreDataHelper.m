@@ -153,15 +153,15 @@ static NSString * UserEntityName;
     return action;
 }
 
-+ (void)handleActionFromDictionary:(NSDictionary *)jsonDictionary {
++ (ETRAction *)actionFromDictionary:(NSDictionary *)jsonDictionary {
     long remoteID = [jsonDictionary longValueForKey:@"a" withFallbackValue:-102];
     if (remoteID < 10) {
         NSLog(@"WARNING: Ignoring incoming Action with Remote ID %ld." , remoteID);
-        return;
+        return nil;
     }
     
     // Acknowledge this Action's ID.
-    [[ETRActionManager sharedManager] ackknowledgeActionID:remoteID];
+    
     
     // Sender and recipient IDs may be a valid User ID, i.e. positive long,
     // or -10, the pre-defined ID for public (as recipient ID) and admin (as sender ID) messages.
@@ -175,7 +175,7 @@ static NSString * UserEntityName;
         // TODO: Handle Server messages.
     } else {
         NSLog(@"WARNING: Received Action with invalid sender ID: %@", jsonDictionary);
-        return;
+        return nil;
     }
     
     long recipientID = [jsonDictionary longValueForKey:@"rc" withFallbackValue:-105];
@@ -185,15 +185,15 @@ static NSString * UserEntityName;
                                     doLoadIfUnavailable:YES];
     } else if (recipientID != ETRActionPublicUserID) {
         NSLog(@"WARNING: Received Action with invalid recipient ID: %@", jsonDictionary);
-        return;
+        return nil;
     }
     
     long roomID = [jsonDictionary longValueForKey:@"r" withFallbackValue:-103];
     if (roomID < 10) {
         NSLog(@"ERROR: Received Action with invalid Room ID: %@", jsonDictionary);
-        return;
+        return nil;
     }
-    ETRRoom *room = [ETRCoreDataHelper roomWithRemoteID:@(roomID)];
+    ETRRoom * room = [ETRCoreDataHelper roomWithRemoteID:@(roomID)];
     
     // Actions that are not messages do not need to be added to the local database.
     short code = [jsonDictionary shortValueForKey:@"cd" withFallbackValue:-1];
@@ -202,33 +202,33 @@ static NSString * UserEntityName;
             if (recipientID == [ETRLocalUserManager userID]) {
                 
             }
-            return;
+            return nil;
             
         case ETRActionCodeBan:
             if (recipientID == [ETRLocalUserManager userID]) {
                 
             }
-            return;
+            return nil;
             
         case ETRActionCodeUserJoin:
             [sender setInRoom:room];
-            return;
+            return nil;
             
         case ETRActionCodeUserQuit:
             [sender setInRoom:nil];
-            return;
+            return nil;
     }
     
     // Skip this Action, if an Object with this remote ID has already been stored locally
     // or if the Action has been sent by the local User.
     // Actions should not change, so they will not be updated.
-    ETRAction *existingAction = [ETRCoreDataHelper actionWithRemoteID:remoteID];
+    ETRAction * existingAction = [ETRCoreDataHelper actionWithRemoteID:remoteID];
     if (existingAction) {
-        return;
+        return nil;
     }
     
     // Incoming Actions are always unique. Just initialise a new one.
-    ETRAction *receivedAction;
+    ETRAction * receivedAction;
     receivedAction = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
                         insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
     
@@ -253,8 +253,9 @@ static NSString * UserEntityName;
     }
     
     //    NSLog(@"DEBUG: Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
-    [[ETRActionManager sharedManager] dispatchNotificationForAction:receivedAction];
     [ETRCoreDataHelper saveContext];
+    
+    return receivedAction;
 }
 
 + (void)dispatchPublicMessage:(NSString *)messageContent {

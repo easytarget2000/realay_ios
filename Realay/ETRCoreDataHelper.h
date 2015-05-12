@@ -26,7 +26,7 @@ extern long const ETRActionPublicUserID;
 #pragma mark -
 #pragma mark Actions
 
-+ (void)handleActionFromDictionary:(NSDictionary *)jsonDictionary;
++ (ETRAction *)actionFromDictionary:(NSDictionary *)jsonDictionary;
 
 + (void)dispatchPublicMessage:(NSString *)messageContent;
 

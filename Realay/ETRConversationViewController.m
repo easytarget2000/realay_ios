@@ -55,11 +55,25 @@ UITableViewDelegate,
 UITextFieldDelegate
 >
 
+/*
+ Reference to Alert View builder and click handler
+ */
 @property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
 
+/*
+ 
+ */
 @property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
 
+/*
+ 
+ */
 @property (nonatomic,retain) UIRefreshControl * historyControl;
+
+/*
+ 
+ */
+@property (atomic) BOOL didFirstScrolldown;
 
 @end
 
@@ -121,6 +135,8 @@ UITextFieldDelegate
     if (error) {
         NSLog(@"ERROR: performFetch: %@", error);
     }
+    
+    _didFirstScrolldown = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -159,7 +175,7 @@ UITextFieldDelegate
         return;
     }
          
-    [[ETRActionManager sharedManager] setForegroundPartnerID:[conversationID longValue]];
+    [[ETRActionManager sharedManager] setForegroundPartnerID:conversationID];
          
     // Restore any unsent message input.
     NSString * lastText = [ETRDefaultsHelper messageInputTextForConversationID:conversationID];
@@ -169,10 +185,26 @@ UITextFieldDelegate
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self messagesTableView] reloadData];
-    [self scrollDownTableViewAnimated:YES];
+    
     
     [self verifySession];
     [self updateConversationStatus];
+    
+    if (_isPublic) {
+        // The first time a public Conversation is shown,
+        // ask for Notification Permissions.
+        
+        UIUserNotificationType types;
+        types = UIUserNotificationTypeBadge | UIUserNotificationTypeAlert | UIUserNotificationTypeSound;
+        UIUserNotificationSettings * settings;
+        settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    }
+    
+    if (!_didFirstScrolldown) {
+        [self scrollDownTableViewAnimated];
+        _didFirstScrolldown = YES;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -261,10 +293,12 @@ UITextFieldDelegate
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self historyControl] endRefreshing];
-    [[self messagesTableView] beginUpdates];
+//    [[self messagesTableView] beginUpdates];
 
     [[self messagesTableView] endUpdates];
-//    [self scrollDownTableViewAnimated:YES];
+    
+//    [self scrollDownTableViewAnimated];
+    _didFirstScrolldown = YES;
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -299,8 +333,8 @@ UITextFieldDelegate
                                             withRowAnimation:UITableViewRowAnimationFade];
         }
     }
-    [[self messagesTableView] reloadData];
-    [self scrollDownTableViewAnimated:YES];
+//    [[self messagesTableView] reloadData];
+//    [self scrollDownTableViewAnimated];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -345,21 +379,24 @@ UITextFieldDelegate
             cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
+//            [[cell messageLabel] setText:[action messageContent]];
             [[cell messageLabel] setText:[action messageContent]];
             NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
         }
     } else {
+        // CONTINUE HERE: Fix layout of private received messages.
+        
         ETRUser * sender = [action sender];
         NSString * senderName;
-        if (_isPublic) {
+//        if (_isPublic) {
             if (sender && [sender name]) {
                 senderName = [sender name];
             } else {
                 senderName = @"x";
             }
-        }
+//        }
         
         if ([action isPhotoMessage]) {
             ETRReceivedMediaCell * cell;
@@ -379,11 +416,11 @@ UITextFieldDelegate
                               placeHolderImage:[UIImage imageNamed:ETRImageNameImagePlaceholder]
                                    doLoadHiRes:NO];
             
-            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
         } else {
-            ETRReceivedMessageCell *cell;
+            ETRReceivedMessageCell * cell;
             cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
@@ -391,13 +428,17 @@ UITextFieldDelegate
                                       intoView:[cell userIconView]
                               placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
                                    doLoadHiRes:NO];
-            if (_isPublic) {
-                [[cell nameLabel] setText:senderName];
-            } else {
-                [[cell nameLabel] removeFromSuperview];
-            }
+//            if (_isPublic) {
+//                [[cell nameLabel] setText:senderName];
+//            } else {
+//                [[cell nameLabel] removeFromSuperview];
+//            }
+            
+            [[cell nameLabel] setText:senderName];
+            
             [[cell messageLabel] setText:[action messageContent]];
-            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+//            [[cell messageLabel] setText:[NSString stringWithFormat:@"%ld", [indexPath row]]];
+            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
         }
@@ -410,15 +451,24 @@ UITextFieldDelegate
     [self hideMediaMenu];
 }
 
-// Scroll to the bottom of a table.
-- (void)scrollDownTableViewAnimated:(BOOL)animated {
-    NSInteger bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
-    if (bottomRow >= 0) {
-        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-        [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-                                        atScrollPosition:UITableViewScrollPositionBottom
-                                                animated:animated];
-    }
+/*
+ Scrolls to the bottom of a table
+ */
+- (void)scrollDownTableViewAnimated {
+//    dispatch_after(
+//                   800,
+//                   dispatch_get_main_queue(),
+//                   ^{
+//                       NSInteger bottomRow;
+//                       bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
+//                       if (bottomRow >= 0) {
+//                           NSIndexPath * indexPath;
+//                           indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+//                           [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+//                                                           atScrollPosition:UITableViewScrollPositionBottom
+//                                                                   animated:YES];
+//                       }
+//                   });
 }
 
 #pragma mark - Alert Views
@@ -586,7 +636,7 @@ UITextFieldDelegate
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    [self scrollDownTableViewAnimated:YES];
+    [self scrollDownTableViewAnimated];
 }
 
 #pragma mark - UITextFieldDelegate

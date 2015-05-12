@@ -65,6 +65,14 @@
     }
 }
 
+- (BOOL)isPrivateMessage {
+    if (![self isValidMessage]) {
+        return NO;
+    } else {
+        return ![self isPublicAction];
+    }
+}
+
 - (BOOL)isPhotoMessage {
     short code = [[self code] shortValue];
     return (code == ETRActionCodePublicMedia) || (code == ETRActionCodePrivateMedia);
@@ -79,7 +87,7 @@
     short code = [[self code] shortValue];
     
     if (code == ETRActionCodePublicMessage || code == ETRActionCodePrivateMessage) {
-        return [self messageContent] && [[self messageContent] length];
+        return [[self messageContent] length];
     } else {
         return NO;
     }

@@ -116,7 +116,7 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self usersTableView] reloadData];
-    [[ETRActionManager sharedManager] setForegroundPartnerID:-9L];
+    [[ETRActionManager sharedManager] setForegroundPartnerID:@(-51L)];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -231,7 +231,15 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     if ([indexPath section] == 0 && numberOfSections > 1) {
         ETRConversation * convo = [_conversationsResultsController objectAtIndexPath:indexPath];
         user = [convo partner];
-        [[cell infoLabel] setText:[[convo lastMessage] messageContent]];
+        
+        NSString * message;
+        if ([[convo lastMessage] isPhotoMessage]) {
+            message = NSLocalizedString(@"Picture", @"Picture");
+        } else {
+            message = [[convo lastMessage] messageContent];
+        }
+        
+        [[cell infoLabel] setText:message];
     } else {
         // The Index Path gives Section 1 but the Fetched Results Controller assumes its values are in Section 0.
         NSIndexPath * alignedPath = [NSIndexPath indexPathForRow:[indexPath row] inSection:0];
@@ -247,7 +255,7 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 0) {
+    if (section == 0 && [[_conversationsResultsController fetchedObjects] count]) {
         return NSLocalizedString(@"Private_Conversations", @"Private Chats");
     } else {
         return NSLocalizedString(@"Users_Around_You", @"All Session Users");
@@ -264,26 +272,12 @@ static CGFloat const ETRUserRowHeight = 64.0f;
     // Hides the selection and if a valid selection was made,
     // opens a Conversation View Controller with the selected partner User.
     
-    if ([indexPath section] == 0) {
-        // If the list only shows information cells and no Conversations, do not listen to selections.
-        if (![[_conversationsResultsController fetchedObjects] count]) {
-            [tableView deselectRowAtIndexPath:indexPath animated:NO];
-            return;
-        }
-        
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if ([indexPath section] == 0 && [[_conversationsResultsController fetchedObjects] count]) {
         ETRConversation * record = [_conversationsResultsController objectAtIndexPath:indexPath];
         [self performSegueWithIdentifier:ETRUsersToConversationSegue sender:[record partner]];
     } else {
-        // If the list only shows information cells and no Users, do not listen to selections.
-        if (![[_usersResultsController fetchedObjects] count]) {
-            [tableView deselectRowAtIndexPath:indexPath animated:NO];
-            return;
-        }
-        
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        
         // The Index Path gives Section 1 but the Fetched Results Controller assumes its values are in Section 0.
         NSIndexPath * alignedPath = [NSIndexPath indexPathForRow:[indexPath row] inSection:0];
         ETRUser * record = [_usersResultsController objectAtIndexPath:alignedPath];
@@ -292,17 +286,6 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 }
 
 - (IBAction)mapButtonPressed:(id)sender {
-    //    NSInteger mapControllerIndex = [[ETRManager sharedManager] mapControllerIndex];
-    //    UINavigationController *navc = [self navigationController];
-    //    UIViewController *mapController = [[navc viewControllers] objectAtIndex:mapControllerIndex];
-    //
-    //    if (mapController) {
-    ////        [navc popToViewController:mapController animated:YES];
-    //
-    //    } else {
-    //        NSLog(@"ERROR: No map view controller on stack.");
-    //    }
-    
     [self performSegueWithIdentifier:ETRUsersToMapSegue sender:self];
 }
 

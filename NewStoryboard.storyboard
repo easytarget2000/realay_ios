@@ -724,11 +724,11 @@
                         <viewControllerLayoutGuide type="bottom" id="tww-m7-b3q"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="xUY-0C-cLt" userLabel="SuperView">
-                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kwo-zQ-WDD" userLabel="MapView">
-                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwo-zQ-WDD" userLabel="MapView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                                 <color key="backgroundColor" red="0.89209157228469849" green="0.87428849935531616" blue="0.83057904243469238" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
@@ -788,6 +788,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="directionsButton" destination="8W6-tc-Zlz" id="Vca-TX-IwZ"/>
                         <outlet property="joinButton" destination="rkm-iu-uQI" id="ZuT-Ci-adW"/>
@@ -810,11 +811,11 @@
                         <viewControllerLayoutGuide type="bottom" id="yYD-dd-rNX"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="90f-s1-pFv">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Pxa-XZ-kiV">
-                                <rect key="frame" x="20" y="121" width="560" height="30"/>
+                                <rect key="frame" x="20" y="57" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardAppearance="light" returnKeyType="go"/>
                                 <connections>
@@ -822,14 +823,14 @@
                                 </connections>
                             </textField>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="uWn-ZG-rtZ">
-                                <rect key="frame" x="20" y="159" width="560" height="82"/>
+                                <rect key="frame" x="20" y="95" width="560" height="82"/>
                                 <string key="text">The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Please enter the password of this Realay." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="APf-2Y-KKg">
-                                <rect key="frame" x="20" y="72" width="560" height="41"/>
+                                <rect key="frame" x="20" y="8" width="560" height="41"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -859,6 +860,7 @@
                     <connections>
                         <outlet property="passwordTextField" destination="Pxa-XZ-kiV" id="CwK-8j-18B"/>
                         <segue destination="rjS-qO-Ikt" kind="show" identifier="passwordToCreateProfileSegue" id="ust-LK-7xz"/>
+                        <segue destination="p6i-Uo-3XE" kind="show" identifier="passwordToJoinSegue" id="TGk-RO-VvM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="29h-ak-flD" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -901,11 +903,12 @@
                     <navigationItem key="navigationItem" id="jyf-th-pJJ">
                         <barButtonItem key="backBarButtonItem" title="Leave" id="VNf-8f-tc7"/>
                     </navigationItem>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                    <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="progressView" destination="qr9-1b-Px3" id="TNH-aH-ioN"/>
                         <outlet property="statusLabel" destination="CuK-Rs-6Rn" id="NTj-Tt-Fca"/>
-                        <segue destination="UdR-EH-f9A" kind="show" id="V8V-22-nCg"/>
-                        <segue destination="aXv-5O-iXY" kind="show" id="vw1-Vr-exp"/>
+                        <segue destination="aXv-5O-iXY" kind="show" identifier="passwordToConversationSegue" id="vw1-Vr-exp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WQR-0r-wpg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -990,7 +993,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="490"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="receivedMessageCell" rowHeight="74" id="ume-yk-9LM" customClass="ETRReceivedMessageCell">
+                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="receivedMessageCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="receivedMessageCell" rowHeight="74" id="ume-yk-9LM" customClass="ETRReceivedMessageCell">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ume-yk-9LM" id="7wy-3C-bRa">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1104,7 +1107,7 @@
                                             <outlet property="userIconView" destination="Wb9-xq-ycX" id="Vkl-6D-gff"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="receivedMediaCell" rowHeight="156" id="tO3-Ac-PT8" customClass="ETRReceivedMediaCell">
+                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="receivedMediaCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="receivedMediaCell" rowHeight="156" id="tO3-Ac-PT8" customClass="ETRReceivedMediaCell">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tO3-Ac-PT8" id="OEu-bZ-SJb">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1217,7 +1220,7 @@
                                             <outlet property="userIconView" destination="A0f-FT-Low" id="0rG-sZ-68R"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sentMessageCell" rowHeight="60" id="p1h-t1-UkY" customClass="ETRSentMessageCell">
+                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="sentMessageCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sentMessageCell" rowHeight="60" id="p1h-t1-UkY" customClass="ETRSentMessageCell">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p1h-t1-UkY" id="w0F-9n-Xcl">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1269,7 +1272,7 @@
                                             <outlet property="timeLabel" destination="Xka-wX-87e" id="zUa-f7-2kG"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sentMediaCell" rowHeight="156" id="XhF-oU-hhg" customClass="ETRSentMediaCell">
+                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="sentMediaCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sentMediaCell" rowHeight="156" id="XhF-oU-hhg" customClass="ETRSentMediaCell">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XhF-oU-hhg" id="A0T-Z1-5xc">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -1451,11 +1454,11 @@
                         <viewControllerLayoutGuide type="bottom" id="2ib-ie-dEm"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="zVD-Xh-ZaR">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="Aju-r4-qpp">
-                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                                 <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="tintColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
@@ -1527,11 +1530,11 @@
                                     <outlet property="delegate" destination="JUk-bR-rpQ" id="KU6-JJ-3Zt"/>
                                 </connections>
                             </tableView>
-                            <view hidden="YES" opaque="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Oy-dR-Zv9" userLabel="InfoView">
-                                <rect key="frame" x="0.0" y="10" width="600" height="580"/>
+                            <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Oy-dR-Zv9" userLabel="InfoView">
+                                <rect key="frame" x="0.0" y="-10" width="600" height="536"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="There are currently no other people online in this place. Invite someone around you to join Realay." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2aI-9U-hJJ">
-                                        <rect key="frame" x="8" y="270" width="584" height="41"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="There are currently no other people online in this place. Invite someone around you to join Realay." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2aI-9U-hJJ">
+                                        <rect key="frame" x="8" y="248" width="584" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -1579,6 +1582,8 @@
                             </mask>
                         </variation>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="infoView" destination="8Oy-dR-Zv9" id="zEO-Vg-yBR"/>
                         <outlet property="usersTableView" destination="Aju-r4-qpp" id="KpE-cp-9lb"/>
@@ -1713,10 +1718,10 @@
         <image name="Twitter" width="64" height="64"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="V8V-22-nCg"/>
-        <segue reference="ust-LK-7xz"/>
         <segue reference="5xD-2e-4tf"/>
-        <segue reference="sfb-lL-fBL"/>
-        <segue reference="Akd-RZ-fLF"/>
+        <segue reference="vw1-Vr-exp"/>
+        <segue reference="pCv-oo-jLv"/>
+        <segue reference="ust-LK-7xz"/>
+        <segue reference="sm6-jE-DDa"/>
     </inferredMetricsTieBreakers>
 </document>

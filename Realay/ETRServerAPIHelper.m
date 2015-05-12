@@ -163,7 +163,7 @@ static NSMutableArray *connections;
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    [ETRCoreDataHelper handleActionFromDictionary:(NSDictionary *)jsonAction];
+                    [ETRCoreDataHelper actionFromDictionary:(NSDictionary *)jsonAction];
                 }
             }
         }

@@ -30,6 +30,10 @@
 
 + (BOOL)doUseMetricSystem;
 
++ (BOOL)doShowPrivateNotifs;
+
++ (BOOL)doShowPublicNotifs;
+
 #pragma mark -
 #pragma mark Location & Room Updates
 

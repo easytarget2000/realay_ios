@@ -48,6 +48,8 @@ typedef NS_ENUM(short, ETRActionCode) {
 
 - (BOOL)isPublicAction;
 
+- (BOOL)isPrivateMessage;
+
 - (BOOL)isValidMessage;
 
 - (BOOL)isPhotoMessage;

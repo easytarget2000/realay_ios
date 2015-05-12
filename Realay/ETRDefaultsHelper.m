@@ -30,6 +30,12 @@ static NSString *const ETRDefaultsKeyLastUpdateLng = @"last_update_lng";
 
 static NSString *const ETRDefaultsKeyLastUpdateTime = @"last_update_time";
 
+static NSString *const ETRdefaultsKeyNotificationsOther = @"notifications_other";
+
+static NSString *const ETRDefaultsKeyNotificationsPublic = @"notifications_public";
+
+static NSString *const ETRDefaultsKeyNotificationsPrivate = @"notifications_private";
+
 static NSString *const ETRDefaultsKeySession = @"session_r";
 
 static NSString *const ETRDefaultsKeyUserID = @"local_user";
@@ -98,7 +104,9 @@ static CLLocation * LastUpdateLocation;
 #pragma mark Settings
 
 + (BOOL)doUseMetricSystem {
-    NSLocale *locale = [NSLocale currentLocale];
+    // TODO: Read from Settings.
+    
+    NSLocale * locale = [NSLocale currentLocale];
     
     id localeMeasurement = [locale objectForKey:NSLocaleUsesMetricSystem];
     if (localeMeasurement && [localeMeasurement isKindOfClass:[NSNumber class]]) {
@@ -108,7 +116,15 @@ static CLLocation * LastUpdateLocation;
     return YES;
 }
 
++ (BOOL)doShowPrivateNotifs {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:ETRDefaultsKeyNotificationsPrivate];
+}
 
++ (BOOL)doShowPublicNotifs {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:ETRDefaultsKeyNotificationsPublic];
+}
 
 #pragma mark -
 #pragma mark Location & Room Updates

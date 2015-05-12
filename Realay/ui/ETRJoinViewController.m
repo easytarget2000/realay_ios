@@ -28,6 +28,8 @@
 @implementation ETRJoinViewController
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+    
     [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
     
     ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
@@ -95,6 +97,8 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
     // TODO: Cancel if back/cancel button pressed.
     
     if ([self isMovingFromParentViewController] || [self isBeingDismissed]) {

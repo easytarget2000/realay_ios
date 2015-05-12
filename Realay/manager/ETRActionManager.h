@@ -15,7 +15,12 @@
 
 @property (nonatomic, readonly) long lastActionID;
 
-@property (nonatomic) long foregroundPartnerID;
+@property (nonatomic, readonly) NSNumber * foregroundPartnerID;
+
+/*
+ 
+ */
+@property (nonatomic, readonly) NSInteger numberOfOtherNotifs;
 
 //@property (readonly, nonatomic) BOOL didFirstQuery;
 
@@ -31,7 +36,7 @@
 
 - (void)dispatchNotificationForAction:(ETRAction *)action;
 
-- (void)setForegroundPartnerID:(long)foregroundPartnerID;
+- (void)setForegroundPartnerID:(NSNumber *)foregroundPartnerID;
 
 - (BOOL)doSendPing;
 

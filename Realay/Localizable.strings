@@ -54,9 +54,15 @@
 
 "phone" = "phone";
 
+"Picture" = "Picture";
+
 "Private_Conversation" = "Private Conversation";
 
 "Private_Conversations" = "Private Conversations";
+
+"Private_Message" = "Private Message";
+
+"Public_Message" = "Public Message";
 
 "Profile" = "Profile";
 

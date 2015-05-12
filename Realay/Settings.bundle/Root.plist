@@ -16,7 +16,7 @@
 			<key>Title</key>
 			<string>Public_Messages</string>
 			<key>Key</key>
-			<string>userDefaultsNotificationPublic</string>
+			<string>notifications_public</string>
 			<key>DefaultValue</key>
 			<false/>
 		</dict>
@@ -26,7 +26,7 @@
 			<key>Title</key>
 			<string>Private_Messages</string>
 			<key>Key</key>
-			<string>userDefaultsNotificationPrivate</string>
+			<string>notifications_private</string>
 			<key>DefaultValue</key>
 			<true/>
 		</dict>
@@ -36,7 +36,7 @@
 			<key>Title</key>
 			<string>Other</string>
 			<key>Key</key>
-			<string>userDefaultsNotifcationOther</string>
+			<string>notifications_other</string>
 			<key>DefaultValue</key>
 			<true/>
 		</dict>
