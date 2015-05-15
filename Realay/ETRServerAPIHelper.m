@@ -364,7 +364,7 @@ static NSMutableArray *connections;
     ETRChatObject *chatObject = [imageLoader chatObject];
     if (!chatObject) return;
     if (![chatObject imageID]) return;
-    NSString *fileID = [chatObject imageFileName:doLoadHiRes];
+    NSString * fileID = [chatObject imageFileName:doLoadHiRes];
     if ([ETRServerAPIHelper didStartConnection:fileID]) {
         return;
     }
@@ -388,31 +388,33 @@ static NSMutableArray *connections;
     
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               [ETRServerAPIHelper didFinishConnection:fileID];
+                           completionHandler:^(
+                                               NSURLResponse * response,
+                                               NSData * data,
+                                               NSError * connectionError
+                                               ) {
                                
+                               [ETRServerAPIHelper didFinishConnection:fileID];
                                if (connectionError || !data) {
                                    NSLog(@"ERROR: loadImageFromUrlString: %@", connectionError);
                                    return;
                                }
                                
                                // Try to build an image from the received data.
-                               UIImage *image = [[UIImage alloc] initWithData:data];
-                               // Release the data and clear the connection.
-                               data = nil;
+                               UIImage * image = [[UIImage alloc] initWithData:data];
                                
                                if (!image) {
-//                                   NSLog(@"ERROR: No image in connection data.");
                                    return;
                                }
+                               
+                               ETRChatObject * loaderObject = [imageLoader chatObject];
                                
                                // Display the image and store the image file
                                // and the low-res image inside of the Object.
                                [ETRImageEditor cropImage:image
-                                             applyToView:[imageLoader targetImageView]
-                                                 isHiRes:doLoadHiRes];
+                                               imageName:fileID
+                                             applyToView:[imageLoader targetImageView]];
                                
-                               ETRChatObject *loaderObject = [imageLoader chatObject];
                                if (!doLoadHiRes && loaderObject) {
                                    [loaderObject setLowResImage:image];
                                }

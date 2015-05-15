@@ -18,7 +18,7 @@
 @implementation ETRImageView
 
 - (BOOL)hasImage:(NSString *)imageName {
-    if ([self imageName] && [self image]) {
+    if (imageName && _imageName) {
         return [imageName isEqualToString:_imageName];
     } else {
         return NO;

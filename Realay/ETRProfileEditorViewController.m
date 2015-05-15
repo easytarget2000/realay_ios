@@ -443,13 +443,16 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 - (void)keyboardWillShow:(NSNotification *)sender
 {
     CGSize kbSize = [[[sender userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-    NSTimeInterval duration = [[[sender userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    NSTimeInterval duration;
+    duration = [[[sender userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
-    [UIView animateWithDuration:duration animations:^{
-        UIEdgeInsets edgeInsets = UIEdgeInsetsMake(0, 0, kbSize.height, 0);
-        [[self tableView] setContentInset:edgeInsets];
-        [[self tableView] setScrollIndicatorInsets:edgeInsets];
-    }];
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         UIEdgeInsets edgeInsets;
+                         edgeInsets = UIEdgeInsetsMake(0.0f, 0.0f, kbSize.height, 0.0f);
+                         [[self tableView] setContentInset:edgeInsets];
+                         [[self tableView] setScrollIndicatorInsets:edgeInsets];
+                     }];
 }
 
 - (void)keyboardWillHide:(NSNotification *)sender

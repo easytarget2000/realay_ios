@@ -8,11 +8,13 @@
 
 #import "ETRRoomListCell.h"
 
+#import "ETRImageView.h"
+
+
 @implementation ETRRoomListCell
 
-- (void)prepareForReuse {
-//    [[self headerImageView] setTag:0];
-//    [[self headerImageView] setImage:[UIImage imageNamed:@"PlaceholderRoomW"]];
-}
+//- (void)prepareForReuse {
+//    [[self headerImageView] setImageName:nil];
+//}
 
 @end

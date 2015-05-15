@@ -44,6 +44,8 @@ static NSString *const ETRSentMessageCellIdentifier = @"sentMessageCell";
 
 static NSString *const ETRSentMediaCellIdentifier = @"sentMediaCell";
 
+static int const ETRMessagesLimitStep = 20;
+
 
 @interface ETRConversationViewController ()
 <
@@ -73,7 +75,22 @@ UITextFieldDelegate
 /*
  
  */
-@property (atomic) BOOL didFirstScrolldown;
+@property (nonatomic) BOOL didFirstScrolldown;
+
+/*
+ 
+ */
+@property (nonatomic) BOOL doScrollToTop;
+
+/*
+ 
+ */
+@property (nonatomic) int messagesLimit;
+
+/*
+ 
+ */
+@property (strong, nonatomic) NSNumber * lowestMessageID;
 
 @end
 
@@ -90,7 +107,7 @@ UITextFieldDelegate
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
     
     // Tapping anywhere but the keyboard, hides it.
-    UITapGestureRecognizer *tap;
+    UITapGestureRecognizer * tap;
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                   action:@selector(dismissKeyboard)];
     [[self view] addGestureRecognizer:tap];
@@ -130,17 +147,27 @@ UITextFieldDelegate
                                                                               withDelegate:self];
         [[self moreButton] setTitle:NSLocalizedString(@"Profile", @"User Profile")];
     }
-    NSError *error = nil;
+    NSError * error = nil;
     [_fetchedResultsController performFetch:&error];
     if (error) {
         NSLog(@"ERROR: performFetch: %@", error);
     }
+    
+    // Configure manual refresher.
+    _historyControl = [[UIRefreshControl alloc] init];
+    [_historyControl addTarget:self
+                       action:@selector(extendHistory)
+             forControlEvents:UIControlEventValueChanged];
+    [_historyControl setTintColor:[ETRUIConstants accentColor]];
+    [[self messagesTableView] addSubview:_historyControl];
     
     _didFirstScrolldown = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    _doScrollToTop = NO;
     
     // Listen for keyboard changes.
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -155,11 +182,6 @@ UITextFieldDelegate
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:NO];
-    
-    // Add a pull-down refreshControl
-    [[self historyControl] addTarget:self
-                              action:@selector(updateRoomsTable)
-                    forControlEvents:UIControlEventValueChanged];
     
     NSNumber * conversationID;
     if (_isPublic) {
@@ -289,12 +311,10 @@ UITextFieldDelegate
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [[self messagesTableView] beginUpdates];
+    [[self historyControl] endRefreshing];
 }
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    [[self historyControl] endRefreshing];
-//    [[self messagesTableView] beginUpdates];
-
     [[self messagesTableView] endUpdates];
     
 //    [self scrollDownTableViewAnimated];
@@ -390,13 +410,13 @@ UITextFieldDelegate
         
         ETRUser * sender = [action sender];
         NSString * senderName;
-//        if (_isPublic) {
+        if (_isPublic) {
             if (sender && [sender name]) {
                 senderName = [sender name];
             } else {
-                senderName = @"x";
+                senderName = @"n/a";
             }
-//        }
+        }
         
         if ([action isPhotoMessage]) {
             ETRReceivedMediaCell * cell;
@@ -409,7 +429,8 @@ UITextFieldDelegate
             if (_isPublic) {
                 [[cell nameLabel] setText:senderName];
             } else {
-                [[cell nameLabel] removeFromSuperview];
+                [[cell nameLabel] setHidden:YES];
+//                [[cell nameLabel] setConstr];
             }
             [ETRImageLoader loadImageForObject:action
                                       intoView:[cell iconView]
@@ -428,16 +449,15 @@ UITextFieldDelegate
                                       intoView:[cell userIconView]
                               placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
                                    doLoadHiRes:NO];
-//            if (_isPublic) {
-//                [[cell nameLabel] setText:senderName];
-//            } else {
-//                [[cell nameLabel] removeFromSuperview];
-//            }
+            if (_isPublic) {
+                [[cell nameLabel] setText:senderName];
+            } else {
+                [[cell nameLabel] removeFromSuperview];
+            }
             
             [[cell nameLabel] setText:senderName];
             
             [[cell messageLabel] setText:[action messageContent]];
-//            [[cell messageLabel] setText:[NSString stringWithFormat:@"%ld", [indexPath row]]];
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
@@ -455,20 +475,67 @@ UITextFieldDelegate
  Scrolls to the bottom of a table
  */
 - (void)scrollDownTableViewAnimated {
-//    dispatch_after(
-//                   800,
-//                   dispatch_get_main_queue(),
-//                   ^{
-//                       NSInteger bottomRow;
-//                       bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
-//                       if (bottomRow >= 0) {
-//                           NSIndexPath * indexPath;
-//                           indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-//                           [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-//                                                           atScrollPosition:UITableViewScrollPositionBottom
-//                                                                   animated:YES];
-//                       }
-//                   });
+    dispatch_after(
+                   800,
+                   dispatch_get_main_queue(),
+                   ^{
+                       NSInteger bottomRow;
+                       bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
+                       if (bottomRow >= 0) {
+                           NSIndexPath * indexPath;
+                           indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+                           [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+                                                           atScrollPosition:UITableViewScrollPositionBottom
+                                                                   animated:YES];
+                       }
+                   });
+}
+
+- (void)extendHistory {
+    
+    // Increase the message limit and reset the lowest ID value.
+    _messagesLimit += ETRMessagesLimitStep;
+    _lowestMessageID = @(-1L);
+    
+    // Restarting the loaders will now fetch a new lowest ID
+    // and display the old messages at the top.
+    _doScrollToTop = YES;
+    
+    
+    // CONTINUE HERE:
+    
+    // Build a cursor that loads all public messages in this room.
+//    
+//    if (mLowestId < 1) {
+//        // Calculate the lowest ID we want to show in this conversation,
+//        // in order to limit the amount of messages,
+//        // i.e. highest ID - 50 = lowest ID --> only show last 50 messages
+//        Cursor lowestIdCursor = getContentResolver().query(
+//                                                           ChatObjectContract.CONTENT_URI_ACTIONS_PUBLIC,
+//                                                           ChatObjectContract.PROJECTION_MSGS_PUB_USER,
+//                                                           ChatObjectContract.SELECTION_PUBLIC_MSGS_UNBLOCKED,
+//                                                           buildSelectionArgs(),
+//                                                           BaseColumns._ID + " DESC LIMIT " + mMessageLimit
+//                                                           );
+//        final int idColumn = lowestIdCursor.getColumnIndex(BaseColumns._ID);
+//        if (idColumn > -1 && lowestIdCursor.moveToLast()) {
+//            mLowestId = lowestIdCursor.getInt(idColumn);
+//        }
+//        lowestIdCursor.close();
+//    }
+//    
+//    if (mLowestId < 0) mLowestId = 0;
+//    
+//    if (i == Action.PUBLIC_RECIPIENT_ID) {
+//        CursorLoader cursorLoader = new CursorLoader(
+//                                                     this,
+//                                                     ChatObjectContract.CONTENT_URI_ACTIONS_PUBLIC,
+//                                                     ChatObjectContract.PROJECTION_MSGS_PUB_USER,
+//                                                     ChatObjectContract.SELECTION_PUBLIC_MSGS_UNBLOCKED,
+//                                                     buildSelectionArgs(),
+//                                                     BaseColumns.MSG_TIME + " ASC"
+//                                                     );
+//    }
 }
 
 #pragma mark - Alert Views
@@ -484,7 +551,6 @@ UITextFieldDelegate
     }
 
 }
-
 
 
 #pragma mark -
@@ -568,7 +634,7 @@ UITextFieldDelegate
  Closes the menu, if the upper button, the gallery button, is visible
 */
 - (void)hideMediaMenu {
-    [self updateConversationStatus];
+//    [self updateConversationStatus];
     
     if(![[self galleryButton] isHidden]) {
         // Collapse the menu from the top.

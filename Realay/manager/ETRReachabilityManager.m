@@ -89,6 +89,10 @@
 //    Reachability * curReach = [note object];
 //    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
     NSLog(@"DEBUG: Reachability did change. %@", note);
+    
+    if ([ETRReachabilityManager isReachable]) {
+        
+    }
 }
 
 

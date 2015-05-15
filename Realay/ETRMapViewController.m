@@ -18,7 +18,7 @@
 #import "ETRUIConstants.h"
 
 
-static CGFloat const ETRMapCloseZoom = 14.0f;
+static CGFloat const ETRMapCloseZoom = 15.0f;
 
 static CGFloat const ETRMapWideZoom = 11.0f;
 
@@ -87,7 +87,7 @@ static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
     [[self mapSubView] addSubview:_mapView];
     
     // Create the room marker.
-    ETRRoom *room = [[ETRSessionManager sharedManager] room];
+    ETRRoom * room = [[ETRSessionManager sharedManager] room];
     if (!room) {
         NSLog(@"ERROR: Cannot start ETRMapViewController without a prepared Session Room.");
         return;

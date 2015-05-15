@@ -36,6 +36,8 @@ static NSString *const ETRActionDateKey = @"sentDate";
 
 static NSString *const ETRActionRoomKey = @"room";
 
+static NSString *const ETRActionInQueueKey = @"inQueue";
+
 static NSString *const ETRConversationPartnerKey = @"partner";
 
 static NSString *const ETRInRoomKey = @"inRoom";
@@ -108,8 +110,8 @@ static NSString * UserEntityName;
 
 + (BOOL)saveContext {
     // Save Record.
-    NSError *error;
-    if (![[ETRCoreDataHelper context] save:&error] || error) {
+    NSError * error;
+    if (![[ETRCoreDataHelper context] save:&error]) {
         NSLog(@"ERROR: Could not save context: %@", error);
         return false;
     } else {
@@ -349,6 +351,43 @@ static NSString * UserEntityName;
     [ETRServerAPIHelper sendLocalUserUpdate];
 }
 
++ (void)retrySendingQueuedActions {
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper actionEntity]];
+    
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"%@ == 1", ETRActionInQueueKey];
+    [request setPredicate:predicate];
+    
+    NSError * error = nil;
+    NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
+                                                                   error:&error];
+    
+    if (error) {
+        NSLog(@"ERROR: %@", error);
+    }
+    
+    for (NSManagedObject * object in actions) {
+        if (![object isKindOfClass:[ETRAction class]]) {
+            NSLog(@"ERROR: Queue Array contained Object that is not of kind ETRAction.");
+            return;
+        }
+        
+        ETRAction * action = (ETRAction *)object;
+        
+        // Some Actions trigger specific API calls.
+        switch ([[action code] shortValue]) {
+            case ETRActionCodeUserUpdate:
+                [ETRServerAPIHelper sendLocalUserUpdate];
+                break;
+                
+            default:
+                [ETRServerAPIHelper putAction:action];
+                break;
+        }
+    }
+}
+
 
 + (ETRAction *)blankOutgoingAction {
     // Outgoing messages are always unique. Just initalise a new one.
@@ -396,7 +435,22 @@ static NSString * UserEntityName;
 }
 
 + (void)removeUserUpdateActionsFromQueue {
-    // TODO: Remove all User Update Actions from the queue.
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper actionEntity]];
+    
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"%@ == %@", ETRActionCodeKey, @(ETRActionCodeUserUpdate)];
+    [request setPredicate:predicate];
+    [request setIncludesPropertyValues:NO];
+    
+    NSError * error = nil;
+    NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
+                                                                   error:&error];
+    for (NSManagedObject * action in actions) {
+        [[ETRCoreDataHelper context] deleteObject:action];
+    }
+    
+    [ETRCoreDataHelper saveContext];
 }
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate {

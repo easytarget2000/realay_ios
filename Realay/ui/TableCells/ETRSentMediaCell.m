@@ -8,18 +8,14 @@
 
 #import "ETRSentMediaCell.h"
 
-#import "ETRImageLoader.h"
+#import "ETRImageView.h"
+
 
 @implementation ETRSentMediaCell
 
-- (void)awakeFromNib {
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (void)prepareForReuse {
+//    [[self iconView] setImageName:nil];
+    [[self timeLabel] setText:@""];
 }
 
 @end

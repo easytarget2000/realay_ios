@@ -14,8 +14,8 @@
 @interface ETRImageEditor : NSObject
 
 + (void)cropImage:(UIImage *)image
-      applyToView:(ETRImageView *)targetImageView
-          isHiRes:(BOOL)isHiRes;
+        imageName:(NSString *)imageName
+      applyToView:(ETRImageView *)targetImageView;
 
 + (UIImage *)imageFromPickerInfo:(NSDictionary *)info;
 

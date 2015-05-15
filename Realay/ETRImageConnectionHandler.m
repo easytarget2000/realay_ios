@@ -87,13 +87,10 @@
     // Display the image and store the image file and the low-res image inside of the Object.
     ETRChatObject * loaderObject = [_imageLoader chatObject];
     ETRImageView * loaderImageView = [_imageLoader targetImageView];
-//    [ETRImageEditor cropImage:image
-//                  applyToView:loaderImageView
-//                      withTag:[[loaderObject remoteID] intValue]];
+
     [ETRImageEditor cropImage:image
-                  applyToView:loaderImageView
-                      isHiRes:_doLoadHiRes];
-    
+                    imageName:[loaderObject imageFileName:_doLoadHiRes]
+                  applyToView:loaderImageView];
     
     // Store the image as a file and the low-res image in the Object.
     if (!_doLoadHiRes && loaderObject) {

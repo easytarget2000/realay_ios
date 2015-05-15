@@ -18,15 +18,15 @@
 
 static ETRActionManager * sharedInstance = nil;
 
-static NSTimeInterval const ETRFastestInterval = 2.5;
+static CFTimeInterval const ETRQueryIntervalFastest = 1.5;
 
-static NSTimeInterval const ETRSlowestInterval = 10.0;
+static CFTimeInterval const ETRQueryIntervalMaxJitter = 0.8;
 
-static CFTimeInterval const ETRTimeIntervalToIdle = 120.0;
+static CFTimeInterval const ETRQueryIntervalSlowest = 8.0;
 
-static NSTimeInterval const ETRIdleInterval = 40.0;
+static CFTimeInterval const ETRQueryIntervalIdle = 45.0;
 
-static NSTimeInterval const ETRMaxIntervalDifference = 2.0;
+static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 
 static CFTimeInterval const ETRPingInterval = 40.0;
 
@@ -43,7 +43,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 /*
  
  */
-@property (nonatomic) NSTimeInterval queryInterval;
+@property (nonatomic) CFTimeInterval queryInterval;
 
 /*
  
@@ -125,18 +125,18 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 }
 
 - (void)dispatchQueryTimerWithResetInterval:(BOOL)doResetInterval {
-    if (doResetInterval || _queryInterval < ETRFastestInterval) {
-        _queryInterval = ETRFastestInterval;
+    if (doResetInterval || _queryInterval < ETRQueryIntervalFastest) {
+        _queryInterval = ETRQueryIntervalFastest;
         _lastActionTime = CFAbsoluteTimeGetCurrent();
         NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
-    } else if (_queryInterval > ETRSlowestInterval) {
-        if (CFAbsoluteTimeGetCurrent() - _lastActionTime > ETRTimeIntervalToIdle) {
-            _queryInterval = ETRIdleInterval;
+    } else if (_queryInterval > ETRQueryIntervalSlowest) {
+        if (CFAbsoluteTimeGetCurrent() - _lastActionTime > ETRWaitIntervalToIdleQueries) {
+            _queryInterval = ETRQueryIntervalIdle;
             NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
         }
     } else {
-        NSTimeInterval random = drand48();
-        _queryInterval += random * ETRMaxIntervalDifference;
+        CFTimeInterval random = drand48();
+        _queryInterval += random * ETRQueryIntervalMaxJitter;
         NSLog(@"DEBUG: New query Timer interval: %g", _queryInterval);
     }
     
@@ -149,14 +149,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
                                                       userInfo:nil
                                                        repeats:NO];
                    });
-    
-//    
-//    dispatch_after(
-//                   _queryInterval,
-//                   dispatch_get_main_queue(),
-//                   ^{
-//                       [self queryUpdates:nil];
-//                   });
 }
 
 - (void)queryUpdates:(NSTimer *)timer {

@@ -16,10 +16,9 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
-//#import "ETRInfoCell.h"
 #import "ETRLocalUserManager.h"
-//#import "ETRMapViewController.h"
 #import "ETRRoom.h"
+#import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
@@ -195,7 +194,18 @@ static CGFloat const ETRUserRowHeight = 64.0f;
         }
     }
     
-    [ETRAnimator fadeView:[self infoView] doAppear:(numberOfRows < 1)];
+    if (numberOfRows < 1) {
+        // Wait for possible results before actually deciding to show the Info View.
+        dispatch_after(
+                       200,
+                       dispatch_get_main_queue(),
+                       ^{
+                           [ETRAnimator fadeView:[self infoView] doAppear:(numberOfRows < 1)];
+                       });
+    } else {
+        // Hiding the Info View happens immediately.
+        [ETRAnimator fadeView:[self infoView] doAppear:NO];
+    }
     
     return numberOfRows;
 }
@@ -263,7 +273,9 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 }
 
 - (void)updateUserList {
-    [[self refreshControl] endRefreshing];
+    [ETRServerAPIHelper updateRoomListWithCompletionHandler:^(BOOL didReceive) {
+        [[self refreshControl] endRefreshing];
+    }];
 }
 
 #pragma mark - Navigation

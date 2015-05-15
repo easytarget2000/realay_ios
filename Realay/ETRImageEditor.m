@@ -10,6 +10,7 @@
 
 #import "ETRChatObject.h"
 #import "ETRImageLoader.h"
+#import "ETRImageView.h"
 
 static CGSize const ETRHiResImageSize = {
     .width = 1080.0f,
@@ -25,39 +26,31 @@ static CGFloat const ETRHiResImageQuality = 0.9f;
 
 static CGFloat const ETRLoResImageQuality = 0.6f;
 
-/*
- Tag value for UIImageView Objects;
- To be used as a flag which states the View already holds a hi-res Image.
- */
-static NSInteger const ETRImageViewTagHiRes = 9212;
-
 
 @implementation ETRImageEditor
 
-+ (void)cropImage:(UIImage *)image applyToView:(UIImageView *)targetImageView isHiRes:(BOOL)isHiRes {
-    
-    if (!image || !targetImageView) {
-        return;
-    }
++ (void)cropImage:(UIImage *)image
+        imageName:(NSString *)imageName
+      applyToView:(ETRImageView *)targetImageView {
     
     dispatch_async(
                    dispatch_get_main_queue(),
                    ^{
-                       if (isHiRes) {
-                           // Store that this Image View already shows a hi-res Image.
-                           // The Tag has to be reset for reuse!
-                           [targetImageView setTag:ETRImageViewTagHiRes];
-                       } else if ([targetImageView tag] == ETRImageViewTagHiRes) {
-                           // Do not override lo-res images.
+                       if (!image || !targetImageView) {
                            return;
                        }
                        
+                       if ([targetImageView hasImage:imageName]) {
+                           return;
+                       }
                        
                        // Adjust the size if needed.
                        UIImage * croppedImage;
                        croppedImage = [ETRImageEditor scaleCropImage:image
                                                               toSize:targetImageView.frame.size];
                        [targetImageView setImage:croppedImage];
+                       
+                       [targetImageView setImageName:imageName];
                        //    [targetImageView setImage:image];
                    });
 }
