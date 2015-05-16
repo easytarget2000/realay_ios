@@ -453,16 +453,18 @@ static NSString * UserEntityName;
     [ETRCoreDataHelper saveContext];
 }
 
-+ (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate {
++ (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate
+                                                       numberOfLastMessages:(NSUInteger)numberOfLastMessages {
+    
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
     
-    NSFetchRequest * fetchRequest;
-    fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    NSEntityDescription * entity = [ETRCoreDataHelper actionEntity];
+    [request setEntity:entity];
     
     NSString * where = [NSString stringWithFormat:@"%@.%@ == %ld AND (%@ == %i OR %@ == %i) AND %@.%@ != %@",
                         ETRActionRoomKey,
@@ -476,12 +478,29 @@ static NSString * UserEntityName;
                         ETRUserIsBlockedKey,
                         @(YES)];
     
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
+    [request setPredicate:predicate];
+    NSArray * sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey
+                                                                ascending:YES]];
+    [request setSortDescriptors:sortDescriptors];
     
-    NSFetchedResultsController *resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+    // The first request is a quick one to get the total number of records,
+    // so that the fetch offset can be calculated:
+    // count - numberOfLastMessages
+    [request setIncludesPropertyValues:NO];
+
+    NSError * error = nil;
+    NSUInteger count = [[ETRCoreDataHelper context] countForFetchRequest:request
+                                                                   error:&error];
+    
+    // Prepare the actual Fetch Request that is used for the Results Controller.
+    [request setIncludesPropertyValues:YES];
+    if (count >= numberOfLastMessages) {
+        [request setFetchOffset:(count - numberOfLastMessages)];
+    }
+    
+    NSFetchedResultsController * resultsController;
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
@@ -490,7 +509,8 @@ static NSString * UserEntityName;
 }
 
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
-                                                       withDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
+                                               numberOfLastMessages:(NSUInteger)numberOfLastMessages
+                                                       delegate:(id<NSFetchedResultsControllerDelegate>)delegate {
     if (!partner) {
         return nil;
     }
@@ -501,24 +521,25 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:[ETRCoreDataHelper actionEntity]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper actionEntity]];
     
     // TODO: Compare Object predicate vs. ID predicate.
 //    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@)",
+    [request setPredicate:[NSPredicate predicateWithFormat:@"(sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@)",
                                 partner,
                                 localUser,
                                 partner,
                                 localUser]];
     
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
+    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
+    [request setFetchLimit:numberOfLastMessages];
     
     NSFetchedResultsController * resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
@@ -745,8 +766,8 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    NSFetchRequest *fetchRequest;
-    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
+    NSFetchRequest *request;
+    request = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
     
 //    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld AND %@ != 1",
 //                       ETRInRoomKey,
@@ -755,11 +776,11 @@ static NSString * UserEntityName;
 //                       ETRUserIsBlockedKey];
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"inRoom == %@ AND isBlocked != 1", sessionRoom];
-    [fetchRequest setPredicate:predicate];
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
+    [request setPredicate:predicate];
+    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
     
     NSFetchedResultsController *resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];

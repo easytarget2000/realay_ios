@@ -24,7 +24,7 @@
 
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem * exitButton;
 
-@property (weak, nonatomic) IBOutlet UIButton * mediaButton;
+@property (weak, nonatomic) IBOutlet UIImageView * mediaButton;
 
 @property (weak, nonatomic) IBOutlet UIView * cameraButton;
 

@@ -8,55 +8,77 @@
 
 #import "ETRAnimator.h"
 
-static NSTimeInterval const ETRAnimationDurationScale = 0.7;
+static NSTimeInterval const ETRAnimationDurationScale = 0.4;
 
-static NSTimeInterval const ETRAnimationDurationFade = 0.7;
+static NSTimeInterval const ETRAnimationDurationFade = 1.2;
 
 @implementation ETRAnimator
 
 + (void)toggleBounceInView:(UIView *)view completion:(void(^)(void))completion {
 //    CGPoint newCenter = CGPointMake(100.0,100.0);
     
+    CGSize size = view.frame.size;
+    CGPoint origin = view.frame.origin;
+    
+    CGPoint originalCenter = [view center];
+    
+    CGPoint hideCenter = CGPointMake(
+                                 originalCenter.x,
+                                 origin.y + (size.height)
+                                 );
+    
     CGFloat blowupScale = 1.2f;
     BOOL doAppear = [view isHidden];
     
     NSTimeInterval blowupDuration, settleDuration;
-    NSTimeInterval shortDuration = 0.3;
+    NSTimeInterval shortDuration = 0.1;
     CGFloat settleScale;
     if (doAppear) {
         blowupDuration = ETRAnimationDurationScale;
         settleDuration = shortDuration;
         settleScale = 1.0f;
         
-        [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 0.0f, 0.0f)];
+        
+        [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 1.0f, 0.0f)];
         [view setHidden:NO];
+        [view setCenter:hideCenter];
     } else {
         blowupDuration = shortDuration;
         settleDuration = ETRAnimationDurationScale;
         settleScale = 0.1f;
     }
     
+    UIViewAnimationOptions options;
+    options = (UIViewAnimationOptionCurveEaseInOut);
+    
     // Perform the blowup animation.
     [UIView animateWithDuration:blowupDuration
                           delay:0.1
-                        options:(UIViewAnimationOptionCurveLinear | UIViewAnimationOptionTransitionFlipFromBottom)
+                        options:options
                      animations:^{
-                         [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, blowupScale, blowupScale)];
+                         [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 1.0f, blowupScale)];
+//                         [view setCenter:hideCenter];
                      }
-                     completion:nil
-     ];
+                     completion:nil];
     
     [UIView animateWithDuration:settleDuration
                           delay:blowupDuration + 0.1
-                        options:(UIViewAnimationOptionCurveLinear | UIViewAnimationOptionTransitionFlipFromBottom)
+                        options:options
                      animations:^{
-                         [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, settleScale, settleScale)];
+                         [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 1.0f, settleScale)];
+                         if (!doAppear) {
+                             [view setCenter:hideCenter];
+                         } else {
+                             [view setCenter:originalCenter];
+                         }
                      }
                      completion:^(BOOL finished) {
                          if (finished) {
                              if(!doAppear) {
                                  [view setHidden:YES];
                              }
+                             
+                             [view setCenter:originalCenter];
                              
                              if (completion) {
                                  completion();

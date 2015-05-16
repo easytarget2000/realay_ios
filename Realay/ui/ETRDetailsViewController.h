@@ -19,8 +19,7 @@
 
 @property (strong, nonatomic) ETRUser * user;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *barButton;
-
-- (IBAction)barButtonPressed:(id)sender;
+//@property (weak, nonatomic) IBOutlet UIBarButtonItem *barButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *blockedUsersButtonPressed;
 
 @end

@@ -80,17 +80,7 @@ UITextFieldDelegate
 /*
  
  */
-@property (nonatomic) BOOL doScrollToTop;
-
-/*
- 
- */
-@property (nonatomic) int messagesLimit;
-
-/*
- 
- */
-@property (strong, nonatomic) NSNumber * lowestMessageID;
+@property (nonatomic) NSUInteger messagesLimit;
 
 @end
 
@@ -125,11 +115,15 @@ UITextFieldDelegate
     
     // Initialize the Fetched Results Controller
     // that is going to load and monitor message records.
+    _messagesLimit = 30L;
+    [self setUpFetchedResultsController];
+    
+    // Configure Views depending on purpose of this Conversation.
     if (_isPublic) {
         ETRRoom * sessionRoom;
         sessionRoom = [ETRSessionManager sessionRoom];
         [self setTitle:[sessionRoom title]];
-       _fetchedResultsController = [ETRCoreDataHelper publicMessagesResultsControllerWithDelegage:self];
+
         [[self navigationItem] setHidesBackButton:YES];
         UIBarButtonItem * exitButton;
         exitButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Leave", @"Exit Session")
@@ -143,14 +137,7 @@ UITextFieldDelegate
         [[[self navigationItem] backBarButtonItem] setTitle:returnTitle];
     } else if (_partner) {
         [self setTitle:[_partner name]];
-        _fetchedResultsController = [ETRCoreDataHelper messagesResultsControllerForPartner:_partner
-                                                                              withDelegate:self];
         [[self moreButton] setTitle:NSLocalizedString(@"Profile", @"User Profile")];
-    }
-    NSError * error = nil;
-    [_fetchedResultsController performFetch:&error];
-    if (error) {
-        NSLog(@"ERROR: performFetch: %@", error);
     }
     
     // Configure manual refresher.
@@ -159,15 +146,16 @@ UITextFieldDelegate
                        action:@selector(extendHistory)
              forControlEvents:UIControlEventValueChanged];
     [_historyControl setTintColor:[ETRUIConstants accentColor]];
+    NSString * pullDownText = NSLocalizedString(@"Pull_down_load_older", @"Load old messages");
+    [_historyControl setAttributedTitle:[[NSAttributedString alloc] initWithString:pullDownText]];
     [[self messagesTableView] addSubview:_historyControl];
     
     _didFirstScrolldown = NO;
+    [[self mediaButton] setTintColor:[ETRUIConstants primaryColor]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    _doScrollToTop = NO;
     
     // Listen for keyboard changes.
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -235,6 +223,9 @@ UITextFieldDelegate
     
     // Disable delegates.
     [[self messageTextField] setDelegate:nil];
+    
+    [[self galleryButton] setHidden:YES];
+    [[self cameraButton] setHidden:YES];
     
     // Show all notifications because no chat is visible.
     [[ETRSessionManager sharedManager] setActiveChatID:-1];
@@ -307,7 +298,24 @@ UITextFieldDelegate
 }
 
 #pragma mark -
-#pragma mark Fetched Results Controller Delegate Methods
+#pragma mark Fetched Results Controller
+
+- (void)setUpFetchedResultsController {
+    if (_isPublic) {
+        _fetchedResultsController = [ETRCoreDataHelper publicMessagesResultsControllerWithDelegate:self
+                                                                              numberOfLastMessages:_messagesLimit];
+    } else if (_partner) {
+        _fetchedResultsController = [ETRCoreDataHelper messagesResultsControllerForPartner:_partner
+                                                                      numberOfLastMessages:_messagesLimit
+                                                                                  delegate:self];
+    }
+    
+    NSError * error = nil;
+    [_fetchedResultsController performFetch:&error];
+    if (error) {
+        NSLog(@"ERROR: performFetch: %@", error);
+    }
+}
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [[self messagesTableView] beginUpdates];
@@ -492,50 +500,12 @@ UITextFieldDelegate
 }
 
 - (void)extendHistory {
-    
-    // Increase the message limit and reset the lowest ID value.
+    // Increase the message limit and request a new Results Controller.
     _messagesLimit += ETRMessagesLimitStep;
-    _lowestMessageID = @(-1L);
     
-    // Restarting the loaders will now fetch a new lowest ID
-    // and display the old messages at the top.
-    _doScrollToTop = YES;
-    
-    
-    // CONTINUE HERE:
-    
-    // Build a cursor that loads all public messages in this room.
-//    
-//    if (mLowestId < 1) {
-//        // Calculate the lowest ID we want to show in this conversation,
-//        // in order to limit the amount of messages,
-//        // i.e. highest ID - 50 = lowest ID --> only show last 50 messages
-//        Cursor lowestIdCursor = getContentResolver().query(
-//                                                           ChatObjectContract.CONTENT_URI_ACTIONS_PUBLIC,
-//                                                           ChatObjectContract.PROJECTION_MSGS_PUB_USER,
-//                                                           ChatObjectContract.SELECTION_PUBLIC_MSGS_UNBLOCKED,
-//                                                           buildSelectionArgs(),
-//                                                           BaseColumns._ID + " DESC LIMIT " + mMessageLimit
-//                                                           );
-//        final int idColumn = lowestIdCursor.getColumnIndex(BaseColumns._ID);
-//        if (idColumn > -1 && lowestIdCursor.moveToLast()) {
-//            mLowestId = lowestIdCursor.getInt(idColumn);
-//        }
-//        lowestIdCursor.close();
-//    }
-//    
-//    if (mLowestId < 0) mLowestId = 0;
-//    
-//    if (i == Action.PUBLIC_RECIPIENT_ID) {
-//        CursorLoader cursorLoader = new CursorLoader(
-//                                                     this,
-//                                                     ChatObjectContract.CONTENT_URI_ACTIONS_PUBLIC,
-//                                                     ChatObjectContract.PROJECTION_MSGS_PUB_USER,
-//                                                     ChatObjectContract.SELECTION_PUBLIC_MSGS_UNBLOCKED,
-//                                                     buildSelectionArgs(),
-//                                                     BaseColumns.MSG_TIME + " ASC"
-//                                                     );
-//    }
+    [self setUpFetchedResultsController];
+    [[self messagesTableView] reloadData];
+    [[self historyControl] endRefreshing];
 }
 
 #pragma mark - Alert Views
@@ -564,7 +534,7 @@ UITextFieldDelegate
     }
     
     // Get the message from the text field.
-    NSString *typedString = [[[self messageTextField] text]
+    NSString * typedString = [[[self messageTextField] text]
                              stringByTrimmingCharactersInSet:
                              [NSCharacterSet whitespaceCharacterSet]];
     
@@ -591,8 +561,44 @@ UITextFieldDelegate
         [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
             [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
         }];
+        
+        // Replace the icon with an arrow and rotate it.
+        [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameArrowRight]];
+        [[self mediaButton] setTintColor:[ETRUIConstants primaryColor]];
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             CGAffineTransform transform;
+                             transform = CGAffineTransformMakeRotation(-90.0f * M_PI_4);
+                             [[self mediaButton] setTransform:transform];
+                         }];
     } else {
         [self hideMediaMenu];
+    }
+}
+
+/*
+ Closes the menu, if the upper button, the gallery button, is visible
+ */
+- (void)hideMediaMenu {
+    //    [self updateConversationStatus];
+    
+    if(![[self galleryButton] isHidden]) {
+        // Collapse the menu from the top.
+        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
+            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
+        }];
+        
+        // Rotate the arrow back and show the default icon when finished.
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             CGAffineTransform transform;
+                             transform = CGAffineTransformMakeRotation(0.0f);
+                             [[self mediaButton] setTransform:transform];
+                         }
+                         completion:^(BOOL finished) {
+                             [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameCamera]];
+                             [[self mediaButton] setTintColor:[ETRUIConstants primaryColor]];
+                         }];
     }
 }
 
@@ -627,20 +633,6 @@ UITextFieldDelegate
     } else if (_partner) {
         [ETRCoreDataHelper dispatchImageMessage:[ETRImageEditor imageFromPickerInfo:info]
                                     toRecipient:_partner];
-    }
-}
-
-/*
- Closes the menu, if the upper button, the gallery button, is visible
-*/
-- (void)hideMediaMenu {
-//    [self updateConversationStatus];
-    
-    if(![[self galleryButton] isHidden]) {
-        // Collapse the menu from the top.
-        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
-            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
-        }];
     }
 }
 

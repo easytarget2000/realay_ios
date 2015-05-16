@@ -11,7 +11,6 @@
 		D0081F5818C546B200D0819A /* ETRAlertViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = D0081F5718C546B200D0819A /* ETRAlertViewFactory.m */; };
 		D00A15FF1AAA1DDF0036B25B /* ETRHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */; };
 		D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */; };
-		D00A16051AAA1E1E0036B25B /* ETRProfileButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A16041AAA1E1E0036B25B /* ETRProfileButtonCell.m */; };
 		D00A16081AAA1E330036B25B /* ETRProfileSocialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */; };
 		D00A160B1AAA25BC0036B25B /* ETRDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A160A1AAA25BC0036B25B /* ETRDetailsViewController.m */; };
 		D00A16111AAA571C0036B25B /* NewStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */; };
@@ -109,8 +108,6 @@
 		D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRHeaderCell.m; path = ui/elements/ETRHeaderCell.m; sourceTree = "<group>"; };
 		D00A16001AAA1DFA0036B25B /* ETRKeyValueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRKeyValueCell.h; path = ui/elements/ETRKeyValueCell.h; sourceTree = "<group>"; };
 		D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRKeyValueCell.m; path = ui/elements/ETRKeyValueCell.m; sourceTree = "<group>"; };
-		D00A16031AAA1E1E0036B25B /* ETRProfileButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRProfileButtonCell.h; path = ui/elements/ETRProfileButtonCell.h; sourceTree = "<group>"; };
-		D00A16041AAA1E1E0036B25B /* ETRProfileButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRProfileButtonCell.m; path = ui/elements/ETRProfileButtonCell.m; sourceTree = "<group>"; };
 		D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRProfileSocialCell.h; path = ui/elements/ETRProfileSocialCell.h; sourceTree = "<group>"; };
 		D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRProfileSocialCell.m; path = ui/elements/ETRProfileSocialCell.m; sourceTree = "<group>"; };
 		D00A16091AAA25BC0036B25B /* ETRDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRDetailsViewController.h; path = ui/ETRDetailsViewController.h; sourceTree = "<group>"; };
@@ -326,8 +323,6 @@
 				D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */,
 				D03133961AAB582B004E981B /* ETRKeyValueEditorCell.h */,
 				D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */,
-				D00A16031AAA1E1E0036B25B /* ETRProfileButtonCell.h */,
-				D00A16041AAA1E1E0036B25B /* ETRProfileButtonCell.m */,
 				D03133991AAB5860004E981B /* ETRProfileHeaderEditorCell.h */,
 				D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */,
 				D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */,
@@ -621,7 +616,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D00A16051AAA1E1E0036B25B /* ETRProfileButtonCell.m in Sources */,
 				D0586CF21ACB11F100C55E4C /* ETRReceivedMediaCell.m in Sources */,
 				D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */,
 				D01446B61A9F573900748378 /* ETRChatObject.m in Sources */,

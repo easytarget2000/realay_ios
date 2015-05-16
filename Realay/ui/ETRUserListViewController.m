@@ -46,6 +46,8 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 
 @property (strong, nonatomic) NSFetchedResultsController * usersResultsController;
 
+@property (nonatomic) BOOL doShowInfoView;
+
 @end
 
 
@@ -54,11 +56,13 @@ static CGFloat const ETRUserRowHeight = 64.0f;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _doShowInfoView = NO;
+    
     // Enable the Fetched Results Controllers.
     _conversationsResultsController = [ETRCoreDataHelper conversationResulsControllerWithDelegate:self];
     _usersResultsController = [ETRCoreDataHelper userListResultsControllerWithDelegate:self];
     
-    NSError *error = nil;
+    NSError * error = nil;
     [_conversationsResultsController performFetch:&error];
     if (error) {
         NSLog(@"ERROR: performFetch: %@", error);
@@ -194,19 +198,21 @@ static CGFloat const ETRUserRowHeight = 64.0f;
         }
     }
     
-    if (numberOfRows < 1) {
+    _doShowInfoView = numberOfRows < 1;
+    
+    if (_doShowInfoView) {
         // Wait for possible results before actually deciding to show the Info View.
         dispatch_after(
-                       200,
+                       400,
                        dispatch_get_main_queue(),
                        ^{
-                           [ETRAnimator fadeView:[self infoView] doAppear:(numberOfRows < 1)];
+                           [ETRAnimator fadeView:[self infoView] doAppear:_doShowInfoView];
                        });
     } else {
         // Hiding the Info View happens immediately.
         [ETRAnimator fadeView:[self infoView] doAppear:NO];
     }
-    
+
     return numberOfRows;
 }
 

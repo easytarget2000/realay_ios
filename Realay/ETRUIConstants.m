@@ -8,6 +8,10 @@
 
 #import "ETRUIConstants.h"
 
+NSString *const ETRImageNameArrowRight = @"ArrowRight";
+
+NSString *const ETRImageNameCamera = @"Camera";
+
 NSString *const ETRViewControllerIDConversation = @"conversationViewController";
 
 NSString *const ETRViewControllerIDDetails = @"detailsViewController";

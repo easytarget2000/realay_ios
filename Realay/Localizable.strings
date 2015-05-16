@@ -64,6 +64,8 @@
 
 "Public_Message" = "Public Message";
 
+"Pull_down_load_older" = "Pull down to load older messages.";
+
 "Profile" = "Profile";
 
 "Return_to_area" = "Please make sure that your location can be estimated and return until %@.";
@@ -75,6 +77,8 @@
 "Session_terminated" = "Your session has been terminated.";
 
 "Settings" = "Settings";
+
+"Share" = "Share";
 
 "Show_Profile" = "Show Profile";
 

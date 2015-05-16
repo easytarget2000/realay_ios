@@ -106,7 +106,9 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
         ETRProfileHeaderEditorCell *headerCell;
         headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderEditorCellIdentifier
                                                      forIndexPath:indexPath];
-        [headerCell setUpWithTag:ETRCellTagOffset + 0 forUser:_localUserCopy inViewController:self];
+        [headerCell setUpWithTag:ETRCellTagOffset + 0
+                         forUser:_localUserCopy
+                inViewController:self];
         return headerCell;
     }
     
@@ -153,42 +155,12 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     return valueCell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     
-    UITableViewCell *currentCell = (UITableViewCell *) [[textField superview] superview];
+    UITableViewCell * currentCell = (UITableViewCell *) [[textField superview] superview];
     
-    NSIndexPath *currentIndexPath = [[self tableView] indexPathForCell:currentCell];
+    NSIndexPath * currentIndexPath = [[self tableView] indexPathForCell:currentCell];
     NSInteger currentRow = [currentIndexPath row];
     
     if (currentRow < 7) {
@@ -338,7 +310,8 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     [self presentViewController:picker animated:YES completion:nil];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+- (void)imagePickerController:(UIImagePickerController *)picker
+didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self dismissViewControllerAnimated:picker completion:nil];
     
     // Load the given image and display the progress in the header Cell's icon ImageView.

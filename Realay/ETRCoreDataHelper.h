@@ -48,10 +48,12 @@ extern long const ETRActionPublicUserID;
 
 + (ETRAction *)blankOutgoingAction;
 
-+ (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegage:(id<NSFetchedResultsControllerDelegate>)delegate;
++ (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate
+                                                       numberOfLastMessages:(NSUInteger)numberOfLastMessages;
 
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
-                                                       withDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
+                                               numberOfLastMessages:(NSUInteger)numberOfLastMessages
+                                                           delegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 #pragma mark -
 #pragma mark Conversations

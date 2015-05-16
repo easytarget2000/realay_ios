@@ -13,8 +13,6 @@
 #import "ETRImageLoader.h"
 #import "ETRKeyValueCell.h"
 #import "ETRLocalUserManager.h"
-//#import "ETRLocationManager.h"
-#import "ETRProfileButtonCell.h"
 #import "ETRProfileSocialCell.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
@@ -54,11 +52,11 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
     
     [[self tableView] setRowHeight:UITableViewAutomaticDimension];
     [[self tableView] setEstimatedRowHeight:128.0f];
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -68,10 +66,6 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
     [navigationBar setTranslucent:YES];
     [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setShadowImage:[UIImage new]];
-
-    
-    // Just in case there is a toolbar wanting to be displayed:
-    [[self navigationController] setToolbarHidden:YES];
     
     if ((!_user && !_room) || (_user && _room)) {
         NSLog(@"ERROR: No Room or User object to show in this Detail View Controller.");
@@ -79,26 +73,59 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
         return;
     }
     
-    UIBarButtonItem * barButton;
-    if (_room && ![[ETRSessionManager sharedManager] didBeginSession]) {
-        barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Join", @"Join")
-                                                     style:UIBarButtonItemStylePlain
-                                                    target:self
-                                                    action:@selector(barButtonPressed:)];
+    if (_room) {
+        [[self navigationController] setToolbarHidden:YES];
+        
+        UIBarButtonItem * barButton;
+        
+        if ([[ETRSessionManager sharedManager] didBeginSession]) {
+            barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Share location")
+                                                         style:UIBarButtonItemStylePlain
+                                                        target:self
+                                                        action:@selector(shareButtonPressed:)];
+        } else {
+            barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Join", @"Join")
+                                                         style:UIBarButtonItemStylePlain
+                                                        target:self
+                                                        action:@selector(joinButtonPressed:)];
+        }
+        
+        [[self navigationItem] setRightBarButtonItem:barButton];
+        
     } else if (_user) {
         if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
+            [[self navigationController] setToolbarHidden:NO];
+            
+            UIBarButtonItem * editButton;
+            
             // Edit Button:
-            barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
+            editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
                                                                       target:self
-                                                                      action:@selector(barButtonPressed:)];
+                                                                      action:@selector(editProfileButtonPressed:)];
+            [[self navigationItem] setRightBarButtonItem:editButton];
         } else {
+            [[self navigationController] setToolbarHidden:YES];
+            
+            UIBarButtonItem * blockButton;
+            UIBarButtonItem * addButton;
+            
+            // TODO: Apply custom icon to block button.
+            
+            // Block Contact Button:
+            blockButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Block"]
+                                                           style:UIBarButtonItemStylePlain
+                                                          target:self
+                                                          action:@selector(blockUserButtonPressed:)];
+            
             // Add Contact Button:
-            barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+            addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
                                                                       target:self
-                                                                      action:@selector(barButtonPressed:)];
+                                                                      action:@selector(addUserButtonPressed:)];
+            
+            NSArray * buttonItems = [NSArray arrayWithObjects:addButton, blockButton, nil];
+            [[self navigationItem] setRightBarButtonItems:buttonItems];
         }
     }
-    [[self navigationItem] setRightBarButtonItem:barButton];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -162,11 +189,6 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
             _socialMediaRow = numberOfRows - 1;
         } else {
             _socialMediaRow = -1;
-        }
-        
-        if (![[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
-            // If this is not the local User, add a row for the block button.
-            numberOfRows ++;
         }
         
         return numberOfRows;
@@ -272,21 +294,7 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
                                 forIndexPath:indexPath {
     
     NSInteger row = [indexPath row];
-    
-    if (![[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
-        // The last row contains the block button, if this is not the local User.
-        if (row == ([tableView numberOfRowsInSection:0] - 1)) {
-            ETRProfileButtonCell *blockButtonCell;
-            blockButtonCell = [tableView dequeueReusableCellWithIdentifier:ETRButtonCellIDentifier
-                                                              forIndexPath:indexPath];
-            
-            NSString *blockUser = NSLocalizedString(@"Block_User", @"Block User");
-            [[blockButtonCell buttonLabel] setText:blockUser];
-            
-            return blockButtonCell;
-        }
-    }
-    
+
     if (row == _socialMediaRow) {
         // The cell for this row displays the social network buttons.
         ETRProfileSocialCell *socialMediaCell;
@@ -336,31 +344,46 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
 
 #pragma mark - Navigation
 
-- (IBAction)barButtonPressed:(id)sender {
-    if (_room) {
-        if (![[ETRSessionManager sharedManager] didBeginSession]) {
+- (IBAction)addUserButtonPressed:(id)sender {
+    // TODO: Handle unauthorization.
+    [_user addToAddressBook];
+}
+
+// CONTINUE HERE.
+
+- (IBAction)blockUserButtonPressed:(id)sender {
+    
+}
+
+- (IBAction)blockedUsersButtonPressed:(id)sender {
+    
+}
+
+- (IBAction)editProfileButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:ETRProfileToEditorSegue sender:nil];
+}
+
+- (IBAction)joinButtonPressed:(id)sender {
+    if (![[ETRSessionManager sharedManager] didBeginSession]) {
 #ifdef DEBUG_JOIN
-            [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
+        [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
 #else
-            if (![ETRLocationManager didAuthorize]) {
-                // The location access has not been authorized.
-                [ETRAlertViewFactory showAuthorizationAlert];
-            } else if ([ETRLocationManager isInSessionRegion]) {
-                // Show the password prompt, if the device location is inside the region.
-                [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
-            } else {
-                // The user is outside of the radius.
-                [ETRAlertViewFactory showRoomDistanceAlert];
-            }
-#endif
-        }
-    } else if (_user) {
-        if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
-            [self performSegueWithIdentifier:ETRProfileToEditorSegue sender:nil];
+        if (![ETRLocationManager didAuthorize]) {
+            // The location access has not been authorized.
+            [ETRAlertViewFactory showAuthorizationAlert];
+        } else if ([ETRLocationManager isInSessionRegion]) {
+            // Show the password prompt, if the device location is inside the region.
+            [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
         } else {
-            [_user addToAddressBook];
+            // The user is outside of the radius.
+            [ETRAlertViewFactory showRoomDistanceAlert];
         }
+#endif
     }
+}
+
+- (IBAction)shareButtonPressed:(id)sender {
+    
 }
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation

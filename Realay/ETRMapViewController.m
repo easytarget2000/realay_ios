@@ -61,7 +61,6 @@ static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    
     [super viewDidAppear:animated];
     
     NSInteger myControllerIndex;
@@ -74,7 +73,6 @@ static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
         NSLog(@"ERROR: No room set in manager.");
         return;
     }
-    
     
     _mapView = [[GMSMapView alloc] init];
     [_mapView setFrame:[[self mapSubView] bounds]];

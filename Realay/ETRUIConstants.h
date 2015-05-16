@@ -18,6 +18,10 @@ extern NSString *const ETRViewControllerIDDetails;
 
 extern NSString *const ETRViewControllerIDJoin;
 
+extern NSString *const ETRImageNameArrowRight;
+
+extern NSString *const ETRImageNameCamera;
+
 extern NSString *const ETRImageNameImagePlaceholder;
 
 extern NSString *const ETRImageNameProfilePlaceholder;
