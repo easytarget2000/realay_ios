@@ -10,6 +10,7 @@
 
 #import "ETRAction.h"
 #import "ETRConversationViewController.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRReadabilityHelper.h"
@@ -22,7 +23,8 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     ETRAlertViewTagLeave = 66,
     ETRAlertViewTagMessageMenu = 68,
     ETRAlertViewTagBlock = 70,
-    ETRAlertViewTagSettings = 72
+    ETRAlertViewTagSettings = 72,
+    ETRAlertViewTagUnblock = 74
 };
 
 
@@ -140,6 +142,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     if (![_selectedMessage isSentAction] && [_selectedMessage isPublicAction]) {
         [buttonTitles addObject:NSLocalizedString(@"Private_Conversation", @"Open Private Chat")];
         [buttonTitles addObject:NSLocalizedString(@"Show_Profile", @"User Details")];
+        [buttonTitles addObject:NSLocalizedString(@"Block_User", @"Block User")];
     }
     
     UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:nil
@@ -176,14 +179,19 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
  Displays a dialog in an alert view that asks to confirm a block action.
  The delegate will handle the YES button click.
  */
-- (void)showBlockConfirmViewForUser:(ETRUser *)user {
+- (void)showBlockConfirmViewForUser:(ETRUser *)user
+                     viewController:(UIViewController *)viewController {
     _selectedUser = user;
     if (!_selectedUser) {
         return;
     }
     
-    NSString *titleFormat = NSLocalizedString(@"Want_block", @"Want block %@?");
-    NSString *userName = [_selectedUser name];
+    if (viewController) {
+        _viewController = viewController;
+    }
+    
+    NSString * titleFormat = NSLocalizedString(@"Want_block", @"Want block %@?");
+    NSString * userName = [_selectedUser name];
     
     NSString * blockReport  = NSLocalizedString(@"Block_Report", "Block & Send Report");
     NSString * blockOnly    = NSLocalizedString(@"Block", "Only block");
@@ -195,6 +203,29 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                                  cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
                                  otherButtonTitles:blockReport, blockOnly, nil];
     [alertView setTag:ETRAlertViewTagBlock];
+    [alertView show];
+}
+
+/*
+ 
+ */
+- (void)showUnblockViewForUser:(ETRUser *)user {
+    _selectedUser = user;
+    if (!_selectedUser) {
+        return;
+    }
+    
+    NSString * messageFormat = NSLocalizedString(@"Want_unblock", @"Want unblock %@?");
+    NSString * userName = [_selectedUser name];
+    
+    UIAlertView * alertView;
+    alertView = [[UIAlertView alloc] initWithTitle:nil
+                                           message:[NSString stringWithFormat:messageFormat, userName]
+                                          delegate:self
+                                 cancelButtonTitle:NSLocalizedString(@"No", "Negative")
+                                 otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil];
+    
+    [alertView setTag:ETRAlertViewTagUnblock];
     [alertView show];
 }
 
@@ -234,7 +265,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
         return;
     }
     
-    NSString *distanceFormat;
+    NSString * distanceFormat;
     distanceFormat = NSLocalizedString(@"Current_distance", @"Current distance: %@");
     NSInteger distanceValue = [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom];
     NSString *distance = [ETRReadabilityHelper formattedIntegerLength:distanceValue];
@@ -252,6 +283,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
  */
 + (void)showTypedNameTooShortAlert {
     // TODO: Replace with warning icon.
+    [ETRAlertViewFactory showGeneralErrorAlert];
 }
 
 /*
@@ -269,7 +301,6 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
 #pragma mark UIAlertViewDelegate
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-
     
     switch ([alertView tag]) {
         case ETRAlertViewTagBlock:
@@ -277,10 +308,25 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                 return;
             }
             
-            if (_selectedUser) {
+            if (!_selectedUser) {
                 NSLog(@"ERROR: Cannot perform next blocking step. User reference lost.");
             } else {
                 [_selectedUser setIsBlocked:@(YES)];
+                [ETRCoreDataHelper saveContext];
+                // TODO: Clear and push to Public Conversation View Controller.
+                
+                if (_viewController) {
+                    UIStoryboard * storyBoard = [_viewController storyboard];
+                    
+                    ETRConversationViewController * publicConversation;
+                    publicConversation = [storyBoard instantiateViewControllerWithIdentifier:ETRViewControllerIDConversation];
+                    [publicConversation setIsPublic:YES];
+                    
+                    UINavigationController * navigationController;
+                    navigationController = [_viewController navigationController];
+                    [navigationController popViewControllerAnimated:NO];
+                    [navigationController pushViewController:publicConversation animated:YES];
+                }
             }
             break;
             
@@ -338,7 +384,12 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                 [profileViewController setUser:[_selectedMessage sender]];
                 [[_viewController navigationController] pushViewController:profileViewController
                                                                   animated:YES];
+                
+            } else if ((buttonIndex == 3 && isPhotoMessage) || buttonIndex == 4) {
+                // Show Block Alert View.
+                [self showBlockConfirmViewForUser:[_selectedMessage sender] viewController:nil];
             }
+            
             break;
             
         case ETRAlertViewTagSettings: {
@@ -346,9 +397,17 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             if (settingsURL) {
                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:settingsURL]];
             }
-        }
-            // TODO: Open App settings.
             
+            break;
+        }
+            
+        case ETRAlertViewTagUnblock:
+            if (buttonIndex == 0) {
+                return;
+            } else if (_selectedUser) {
+                [_selectedUser setIsBlocked:@(NO)];
+                [ETRCoreDataHelper saveContext];
+            }
     }
 }
 

@@ -28,6 +28,9 @@
 		D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */; };
 		D02465C81AF92CD80049CDB4 /* ETRBlockedUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */; };
 		D026A9AB1AB8D0D0006FB920 /* ETRReceivedMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */; };
+		D029654F1B15FCE700FABACD /* ETRSessionTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = D029654E1B15FCE700FABACD /* ETRSessionTabBarController.m */; };
+		D02965521B1638FF00FABACD /* ETRConversationListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02965511B1638FF00FABACD /* ETRConversationListViewController.m */; };
+		D02965551B16441500FABACD /* ETRUserListBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02965541B16441500FABACD /* ETRUserListBaseViewController.m */; };
 		D02E42561AB4B06C00A46CF5 /* ETRReadabilityHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */; };
 		D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */; };
 		D03133981AAB582B004E981B /* ETRKeyValueEditorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */; };
@@ -140,6 +143,12 @@
 		D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBlockedUsersViewController.m; sourceTree = "<group>"; };
 		D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRReceivedMessageCell.h; path = ui/TableCells/ETRReceivedMessageCell.h; sourceTree = "<group>"; };
 		D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRReceivedMessageCell.m; path = ui/TableCells/ETRReceivedMessageCell.m; sourceTree = "<group>"; };
+		D029654D1B15FCE700FABACD /* ETRSessionTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionTabBarController.h; sourceTree = "<group>"; };
+		D029654E1B15FCE700FABACD /* ETRSessionTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionTabBarController.m; sourceTree = "<group>"; };
+		D02965501B1638FF00FABACD /* ETRConversationListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRConversationListViewController.h; path = ui/ETRConversationListViewController.h; sourceTree = "<group>"; };
+		D02965511B1638FF00FABACD /* ETRConversationListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRConversationListViewController.m; path = ui/ETRConversationListViewController.m; sourceTree = "<group>"; };
+		D02965531B16441500FABACD /* ETRUserListBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUserListBaseViewController.h; sourceTree = "<group>"; };
+		D02965541B16441500FABACD /* ETRUserListBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUserListBaseViewController.m; sourceTree = "<group>"; };
 		D02E42541AB4B06C00A46CF5 /* ETRReadabilityHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReadabilityHelper.h; sourceTree = "<group>"; };
 		D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReadabilityHelper.m; sourceTree = "<group>"; };
 		D03133931AAB5754004E981B /* ETRProfileEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRProfileEditorViewController.h; sourceTree = "<group>"; };
@@ -308,6 +317,21 @@
 				D0FF65F51AFEA06100C8572D /* ETRImageView.m */,
 			);
 			name = "Small Elements";
+			sourceTree = "<group>";
+		};
+		D02965561B16607200FABACD /* SessionTabs */ = {
+			isa = PBXGroup;
+			children = (
+				D02965501B1638FF00FABACD /* ETRConversationListViewController.h */,
+				D02965511B1638FF00FABACD /* ETRConversationListViewController.m */,
+				D029654D1B15FCE700FABACD /* ETRSessionTabBarController.h */,
+				D029654E1B15FCE700FABACD /* ETRSessionTabBarController.m */,
+				D013BB8C1AFAAD2000DA1895 /* ETRUserListViewController.h */,
+				D013BB8D1AFAAD2000DA1895 /* ETRUserListViewController.m */,
+				D02965531B16441500FABACD /* ETRUserListBaseViewController.h */,
+				D02965541B16441500FABACD /* ETRUserListBaseViewController.m */,
+			);
+			name = SessionTabs;
 			sourceTree = "<group>";
 		};
 		D04352461AB3A8D200CF95AB /* TableCells */ = {
@@ -491,6 +515,7 @@
 		D0F39EC517F1141F00D60257 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				D02965561B16607200FABACD /* SessionTabs */,
 				D01087821B00D22100341E07 /* ETRBaseViewController.h */,
 				D01087831B00D22100341E07 /* ETRBaseViewController.m */,
 				D02465C61AF92CD80049CDB4 /* ETRBlockedUsersViewController.h */,
@@ -513,8 +538,6 @@
 				D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */,
 				D0190B331ABB726D0010E637 /* ETRUIConstants.h */,
 				D0190B341ABB726D0010E637 /* ETRUIConstants.m */,
-				D013BB8C1AFAAD2000DA1895 /* ETRUserListViewController.h */,
-				D013BB8D1AFAAD2000DA1895 /* ETRUserListViewController.m */,
 				D01446B71A9F78F500748378 /* Images.xcassets */,
 				D0BB824D1AB2483B00276D5C /* Localizable.strings */,
 				D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */,
@@ -622,6 +645,7 @@
 				D079327D1B011D1E0086DB3F /* ETRBouncer.m in Sources */,
 				D0E1971517E276DB00135B8C /* main.m in Sources */,
 				D00A15FF1AAA1DDF0036B25B /* ETRHeaderCell.m in Sources */,
+				D02965551B16441500FABACD /* ETRUserListBaseViewController.m in Sources */,
 				D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */,
 				D0C821C91AC21B2C00549EEA /* ETRUserCell.m in Sources */,
 				D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */,
@@ -653,10 +677,12 @@
 				D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */,
 				D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */,
 				D04352491AB3AA9C00CF95AB /* ETRSentMessageCell.m in Sources */,
+				D02965521B1638FF00FABACD /* ETRConversationListViewController.m in Sources */,
 				D0C821CC1AC2247500549EEA /* ETRConversation.m in Sources */,
 				D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */,
 				D00A16081AAA1E330036B25B /* ETRProfileSocialCell.m in Sources */,
 				D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */,
+				D029654F1B15FCE700FABACD /* ETRSessionTabBarController.m in Sources */,
 				D0B3D46A1AC481290070F282 /* ETRInfoCell.m in Sources */,
 				D00A160B1AAA25BC0036B25B /* ETRDetailsViewController.m in Sources */,
 				D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */,

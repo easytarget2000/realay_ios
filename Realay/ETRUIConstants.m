@@ -8,15 +8,19 @@
 
 #import "ETRUIConstants.h"
 
+NSString *const ETRCellIdentifierUser = @"userCell";
+
 NSString *const ETRImageNameArrowRight = @"ArrowRight";
 
 NSString *const ETRImageNameCamera = @"Camera";
 
-NSString *const ETRViewControllerIDConversation = @"conversationViewController";
+NSString *const ETRViewControllerIDBlockedUsers = @"BlockedUsers";
 
-NSString *const ETRViewControllerIDDetails = @"detailsViewController";
+NSString *const ETRViewControllerIDConversation = @"Conversation";
 
-NSString *const ETRViewControllerIDJoin = @"joinViewController";
+NSString *const ETRViewControllerIDDetails = @"Details";
+
+NSString *const ETRViewControllerIDJoin = @"Join";
 
 NSString *const ETRImageNameProfilePlaceholder = @"PlaceholderProfileW";
 
@@ -26,6 +30,8 @@ NSString *const ETRImageNameRoomPlaceholder = @"PlaceholderRoomW";
 NSString *const ETRImageNameUserIcon = @"PlaceholderProfileW";
 
 NSString *const ETRImageNameImagePlaceholder = @"Camera";
+
+CGFloat const ETRRowHeightUser = 64.0f;
 
 static UIColor * PrimaryColor;
 

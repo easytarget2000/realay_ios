@@ -62,6 +62,18 @@
  */
 + (void)showHasLeftViewForUser:(ETRUser *)user;
 
+/*
+ Displays a dialog in an alert view that asks to confirm a block action.
+ The delegate will handle the YES button click.
+ */
+- (void)showBlockConfirmViewForUser:(ETRUser *)user
+                     viewController:(UIViewController *)viewController;
+
+/*
+ 
+ */
+- (void)showUnblockViewForUser:(ETRUser *)user;
+
 #pragma mark -
 #pragma mark General
 

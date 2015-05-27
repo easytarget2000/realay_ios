@@ -9,6 +9,13 @@
 #import "ETRBaseViewController.h"
 
 
+@class ETRImageView;
+
+
 @interface ETRBlockedUsersViewController : ETRBaseViewController
+
+@property (weak, nonatomic) IBOutlet UITableView *usersTableView;
+
+@property (weak, nonatomic) IBOutlet ETRImageView *infoView;
 
 @end

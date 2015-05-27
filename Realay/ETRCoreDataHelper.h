@@ -15,7 +15,6 @@
 @class ETRRoom;
 @class ETRUser;
 
-
 extern long const ETRActionPublicUserID;
 
 

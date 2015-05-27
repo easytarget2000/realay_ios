@@ -15,15 +15,19 @@
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 
-//static NSString *const joinSegue = @"joinToConversationSegue";
+static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
+
 
 @interface ETRJoinViewController ()
 
 @property (strong, nonatomic) NSThread * joinThread;
 
-@property (atomic) BOOL isCanceled;
+@property (nonatomic) BOOL isCanceled;
+
+@property (nonatomic) NSTimer * delayTimer;
 
 @end
+
 
 @implementation ETRJoinViewController
 
@@ -43,6 +47,8 @@
         return;
     }
     
+    // TODO: Remove this line or translate it.
+    
     NSString * entering = [NSString stringWithFormat:@"Entering %@...", [preparedRoom title]];
     [[self statusLabel] setText:entering];
     [[self progressView] setProgress:0.1f];
@@ -51,6 +57,36 @@
                                           selector:@selector(startJoinThreadforRoom:)
                                             object:preparedRoom];
     [_joinThread start];
+    
+    _delayTimer = [NSTimer scheduledTimerWithTimeInterval:ETRIntervalJoinDelayed
+                                                   target:self
+                                                 selector:@selector(handleDelay:)
+                                                 userInfo:@(1)
+                                                  repeats:NO];
+}
+     
+-(void)handleDelay:(NSTimer *)timer {
+    id userInfo = [timer userInfo];
+    if (userInfo && [userInfo isKindOfClass:[NSNumber class]]) {
+        NSNumber * timerID = (NSNumber *)userInfo;
+        if ([timerID isEqualToValue:@(1)]) {
+            // Notify user of connection delay and start timeout Timer.
+            
+            NSString * delayText = NSLocalizedString(@"Connecting_seems_longer", @"Slow connection");
+            [[self statusLabel] setText:delayText];
+            
+            _delayTimer = [NSTimer scheduledTimerWithTimeInterval:ETRIntervalJoinDelayed
+                                                           target:self
+                                                         selector:@selector(handleDelay:)
+                                                         userInfo:@(2)
+                                                          repeats:NO];
+            
+        } else if ([timerID isEqualToValue:@(2)]) {
+            // The process timed out.
+            [ETRAlertViewFactory showGeneralErrorAlert];
+            [[self navigationController] popToRootViewControllerAnimated:YES];
+        }
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -82,6 +118,8 @@
 }
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {
+    [_delayTimer invalidate];
+    
     if (_isCanceled) {
         return;
     }
@@ -98,6 +136,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    [_delayTimer invalidate];
     
     // TODO: Cancel if back/cancel button pressed.
     

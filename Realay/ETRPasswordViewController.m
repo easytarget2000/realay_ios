@@ -16,7 +16,7 @@
 #import "ETRSessionManager.h"
 
 
-static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue";
+static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
 
 
 @implementation ETRPasswordViewController
@@ -81,7 +81,7 @@ static NSString *const ETRPasswordToLoginSegue = @"passwordToCreateProfileSegue"
         if ([ETRLocalUserManager userID] > 10) {
             [super pushToJoinViewController];
         } else {
-            [self performSegueWithIdentifier:ETRPasswordToLoginSegue
+            [self performSegueWithIdentifier:ETRSeguePasswordToLogin
                                       sender:self];
         }
     } else {

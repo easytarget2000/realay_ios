@@ -31,11 +31,11 @@ static NSString *const ETRInfoCellIdentifier = @"infoCell";
 
 static NSString *const ETRRoomCellIdentifier = @"roomCell";
 
-static NSString *const ETRRoomListToMapSegue = @"roomListToMapSegue";
+static NSString *const ETRSegueRoomsToMap = @"RoomsToMap";
 
-static NSString *const ETRRoomListToLoginSegue = @"roomListToLoginSegue";
+static NSString *const ETRSegueRoomsToLogin = @"RoomsToLogin";
 
-static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
+static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
 
 @interface ETRRoomListViewController () <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
 
@@ -305,7 +305,7 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
     
     NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
     
-    [self performSegueWithIdentifier:ETRRoomListToMapSegue sender:record];
+    [self performSegueWithIdentifier:ETRSegueRoomsToMap sender:record];
 }
 
 #pragma mark - UITableViewDataSource
@@ -346,22 +346,22 @@ static NSString *const ETRRoomListToProfileSegue = @"roomListToProfileSegue";
 // Create or view my profile.
 - (IBAction)profileButtonPressed:(id)sender {
     if ([ETRLocalUserManager userID] > 10) {
-        [self performSegueWithIdentifier:ETRRoomListToProfileSegue sender:self];
+        [self performSegueWithIdentifier:ETRSegueRoomsToProfile sender:self];
     } else {
-        [self performSegueWithIdentifier:ETRRoomListToLoginSegue sender:self];
+        [self performSegueWithIdentifier:ETRSegueRoomsToLogin sender:self];
     }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    if([[segue identifier] isEqualToString:ETRRoomListToLoginSegue]) {
+    if([[segue identifier] isEqualToString:ETRSegueRoomsToLogin]) {
         // Create my profile before showing it.
         
         // Tell the Create Profile controller where to go next.
         ETRLoginViewController * destination = [segue destinationViewController];
         [destination showProfileOnLogin];
         
-    } else if([[segue identifier] isEqualToString:ETRRoomListToProfileSegue]) {
+    } else if([[segue identifier] isEqualToString:ETRSegueRoomsToProfile]) {
         // Just show my own user profile.
         
         ETRDetailsViewController *destination = [segue destinationViewController];

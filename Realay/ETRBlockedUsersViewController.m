@@ -8,30 +8,146 @@
 
 #import "ETRBlockedUsersViewController.h"
 
+#import "ETRAlertViewFactory.h"
+#import "ETRCoreDataHelper.h"
+#import "ETRImageLoader.h"
+#import "ETRImageView.h"
+#import "ETRUIConstants.h"
+#import "ETRUser.h"
+#import "ETRUserCell.h"
+
+
 @interface ETRBlockedUsersViewController ()
+<UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
+
+/*
+ Reference to Alert View builder and click handler
+ */
+@property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
+
+@property (strong, nonatomic) NSFetchedResultsController * resultsController;
+
+@property (nonatomic) BOOL doShowInfoView;
 
 @end
 
+
 @implementation ETRBlockedUsersViewController
+
+#pragma mark -
+#pragma mark UIViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    _doShowInfoView = NO;
+    
+    // Enable the Fetched Results Controllers.
+    _resultsController = [ETRCoreDataHelper blockedUserListControllerWithDelegate:self];
+    NSError * error = nil;
+    [_resultsController performFetch:&error];
+    if (error) {
+        NSLog(@"ERROR: performFetch: %@", error);
+    }
+    
+    // Do not display empty cells at the end.
+    [[self usersTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
+    
+    // The User list has a fixed row height.
+    [[self usersTableView] setRowHeight:ETRRowHeightUser];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [[self usersTableView] reloadData];
 }
-*/
+
+#pragma mark -
+#pragma mark UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (!_resultsController) {
+        return 0;
+    } else {
+        return [[_resultsController fetchedObjects] count];
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    ETRUserCell * userCell = [tableView dequeueReusableCellWithIdentifier:ETRCellIdentifierUser
+                                                             forIndexPath:indexPath];
+
+    ETRUser * user = [_resultsController objectAtIndexPath:indexPath];
+    
+    [ETRImageLoader loadImageForObject:user
+                              intoView:[userCell iconView]
+                      placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
+                           doLoadHiRes:NO];
+    
+    [[userCell nameLabel] setText:[user name]];
+    [[userCell infoLabel] setText:[user status]];
+    
+    return userCell;
+}
+
+#pragma mark -
+#pragma mark Table View Input
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    ETRUser * record = [_resultsController objectAtIndexPath:indexPath];
+    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
+    [_alertViewFactory showUnblockViewForUser:record];
+}
+
+#pragma mark -
+#pragma mark NSFetchedResultsControllerDelegate
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [[self usersTableView] beginUpdates];
+}
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [[self usersTableView] endUpdates];
+}
+
+- (void)controller:(NSFetchedResultsController *)controller
+   didChangeObject:(id)anObject
+       atIndexPath:(NSIndexPath *)indexPath
+     forChangeType:(NSFetchedResultsChangeType)type
+      newIndexPath:(NSIndexPath *)newIndexPath {
+    
+    switch (type) {
+        case NSFetchedResultsChangeInsert: {
+            [[self usersTableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                         withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        }
+        case NSFetchedResultsChangeDelete: {
+            [[self usersTableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                         withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        }
+        case NSFetchedResultsChangeUpdate: {
+
+        }
+        case NSFetchedResultsChangeMove: {
+            [[self usersTableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                         withRowAnimation:UITableViewRowAnimationFade];
+            [[self usersTableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                                         withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+}
 
 @end

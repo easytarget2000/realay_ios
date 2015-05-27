@@ -12,6 +12,10 @@
 
 extern CGFloat const ETRIconViewCornerRadius;
 
+extern NSString *const ETRCellIdentifierUser;
+
+extern NSString *const ETRViewControllerIDBlockedUsers;
+
 extern NSString *const ETRViewControllerIDConversation;
 
 extern NSString *const ETRViewControllerIDDetails;
@@ -29,6 +33,9 @@ extern NSString *const ETRImageNameProfilePlaceholder;
 extern NSString *const ETRImageNameRoomPlaceholder;
 
 extern NSString *const ETRImageNameUserIcon;
+
+extern CGFloat const ETRRowHeightUser;
+
 
 + (UIColor *)primaryColor;
 

@@ -739,7 +739,7 @@ static NSString * UserEntityName;
 }
 
 + (NSFetchedResultsController *)roomListResultsController {
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
     
     // Add Sort Descriptors
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRRoomDistanceKey ascending:YES]]];
@@ -766,7 +766,7 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    NSFetchRequest *request;
+    NSFetchRequest * request;
     request = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
     
 //    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld AND %@ != 1",
@@ -779,7 +779,7 @@ static NSString * UserEntityName;
     [request setPredicate:predicate];
     [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
     
-    NSFetchedResultsController *resultsController;
+    NSFetchedResultsController * resultsController;
     resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
@@ -790,16 +790,15 @@ static NSString * UserEntityName;
 }
 
 + (NSFetchedResultsController *)blockedUserListControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
-    NSFetchRequest *fetchRequest;
-    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper userEntity]];
     
-    NSString *where = [NSString stringWithFormat:@"%@ == %@", ETRUserIsBlockedKey, @(YES)];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetchRequest setPredicate:predicate];
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"isBlocked == 1"];
+    [request setPredicate:predicate];
+    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
     
-    NSFetchedResultsController *resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+    NSFetchedResultsController * resultsController;
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];

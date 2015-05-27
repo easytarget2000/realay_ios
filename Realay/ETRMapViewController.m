@@ -22,9 +22,9 @@ static CGFloat const ETRMapCloseZoom = 15.0f;
 
 static CGFloat const ETRMapWideZoom = 11.0f;
 
-static NSString *const ETRMapToPasswordSegue = @"mapToPasswordSegue";
+static NSString *const ETRSegueMapToPassword = @"MapToPassword";
 
-static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
+static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 
 
 @implementation ETRMapViewController {
@@ -208,7 +208,7 @@ static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
 }
 
 - (IBAction)detailsButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:ETRMapToDetailsSegue sender:self];
+    [self performSegueWithIdentifier:ETRSegueMapToDetails sender:self];
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
@@ -218,7 +218,7 @@ static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
     }
     
 #ifdef DEBUG_JOIN
-    [self performSegueWithIdentifier:ETRMapToPasswordSegue sender:nil];
+    [self performSegueWithIdentifier:ETRSegueMapToPassword sender:nil];
 #else
     if (![ETRLocationManager didAuthorize]) {
         // The location access has not been authorized.
@@ -234,7 +234,7 @@ static NSString *const ETRMapToDetailsSegue = @"mapToDetailsSegue";
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:ETRMapToDetailsSegue]) {
+    if ([[segue identifier] isEqualToString:ETRSegueMapToDetails]) {
         ETRDetailsViewController *destination;
         destination = [segue destinationViewController];
         [destination setRoom:[[ETRSessionManager sharedManager] room]];

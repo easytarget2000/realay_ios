@@ -22,9 +22,9 @@
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
 
-static short const ETRAPITimeOutInterval = 20;
+static NSTimeInterval const ETRIntervalAPITimeOut = 10.0;
 
-static short const ETRDefaultSearchRadius = 20;
+static short const ETRRadiusDefaultKm = 20;
 
 NSString * ETRAPIBaseURL = @"http://rldb.easy-target.org/";
 
@@ -319,7 +319,7 @@ static NSMutableArray *connections;
     [paramDict setObject:[NSString stringWithFormat:@"%@", [outgoingAction code]] forKey:@"code"];
     [paramDict setObject:[NSString stringWithFormat:@"%ld", timestamp] forKey:@"time"];
     
-    NSString *successStatus;
+    NSString * successStatus;
     if ([outgoingAction isValidMessage]) {
         [paramDict setObject:[outgoingAction messageContent] forKey:@"message"];
         successStatus = ETRPutMessageSuccessStatus;
@@ -384,7 +384,7 @@ static NSMutableArray *connections;
 
     [request setHTTPBody:[NSMutableData dataWithData:bodyData]];
     [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:ETRAPITimeOutInterval];
+    [request setTimeoutInterval:ETRIntervalAPITimeOut];
     
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
@@ -590,7 +590,7 @@ static NSMutableArray *connections;
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[NSString stringWithFormat:@"%g", coordinate.latitude] forKey:@"lat"];
     [paramDict setObject:[NSString stringWithFormat:@"%g", coordinate.longitude] forKey:@"lng"];
-    [paramDict setObject:[NSString stringWithFormat:@"%d", ETRDefaultSearchRadius] forKey:@"dist"];
+    [paramDict setObject:[NSString stringWithFormat:@"%d", ETRRadiusDefaultKm] forKey:@"dist"];
 
     [ETRServerAPIHelper performAPICall:ETRGetRoomsAPICall
                                 withID:ETRGetRoomsAPICall
@@ -904,8 +904,8 @@ static NSMutableArray *connections;
      completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
     
     // Prepare the URL to the give PHP file.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
-    NSURL *url = [NSURL URLWithString:
+    NSString * URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, apiCall];
+    NSURL * url = [NSURL URLWithString:
                   [URLString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     
     // Prepare the POST request with the given data string.
@@ -924,10 +924,6 @@ static NSMutableArray *connections;
         [bodyString appendString:@"="];
         
         [bodyString appendString:(NSString *) [paramDict valueForKey:param]];
-        //        id <NSObject> value = [paramDict valueForKey:param];
-        //        if ([value isMemberOfClass:[NSString class]]) {
-        //            [bodyString appendString:(NSString *) value];
-        //        }
     }
     
 #ifdef DEBUG
@@ -938,7 +934,7 @@ static NSMutableArray *connections;
                                  allowLossyConversion:YES];
     [request setHTTPBody:bodyData];
     [request setHTTPMethod:@"POST"];
-    [request setTimeoutInterval:ETRAPITimeOutInterval];
+    [request setTimeoutInterval:ETRIntervalAPITimeOut];
     
     [ETRServerAPIHelper performAPIRequest:request
                                    withID:connectionID

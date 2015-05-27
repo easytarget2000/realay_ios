@@ -8,7 +8,8 @@
 
 #import "ETRDetailsViewController.h"
 
-//#import "ETRAlertViewFactory.h"
+#import "ETRAlertViewFactory.h"
+#import "ETRBlockedUsersViewController.h"
 #import "ETRHeaderCell.h"
 #import "ETRImageLoader.h"
 #import "ETRKeyValueCell.h"
@@ -17,7 +18,9 @@
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
+
 
 static NSString *const ETRHeaderCellIdentifier = @"profileHeaderCell";
 
@@ -27,9 +30,9 @@ static NSString *const ETRSocialMediaCellIdentifier = @"profileSocialCell";
 
 static NSString *const ETRButtonCellIDentifier = @"profileButtonCell";
 
-static NSString *const ETRProfileToEditorSegue = @"profileToEditorSegue";
+static NSString *const ETRSegueProfileToEditor = @"ProfileToEditor";
 
-static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
+static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 
 @interface ETRDetailsViewController ()
@@ -41,6 +44,8 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
 @property (nonatomic) NSInteger websiteRow;
 
 @property (nonatomic) NSInteger socialMediaRow;
+
+@property (strong, nonatomic) ETRAlertViewFactory * alertHelper;
 
 @end
 
@@ -79,10 +84,10 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
         UIBarButtonItem * barButton;
         
         if ([[ETRSessionManager sharedManager] didBeginSession]) {
-            barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Share location")
-                                                         style:UIBarButtonItemStylePlain
-                                                        target:self
-                                                        action:@selector(shareButtonPressed:)];
+//            barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Share location")
+//                                                         style:UIBarButtonItemStylePlain
+//                                                        target:self
+//                                                        action:@selector(shareButtonPressed:)];
         } else {
             barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Join", @"Join")
                                                          style:UIBarButtonItemStylePlain
@@ -349,24 +354,27 @@ static NSString *const ETRDetailsToPasswordSegue = @"detailsToPasswordSegue";
     [_user addToAddressBook];
 }
 
-// CONTINUE HERE.
-
 - (IBAction)blockUserButtonPressed:(id)sender {
-    
+    _alertHelper = [[ETRAlertViewFactory alloc] init];
+    [_alertHelper showBlockConfirmViewForUser:_user viewController:self];
 }
 
 - (IBAction)blockedUsersButtonPressed:(id)sender {
+    UIStoryboard * storyboard = [self storyboard];
+    ETRBlockedUsersViewController * viewController;
+    viewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDBlockedUsers];
     
+    [[self navigationController] pushViewController:viewController animated:YES];
 }
 
 - (IBAction)editProfileButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:ETRProfileToEditorSegue sender:nil];
+    [self performSegueWithIdentifier:ETRSegueProfileToEditor sender:nil];
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
     if (![[ETRSessionManager sharedManager] didBeginSession]) {
 #ifdef DEBUG_JOIN
-        [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
+        [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
 #else
         if (![ETRLocationManager didAuthorize]) {
             // The location access has not been authorized.

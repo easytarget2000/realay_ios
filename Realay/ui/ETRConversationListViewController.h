@@ -1,8 +1,8 @@
 //
-//  ETRUserListViewController.h
+//  ETRConversationListViewController.h
 //  Realay
 //
-//  Created by Michel on 06/05/15.
+//  Created by Michel on 27/05/15.
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
@@ -12,7 +12,7 @@
 @class ETRImageView;
 
 
-@interface ETRUserListViewController : ETRUserListBaseViewController
+@interface ETRConversationListViewController : ETRUserListBaseViewController
 
 @property (weak, nonatomic) IBOutlet UITableView * tableView;
 

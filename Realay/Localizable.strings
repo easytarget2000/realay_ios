@@ -20,6 +20,8 @@
 
 "Chat" = "Chat";
 
+"Connecting_seems_longer" = "Connecting seems to take longer than usual.";
+
 "Copy_Message" = "Copy Message";
 
 "Current_distance" = "You are currently %@ away.";
@@ -107,6 +109,8 @@
 "Want_block" = "Do you want to block %@?";
 
 "Want_leave" = "Do you want to leave %@?\n\nYou will no longer receive any messages.";
+
+"Want_unblock" = "Do you want to unblock %@?";
 
 "website" = "website";
 

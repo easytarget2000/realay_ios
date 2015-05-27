@@ -12,7 +12,7 @@
 #import "ETRActionManager.h"
 #import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
-#import "ETRConversation.h"
+//#import "ETRConversation.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDefaultsHelper.h"
 #import "ETRDetailsViewController.h"
@@ -32,9 +32,9 @@
 
 static CGFloat const ETREstimatedMessageRowHeight = 100.0f;
 
-static NSString *const ETRConversationToUserListSegue = @"conversationToUserListSegue";
+static NSString *const ETRConversationToUserListSegue = @"PublicChatToSessionTabs";
 
-static NSString *const ETRConversationToProfileSegue = @"conversationToProfileSegue";
+static NSString *const ETRConversationToProfileSegue = @"ChatToProfile";
 
 static NSString *const ETRReceivedMessageCellIdentifier = @"receivedMessageCell";
 
@@ -399,7 +399,7 @@ UITextFieldDelegate
                                       intoView:[cell iconView]
                               placeHolderImage:[UIImage imageNamed:ETRImageNameImagePlaceholder]
                                    doLoadHiRes:NO];
-            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
         } else {
@@ -407,9 +407,8 @@ UITextFieldDelegate
             cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
-//            [[cell messageLabel] setText:[action messageContent]];
             [[cell messageLabel] setText:[action messageContent]];
-            NSString *timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
             return cell;
         }

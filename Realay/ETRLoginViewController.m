@@ -14,9 +14,9 @@
 #import "ETRServerAPIHelper.h"
 #import "ETRUser.h"
 
-static NSString *const ETRLoginToJoinSegue = @"loginToJoinSegue";
+static NSString *const ETRSegueLoginToJoin = @"LoginToJoin";
 
-static NSString *const ETRLoginToProfileSegue = @"loginToProfileSegue";
+static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
 
 
 @interface ETRLoginViewController()
@@ -71,7 +71,7 @@ static NSString *const ETRLoginToProfileSegue = @"loginToProfileSegue";
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:ETRLoginToProfileSegue]) {
+    if ([[segue identifier] isEqualToString:ETRSegueLoginToProfile]) {
         ETRDetailsViewController * destination = [segue destinationViewController];
         [destination setUser:[[ETRLocalUserManager sharedManager] user]];
     }
@@ -108,7 +108,7 @@ static NSString *const ETRLoginToProfileSegue = @"loginToProfileSegue";
         if (_doStartSessionOnFinish) {
             [super pushToJoinViewController];
         } else {
-            [self performSegueWithIdentifier:ETRLoginToProfileSegue sender:nil];
+            [self performSegueWithIdentifier:ETRSegueLoginToProfile sender:nil];
         }
     } else {
         [ETRAlertViewFactory showGeneralErrorAlert];
