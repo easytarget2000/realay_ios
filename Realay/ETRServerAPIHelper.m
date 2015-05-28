@@ -337,7 +337,10 @@ static NSMutableArray *connections;
                          if ([receivedObject isKindOfClass:[NSNumber class]]) {
                              NSNumber *didSucceed = (NSNumber *)receivedObject;
                              if ([didSucceed boolValue]) {
-                                 NSLog(@"DEBUG: Did successfully send Action: %@", [outgoingAction messageContent]);
+#ifdef DEBUG
+                                 NSLog(@"Did successfully send Action: %@", [outgoingAction messageContent]);
+#endif
+                                 
                                  [ETRCoreDataHelper removeActionFromQueue:outgoingAction];
                                  return;
                              }
@@ -380,7 +383,9 @@ static NSMutableArray *connections;
     NSString *bodyString = [NSString stringWithFormat:@"f=%@.jpg", fileID];
     NSData *bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
     
-    NSLog(@"DEBUG: %@?%@", URLString, bodyString);
+#ifdef DEBUG
+    NSLog(@"API: %@?%@",[self class], URLString, bodyString);
+#endif
 
     [request setHTTPBody:[NSMutableData dataWithData:bodyData]];
     [request setHTTPMethod:@"POST"];
@@ -561,11 +566,15 @@ static NSMutableArray *connections;
                                 objectTag:@"i"
                         completionHandler:^(id<NSObject> receivedObject) {
                             if (receivedObject && [receivedObject isKindOfClass:[NSString class]]) {
-                                NSLog(@"DEBUG: Put image got ID: %@", receivedObject);
+#ifdef DEBUG
+                                NSLog(@"Put image got ID: %@", receivedObject);
+#endif
                                 NSString * remoteImageID = (NSString *)receivedObject;
                                 completionHandler(@((long) [remoteImageID longLongValue]));
                             } else {
+#ifdef DEBUG
                                 NSLog(@"ERROR: Did not receive an Image ID.");
+#endif
                                 completionHandler(@(-19));
                             }
                         }];
@@ -798,7 +807,9 @@ static NSMutableArray *connections;
     if (!connections) {
         connections = [NSMutableArray array];
     } else if ([connections containsObject:connectionID]) {
-        NSLog(@"DEBUG: Not performing %@ because the same call has already been started.", connectionID);
+#ifdef DEBUG
+        NSLog(@"Not performing %@ because the same call has already been started.", connectionID);
+#endif
         return YES;
     }
     
@@ -927,7 +938,7 @@ static NSMutableArray *connections;
     }
     
 #ifdef DEBUG
-    NSLog(@"DEBUG: API: %@?%@", apiCall, bodyString);
+    NSLog(@"API: %@?%@", apiCall, bodyString);
 #endif
     
     NSData * bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding

@@ -136,7 +136,7 @@ static CLLocation * LastUpdateLocation;
     
     if (![ETRDefaultsHelper lastUpdateLocation]) {
 #ifdef DEBUG
-        NSLog(@"DEBUG: Updating Rooms. No update Location can be found.");
+        NSLog(@"Updating Rooms. No update Location can be found.");
 #endif
         return YES;
     }
@@ -144,7 +144,7 @@ static CLLocation * LastUpdateLocation;
     CFTimeInterval lastUpdateInterval = [[LastUpdateLocation timestamp] timeIntervalSinceNow];
     if (lastUpdateInterval > ETRRoomListUpdateInterval) {
 #ifdef DEBUG
-        NSLog(@"DEBUG: Updating Rooms. Last Update was %g s ago.", lastUpdateInterval);
+        NSLog(@"Updating Rooms. Last Update was %g s ago.", lastUpdateInterval);
 #endif
         return YES;
     }
@@ -152,7 +152,7 @@ static CLLocation * LastUpdateLocation;
     CLLocationDistance lastUpdateDistance = [LastUpdateLocation distanceFromLocation:location];
     if (lastUpdateDistance > ETRRoomListUpdateDistance) {
 #ifdef DEBUG
-        NSLog(@"DEBUG: Updating Rooms. Last Update was %g m away.", lastUpdateDistance);
+        NSLog(@"Updating Rooms. Last Update was %g m away.", lastUpdateDistance);
 #endif
         return YES;
     }

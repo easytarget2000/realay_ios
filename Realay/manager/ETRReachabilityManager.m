@@ -73,11 +73,14 @@
     if ([reachability isReachableViaWWAN]) {
         return YES;
     }
-//    NSLog(@"DEBUG: Device is not reachable via WWAN.");
+    
     if ([reachability isReachableViaWiFi]) {
         return YES;
     }
-    NSLog(@"DEBUG: Device is not reachable via WiFi.");
+    
+#ifdef DEBUG
+    NSLog(@"Device is not reachable via WiFi.");
+#endif
     
     return [reachability isReachable];
 }
@@ -88,7 +91,9 @@
 - (void)reachabilityDidChange:(NSNotification *)note {
 //    Reachability * curReach = [note object];
 //    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
-    NSLog(@"DEBUG: Reachability did change. %@", note);
+#ifdef DEBUG
+    NSLog(@"Reachability did change. %@", note);
+#endif
     
     if ([ETRReachabilityManager isReachable]) {
         

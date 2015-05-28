@@ -8,6 +8,7 @@
 
 #import "ETRBaseViewController.h"
 
+#import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
 #import "ETRConversationViewController.h"
 #import "ETRJoinViewController.h"
@@ -83,6 +84,46 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
     viewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDJoin];
     
     [[self navigationController] pushViewController:viewController animated:YES];
+}
+
+- (void)setPrivateMessagesBadgeNumber:(NSInteger )number
+                              inLabel:(UILabel *)label
+                       animateFromTop:(BOOL)doAnimateFromTop {
+    
+    //    NSString * privateChats = NSLocalizedString(@"Private_Chats", @"Private Conversations");
+    //    NSString * title;
+    
+    if (number < 1) {
+        [ETRAnimator fadeView:label doAppear:NO];
+    } else {
+        NSString * displayValue;
+        if (number <= 100)  {
+            displayValue = [NSString stringWithFormat:@"%ld", number];
+        } else {
+            displayValue = @"100+";
+        }
+        
+        if (![displayValue isEqualToString:[label text]]) {
+            // Force the animation if the content of the badge changes.
+            [label setHidden:YES];
+        }
+        
+        [label setText:displayValue];
+        
+        //        [ETRAnimator fadeView:[self unreadCounterLabel] doAppear:YES];
+        
+        if ([label isHidden]) {
+            [ETRAnimator toggleBounceInView:label
+                             animateFromTop:doAnimateFromTop
+                                 completion:^{
+                CGFloat cornerRadius = label.frame.size.width * 0.5f;
+                [[label layer] setCornerRadius:cornerRadius];
+            }];
+        }
+    }
+    
+    //        [[[self viewControllers] objectAtIndex:1] setTitle:title];
+    //    [[[self tabBar] layer] setNeedsDisplay];
 }
 
 @end

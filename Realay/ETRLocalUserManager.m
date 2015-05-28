@@ -93,7 +93,11 @@ static ETRLocalUserManager * sharedInstance = nil;
     if (newImageID > 0L) {
         newImageID *= -1L;
     }
-    NSLog(@"DEBUG: New local User image ID: %ld", newImageID);
+    
+#ifdef DEBUG
+    NSLog(@"New local User image ID: %ld", newImageID);
+#endif
+    
     [_user setImageID:@(newImageID)];
     
     NSData * loResData = [ETRImageEditor cropLoResImage:newUserImage

@@ -31,6 +31,8 @@ NSString *const ETRImageNameUserIcon = @"PlaceholderProfileW";
 
 NSString *const ETRImageNameImagePlaceholder = @"Camera";
 
+CGFloat const ETRFontSizeSmall = 15.0f;
+
 CGFloat const ETRRowHeightUser = 64.0f;
 
 static UIColor * PrimaryColor;

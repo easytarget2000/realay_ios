@@ -10,7 +10,9 @@
 
 @interface ETRAnimator : NSObject
 
-+ (void)toggleBounceInView:(UIView *)view completion:(void(^)(void))completion;
++ (void)toggleBounceInView:(UIView *)view
+            animateFromTop:(BOOL)doAnimateFromTop
+                completion:(void(^)(void))completion;
 
 #pragma mark -
 #pragma mark Fading

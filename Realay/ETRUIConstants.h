@@ -34,6 +34,8 @@ extern NSString *const ETRImageNameRoomPlaceholder;
 
 extern NSString *const ETRImageNameUserIcon;
 
+extern CGFloat const ETRFontSizeSmall;
+
 extern CGFloat const ETRRowHeightUser;
 
 

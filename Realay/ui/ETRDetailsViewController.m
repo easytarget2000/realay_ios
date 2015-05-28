@@ -57,7 +57,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     [[self tableView] setRowHeight:UITableViewAutomaticDimension];
     [[self tableView] setEstimatedRowHeight:128.0f];
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
@@ -71,12 +71,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     [navigationBar setTranslucent:YES];
     [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setShadowImage:[UIImage new]];
-    
-    if ((!_user && !_room) || (_user && _room)) {
-        NSLog(@"ERROR: No Room or User object to show in this Detail View Controller.");
-        [[self navigationController] popViewControllerAnimated:NO];
-        return;
-    }
     
     if (_room) {
         [[self navigationController] setToolbarHidden:YES];
@@ -97,8 +91,10 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         
         [[self navigationItem] setRightBarButtonItem:barButton];
         
-    } else if (_user) {
-        if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
+    } else {
+        if (!_user) {
+            _user = [[ETRLocalUserManager sharedManager] user];
+
             [[self navigationController] setToolbarHidden:NO];
             
             UIBarButtonItem * editButton;

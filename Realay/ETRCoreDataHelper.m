@@ -252,9 +252,10 @@ static NSString * UserEntityName;
         ETRConversation * convo;
         convo = [ETRCoreDataHelper conversationWithSender:sender recipient:recipient];
         [convo updateLastMessage:receivedAction];
+        [convo setHasUnreadMessage:@(YES)];
     }
     
-    //    NSLog(@"DEBUG: Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
+    //    NSLog(@"Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
     [ETRCoreDataHelper saveContext];
     
     return receivedAction;
@@ -323,7 +324,11 @@ static NSString * UserEntityName;
     if (newImageID > 0L) {
         newImageID *= -1L;
     }
-    NSLog(@"DEBUG: New local User image ID: %ld", newImageID);
+    
+#ifdef DEBUG
+    NSLog(@"New local User image ID: %ld", newImageID);
+#endif
+    
     [mediaAction setImageID:@(newImageID)];
     
     NSData * loResData = [ETRImageEditor cropLoResImage:image
@@ -416,7 +421,7 @@ static NSString * UserEntityName;
     
 #ifndef DEBUG
     if ([[unsentAction isInQueue] boolValue]) {
-        NSLog(@"DEBUG: Action \"%@\" is already in the queue.", unsentAction);
+        NSLog(@"Action \"%@\" is already in the queue.", unsentAction);
         return;
     }
 #endif
@@ -545,7 +550,7 @@ static NSString * UserEntityName;
                                                                        cacheName:nil];
     
 //    CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - startTime;
-//    NSLog(@"DEBUG: Fetched Results Controller %@ in %f ms.", [partner remoteID], duration);
+//    NSLog(@"Fetched Results Controller %@ in %f ms.", [partner remoteID], duration);
 
     [resultsController setDelegate:delegate];
     return resultsController;
@@ -612,19 +617,7 @@ static NSString * UserEntityName;
 
 + (ETRConversation *)conversationWithPartner:(ETRUser *)partner {
     // Find the appropriate Conversation by using the partner User's remote ID.
-    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper conversationEntityName]];
-    long partnerID = [[partner remoteID] longValue];
-    NSString * where;
-    where = [NSString stringWithFormat:@"%@.%@ == %ld", ETRConversationPartnerKey, ETRRemoteIDKey, partnerID];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
-    [fetch setPredicate:predicate];
-    NSArray * storedObjects = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
-    
-    if (storedObjects && [storedObjects count]) {
-        if ([storedObjects[0] isKindOfClass:[ETRConversation class]]) {
-            return (ETRConversation *)storedObjects[0];
-        }
-    }
+    NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper conversationEntityName]];
     
     ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
     if (!sessionRoom) {
@@ -632,6 +625,17 @@ static NSString * UserEntityName;
         return nil;
     }
     
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"partner == %@ AND inRoom == %@", partner, sessionRoom];
+    [request setPredicate:predicate];
+    NSArray * storedObjects = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
+    
+    if (storedObjects && [storedObjects count]) {
+        if ([storedObjects[0] isKindOfClass:[ETRConversation class]]) {
+            return (ETRConversation *)storedObjects[0];
+        }
+    }
+        
     // The Conversation does not exist yet.
     ETRConversation * convo = [[ETRConversation alloc] initWithEntity:[ETRCoreDataHelper conversationEntity]
                                        insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
@@ -862,12 +866,12 @@ static NSString * UserEntityName;
     }
     
     // Check the context CoreData, if an object with this remote ID exists.
-    NSFetchRequest *fetch;
-    fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
+    NSFetchRequest * request;
+    request = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
 //    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"remoteID = %@", remoteID];
-    [fetch setPredicate:predicate];
-    NSArray *existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
+    [request setPredicate:predicate];
+    NSArray *existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
     
     if (existingUsers && [existingUsers count]) {
         if ([existingUsers[0] isKindOfClass:[ETRUser class]]) {

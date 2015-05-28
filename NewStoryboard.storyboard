@@ -716,7 +716,7 @@
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwo-zQ-WDD" userLabel="MapView">
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kwo-zQ-WDD" userLabel="MapView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="487"/>
                                 <color key="backgroundColor" red="0.89209157228469849" green="0.87428849935531616" blue="0.83057904243469238" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
@@ -800,7 +800,7 @@
                         <viewControllerLayoutGuide type="bottom" id="yYD-dd-rNX"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="90f-s1-pFv">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Pxa-XZ-kiV">
@@ -865,14 +865,14 @@
                         <viewControllerLayoutGuide type="bottom" id="VKS-OW-wkY"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="jwj-fi-OGY">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.10000000000000003" translatesAutoresizingMaskIntoConstraints="NO" id="qr9-1b-Px3">
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" progress="0.10000000000000003" translatesAutoresizingMaskIntoConstraints="NO" id="qr9-1b-Px3">
                                 <rect key="frame" x="48" y="277" width="504" height="2"/>
                                 <color key="progressTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </progressView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Entering..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CuK-Rs-6Rn">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Entering..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CuK-Rs-6Rn">
                                 <rect key="frame" x="261" y="248" width="78" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -1419,27 +1419,55 @@
                                     </mask>
                                 </variation>
                             </view>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uvy-VJ-xVK" userLabel="BadgeLabel">
+                                <rect key="frame" x="572" y="68" width="24" height="24"/>
+                                <color key="backgroundColor" red="1" green="0.59607843137254901" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="24" id="FQy-XW-JAW"/>
+                                    <constraint firstAttribute="width" secondItem="uvy-VJ-xVK" secondAttribute="height" multiplier="1:1" id="h5a-3c-kuL"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="12"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="zqS-65-4Pd" secondAttribute="trailing" id="BF2-eg-JQl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="FES-Mx-8B1" secondAttribute="trailing" constant="-16" id="CtO-vS-ebg"/>
+                            <constraint firstItem="uvy-VJ-xVK" firstAttribute="width" secondItem="uvy-VJ-xVK" secondAttribute="height" multiplier="1:1" id="I1b-w4-ty0"/>
                             <constraint firstItem="exz-8g-RKA" firstAttribute="top" secondItem="lJ3-dO-OLj" secondAttribute="bottom" id="Ilj-op-9Vb"/>
+                            <constraint firstItem="Mxd-E4-1jK" firstAttribute="top" secondItem="uvy-VJ-xVK" secondAttribute="bottom" constant="-5" id="Lck-75-Vbn"/>
                             <constraint firstAttribute="trailing" secondItem="exz-8g-RKA" secondAttribute="trailing" id="NPl-of-fMN"/>
                             <constraint firstItem="FES-Mx-8B1" firstAttribute="top" secondItem="zqS-65-4Pd" secondAttribute="bottom" priority="999" id="Pen-Ca-Yu4"/>
+                            <constraint firstItem="uvy-VJ-xVK" firstAttribute="top" secondItem="Mxd-E4-1jK" secondAttribute="bottom" constant="4" id="TDR-Sw-opc"/>
                             <constraint firstItem="zqS-65-4Pd" firstAttribute="leading" secondItem="34d-DY-DcP" secondAttribute="leading" id="VDH-wB-S8a"/>
                             <constraint firstItem="prh-tI-LiU" firstAttribute="top" secondItem="exz-8g-RKA" secondAttribute="bottom" id="Vo4-9w-VBb"/>
                             <constraint firstItem="exz-8g-RKA" firstAttribute="top" secondItem="zqS-65-4Pd" secondAttribute="bottom" id="Ztc-aG-IWl"/>
                             <constraint firstItem="FES-Mx-8B1" firstAttribute="leading" secondItem="34d-DY-DcP" secondAttribute="leadingMargin" constant="-16" id="cj1-1R-6LX"/>
                             <constraint firstAttribute="trailingMargin" secondItem="lJ3-dO-OLj" secondAttribute="trailing" constant="-16" id="hgG-gv-4fi"/>
+                            <constraint firstItem="uvy-VJ-xVK" firstAttribute="leading" secondItem="prh-tI-LiU" secondAttribute="trailing" constant="-40" id="jkK-GN-LXH"/>
+                            <constraint firstItem="Mxd-E4-1jK" firstAttribute="top" secondItem="uvy-VJ-xVK" secondAttribute="bottom" constant="4" id="kAm-EG-rRX"/>
+                            <constraint firstItem="uvy-VJ-xVK" firstAttribute="trailing" secondItem="34d-DY-DcP" secondAttribute="trailingMargin" id="lze-ku-j74"/>
                             <constraint firstItem="lJ3-dO-OLj" firstAttribute="leading" secondItem="34d-DY-DcP" secondAttribute="leadingMargin" constant="-16" id="nCN-8g-E04"/>
                             <constraint firstItem="zqS-65-4Pd" firstAttribute="top" secondItem="Mxd-E4-1jK" secondAttribute="bottom" id="nRb-V6-ODM"/>
                             <constraint firstItem="exz-8g-RKA" firstAttribute="leading" secondItem="34d-DY-DcP" secondAttribute="leading" id="qTJ-yC-ogo"/>
+                            <constraint firstItem="uvy-VJ-xVK" firstAttribute="trailing" secondItem="34d-DY-DcP" secondAttribute="trailingMargin" constant="12" id="tBj-nF-Bja"/>
                             <constraint firstItem="lJ3-dO-OLj" firstAttribute="top" secondItem="FES-Mx-8B1" secondAttribute="bottom" constant="-4" id="vaM-eE-aHn"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="Lck-75-Vbn"/>
+                                <exclude reference="kAm-EG-rRX"/>
                                 <exclude reference="Pen-Ca-Yu4"/>
+                                <exclude reference="jkK-GN-LXH"/>
+                                <exclude reference="lze-ku-j74"/>
                             </mask>
                         </variation>
                     </view>
@@ -1455,6 +1483,7 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="badgeLabel" destination="uvy-VJ-xVK" id="VwD-5D-UHA"/>
                         <outlet property="cameraButton" destination="lJ3-dO-OLj" id="JIO-YU-pFM"/>
                         <outlet property="galleryButton" destination="FES-Mx-8B1" id="EaF-Pc-teA"/>
                         <outlet property="mediaButton" destination="Ql4-b7-LJ4" id="NzU-Xv-8O5"/>
@@ -1474,7 +1503,7 @@
             <objects>
                 <tableViewController id="YhD-BC-frp" customClass="ETRProfileEditorViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LJO-m6-c4S">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -1739,7 +1768,7 @@ use the Block button on their profile or tap and hold one of their messages an
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="2uJ-br-HZe">
-                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="tintColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
@@ -1811,6 +1840,23 @@ use the Block button on their profile or tap and hold one of their messages an
                                     <outlet property="delegate" destination="2h7-X9-TPT" id="fHI-v1-Jnz"/>
                                 </connections>
                             </tableView>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fyf-gu-euR" userLabel="BadgeLabel">
+                                <rect key="frame" x="572" y="523" width="24" height="24"/>
+                                <color key="backgroundColor" red="0.24919006229999999" green="0.63991189000000004" blue="0.247087419" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="24" id="6nL-bU-w6f"/>
+                                    <constraint firstAttribute="width" secondItem="fyf-gu-euR" secondAttribute="height" multiplier="1:1" id="h6H-Yq-hzz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="12"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                             <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e07-oS-v8C" userLabel="InfoView" customClass="ETRImageView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                                 <subviews>
@@ -1823,28 +1869,38 @@ use the Block button on their profile or tap and hold one of their messages an
                                 </subviews>
                                 <color key="backgroundColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstItem="Mqs-pz-Qhi" firstAttribute="leading" secondItem="e07-oS-v8C" secondAttribute="leading" constant="8" id="Gj2-la-1oX"/>
-                                    <constraint firstAttribute="centerY" secondItem="Mqs-pz-Qhi" secondAttribute="centerY" id="I2D-Et-fB1"/>
-                                    <constraint firstAttribute="trailing" secondItem="Mqs-pz-Qhi" secondAttribute="trailing" constant="8" id="OCo-zU-IjM"/>
+                                    <constraint firstAttribute="trailing" secondItem="Mqs-pz-Qhi" secondAttribute="trailing" constant="8" id="Ddh-nR-wrK"/>
+                                    <constraint firstItem="Mqs-pz-Qhi" firstAttribute="leading" secondItem="e07-oS-v8C" secondAttribute="leading" constant="8" id="bN4-rt-nIA"/>
+                                    <constraint firstAttribute="centerY" secondItem="Mqs-pz-Qhi" secondAttribute="centerY" id="spd-xi-tqz"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6cZ-YS-aff" firstAttribute="top" secondItem="2uJ-br-HZe" secondAttribute="bottom" id="3Fm-B9-1qo"/>
-                            <constraint firstItem="2uJ-br-HZe" firstAttribute="top" secondItem="lh2-iE-AtG" secondAttribute="bottom" id="JIR-Xd-tQ5"/>
-                            <constraint firstItem="2uJ-br-HZe" firstAttribute="top" secondItem="e07-oS-v8C" secondAttribute="top" constant="64" id="PzN-8Q-03r"/>
-                            <constraint firstItem="2uJ-br-HZe" firstAttribute="leading" secondItem="e07-oS-v8C" secondAttribute="leading" id="U6k-Jk-NgG"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="2uJ-br-HZe" secondAttribute="trailing" constant="-16" id="Vr4-Sp-OpV"/>
-                            <constraint firstItem="2uJ-br-HZe" firstAttribute="trailing" secondItem="e07-oS-v8C" secondAttribute="trailing" id="Wqu-Xt-Lh6"/>
-                            <constraint firstItem="2uJ-br-HZe" firstAttribute="leading" secondItem="njc-8m-Svs" secondAttribute="leadingMargin" constant="-16" id="c8D-Lv-nQz"/>
-                            <constraint firstItem="2uJ-br-HZe" firstAttribute="bottom" secondItem="e07-oS-v8C" secondAttribute="bottom" id="znb-WE-zWB"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="e07-oS-v8C" secondAttribute="trailing" constant="-16" id="9UD-wa-Elg"/>
+                            <constraint firstItem="2uJ-br-HZe" firstAttribute="leading" secondItem="njc-8m-Svs" secondAttribute="leadingMargin" constant="-16" id="OGM-k8-ufx"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="2uJ-br-HZe" secondAttribute="trailing" constant="-16" id="WhI-GX-zsr"/>
+                            <constraint firstItem="2uJ-br-HZe" firstAttribute="top" secondItem="lh2-iE-AtG" secondAttribute="bottom" constant="-20" id="ah6-4y-QMK"/>
+                            <constraint firstItem="6cZ-YS-aff" firstAttribute="top" secondItem="e07-oS-v8C" secondAttribute="bottom" id="daR-zU-445"/>
+                            <constraint firstItem="fyf-gu-euR" firstAttribute="trailing" secondItem="njc-8m-Svs" secondAttribute="trailingMargin" constant="12" id="eAa-Yx-Pls"/>
+                            <constraint firstItem="6cZ-YS-aff" firstAttribute="top" secondItem="e07-oS-v8C" secondAttribute="bottom" id="fui-OP-jlX"/>
+                            <constraint firstItem="6cZ-YS-aff" firstAttribute="top" secondItem="fyf-gu-euR" secondAttribute="bottom" constant="4" id="ja4-KJ-Wy4"/>
+                            <constraint firstItem="e07-oS-v8C" firstAttribute="top" secondItem="lh2-iE-AtG" secondAttribute="bottom" constant="-20" id="mFl-xc-dxQ"/>
+                            <constraint firstItem="6cZ-YS-aff" firstAttribute="top" secondItem="2uJ-br-HZe" secondAttribute="bottom" id="mIa-XX-M1x"/>
+                            <constraint firstItem="e07-oS-v8C" firstAttribute="leading" secondItem="njc-8m-Svs" secondAttribute="leadingMargin" constant="-16" id="z1m-01-eOc"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="fui-OP-jlX"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Users" image="Users" id="xbU-i9-6xE"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="infoView" destination="e07-oS-v8C" id="frV-ZQ-DbD"/>
                         <outlet property="tableView" destination="2uJ-br-HZe" id="jqE-mL-ObT"/>
+                        <outlet property="unreadCounterLabel" destination="fyf-gu-euR" id="rgJ-dE-EQD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="My2-kD-26y" sceneMemberID="firstResponder"/>
@@ -1860,11 +1916,11 @@ use the Block button on their profile or tap and hold one of their messages an
                         <viewControllerLayoutGuide type="bottom" id="mvA-LY-aX4"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="LKP-gK-rBe">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="p6Q-og-Hds">
-                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="487"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="tintColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
@@ -1938,7 +1994,7 @@ use the Block button on their profile or tap and hold one of their messages an
                                 </connections>
                             </tableView>
                             <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rb4-cu-wuE" userLabel="InfoView" customClass="ETRImageView">
-                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="487"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="There are currently no other people online in this place. Invite someone around you to join Realay." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BFo-Pz-sfE">
                                         <rect key="frame" x="8" y="223" width="584" height="41"/>
@@ -1968,6 +2024,8 @@ use the Block button on their profile or tap and hold one of their messages an
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Private Chats" image="Chats" id="IUh-Gd-6dG"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="infoView" destination="rb4-cu-wuE" id="YAO-hm-vBH"/>
                         <outlet property="tableView" destination="p6Q-og-Hds" id="75w-q3-OTc"/>
@@ -1981,6 +2039,8 @@ use the Block button on their profile or tap and hold one of their messages an
         <scene sceneID="k2Z-6O-E5S">
             <objects>
                 <tabBarController storyboardIdentifier="SessionTabs" modalTransitionStyle="partialCurl" useStoryboardIdentifierAsRestorationIdentifier="YES" id="70n-EJ-HyH" userLabel="Session Tabs" customClass="ETRSessionTabBarController" sceneMemberID="viewController">
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" selectionIndicatorImage="Contacts" itemPositioning="fill" id="pGf-78-JCQ">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
@@ -1993,6 +2053,7 @@ use the Block button on their profile or tap and hold one of their messages an
                         <segue destination="2h7-X9-TPT" kind="relationship" relationship="viewControllers" id="Bxs-CP-rQ7"/>
                         <segue destination="dgb-7h-V3U" kind="relationship" relationship="viewControllers" id="F6K-e4-Sb1"/>
                         <segue destination="n1u-4b-9fV" kind="show" identifier="SessionTabsToMap" id="23X-oy-w6A"/>
+                        <segue destination="IKO-ja-zch" kind="show" identifier="SessionTabsToProfile" id="Y8M-zK-Gf4"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Asp-KB-l0J" sceneMemberID="firstResponder"/>
@@ -2021,9 +2082,9 @@ use the Block button on their profile or tap and hold one of their messages an
         <image name="Users" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="23X-oy-w6A"/>
         <segue reference="pCv-oo-jLv"/>
-        <segue reference="kUC-T2-6az"/>
+        <segue reference="5xD-2e-4tf"/>
         <segue reference="ust-LK-7xz"/>
+        <segue reference="23X-oy-w6A"/>
     </inferredMetricsTieBreakers>
 </document>

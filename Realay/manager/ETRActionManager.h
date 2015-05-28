@@ -9,7 +9,19 @@
 #import <Foundation/Foundation.h>
 
 @class ETRAction;
+@class ETRUserListViewController;
 
+#pragma mark -
+#pragma mark ETRInternalNotificationHandler Protocol
+
+@protocol ETRInternalNotificationHandler
+
+- (void)setPrivateMessagesBadgeNumber:(NSInteger)number;
+
+@end
+
+#pragma mark -
+#pragma mark Interface
 
 @interface ETRActionManager : NSObject
 
@@ -17,14 +29,12 @@
 
 @property (nonatomic, readonly) NSNumber * foregroundPartnerID;
 
-/*
- 
- */
-@property (nonatomic, readonly) NSInteger numberOfOtherNotifs;
-
-//@property (readonly, nonatomic) BOOL didFirstQuery;
+@property (strong, nonatomic) id<ETRInternalNotificationHandler> internalNotificationHandler;
 
 + (ETRActionManager *)sharedManager;
+
+#pragma mark -
+#pragma mark Session Life Cycle
 
 - (void)startSession;
 
@@ -32,12 +42,17 @@
 
 - (void)queryUpdates:(NSTimer *)timer;
 
+- (BOOL)doSendPing;
+
 - (void)ackknowledgeActionID:(long)remoteActionID;
+
+#pragma mark -
+#pragma mark Notifications
 
 - (void)dispatchNotificationForAction:(ETRAction *)action;
 
 - (void)setForegroundPartnerID:(NSNumber *)foregroundPartnerID;
 
-- (BOOL)doSendPing;
+- (NSInteger)numberOfPrivateNotifs;
 
 @end

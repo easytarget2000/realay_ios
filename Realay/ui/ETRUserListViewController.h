@@ -18,4 +18,6 @@
 
 @property (weak, nonatomic) IBOutlet ETRImageView * infoView;
 
+@property (weak, nonatomic) IBOutlet UILabel * unreadCounterLabel;
+
 @end

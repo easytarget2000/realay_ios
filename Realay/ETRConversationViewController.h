@@ -14,6 +14,8 @@
 
 @interface ETRConversationViewController : ETRBaseViewController
 
+@property (weak, nonatomic) IBOutlet UILabel *badgeLabel;
+
 @property (weak, nonatomic) IBOutlet UITableView * messagesTableView;
 
 // TODO: Replace inputCover with UIView * cover;

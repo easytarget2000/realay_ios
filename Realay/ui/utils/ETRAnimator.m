@@ -14,7 +14,10 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
 
 @implementation ETRAnimator
 
-+ (void)toggleBounceInView:(UIView *)view completion:(void(^)(void))completion {
++ (void)toggleBounceInView:(UIView *)view
+            animateFromTop:(BOOL)doAnimateFromTop
+                completion:(void(^)(void))completion {
+    
 //    CGPoint newCenter = CGPointMake(100.0,100.0);
     
     CGSize size = view.frame.size;
@@ -22,10 +25,19 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
     
     CGPoint originalCenter = [view center];
     
-    CGPoint hideCenter = CGPointMake(
+    CGPoint hideCenter;
+    
+    if (doAnimateFromTop) {
+        hideCenter = CGPointMake(
+                                 originalCenter.x,
+                                 origin.y
+                                 );
+    } else {
+        hideCenter = CGPointMake(
                                  originalCenter.x,
                                  origin.y + (size.height)
                                  );
+    }
     
     CGFloat blowupScale = 1.2f;
     BOOL doAppear = [view isHidden];

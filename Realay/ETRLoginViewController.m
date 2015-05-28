@@ -70,12 +70,12 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
     _doShowProfileOnFinish = NO;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:ETRSegueLoginToProfile]) {
-        ETRDetailsViewController * destination = [segue destinationViewController];
-        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
-    }
-}
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    if ([[segue identifier] isEqualToString:ETRSegueLoginToProfile]) {
+//        ETRDetailsViewController * destination = [segue destinationViewController];
+//        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
+//    }
+//}
 
 - (IBAction)saveButtonPressed:(id)sender {
     NSString * typedName;

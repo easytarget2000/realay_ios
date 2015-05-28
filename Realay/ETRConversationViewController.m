@@ -12,7 +12,7 @@
 #import "ETRActionManager.h"
 #import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
-//#import "ETRConversation.h"
+#import "ETRConversation.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDefaultsHelper.h"
 #import "ETRDetailsViewController.h"
@@ -49,6 +49,7 @@ static int const ETRMessagesLimitStep = 20;
 
 @interface ETRConversationViewController ()
 <
+ETRInternalNotificationHandler,
 NSFetchedResultsControllerDelegate,
 UIImagePickerControllerDelegate,
 UINavigationControllerDelegate,
@@ -132,6 +133,9 @@ UITextFieldDelegate
                                                      action:@selector(exitButtonPressed:)];
         [[self navigationItem] setLeftBarButtonItem:exitButton];
         
+        // Only Public Conversations have a badge in the Navigation Bar.
+//        [[[self navigationController] navigationBar] addSubview:[self badgeLabel]];
+        
         // Only public Conversations get a BackBarButton that has a title (in the _next_ ViewController).
         NSString * returnTitle = NSLocalizedString(@"Chat", @"(Public) Chat");
         [[[self navigationItem] backBarButtonItem] setTitle:returnTitle];
@@ -184,9 +188,9 @@ UITextFieldDelegate
         [[self navigationController] popToRootViewControllerAnimated:YES];
         return;
     }
-         
+    
     [[ETRActionManager sharedManager] setForegroundPartnerID:conversationID];
-         
+    
     // Restore any unsent message input.
     NSString * lastText = [ETRDefaultsHelper messageInputTextForConversationID:conversationID];
     [[self messageTextField] setText:lastText];
@@ -209,6 +213,10 @@ UITextFieldDelegate
         UIUserNotificationSettings * settings;
         settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        
+        // Public Conversations have a Badge
+        // that shows the number of unread private messages.
+        [[ETRActionManager sharedManager] setInternalNotificationHandler:self];
     }
     
     if (!_didFirstScrolldown) {
@@ -243,6 +251,12 @@ UITextFieldDelegate
         conversationID = @(ETRActionPublicUserID);
     } else if (_partner) {
         conversationID = [_partner remoteID];
+        
+        // Acknowledge that all messages have been read in this Private Conversation.
+        ETRConversation * conversation;
+        conversation = [ETRCoreDataHelper conversationWithPartner:_partner];
+        [conversation setHasUnreadMessage:@(NO)];
+        [ETRCoreDataHelper saveContext];
     }
     [ETRDefaultsHelper storeMessageInputText:[[self messageTextField] text]
                            forConversationID:conversationID];
@@ -252,6 +266,9 @@ UITextFieldDelegate
     [super didReceiveMemoryWarning];
     // TODO: Reset message limit.
 }
+
+#pragma mark -
+#pragma mark Session Events
 
 - (BOOL)verifySession {
     if (!_isPublic && !_partner) {
@@ -282,6 +299,18 @@ UITextFieldDelegate
     
     [[self inputCover] setHidden:YES];
     return YES;
+}
+
+- (void)setPrivateMessagesBadgeNumber:(NSInteger)number {
+    if (_partner) {
+        // Private Conversations do not display a badge.
+        [[self badgeLabel] setHidden:YES];
+        return;
+    }
+    
+    [super setPrivateMessagesBadgeNumber:number
+                                 inLabel:[self badgeLabel]
+                          animateFromTop:YES];
 }
 
 #pragma mark -
@@ -336,7 +365,7 @@ UITextFieldDelegate
       newIndexPath:(NSIndexPath *)newIndexPath {
     
     NSLog(@"didChangeObject.");
-//    NSLog(@"DEBUG: didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
+//    NSLog(@"didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
     
     switch (type) {
         case NSFetchedResultsChangeInsert: {
@@ -351,7 +380,7 @@ UITextFieldDelegate
         }
         case NSFetchedResultsChangeUpdate: {
             [[self messagesTableView] cellForRowAtIndexPath:indexPath];
-            NSLog(@"DEBUG: Updated message record: %ld, %ld, %@", [indexPath row], [newIndexPath row], anObject);
+//            NSLog(@"Updated message record: %ld, %ld, %@", [indexPath row], [newIndexPath row], anObject);
             break;
         }
         case NSFetchedResultsChangeMove: {
@@ -557,9 +586,13 @@ UITextFieldDelegate
         }
         
         // Expand the menu from the bottom.
-        [ETRAnimator toggleBounceInView:[self cameraButton] completion:^{
-            [ETRAnimator toggleBounceInView:[self galleryButton] completion:nil];
-        }];
+        [ETRAnimator toggleBounceInView:[self cameraButton]
+                         animateFromTop:NO
+                             completion:^{
+                                 [ETRAnimator toggleBounceInView:[self galleryButton]
+                                                  animateFromTop:NO
+                                                      completion:nil];
+                             }];
         
         // Replace the icon with an arrow and rotate it.
         [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameArrowRight]];
@@ -583,8 +616,12 @@ UITextFieldDelegate
     
     if(![[self galleryButton] isHidden]) {
         // Collapse the menu from the top.
-        [ETRAnimator toggleBounceInView:[self galleryButton] completion:^{
-            [ETRAnimator toggleBounceInView:[self cameraButton] completion:nil];
+        [ETRAnimator toggleBounceInView:[self galleryButton]
+                         animateFromTop:NO
+                             completion:^{
+                                 [ETRAnimator toggleBounceInView:[self cameraButton]
+                                                  animateFromTop:NO
+                                                      completion:nil];
         }];
         
         // Rotate the arrow back and show the default icon when finished.

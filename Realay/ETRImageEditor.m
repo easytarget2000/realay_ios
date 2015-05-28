@@ -116,7 +116,7 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     scaleSize.width *= resizeFactor;
     scaleSize.height *= resizeFactor;
     
-//    NSLog(@"DEBUG: Scaling Image %g x %g to %g x %g to fit %g x %g.", imageSize.width, imageSize.height, scaleSize.width, scaleSize.height, targetSize.width, targetSize.width);
+//    NSLog(@"Scaling Image %g x %g to %g x %g to fit %g x %g.", imageSize.width, imageSize.height, scaleSize.width, scaleSize.height, targetSize.width, targetSize.width);
     
     UIGraphicsBeginImageContext(scaleSize);
     

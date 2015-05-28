@@ -361,13 +361,14 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
         ETRLoginViewController * destination = [segue destinationViewController];
         [destination showProfileOnLogin];
         
-    } else if([[segue identifier] isEqualToString:ETRSegueRoomsToProfile]) {
-        // Just show my own user profile.
-        
-        ETRDetailsViewController *destination = [segue destinationViewController];
-        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
-        //TODO: Tell the View Profile controller to come back to the Room List on Back.
     }
+//    else if([[segue identifier] isEqualToString:ETRSegueRoomsToProfile]) {
+//        // Just show my own user profile.
+//        
+//        ETRDetailsViewController *destination = [segue destinationViewController];
+//        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
+//        //TODO: Tell the View Profile controller to come back to the Room List on Back.
+//    }
     
 }
 

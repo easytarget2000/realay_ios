@@ -8,11 +8,13 @@
 
 #import "ETRUserListViewController.h"
 
+#import "ETRActionManager.h"
+#import "ETRAnimator.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRUIConstants.h"
 
 
-@interface ETRUserListViewController ()
+@interface ETRUserListViewController () <ETRInternalNotificationHandler>
 
 @property (weak, nonatomic) UIRefreshControl * refreshControl;
 
@@ -20,6 +22,9 @@
 
 
 @implementation ETRUserListViewController
+
+#pragma mark -
+#pragma mark UIViewController
 
 - (void)viewDidLoad {
     [super viewDidLoadForConversationList:NO];
@@ -34,9 +39,21 @@
     [self setRefreshControl:refreshControl];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [[ETRActionManager sharedManager] setInternalNotificationHandler:self];
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[self refreshControl] endRefreshing];
+    [ETRAnimator fadeView:[self unreadCounterLabel] doAppear:NO];
+}
+
+- (void)setPrivateMessagesBadgeNumber:(NSInteger)number {
+    [super setPrivateMessagesBadgeNumber:number
+                                 inLabel:[self unreadCounterLabel]
+                          animateFromTop:NO];
 }
 
 #pragma mark -

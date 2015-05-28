@@ -11,8 +11,14 @@
 #import "ETRActionManager.h"
 #import "ETRConversationViewController.h"
 #import "ETRDetailsViewController.h"
+#import "ETRLocalUserManager.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
+
+
+static NSString *const ETRSegueSessionTabsToMap = @"SessionTabsToMap";
+
+static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
 
 
 @interface ETRSessionTabBarController ()
@@ -21,6 +27,9 @@
 
 
 @implementation ETRSessionTabBarController
+
+#pragma mark -
+#pragma mark UITabBarController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,6 +56,12 @@
     [[self navigationItem] setRightBarButtonItems:rightBarButtons];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
@@ -57,13 +72,13 @@
 #pragma mark Navigation
 
 - (IBAction)mapButtonPressed:(id)sender {
-//    [self performSegueWithIdentifier:ETRSegueSessionTabsToMap sender:self];
+    [self performSegueWithIdentifier:ETRSegueSessionTabsToMap sender:nil];
 }
 
 - (IBAction)profileButtonPressed:(id)sender {
-//    [self performSegueWithIdentifier:ETRSegueSessionTabsToProfile
-//                              sender:[[ETRLocalUserManager sharedManager] user]];
+    [self performSegueWithIdentifier:ETRSegueSessionTabsToProfile sender:nil];
 }
+
 
 //- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 //    id destination = [segue destinationViewController];

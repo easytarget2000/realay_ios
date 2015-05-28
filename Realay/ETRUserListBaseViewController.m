@@ -14,6 +14,7 @@
 #import "ETRConversationViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRImageView.h"
+#import "ETRSessionTabBarController.h"
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
 #import "ETRUserCell.h"
@@ -179,6 +180,15 @@
         }
         
         [[cell infoLabel] setText:message];
+        
+        if ([[convo hasUnreadMessage] boolValue]) {
+            [[cell infoLabel] setTextColor:[ETRUIConstants accentColor]];
+            [[cell infoLabel] setFont:[UIFont boldSystemFontOfSize:ETRFontSizeSmall]];
+        } else {
+            [[cell infoLabel] setTextColor:[ETRUIConstants primaryColor]];
+            [[cell infoLabel] setFont:[UIFont systemFontOfSize:ETRFontSizeSmall]];
+        }
+        
     } else {
         // The Index Path gives Section 1 but the Fetched Results Controller assumes its values are in Section 0.
         NSIndexPath * alignedPath = [NSIndexPath indexPathForRow:[indexPath row] inSection:0];
