@@ -4,11 +4,6 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Realay BgFetch.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
 		<key>Realay.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -17,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>D0E1970417E276DB00135B8C</key>
+		<key>D0D54B371B2F1F9100F8875B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

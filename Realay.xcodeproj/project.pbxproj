@@ -7,574 +7,413 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D002484C1B2E11BA008337A4 /* Realay-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D002484B1B2E11BA008337A4 /* Realay-Info.plist */; };
-		D0035C3A18B2AA1E00C5EEAF /* ETRLocalUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0035C3918B2AA1E00C5EEAF /* ETRLocalUserManager.m */; };
-		D0081F5818C546B200D0819A /* ETRAlertViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = D0081F5718C546B200D0819A /* ETRAlertViewFactory.m */; };
-		D00A15FF1AAA1DDF0036B25B /* ETRHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */; };
-		D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */; };
-		D00A16081AAA1E330036B25B /* ETRProfileSocialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */; };
-		D00A160B1AAA25BC0036B25B /* ETRDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A160A1AAA25BC0036B25B /* ETRDetailsViewController.m */; };
-		D00A16111AAA571C0036B25B /* NewStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */; };
-		D01087841B00D22100341E07 /* ETRBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01087831B00D22100341E07 /* ETRBaseViewController.m */; };
-		D013BB8E1AFAAD2000DA1895 /* ETRUserListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D013BB8D1AFAAD2000DA1895 /* ETRUserListViewController.m */; };
-		D01446B61A9F573900748378 /* ETRChatObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446B51A9F573900748378 /* ETRChatObject.m */; };
-		D01446B81A9F78F500748378 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D01446B71A9F78F500748378 /* Images.xcassets */; };
-		D01446BF1A9F9E0D00748378 /* ETRCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446BE1A9F9E0D00748378 /* ETRCircleView.m */; };
-		D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */; };
-		D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C51A9FF04D00748378 /* ETRInformationCell.m */; };
-		D0190B351ABB726D0010E637 /* ETRUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D0190B341ABB726D0010E637 /* ETRUIConstants.m */; };
-		D0190B381ABB7B050010E637 /* ETRShadowView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0190B371ABB7B050010E637 /* ETRShadowView.m */; };
-		D01A602618E35BF900730A1B /* ETRRoomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01A602518E35BF900730A1B /* ETRRoomCell.m */; };
-		D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */; };
-		D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */; };
-		D02465C81AF92CD80049CDB4 /* ETRBlockedUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */; };
-		D026A9AB1AB8D0D0006FB920 /* ETRReceivedMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */; };
-		D029654F1B15FCE700FABACD /* ETRSessionTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = D029654E1B15FCE700FABACD /* ETRSessionTabBarController.m */; };
-		D02965521B1638FF00FABACD /* ETRConversationListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02965511B1638FF00FABACD /* ETRConversationListViewController.m */; };
-		D02965551B16441500FABACD /* ETRUserListBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02965541B16441500FABACD /* ETRUserListBaseViewController.m */; };
-		D02E42561AB4B06C00A46CF5 /* ETRReadabilityHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */; };
-		D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */; };
-		D03133981AAB582B004E981B /* ETRKeyValueEditorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */; };
-		D031339B1AAB5860004E981B /* ETRProfileHeaderEditorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */; };
-		D032E7441A9E6F3E0021E501 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D032E7431A9E6F3E0021E501 /* GoogleMaps.framework */; };
-		D032E74A1A9E71570021E501 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D032E7491A9E71570021E501 /* GoogleMaps.bundle */; };
-		D04352491AB3AA9C00CF95AB /* ETRSentMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */; };
-		D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = D048E2941AA65083001631CB /* ETRImageEditor.m */; };
-		D0529A0D1AA26FED002211A3 /* Realay.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D0529A0B1AA26FED002211A3 /* Realay.xcdatamodeld */; };
-		D0586CEF1ACB11E200C55E4C /* ETRSentMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */; };
-		D0586CF21ACB11F100C55E4C /* ETRReceivedMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */; };
-		D06E464C18D3945A00833C94 /* LeftBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464A18D3945A00833C94 /* LeftBubble.png */; };
-		D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464B18D3945A00833C94 /* LeftBubble@2x.png */; };
-		D06E465018D3966D00833C94 /* RightBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464E18D3966D00833C94 /* RightBubble.png */; };
-		D06E465118D3966D00833C94 /* RightBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464F18D3966D00833C94 /* RightBubble@2x.png */; };
-		D071C3C01B28AE6E0037F48E /* LogoWhite_240pt.png in Resources */ = {isa = PBXBuildFile; fileRef = D071C3BF1B28AE6E0037F48E /* LogoWhite_240pt.png */; };
-		D071C3C31B28E0800037F48E /* ETRSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D071C3C21B28E0800037F48E /* ETRSettingsTableViewController.m */; };
-		D071C3C61B28E5860037F48E /* ETRSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D071C3C51B28E5860037F48E /* ETRSettingCell.m */; };
-		D079327D1B011D1E0086DB3F /* ETRBouncer.m in Sources */ = {isa = PBXBuildFile; fileRef = D079327C1B011D1E0086DB3F /* ETRBouncer.m */; };
-		D079327F1B014B690086DB3F /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D079327E1B014B690086DB3F /* Launch Screen.xib */; };
-		D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0795F8D1AA48E76009CCF73 /* ETRCoreDataHelper.m */; };
-		D0795F901AA4FB92009CCF73 /* lustgarten.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */; };
-		D07E1C1C1AC9994400B86E1A /* ETRAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = D07E1C1B1AC9994400B86E1A /* ETRAnimator.m */; };
-		D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */; };
-		D0917D0B1AC583FE00136D31 /* ETRReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0917D0A1AC583FE00136D31 /* ETRReachabilityManager.m */; };
-		D0917D111AC588E200136D31 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D0917D101AC588E200136D31 /* Reachability.m */; };
-		D0A472EB1AC88791006A1089 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0A472EA1AC88791006A1089 /* AddressBook.framework */; };
-		D0B3D46A1AC481290070F282 /* ETRInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B3D4691AC481290070F282 /* ETRInfoCell.m */; };
-		D0BB824E1AB2483B00276D5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0BB824D1AB2483B00276D5C /* Localizable.strings */; };
-		D0C821C91AC21B2C00549EEA /* ETRUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C821C81AC21B2C00549EEA /* ETRUserCell.m */; };
-		D0C821CC1AC2247500549EEA /* ETRConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C821CB1AC2247500549EEA /* ETRConversation.m */; };
-		D0CF29DD185264210012AF7F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0CF29DC185264210012AF7F /* OpenGLES.framework */; };
-		D0D0CEED17E74EE70079017F /* ETRLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D0CEEC17E74EE70079017F /* ETRLoginViewController.m */; };
-		D0D1248E17FCB03100E37C45 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1248917FCB03100E37C45 /* libsqlite3.dylib */; };
-		D0D1248F17FCB03100E37C45 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1248A17FCB03100E37C45 /* libSystem.dylib */; };
-		D0D1249117FCB15000E37C45 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1249017FCB15000E37C45 /* Security.framework */; };
-		D0D1249317FCB19500E37C45 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D1249217FCB19500E37C45 /* CFNetwork.framework */; };
-		D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */; };
-		D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DA55391918165300B8A0F7 /* ETRLocationManager.m */; };
-		D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */; };
-		D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D0DE0DD4184BB1880039DE0E /* Settings.bundle */; };
-		D0E092791AB62B7800D190F8 /* ETRDefaultsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E092781AB62B7800D190F8 /* ETRDefaultsHelper.m */; };
-		D0E1970917E276DB00135B8C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970817E276DB00135B8C /* UIKit.framework */; };
-		D0E1970B17E276DB00135B8C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970A17E276DB00135B8C /* Foundation.framework */; };
-		D0E1970D17E276DB00135B8C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1970C17E276DB00135B8C /* CoreGraphics.framework */; };
-		D0E1971317E276DB00135B8C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0E1971117E276DB00135B8C /* InfoPlist.strings */; };
-		D0E1971517E276DB00135B8C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E1971417E276DB00135B8C /* main.m */; };
-		D0E1971917E276DB00135B8C /* ETRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E1971817E276DB00135B8C /* ETRAppDelegate.m */; };
-		D0E1971B17E276DB00135B8C /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E1971A17E276DB00135B8C /* Default.png */; };
-		D0E1971D17E276DB00135B8C /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E1971C17E276DB00135B8C /* Default@2x.png */; };
-		D0E1971F17E276DB00135B8C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E1971E17E276DB00135B8C /* Default-568h@2x.png */; };
-		D0E1975117E27C2400135B8C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975017E27C2400135B8C /* AVFoundation.framework */; };
-		D0E1975317E27C2B00135B8C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975217E27C2B00135B8C /* CoreData.framework */; };
-		D0E1975517E27C3100135B8C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975417E27C3100135B8C /* CoreLocation.framework */; };
-		D0E1975717E27C4000135B8C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975617E27C4000135B8C /* CoreText.framework */; };
-		D0E1975917E27C4A00135B8C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975817E27C4A00135B8C /* GLKit.framework */; };
-		D0E1975B17E27C5300135B8C /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975A17E27C5300135B8C /* ImageIO.framework */; };
-		D0E1975D17E27C5C00135B8C /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975C17E27C5C00135B8C /* libc++.dylib */; };
-		D0E1975F17E27C6300135B8C /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1975E17E27C6300135B8C /* libicucore.dylib */; };
-		D0E1976117E27C6A00135B8C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1976017E27C6A00135B8C /* libz.dylib */; };
-		D0E1976517E27C7700135B8C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1976417E27C7700135B8C /* SystemConfiguration.framework */; };
-		D0E1976717E27C7D00135B8C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1976617E27C7D00135B8C /* QuartzCore.framework */; };
-		D0E31B5E1AA377F30008AF9F /* ETRUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E31B5D1AA377F30008AF9F /* ETRUser.m */; };
-		D0E31B611AA377F40008AF9F /* ETRRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E31B601AA377F40008AF9F /* ETRRoom.m */; };
-		D0E31B641AA377F40008AF9F /* ETRAction.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E31B631AA377F40008AF9F /* ETRAction.m */; };
-		D0E4E8DF1AA0A94700ADF026 /* placeholder_map.png in Resources */ = {isa = PBXBuildFile; fileRef = D0E4E8DE1AA0A94700ADF026 /* placeholder_map.png */; };
-		D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */; };
-		D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0E87A5E18D79B73001D5371 /* ETRPasswordViewController.m */; };
-		D0EC763C18EDFC5C00CB0BAE /* ETRSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */; };
-		D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */; };
-		D0F2AB0118FFDA14008B7C32 /* empty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D0F2AB0018FFDA14008B7C32 /* empty.jpg */; };
-		D0FF65F61AFEA06100C8572D /* ETRImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0FF65F51AFEA06100C8572D /* ETRImageView.m */; };
+		D0D54B3D1B2F1F9100F8875B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3C1B2F1F9100F8875B /* main.m */; };
+		D0D54B401B2F1F9100F8875B /* ETRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3F1B2F1F9100F8875B /* ETRAppDelegate.m */; };
+		D0D54B461B2F1F9100F8875B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0D54B441B2F1F9100F8875B /* Main.storyboard */; };
+		D0D54B491B2F1F9100F8875B /* Realay.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B471B2F1F9100F8875B /* Realay.xcdatamodeld */; };
+		D0D54B4B1B2F1F9100F8875B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0D54B4A1B2F1F9100F8875B /* Assets.xcassets */; };
+		D0D54BA41B2F218300F8875B /* ETRImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B581B2F218300F8875B /* ETRImageView.m */; };
+		D0D54BA51B2F218300F8875B /* ETRShadowView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B5A1B2F218300F8875B /* ETRShadowView.m */; };
+		D0D54BA61B2F218300F8875B /* ETRBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B5C1B2F218300F8875B /* ETRBaseViewController.m */; };
+		D0D54BA71B2F218300F8875B /* ETRBlockedUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B5E1B2F218300F8875B /* ETRBlockedUsersViewController.m */; };
+		D0D54BA81B2F218300F8875B /* ETRConversationListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B601B2F218300F8875B /* ETRConversationListViewController.m */; };
+		D0D54BA91B2F218300F8875B /* ETRConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B621B2F218300F8875B /* ETRConversationViewController.m */; };
+		D0D54BAA1B2F218300F8875B /* ETRDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B641B2F218300F8875B /* ETRDetailsViewController.m */; };
+		D0D54BAB1B2F218300F8875B /* ETRJoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B661B2F218300F8875B /* ETRJoinViewController.m */; };
+		D0D54BAC1B2F218300F8875B /* ETRLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B681B2F218300F8875B /* ETRLoginViewController.m */; };
+		D0D54BAD1B2F218300F8875B /* ETRMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B6A1B2F218300F8875B /* ETRMapViewController.m */; };
+		D0D54BAE1B2F218300F8875B /* ETRPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B6C1B2F218300F8875B /* ETRPasswordViewController.m */; };
+		D0D54BAF1B2F218300F8875B /* ETRProfileEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B6E1B2F218300F8875B /* ETRProfileEditorViewController.m */; };
+		D0D54BB01B2F218300F8875B /* ETRRoomListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B701B2F218300F8875B /* ETRRoomListViewController.m */; };
+		D0D54BB11B2F218300F8875B /* ETRSessionTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B721B2F218300F8875B /* ETRSessionTabBarController.m */; };
+		D0D54BB21B2F218300F8875B /* ETRSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B741B2F218300F8875B /* ETRSettingsTableViewController.m */; };
+		D0D54BB31B2F218300F8875B /* ETRUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B761B2F218300F8875B /* ETRUIConstants.m */; };
+		D0D54BB41B2F218300F8875B /* ETRUserListBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B781B2F218300F8875B /* ETRUserListBaseViewController.m */; };
+		D0D54BB51B2F218300F8875B /* ETRUserListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B7A1B2F218300F8875B /* ETRUserListViewController.m */; };
+		D0D54BB61B2F218300F8875B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0D54B7B1B2F218300F8875B /* Localizable.strings */; };
+		D0D54BB71B2F218300F8875B /* ETRHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B7E1B2F218300F8875B /* ETRHeaderCell.m */; };
+		D0D54BB81B2F218300F8875B /* ETRInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B801B2F218300F8875B /* ETRInfoCell.m */; };
+		D0D54BB91B2F218300F8875B /* ETRInformationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B821B2F218300F8875B /* ETRInformationCell.m */; };
+		D0D54BBA1B2F218300F8875B /* ETRKeyValueCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B841B2F218300F8875B /* ETRKeyValueCell.m */; };
+		D0D54BBB1B2F218300F8875B /* ETRKeyValueEditorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B861B2F218300F8875B /* ETRKeyValueEditorCell.m */; };
+		D0D54BBC1B2F218300F8875B /* ETRProfileHeaderEditorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B881B2F218300F8875B /* ETRProfileHeaderEditorCell.m */; };
+		D0D54BBD1B2F218300F8875B /* ETRProfileSocialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B8A1B2F218300F8875B /* ETRProfileSocialCell.m */; };
+		D0D54BBE1B2F218300F8875B /* ETRReceivedMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B8C1B2F218300F8875B /* ETRReceivedMediaCell.m */; };
+		D0D54BBF1B2F218300F8875B /* ETRReceivedMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B8E1B2F218300F8875B /* ETRReceivedMessageCell.m */; };
+		D0D54BC01B2F218300F8875B /* ETRRoomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B901B2F218300F8875B /* ETRRoomCell.m */; };
+		D0D54BC11B2F218300F8875B /* ETRSentMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B921B2F218300F8875B /* ETRSentMediaCell.m */; };
+		D0D54BC21B2F218300F8875B /* ETRSentMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B941B2F218300F8875B /* ETRSentMessageCell.m */; };
+		D0D54BC31B2F218300F8875B /* ETRSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B961B2F218300F8875B /* ETRSettingCell.m */; };
+		D0D54BC41B2F218300F8875B /* ETRUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B981B2F218300F8875B /* ETRUserCell.m */; };
+		D0D54BC51B2F218300F8875B /* ETRAlertViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B9B1B2F218300F8875B /* ETRAlertViewFactory.m */; };
+		D0D54BC61B2F218300F8875B /* ETRAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B9D1B2F218300F8875B /* ETRAnimator.m */; };
+		D0D54BC71B2F218300F8875B /* ETRImageEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B9F1B2F218300F8875B /* ETRImageEditor.m */; };
+		D0D54BC81B2F218300F8875B /* ETRImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BA11B2F218300F8875B /* ETRImageLoader.m */; };
+		D0D54BC91B2F218300F8875B /* ETRReadabilityHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BA31B2F218300F8875B /* ETRReadabilityHelper.m */; };
+		D0D54BD71B2F218F00F8875B /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BCC1B2F218F00F8875B /* ETRActionManager.m */; };
+		D0D54BD81B2F218F00F8875B /* ETRBouncer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BCE1B2F218F00F8875B /* ETRBouncer.m */; };
+		D0D54BD91B2F218F00F8875B /* ETRLocalUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BD01B2F218F00F8875B /* ETRLocalUserManager.m */; };
+		D0D54BDA1B2F218F00F8875B /* ETRLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BD21B2F218F00F8875B /* ETRLocationManager.m */; };
+		D0D54BDB1B2F218F00F8875B /* ETRReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BD41B2F218F00F8875B /* ETRReachabilityManager.m */; };
+		D0D54BDC1B2F218F00F8875B /* ETRSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BD61B2F218F00F8875B /* ETRSessionManager.m */; };
+		D0D54BEA1B2F219500F8875B /* ETRAction.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BDF1B2F219500F8875B /* ETRAction.m */; };
+		D0D54BEB1B2F219500F8875B /* ETRChatObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BE11B2F219500F8875B /* ETRChatObject.m */; };
+		D0D54BEC1B2F219500F8875B /* ETRConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BE31B2F219500F8875B /* ETRConversation.m */; };
+		D0D54BED1B2F219500F8875B /* ETRCoreDataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BE51B2F219500F8875B /* ETRCoreDataHelper.m */; };
+		D0D54BEE1B2F219500F8875B /* ETRRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BE71B2F219500F8875B /* ETRRoom.m */; };
+		D0D54BEF1B2F219500F8875B /* ETRUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BE91B2F219500F8875B /* ETRUser.m */; };
+		D0D54BF71B2F21A400F8875B /* ETRImageConnectionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BF21B2F21A400F8875B /* ETRImageConnectionHandler.m */; };
+		D0D54BF81B2F21A400F8875B /* ETRServerAPIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BF41B2F21A400F8875B /* ETRServerAPIHelper.m */; };
+		D0D54BF91B2F21A400F8875B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BF61B2F21A400F8875B /* Reachability.m */; };
+		D0D54BFF1B2F21B500F8875B /* ETRDefaultsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BFD1B2F21B500F8875B /* ETRDefaultsHelper.m */; };
+		D0D54C021B2F21C200F8875B /* lustgarten.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D0D54C001B2F21C200F8875B /* lustgarten.gpx */; };
+		D0D54C081B2F298C00F8875B /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0D54C071B2F298C00F8875B /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D002484B1B2E11BA008337A4 /* Realay-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Realay-Info.plist"; sourceTree = SOURCE_ROOT; };
-		D0035C3818B2AA1E00C5EEAF /* ETRLocalUserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocalUserManager.h; sourceTree = "<group>"; };
-		D0035C3918B2AA1E00C5EEAF /* ETRLocalUserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocalUserManager.m; sourceTree = "<group>"; };
-		D0081F5618C546B200D0819A /* ETRAlertViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRAlertViewFactory.h; sourceTree = "<group>"; };
-		D0081F5718C546B200D0819A /* ETRAlertViewFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRAlertViewFactory.m; sourceTree = "<group>"; };
-		D00A15FD1AAA1DDF0036B25B /* ETRHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRHeaderCell.h; path = ui/elements/ETRHeaderCell.h; sourceTree = "<group>"; };
-		D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRHeaderCell.m; path = ui/elements/ETRHeaderCell.m; sourceTree = "<group>"; };
-		D00A16001AAA1DFA0036B25B /* ETRKeyValueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRKeyValueCell.h; path = ui/elements/ETRKeyValueCell.h; sourceTree = "<group>"; };
-		D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRKeyValueCell.m; path = ui/elements/ETRKeyValueCell.m; sourceTree = "<group>"; };
-		D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRProfileSocialCell.h; path = ui/elements/ETRProfileSocialCell.h; sourceTree = "<group>"; };
-		D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRProfileSocialCell.m; path = ui/elements/ETRProfileSocialCell.m; sourceTree = "<group>"; };
-		D00A16091AAA25BC0036B25B /* ETRDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRDetailsViewController.h; path = ui/ETRDetailsViewController.h; sourceTree = "<group>"; };
-		D00A160A1AAA25BC0036B25B /* ETRDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRDetailsViewController.m; path = ui/ETRDetailsViewController.m; sourceTree = "<group>"; };
-		D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = NewStoryboard.storyboard; path = ../NewStoryboard.storyboard; sourceTree = "<group>"; };
-		D01087821B00D22100341E07 /* ETRBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRBaseViewController.h; path = ui/ETRBaseViewController.h; sourceTree = "<group>"; };
-		D01087831B00D22100341E07 /* ETRBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRBaseViewController.m; path = ui/ETRBaseViewController.m; sourceTree = "<group>"; };
-		D013BB8C1AFAAD2000DA1895 /* ETRUserListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRUserListViewController.h; path = ui/ETRUserListViewController.h; sourceTree = "<group>"; };
-		D013BB8D1AFAAD2000DA1895 /* ETRUserListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRUserListViewController.m; path = ui/ETRUserListViewController.m; sourceTree = "<group>"; };
-		D01446B41A9F573900748378 /* ETRChatObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRChatObject.h; sourceTree = "<group>"; };
-		D01446B51A9F573900748378 /* ETRChatObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRChatObject.m; sourceTree = "<group>"; };
-		D01446B71A9F78F500748378 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
-		D01446BD1A9F9E0D00748378 /* ETRCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRCircleView.h; sourceTree = "<group>"; };
-		D01446BE1A9F9E0D00748378 /* ETRCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRCircleView.m; sourceTree = "<group>"; };
-		D01446C11A9FD90A00748378 /* ETRImageConnectionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageConnectionHandler.h; sourceTree = "<group>"; };
-		D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageConnectionHandler.m; sourceTree = "<group>"; };
-		D01446C41A9FF04D00748378 /* ETRInformationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRInformationCell.h; sourceTree = "<group>"; };
-		D01446C51A9FF04D00748378 /* ETRInformationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRInformationCell.m; sourceTree = "<group>"; };
-		D0190B331ABB726D0010E637 /* ETRUIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUIConstants.h; sourceTree = "<group>"; };
-		D0190B341ABB726D0010E637 /* ETRUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUIConstants.m; sourceTree = "<group>"; };
-		D0190B361ABB7B050010E637 /* ETRShadowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRShadowView.h; path = ui/elements/ETRShadowView.h; sourceTree = "<group>"; };
-		D0190B371ABB7B050010E637 /* ETRShadowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRShadowView.m; path = ui/elements/ETRShadowView.m; sourceTree = "<group>"; };
-		D01A602518E35BF900730A1B /* ETRRoomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomCell.m; sourceTree = "<group>"; };
-		D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRJoinViewController.h; path = ui/ETRJoinViewController.h; sourceTree = "<group>"; };
-		D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRJoinViewController.m; path = ui/ETRJoinViewController.m; sourceTree = "<group>"; };
-		D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRActionManager.h; path = manager/ETRActionManager.h; sourceTree = "<group>"; };
-		D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRActionManager.m; path = manager/ETRActionManager.m; sourceTree = "<group>"; };
-		D020733117EBB34400453B69 /* ETRRoomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomCell.h; sourceTree = "<group>"; };
-		D02465C61AF92CD80049CDB4 /* ETRBlockedUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRBlockedUsersViewController.h; sourceTree = "<group>"; };
-		D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBlockedUsersViewController.m; sourceTree = "<group>"; };
-		D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRReceivedMessageCell.h; path = ui/TableCells/ETRReceivedMessageCell.h; sourceTree = "<group>"; };
-		D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRReceivedMessageCell.m; path = ui/TableCells/ETRReceivedMessageCell.m; sourceTree = "<group>"; };
-		D029654D1B15FCE700FABACD /* ETRSessionTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionTabBarController.h; sourceTree = "<group>"; };
-		D029654E1B15FCE700FABACD /* ETRSessionTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionTabBarController.m; sourceTree = "<group>"; };
-		D02965501B1638FF00FABACD /* ETRConversationListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRConversationListViewController.h; path = ui/ETRConversationListViewController.h; sourceTree = "<group>"; };
-		D02965511B1638FF00FABACD /* ETRConversationListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRConversationListViewController.m; path = ui/ETRConversationListViewController.m; sourceTree = "<group>"; };
-		D02965531B16441500FABACD /* ETRUserListBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUserListBaseViewController.h; sourceTree = "<group>"; };
-		D02965541B16441500FABACD /* ETRUserListBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUserListBaseViewController.m; sourceTree = "<group>"; };
-		D02E42541AB4B06C00A46CF5 /* ETRReadabilityHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReadabilityHelper.h; sourceTree = "<group>"; };
-		D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReadabilityHelper.m; sourceTree = "<group>"; };
-		D03133931AAB5754004E981B /* ETRProfileEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRProfileEditorViewController.h; sourceTree = "<group>"; };
-		D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRProfileEditorViewController.m; sourceTree = "<group>"; };
-		D03133961AAB582B004E981B /* ETRKeyValueEditorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRKeyValueEditorCell.h; sourceTree = "<group>"; };
-		D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRKeyValueEditorCell.m; sourceTree = "<group>"; };
-		D03133991AAB5860004E981B /* ETRProfileHeaderEditorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRProfileHeaderEditorCell.h; path = ui/elements/ETRProfileHeaderEditorCell.h; sourceTree = "<group>"; };
-		D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRProfileHeaderEditorCell.m; path = ui/elements/ETRProfileHeaderEditorCell.m; sourceTree = "<group>"; };
-		D032E7431A9E6F3E0021E501 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
-		D032E7491A9E71570021E501 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleMaps.bundle; sourceTree = "<group>"; };
-		D04352471AB3AA9C00CF95AB /* ETRSentMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRSentMessageCell.h; path = ui/TableCells/ETRSentMessageCell.h; sourceTree = "<group>"; };
-		D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRSentMessageCell.m; path = ui/TableCells/ETRSentMessageCell.m; sourceTree = "<group>"; };
-		D048E2931AA65083001631CB /* ETRImageEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageEditor.h; sourceTree = "<group>"; };
-		D048E2941AA65083001631CB /* ETRImageEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageEditor.m; sourceTree = "<group>"; };
-		D0529A0C1AA26FED002211A3 /* Realay.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Realay.xcdatamodel; sourceTree = "<group>"; };
-		D0586CED1ACB11E200C55E4C /* ETRSentMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRSentMediaCell.h; path = ui/TableCells/ETRSentMediaCell.h; sourceTree = "<group>"; };
-		D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRSentMediaCell.m; path = ui/TableCells/ETRSentMediaCell.m; sourceTree = "<group>"; };
-		D0586CF01ACB11F100C55E4C /* ETRReceivedMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReceivedMediaCell.h; sourceTree = "<group>"; };
-		D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReceivedMediaCell.m; sourceTree = "<group>"; };
-		D05E3205189EB7E300F3A94C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		D06E464A18D3945A00833C94 /* LeftBubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LeftBubble.png; sourceTree = "<group>"; };
-		D06E464B18D3945A00833C94 /* LeftBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LeftBubble@2x.png"; sourceTree = "<group>"; };
-		D06E464E18D3966D00833C94 /* RightBubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RightBubble.png; sourceTree = "<group>"; };
-		D06E464F18D3966D00833C94 /* RightBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RightBubble@2x.png"; sourceTree = "<group>"; };
-		D071C3BF1B28AE6E0037F48E /* LogoWhite_240pt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LogoWhite_240pt.png; sourceTree = "<group>"; };
-		D071C3C11B28E0800037F48E /* ETRSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRSettingsTableViewController.h; path = ui/ETRSettingsTableViewController.h; sourceTree = "<group>"; };
-		D071C3C21B28E0800037F48E /* ETRSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRSettingsTableViewController.m; path = ui/ETRSettingsTableViewController.m; sourceTree = "<group>"; };
-		D071C3C41B28E5860037F48E /* ETRSettingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSettingCell.h; sourceTree = "<group>"; };
-		D071C3C51B28E5860037F48E /* ETRSettingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSettingCell.m; sourceTree = "<group>"; };
-		D079327B1B011D1E0086DB3F /* ETRBouncer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRBouncer.h; path = manager/ETRBouncer.h; sourceTree = "<group>"; };
-		D079327C1B011D1E0086DB3F /* ETRBouncer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRBouncer.m; path = manager/ETRBouncer.m; sourceTree = "<group>"; };
-		D079327E1B014B690086DB3F /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "Launch Screen.xib"; path = "Realay/Launch Screen.xib"; sourceTree = "<group>"; };
-		D0795F8C1AA48E76009CCF73 /* ETRCoreDataHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRCoreDataHelper.h; sourceTree = "<group>"; };
-		D0795F8D1AA48E76009CCF73 /* ETRCoreDataHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRCoreDataHelper.m; sourceTree = "<group>"; };
-		D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lustgarten.gpx; sourceTree = "<group>"; };
-		D07E1C1A1AC9994400B86E1A /* ETRAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRAnimator.h; path = ui/utils/ETRAnimator.h; sourceTree = "<group>"; };
-		D07E1C1B1AC9994400B86E1A /* ETRAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRAnimator.m; path = ui/utils/ETRAnimator.m; sourceTree = "<group>"; };
-		D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageLoader.h; sourceTree = "<group>"; };
-		D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageLoader.m; sourceTree = "<group>"; };
-		D0917D091AC583FE00136D31 /* ETRReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRReachabilityManager.h; path = manager/ETRReachabilityManager.h; sourceTree = "<group>"; };
-		D0917D0A1AC583FE00136D31 /* ETRReachabilityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRReachabilityManager.m; path = manager/ETRReachabilityManager.m; sourceTree = "<group>"; };
-		D0917D0F1AC588E200136D31 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		D0917D101AC588E200136D31 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		D0A472EA1AC88791006A1089 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
-		D0B3D4681AC481290070F282 /* ETRInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRInfoCell.h; sourceTree = "<group>"; };
-		D0B3D4691AC481290070F282 /* ETRInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRInfoCell.m; sourceTree = "<group>"; };
-		D0BB824D1AB2483B00276D5C /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		D0C821C71AC21B2C00549EEA /* ETRUserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUserCell.h; sourceTree = "<group>"; };
-		D0C821C81AC21B2C00549EEA /* ETRUserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUserCell.m; sourceTree = "<group>"; };
-		D0C821CA1AC2247500549EEA /* ETRConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRConversation.h; path = DataModel/ETRConversation.h; sourceTree = "<group>"; };
-		D0C821CB1AC2247500549EEA /* ETRConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRConversation.m; path = DataModel/ETRConversation.m; sourceTree = "<group>"; };
-		D0CF29DC185264210012AF7F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		D0D0CEEB17E74EE70079017F /* ETRLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLoginViewController.h; sourceTree = "<group>"; };
-		D0D0CEEC17E74EE70079017F /* ETRLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLoginViewController.m; sourceTree = "<group>"; };
-		D0D1248917FCB03100E37C45 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		D0D1248A17FCB03100E37C45 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
-		D0D1249017FCB15000E37C45 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		D0D1249217FCB19500E37C45 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		D0D7D8BF17EFADCF00F8008E /* ETRMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMapViewController.h; sourceTree = "<group>"; };
-		D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMapViewController.m; sourceTree = "<group>"; };
-		D0DA55381918165300B8A0F7 /* ETRLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationManager.h; sourceTree = "<group>"; };
-		D0DA55391918165300B8A0F7 /* ETRLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationManager.m; sourceTree = "<group>"; };
-		D0DE0DD1184BAC7E0039DE0E /* ETRConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRConversationViewController.h; sourceTree = "<group>"; };
-		D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRConversationViewController.m; sourceTree = "<group>"; };
-		D0DE0DD4184BB1880039DE0E /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
-		D0E092771AB62B7800D190F8 /* ETRDefaultsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRDefaultsHelper.h; sourceTree = "<group>"; };
-		D0E092781AB62B7800D190F8 /* ETRDefaultsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRDefaultsHelper.m; sourceTree = "<group>"; };
-		D0E1970517E276DB00135B8C /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D0E1970817E276DB00135B8C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		D0E1970A17E276DB00135B8C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D0E1970C17E276DB00135B8C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		D0E1971417E276DB00135B8C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D0E1971617E276DB00135B8C /* Realay-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Realay-Prefix.pch"; sourceTree = "<group>"; };
-		D0E1971717E276DB00135B8C /* ETRAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRAppDelegate.h; sourceTree = "<group>"; };
-		D0E1971817E276DB00135B8C /* ETRAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ETRAppDelegate.m; sourceTree = "<group>"; };
-		D0E1971A17E276DB00135B8C /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		D0E1971C17E276DB00135B8C /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		D0E1971E17E276DB00135B8C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		D0E1975017E27C2400135B8C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		D0E1975217E27C2B00135B8C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		D0E1975417E27C3100135B8C /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		D0E1975617E27C4000135B8C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
-		D0E1975817E27C4A00135B8C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		D0E1975A17E27C5300135B8C /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		D0E1975C17E27C5C00135B8C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
-		D0E1975E17E27C6300135B8C /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
-		D0E1976017E27C6A00135B8C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		D0E1976417E27C7700135B8C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		D0E1976617E27C7D00135B8C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		D0E31B5C1AA377F30008AF9F /* ETRUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUser.h; sourceTree = "<group>"; };
-		D0E31B5D1AA377F30008AF9F /* ETRUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUser.m; sourceTree = "<group>"; };
-		D0E31B5F1AA377F40008AF9F /* ETRRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoom.h; sourceTree = "<group>"; };
-		D0E31B601AA377F40008AF9F /* ETRRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoom.m; sourceTree = "<group>"; };
-		D0E31B621AA377F40008AF9F /* ETRAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRAction.h; sourceTree = "<group>"; };
-		D0E31B631AA377F40008AF9F /* ETRAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRAction.m; sourceTree = "<group>"; };
-		D0E4E8DE1AA0A94700ADF026 /* placeholder_map.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = placeholder_map.png; sourceTree = "<group>"; };
-		D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRServerAPIHelper.h; sourceTree = "<group>"; };
-		D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRServerAPIHelper.m; sourceTree = "<group>"; };
-		D0E87A5D18D79B73001D5371 /* ETRPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRPasswordViewController.h; sourceTree = "<group>"; };
-		D0E87A5E18D79B73001D5371 /* ETRPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRPasswordViewController.m; sourceTree = "<group>"; };
-		D0EFD9B617E90E5000522146 /* ETRRoomListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListViewController.h; sourceTree = "<group>"; };
-		D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListViewController.m; sourceTree = "<group>"; };
-		D0F02E2F1B2E0CC500D453F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		D0F02E301B2E0D5900D453F4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = "en.lproj/Realay-Info.plist"; sourceTree = "<group>"; };
-		D0F0392918C379DF008DDA5F /* ETRSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionManager.h; sourceTree = "<group>"; };
-		D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionManager.m; sourceTree = "<group>"; };
-		D0F2AB0018FFDA14008B7C32 /* empty.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = empty.jpg; sourceTree = "<group>"; };
-		D0F63EA318DA2B740082A468 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
-		D0FF65F41AFEA06100C8572D /* ETRImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRImageView.h; path = ui/elements/ETRImageView.h; sourceTree = "<group>"; };
-		D0FF65F51AFEA06100C8572D /* ETRImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRImageView.m; path = ui/elements/ETRImageView.m; sourceTree = "<group>"; };
+		D0D54B381B2F1F9100F8875B /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0D54B3C1B2F1F9100F8875B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D0D54B3E1B2F1F9100F8875B /* ETRAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRAppDelegate.h; sourceTree = "<group>"; };
+		D0D54B3F1B2F1F9100F8875B /* ETRAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ETRAppDelegate.m; sourceTree = "<group>"; };
+		D0D54B451B2F1F9100F8875B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D0D54B481B2F1F9100F8875B /* Realay.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Realay.xcdatamodel; sourceTree = "<group>"; };
+		D0D54B4A1B2F1F9100F8875B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../Assets.xcassets; sourceTree = "<group>"; };
+		D0D54B4F1B2F1F9100F8875B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0D54B571B2F218300F8875B /* ETRImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageView.h; sourceTree = "<group>"; };
+		D0D54B581B2F218300F8875B /* ETRImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageView.m; sourceTree = "<group>"; };
+		D0D54B591B2F218300F8875B /* ETRShadowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRShadowView.h; sourceTree = "<group>"; };
+		D0D54B5A1B2F218300F8875B /* ETRShadowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRShadowView.m; sourceTree = "<group>"; };
+		D0D54B5B1B2F218300F8875B /* ETRBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRBaseViewController.h; sourceTree = "<group>"; };
+		D0D54B5C1B2F218300F8875B /* ETRBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBaseViewController.m; sourceTree = "<group>"; };
+		D0D54B5D1B2F218300F8875B /* ETRBlockedUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRBlockedUsersViewController.h; sourceTree = "<group>"; };
+		D0D54B5E1B2F218300F8875B /* ETRBlockedUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBlockedUsersViewController.m; sourceTree = "<group>"; };
+		D0D54B5F1B2F218300F8875B /* ETRConversationListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRConversationListViewController.h; sourceTree = "<group>"; };
+		D0D54B601B2F218300F8875B /* ETRConversationListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRConversationListViewController.m; sourceTree = "<group>"; };
+		D0D54B611B2F218300F8875B /* ETRConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRConversationViewController.h; sourceTree = "<group>"; };
+		D0D54B621B2F218300F8875B /* ETRConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRConversationViewController.m; sourceTree = "<group>"; };
+		D0D54B631B2F218300F8875B /* ETRDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRDetailsViewController.h; sourceTree = "<group>"; };
+		D0D54B641B2F218300F8875B /* ETRDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRDetailsViewController.m; sourceTree = "<group>"; };
+		D0D54B651B2F218300F8875B /* ETRJoinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRJoinViewController.h; sourceTree = "<group>"; };
+		D0D54B661B2F218300F8875B /* ETRJoinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRJoinViewController.m; sourceTree = "<group>"; };
+		D0D54B671B2F218300F8875B /* ETRLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLoginViewController.h; sourceTree = "<group>"; };
+		D0D54B681B2F218300F8875B /* ETRLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLoginViewController.m; sourceTree = "<group>"; };
+		D0D54B691B2F218300F8875B /* ETRMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMapViewController.h; sourceTree = "<group>"; };
+		D0D54B6A1B2F218300F8875B /* ETRMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMapViewController.m; sourceTree = "<group>"; };
+		D0D54B6B1B2F218300F8875B /* ETRPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRPasswordViewController.h; sourceTree = "<group>"; };
+		D0D54B6C1B2F218300F8875B /* ETRPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRPasswordViewController.m; sourceTree = "<group>"; };
+		D0D54B6D1B2F218300F8875B /* ETRProfileEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRProfileEditorViewController.h; sourceTree = "<group>"; };
+		D0D54B6E1B2F218300F8875B /* ETRProfileEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRProfileEditorViewController.m; sourceTree = "<group>"; };
+		D0D54B6F1B2F218300F8875B /* ETRRoomListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListViewController.h; sourceTree = "<group>"; };
+		D0D54B701B2F218300F8875B /* ETRRoomListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListViewController.m; sourceTree = "<group>"; };
+		D0D54B711B2F218300F8875B /* ETRSessionTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionTabBarController.h; sourceTree = "<group>"; };
+		D0D54B721B2F218300F8875B /* ETRSessionTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionTabBarController.m; sourceTree = "<group>"; };
+		D0D54B731B2F218300F8875B /* ETRSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSettingsTableViewController.h; sourceTree = "<group>"; };
+		D0D54B741B2F218300F8875B /* ETRSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSettingsTableViewController.m; sourceTree = "<group>"; };
+		D0D54B751B2F218300F8875B /* ETRUIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUIConstants.h; sourceTree = "<group>"; };
+		D0D54B761B2F218300F8875B /* ETRUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUIConstants.m; sourceTree = "<group>"; };
+		D0D54B771B2F218300F8875B /* ETRUserListBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUserListBaseViewController.h; sourceTree = "<group>"; };
+		D0D54B781B2F218300F8875B /* ETRUserListBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUserListBaseViewController.m; sourceTree = "<group>"; };
+		D0D54B791B2F218300F8875B /* ETRUserListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUserListViewController.h; sourceTree = "<group>"; };
+		D0D54B7A1B2F218300F8875B /* ETRUserListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUserListViewController.m; sourceTree = "<group>"; };
+		D0D54B7B1B2F218300F8875B /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		D0D54B7D1B2F218300F8875B /* ETRHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRHeaderCell.h; sourceTree = "<group>"; };
+		D0D54B7E1B2F218300F8875B /* ETRHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRHeaderCell.m; sourceTree = "<group>"; };
+		D0D54B7F1B2F218300F8875B /* ETRInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRInfoCell.h; sourceTree = "<group>"; };
+		D0D54B801B2F218300F8875B /* ETRInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRInfoCell.m; sourceTree = "<group>"; };
+		D0D54B811B2F218300F8875B /* ETRInformationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRInformationCell.h; sourceTree = "<group>"; };
+		D0D54B821B2F218300F8875B /* ETRInformationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRInformationCell.m; sourceTree = "<group>"; };
+		D0D54B831B2F218300F8875B /* ETRKeyValueCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRKeyValueCell.h; sourceTree = "<group>"; };
+		D0D54B841B2F218300F8875B /* ETRKeyValueCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRKeyValueCell.m; sourceTree = "<group>"; };
+		D0D54B851B2F218300F8875B /* ETRKeyValueEditorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRKeyValueEditorCell.h; sourceTree = "<group>"; };
+		D0D54B861B2F218300F8875B /* ETRKeyValueEditorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRKeyValueEditorCell.m; sourceTree = "<group>"; };
+		D0D54B871B2F218300F8875B /* ETRProfileHeaderEditorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRProfileHeaderEditorCell.h; sourceTree = "<group>"; };
+		D0D54B881B2F218300F8875B /* ETRProfileHeaderEditorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRProfileHeaderEditorCell.m; sourceTree = "<group>"; };
+		D0D54B891B2F218300F8875B /* ETRProfileSocialCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRProfileSocialCell.h; sourceTree = "<group>"; };
+		D0D54B8A1B2F218300F8875B /* ETRProfileSocialCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRProfileSocialCell.m; sourceTree = "<group>"; };
+		D0D54B8B1B2F218300F8875B /* ETRReceivedMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReceivedMediaCell.h; sourceTree = "<group>"; };
+		D0D54B8C1B2F218300F8875B /* ETRReceivedMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReceivedMediaCell.m; sourceTree = "<group>"; };
+		D0D54B8D1B2F218300F8875B /* ETRReceivedMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReceivedMessageCell.h; sourceTree = "<group>"; };
+		D0D54B8E1B2F218300F8875B /* ETRReceivedMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReceivedMessageCell.m; sourceTree = "<group>"; };
+		D0D54B8F1B2F218300F8875B /* ETRRoomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomCell.h; sourceTree = "<group>"; };
+		D0D54B901B2F218300F8875B /* ETRRoomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomCell.m; sourceTree = "<group>"; };
+		D0D54B911B2F218300F8875B /* ETRSentMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSentMediaCell.h; sourceTree = "<group>"; };
+		D0D54B921B2F218300F8875B /* ETRSentMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSentMediaCell.m; sourceTree = "<group>"; };
+		D0D54B931B2F218300F8875B /* ETRSentMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSentMessageCell.h; sourceTree = "<group>"; };
+		D0D54B941B2F218300F8875B /* ETRSentMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSentMessageCell.m; sourceTree = "<group>"; };
+		D0D54B951B2F218300F8875B /* ETRSettingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSettingCell.h; sourceTree = "<group>"; };
+		D0D54B961B2F218300F8875B /* ETRSettingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSettingCell.m; sourceTree = "<group>"; };
+		D0D54B971B2F218300F8875B /* ETRUserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUserCell.h; sourceTree = "<group>"; };
+		D0D54B981B2F218300F8875B /* ETRUserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUserCell.m; sourceTree = "<group>"; };
+		D0D54B9A1B2F218300F8875B /* ETRAlertViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRAlertViewFactory.h; sourceTree = "<group>"; };
+		D0D54B9B1B2F218300F8875B /* ETRAlertViewFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRAlertViewFactory.m; sourceTree = "<group>"; };
+		D0D54B9C1B2F218300F8875B /* ETRAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRAnimator.h; sourceTree = "<group>"; };
+		D0D54B9D1B2F218300F8875B /* ETRAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRAnimator.m; sourceTree = "<group>"; };
+		D0D54B9E1B2F218300F8875B /* ETRImageEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageEditor.h; sourceTree = "<group>"; };
+		D0D54B9F1B2F218300F8875B /* ETRImageEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageEditor.m; sourceTree = "<group>"; };
+		D0D54BA01B2F218300F8875B /* ETRImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageLoader.h; sourceTree = "<group>"; };
+		D0D54BA11B2F218300F8875B /* ETRImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageLoader.m; sourceTree = "<group>"; };
+		D0D54BA21B2F218300F8875B /* ETRReadabilityHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReadabilityHelper.h; sourceTree = "<group>"; };
+		D0D54BA31B2F218300F8875B /* ETRReadabilityHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReadabilityHelper.m; sourceTree = "<group>"; };
+		D0D54BCB1B2F218F00F8875B /* ETRActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRActionManager.h; sourceTree = "<group>"; };
+		D0D54BCC1B2F218F00F8875B /* ETRActionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRActionManager.m; sourceTree = "<group>"; };
+		D0D54BCD1B2F218F00F8875B /* ETRBouncer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRBouncer.h; sourceTree = "<group>"; };
+		D0D54BCE1B2F218F00F8875B /* ETRBouncer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBouncer.m; sourceTree = "<group>"; };
+		D0D54BCF1B2F218F00F8875B /* ETRLocalUserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocalUserManager.h; sourceTree = "<group>"; };
+		D0D54BD01B2F218F00F8875B /* ETRLocalUserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocalUserManager.m; sourceTree = "<group>"; };
+		D0D54BD11B2F218F00F8875B /* ETRLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationManager.h; sourceTree = "<group>"; };
+		D0D54BD21B2F218F00F8875B /* ETRLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationManager.m; sourceTree = "<group>"; };
+		D0D54BD31B2F218F00F8875B /* ETRReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRReachabilityManager.h; sourceTree = "<group>"; };
+		D0D54BD41B2F218F00F8875B /* ETRReachabilityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRReachabilityManager.m; sourceTree = "<group>"; };
+		D0D54BD51B2F218F00F8875B /* ETRSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionManager.h; sourceTree = "<group>"; };
+		D0D54BD61B2F218F00F8875B /* ETRSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionManager.m; sourceTree = "<group>"; };
+		D0D54BDE1B2F219500F8875B /* ETRAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRAction.h; sourceTree = "<group>"; };
+		D0D54BDF1B2F219500F8875B /* ETRAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRAction.m; sourceTree = "<group>"; };
+		D0D54BE01B2F219500F8875B /* ETRChatObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRChatObject.h; sourceTree = "<group>"; };
+		D0D54BE11B2F219500F8875B /* ETRChatObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRChatObject.m; sourceTree = "<group>"; };
+		D0D54BE21B2F219500F8875B /* ETRConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRConversation.h; sourceTree = "<group>"; };
+		D0D54BE31B2F219500F8875B /* ETRConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRConversation.m; sourceTree = "<group>"; };
+		D0D54BE41B2F219500F8875B /* ETRCoreDataHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRCoreDataHelper.h; sourceTree = "<group>"; };
+		D0D54BE51B2F219500F8875B /* ETRCoreDataHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRCoreDataHelper.m; sourceTree = "<group>"; };
+		D0D54BE61B2F219500F8875B /* ETRRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoom.h; sourceTree = "<group>"; };
+		D0D54BE71B2F219500F8875B /* ETRRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoom.m; sourceTree = "<group>"; };
+		D0D54BE81B2F219500F8875B /* ETRUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRUser.h; sourceTree = "<group>"; };
+		D0D54BE91B2F219500F8875B /* ETRUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUser.m; sourceTree = "<group>"; };
+		D0D54BF11B2F21A400F8875B /* ETRImageConnectionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRImageConnectionHandler.h; sourceTree = "<group>"; };
+		D0D54BF21B2F21A400F8875B /* ETRImageConnectionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRImageConnectionHandler.m; sourceTree = "<group>"; };
+		D0D54BF31B2F21A400F8875B /* ETRServerAPIHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRServerAPIHelper.h; sourceTree = "<group>"; };
+		D0D54BF41B2F21A400F8875B /* ETRServerAPIHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRServerAPIHelper.m; sourceTree = "<group>"; };
+		D0D54BF51B2F21A400F8875B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		D0D54BF61B2F21A400F8875B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		D0D54BFC1B2F21B500F8875B /* ETRDefaultsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRDefaultsHelper.h; sourceTree = "<group>"; };
+		D0D54BFD1B2F21B500F8875B /* ETRDefaultsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRDefaultsHelper.m; sourceTree = "<group>"; };
+		D0D54C001B2F21C200F8875B /* lustgarten.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lustgarten.gpx; sourceTree = "<group>"; };
+		D0D54C071B2F298C00F8875B /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D0E1970217E276DB00135B8C /* Frameworks */ = {
+		D0D54B351B2F1F9100F8875B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0A472EB1AC88791006A1089 /* AddressBook.framework in Frameworks */,
-				D0E1976517E27C7700135B8C /* SystemConfiguration.framework in Frameworks */,
-				D0CF29DD185264210012AF7F /* OpenGLES.framework in Frameworks */,
-				D0D1249317FCB19500E37C45 /* CFNetwork.framework in Frameworks */,
-				D0D1249117FCB15000E37C45 /* Security.framework in Frameworks */,
-				D0E1976717E27C7D00135B8C /* QuartzCore.framework in Frameworks */,
-				D0E1976117E27C6A00135B8C /* libz.dylib in Frameworks */,
-				D0E1975F17E27C6300135B8C /* libicucore.dylib in Frameworks */,
-				D0E1975D17E27C5C00135B8C /* libc++.dylib in Frameworks */,
-				D0E1975B17E27C5300135B8C /* ImageIO.framework in Frameworks */,
-				D0E1975917E27C4A00135B8C /* GLKit.framework in Frameworks */,
-				D0E1975717E27C4000135B8C /* CoreText.framework in Frameworks */,
-				D0E1975517E27C3100135B8C /* CoreLocation.framework in Frameworks */,
-				D0E1975317E27C2B00135B8C /* CoreData.framework in Frameworks */,
-				D0E1975117E27C2400135B8C /* AVFoundation.framework in Frameworks */,
-				D0E1970917E276DB00135B8C /* UIKit.framework in Frameworks */,
-				D032E7441A9E6F3E0021E501 /* GoogleMaps.framework in Frameworks */,
-				D0E1970B17E276DB00135B8C /* Foundation.framework in Frameworks */,
-				D0E1970D17E276DB00135B8C /* CoreGraphics.framework in Frameworks */,
-				D0D1248E17FCB03100E37C45 /* libsqlite3.dylib in Frameworks */,
-				D0D1248F17FCB03100E37C45 /* libSystem.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D00E7AF61905AAFE003C501A /* Manager */ = {
+		D0D54B2F1B2F1F9100F8875B = {
 			isa = PBXGroup;
 			children = (
-				D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */,
-				D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */,
-				D079327B1B011D1E0086DB3F /* ETRBouncer.h */,
-				D079327C1B011D1E0086DB3F /* ETRBouncer.m */,
-				D0035C3818B2AA1E00C5EEAF /* ETRLocalUserManager.h */,
-				D0035C3918B2AA1E00C5EEAF /* ETRLocalUserManager.m */,
-				D0DA55381918165300B8A0F7 /* ETRLocationManager.h */,
-				D0DA55391918165300B8A0F7 /* ETRLocationManager.m */,
-				D0917D091AC583FE00136D31 /* ETRReachabilityManager.h */,
-				D0917D0A1AC583FE00136D31 /* ETRReachabilityManager.m */,
-				D0F0392918C379DF008DDA5F /* ETRSessionManager.h */,
-				D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */,
-			);
-			name = Manager;
-			sourceTree = "<group>";
-		};
-		D01446B91A9F9BDF00748378 /* Small Elements */ = {
-			isa = PBXGroup;
-			children = (
-				D071C3BF1B28AE6E0037F48E /* LogoWhite_240pt.png */,
-				D01446BD1A9F9E0D00748378 /* ETRCircleView.h */,
-				D01446BE1A9F9E0D00748378 /* ETRCircleView.m */,
-				D0190B361ABB7B050010E637 /* ETRShadowView.h */,
-				D0190B371ABB7B050010E637 /* ETRShadowView.m */,
-				D0FF65F41AFEA06100C8572D /* ETRImageView.h */,
-				D0FF65F51AFEA06100C8572D /* ETRImageView.m */,
-			);
-			name = "Small Elements";
-			sourceTree = "<group>";
-		};
-		D02965561B16607200FABACD /* SessionTabs */ = {
-			isa = PBXGroup;
-			children = (
-				D02965501B1638FF00FABACD /* ETRConversationListViewController.h */,
-				D02965511B1638FF00FABACD /* ETRConversationListViewController.m */,
-				D029654D1B15FCE700FABACD /* ETRSessionTabBarController.h */,
-				D029654E1B15FCE700FABACD /* ETRSessionTabBarController.m */,
-				D013BB8C1AFAAD2000DA1895 /* ETRUserListViewController.h */,
-				D013BB8D1AFAAD2000DA1895 /* ETRUserListViewController.m */,
-				D02965531B16441500FABACD /* ETRUserListBaseViewController.h */,
-				D02965541B16441500FABACD /* ETRUserListBaseViewController.m */,
-			);
-			name = SessionTabs;
-			sourceTree = "<group>";
-		};
-		D04352461AB3A8D200CF95AB /* TableCells */ = {
-			isa = PBXGroup;
-			children = (
-				D00A15FD1AAA1DDF0036B25B /* ETRHeaderCell.h */,
-				D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */,
-				D0B3D4681AC481290070F282 /* ETRInfoCell.h */,
-				D0B3D4691AC481290070F282 /* ETRInfoCell.m */,
-				D01446C41A9FF04D00748378 /* ETRInformationCell.h */,
-				D01446C51A9FF04D00748378 /* ETRInformationCell.m */,
-				D00A16001AAA1DFA0036B25B /* ETRKeyValueCell.h */,
-				D00A16011AAA1DFA0036B25B /* ETRKeyValueCell.m */,
-				D03133961AAB582B004E981B /* ETRKeyValueEditorCell.h */,
-				D03133971AAB582B004E981B /* ETRKeyValueEditorCell.m */,
-				D03133991AAB5860004E981B /* ETRProfileHeaderEditorCell.h */,
-				D031339A1AAB5860004E981B /* ETRProfileHeaderEditorCell.m */,
-				D00A16061AAA1E330036B25B /* ETRProfileSocialCell.h */,
-				D00A16071AAA1E330036B25B /* ETRProfileSocialCell.m */,
-				D0586CF01ACB11F100C55E4C /* ETRReceivedMediaCell.h */,
-				D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */,
-				D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */,
-				D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */,
-				D020733117EBB34400453B69 /* ETRRoomCell.h */,
-				D01A602518E35BF900730A1B /* ETRRoomCell.m */,
-				D0586CED1ACB11E200C55E4C /* ETRSentMediaCell.h */,
-				D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */,
-				D04352471AB3AA9C00CF95AB /* ETRSentMessageCell.h */,
-				D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */,
-				D0C821C71AC21B2C00549EEA /* ETRUserCell.h */,
-				D0C821C81AC21B2C00549EEA /* ETRUserCell.m */,
-				D071C3C41B28E5860037F48E /* ETRSettingCell.h */,
-				D071C3C51B28E5860037F48E /* ETRSettingCell.m */,
-			);
-			name = TableCells;
-			sourceTree = "<group>";
-		};
-		D0BF1FDB18C3D4D800E17774 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				D0081F5618C546B200D0819A /* ETRAlertViewFactory.h */,
-				D0081F5718C546B200D0819A /* ETRAlertViewFactory.m */,
-				D07E1C1A1AC9994400B86E1A /* ETRAnimator.h */,
-				D07E1C1B1AC9994400B86E1A /* ETRAnimator.m */,
-				D01446C11A9FD90A00748378 /* ETRImageConnectionHandler.h */,
-				D01446C21A9FD90A00748378 /* ETRImageConnectionHandler.m */,
-				D048E2931AA65083001631CB /* ETRImageEditor.h */,
-				D048E2941AA65083001631CB /* ETRImageEditor.m */,
-				D090E0EB18CF5C1400366E19 /* ETRImageLoader.h */,
-				D090E0EC18CF5C1400366E19 /* ETRImageLoader.m */,
-				D02E42541AB4B06C00A46CF5 /* ETRReadabilityHelper.h */,
-				D02E42551AB4B06C00A46CF5 /* ETRReadabilityHelper.m */,
-			);
-			name = Utils;
-			sourceTree = "<group>";
-		};
-		D0CF29DB1851FA460012AF7F /* DataModel */ = {
-			isa = PBXGroup;
-			children = (
-				D0E31B621AA377F40008AF9F /* ETRAction.h */,
-				D0E31B631AA377F40008AF9F /* ETRAction.m */,
-				D01446B41A9F573900748378 /* ETRChatObject.h */,
-				D01446B51A9F573900748378 /* ETRChatObject.m */,
-				D0C821CA1AC2247500549EEA /* ETRConversation.h */,
-				D0C821CB1AC2247500549EEA /* ETRConversation.m */,
-				D0795F8C1AA48E76009CCF73 /* ETRCoreDataHelper.h */,
-				D0795F8D1AA48E76009CCF73 /* ETRCoreDataHelper.m */,
-				D0E31B5F1AA377F40008AF9F /* ETRRoom.h */,
-				D0E31B601AA377F40008AF9F /* ETRRoom.m */,
-				D0E31B5C1AA377F30008AF9F /* ETRUser.h */,
-				D0E31B5D1AA377F30008AF9F /* ETRUser.m */,
-				D0529A0B1AA26FED002211A3 /* Realay.xcdatamodeld */,
-			);
-			name = DataModel;
-			sourceTree = "<group>";
-		};
-		D0DA55311917E6D400B8A0F7 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				D0E4E8DE1AA0A94700ADF026 /* placeholder_map.png */,
-				D0E1971A17E276DB00135B8C /* Default.png */,
-				D0E1971C17E276DB00135B8C /* Default@2x.png */,
-				D0E1971E17E276DB00135B8C /* Default-568h@2x.png */,
-				D0F2AB0018FFDA14008B7C32 /* empty.jpg */,
-			);
-			name = Images;
-			sourceTree = "<group>";
-		};
-		D0E196FC17E276DB00135B8C = {
-			isa = PBXGroup;
-			children = (
-				D079327E1B014B690086DB3F /* Launch Screen.xib */,
-				D0795F8F1AA4FB92009CCF73 /* lustgarten.gpx */,
-				D0E1970617E276DB00135B8C /* Products */,
-				D0E1970E17E276DB00135B8C /* Realay */,
+				D0D54B3A1B2F1F9100F8875B /* Realay */,
+				D0D54B391B2F1F9100F8875B /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		D0E1970617E276DB00135B8C /* Products */ = {
+		D0D54B391B2F1F9100F8875B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D0E1970517E276DB00135B8C /* Realay.app */,
+				D0D54B381B2F1F9100F8875B /* Realay.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D0E1970717E276DB00135B8C /* Frameworks */ = {
+		D0D54B3A1B2F1F9100F8875B /* Realay */ = {
 			isa = PBXGroup;
 			children = (
-				D0A472EA1AC88791006A1089 /* AddressBook.framework */,
-				D0917D0F1AC588E200136D31 /* Reachability.h */,
-				D0917D101AC588E200136D31 /* Reachability.m */,
-				D032E7491A9E71570021E501 /* GoogleMaps.bundle */,
-				D032E7431A9E6F3E0021E501 /* GoogleMaps.framework */,
-				D0D1249217FCB19500E37C45 /* CFNetwork.framework */,
-				D0D1249017FCB15000E37C45 /* Security.framework */,
-				D0F63EA318DA2B740082A468 /* GoogleMaps.framework */,
-				D0CF29DC185264210012AF7F /* OpenGLES.framework */,
-				D0E1976017E27C6A00135B8C /* libz.dylib */,
-				D0E1975E17E27C6300135B8C /* libicucore.dylib */,
-				D0E1975C17E27C5C00135B8C /* libc++.dylib */,
-				D0D1248917FCB03100E37C45 /* libsqlite3.dylib */,
-				D0D1248A17FCB03100E37C45 /* libSystem.dylib */,
-				D0E1975A17E27C5300135B8C /* ImageIO.framework */,
-				D0E1975817E27C4A00135B8C /* GLKit.framework */,
-				D0E1975617E27C4000135B8C /* CoreText.framework */,
-				D0E1975417E27C3100135B8C /* CoreLocation.framework */,
-				D0E1975217E27C2B00135B8C /* CoreData.framework */,
-				D0E1975017E27C2400135B8C /* AVFoundation.framework */,
-				D0E1976617E27C7D00135B8C /* QuartzCore.framework */,
-				D0E1976417E27C7700135B8C /* SystemConfiguration.framework */,
-				D0E1970817E276DB00135B8C /* UIKit.framework */,
-				D0E1970A17E276DB00135B8C /* Foundation.framework */,
-				D0E1970C17E276DB00135B8C /* CoreGraphics.framework */,
-			);
-			name = Frameworks;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		D0E1970E17E276DB00135B8C /* Realay */ = {
-			isa = PBXGroup;
-			children = (
-				D0CF29DB1851FA460012AF7F /* DataModel */,
-				D0E1971717E276DB00135B8C /* ETRAppDelegate.h */,
-				D0E1971817E276DB00135B8C /* ETRAppDelegate.m */,
-				D0E092771AB62B7800D190F8 /* ETRDefaultsHelper.h */,
-				D0E092781AB62B7800D190F8 /* ETRDefaultsHelper.m */,
-				D0E6D97118B3A369005B4F7F /* ETRServerAPIHelper.h */,
-				D0E6D97218B3A369005B4F7F /* ETRServerAPIHelper.m */,
-				D0DE0DD4184BB1880039DE0E /* Settings.bundle */,
-				D0E1970717E276DB00135B8C /* Frameworks */,
-				D00E7AF61905AAFE003C501A /* Manager */,
-				D0E1970F17E276DB00135B8C /* Supporting Files */,
-				D0F39EC517F1141F00D60257 /* UI */,
+				D0D54B4F1B2F1F9100F8875B /* Info.plist */,
+				D0D54B3E1B2F1F9100F8875B /* ETRAppDelegate.h */,
+				D0D54B3F1B2F1F9100F8875B /* ETRAppDelegate.m */,
+				D0D54BFC1B2F21B500F8875B /* ETRDefaultsHelper.h */,
+				D0D54BFD1B2F21B500F8875B /* ETRDefaultsHelper.m */,
+				D0D54BF01B2F21A400F8875B /* Connection */,
+				D0D54BDD1B2F219500F8875B /* DataModel */,
+				D0D54BCA1B2F218F00F8875B /* Manager */,
+				D0D54B551B2F218300F8875B /* UI */,
+				D0D54C001B2F21C200F8875B /* lustgarten.gpx */,
+				D0D54B3B1B2F1F9100F8875B /* Supporting Files */,
 			);
 			path = Realay;
 			sourceTree = "<group>";
 		};
-		D0E1970F17E276DB00135B8C /* Supporting Files */ = {
+		D0D54B3B1B2F1F9100F8875B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D002484B1B2E11BA008337A4 /* Realay-Info.plist */,
-				D0DA55311917E6D400B8A0F7 /* Images */,
-				D0ED14E518C9373E002F6CEE /* ChatBubbles */,
-				D0F02E2C1B2E0A3100D453F4 /* Realay-Info.plist */,
-				D0E1971117E276DB00135B8C /* InfoPlist.strings */,
-				D0E1971417E276DB00135B8C /* main.m */,
-				D0E1971617E276DB00135B8C /* Realay-Prefix.pch */,
+				D0D54B3C1B2F1F9100F8875B /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		D0ED14E518C9373E002F6CEE /* ChatBubbles */ = {
+		D0D54B551B2F218300F8875B /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				D06E464E18D3966D00833C94 /* RightBubble.png */,
-				D06E464F18D3966D00833C94 /* RightBubble@2x.png */,
-				D06E464A18D3945A00833C94 /* LeftBubble.png */,
-				D06E464B18D3945A00833C94 /* LeftBubble@2x.png */,
+				D0D54B4A1B2F1F9100F8875B /* Assets.xcassets */,
+				D0D54B441B2F1F9100F8875B /* Main.storyboard */,
+				D0D54C071B2F298C00F8875B /* Launch Screen.storyboard */,
+				D0D54B561B2F218300F8875B /* Elements */,
+				D0D54B5B1B2F218300F8875B /* ETRBaseViewController.h */,
+				D0D54B5C1B2F218300F8875B /* ETRBaseViewController.m */,
+				D0D54B5D1B2F218300F8875B /* ETRBlockedUsersViewController.h */,
+				D0D54B5E1B2F218300F8875B /* ETRBlockedUsersViewController.m */,
+				D0D54B5F1B2F218300F8875B /* ETRConversationListViewController.h */,
+				D0D54B601B2F218300F8875B /* ETRConversationListViewController.m */,
+				D0D54B611B2F218300F8875B /* ETRConversationViewController.h */,
+				D0D54B621B2F218300F8875B /* ETRConversationViewController.m */,
+				D0D54B631B2F218300F8875B /* ETRDetailsViewController.h */,
+				D0D54B641B2F218300F8875B /* ETRDetailsViewController.m */,
+				D0D54B651B2F218300F8875B /* ETRJoinViewController.h */,
+				D0D54B661B2F218300F8875B /* ETRJoinViewController.m */,
+				D0D54B671B2F218300F8875B /* ETRLoginViewController.h */,
+				D0D54B681B2F218300F8875B /* ETRLoginViewController.m */,
+				D0D54B691B2F218300F8875B /* ETRMapViewController.h */,
+				D0D54B6A1B2F218300F8875B /* ETRMapViewController.m */,
+				D0D54B6B1B2F218300F8875B /* ETRPasswordViewController.h */,
+				D0D54B6C1B2F218300F8875B /* ETRPasswordViewController.m */,
+				D0D54B6D1B2F218300F8875B /* ETRProfileEditorViewController.h */,
+				D0D54B6E1B2F218300F8875B /* ETRProfileEditorViewController.m */,
+				D0D54B6F1B2F218300F8875B /* ETRRoomListViewController.h */,
+				D0D54B701B2F218300F8875B /* ETRRoomListViewController.m */,
+				D0D54B711B2F218300F8875B /* ETRSessionTabBarController.h */,
+				D0D54B721B2F218300F8875B /* ETRSessionTabBarController.m */,
+				D0D54B731B2F218300F8875B /* ETRSettingsTableViewController.h */,
+				D0D54B741B2F218300F8875B /* ETRSettingsTableViewController.m */,
+				D0D54B751B2F218300F8875B /* ETRUIConstants.h */,
+				D0D54B761B2F218300F8875B /* ETRUIConstants.m */,
+				D0D54B771B2F218300F8875B /* ETRUserListBaseViewController.h */,
+				D0D54B781B2F218300F8875B /* ETRUserListBaseViewController.m */,
+				D0D54B791B2F218300F8875B /* ETRUserListViewController.h */,
+				D0D54B7A1B2F218300F8875B /* ETRUserListViewController.m */,
+				D0D54B7B1B2F218300F8875B /* Localizable.strings */,
+				D0D54B7C1B2F218300F8875B /* TableCells */,
+				D0D54B991B2F218300F8875B /* Utils */,
 			);
-			name = ChatBubbles;
+			path = UI;
 			sourceTree = "<group>";
 		};
-		D0F39EC517F1141F00D60257 /* UI */ = {
+		D0D54B561B2F218300F8875B /* Elements */ = {
 			isa = PBXGroup;
 			children = (
-				D02965561B16607200FABACD /* SessionTabs */,
-				D01087821B00D22100341E07 /* ETRBaseViewController.h */,
-				D01087831B00D22100341E07 /* ETRBaseViewController.m */,
-				D02465C61AF92CD80049CDB4 /* ETRBlockedUsersViewController.h */,
-				D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */,
-				D0DE0DD1184BAC7E0039DE0E /* ETRConversationViewController.h */,
-				D0DE0DD2184BAC7E0039DE0E /* ETRConversationViewController.m */,
-				D00A16091AAA25BC0036B25B /* ETRDetailsViewController.h */,
-				D00A160A1AAA25BC0036B25B /* ETRDetailsViewController.m */,
-				D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */,
-				D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */,
-				D0D0CEEB17E74EE70079017F /* ETRLoginViewController.h */,
-				D0D0CEEC17E74EE70079017F /* ETRLoginViewController.m */,
-				D0D7D8BF17EFADCF00F8008E /* ETRMapViewController.h */,
-				D0D7D8C017EFADCF00F8008E /* ETRMapViewController.m */,
-				D0E87A5D18D79B73001D5371 /* ETRPasswordViewController.h */,
-				D0E87A5E18D79B73001D5371 /* ETRPasswordViewController.m */,
-				D03133931AAB5754004E981B /* ETRProfileEditorViewController.h */,
-				D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */,
-				D0EFD9B617E90E5000522146 /* ETRRoomListViewController.h */,
-				D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */,
-				D071C3C11B28E0800037F48E /* ETRSettingsTableViewController.h */,
-				D071C3C21B28E0800037F48E /* ETRSettingsTableViewController.m */,
-				D0190B331ABB726D0010E637 /* ETRUIConstants.h */,
-				D0190B341ABB726D0010E637 /* ETRUIConstants.m */,
-				D01446B71A9F78F500748378 /* Images.xcassets */,
-				D0BB824D1AB2483B00276D5C /* Localizable.strings */,
-				D00A16101AAA571C0036B25B /* NewStoryboard.storyboard */,
-				D01446B91A9F9BDF00748378 /* Small Elements */,
-				D04352461AB3A8D200CF95AB /* TableCells */,
-				D0BF1FDB18C3D4D800E17774 /* Utils */,
+				D0D54B571B2F218300F8875B /* ETRImageView.h */,
+				D0D54B581B2F218300F8875B /* ETRImageView.m */,
+				D0D54B591B2F218300F8875B /* ETRShadowView.h */,
+				D0D54B5A1B2F218300F8875B /* ETRShadowView.m */,
 			);
-			name = UI;
+			path = Elements;
+			sourceTree = "<group>";
+		};
+		D0D54B7C1B2F218300F8875B /* TableCells */ = {
+			isa = PBXGroup;
+			children = (
+				D0D54B7D1B2F218300F8875B /* ETRHeaderCell.h */,
+				D0D54B7E1B2F218300F8875B /* ETRHeaderCell.m */,
+				D0D54B7F1B2F218300F8875B /* ETRInfoCell.h */,
+				D0D54B801B2F218300F8875B /* ETRInfoCell.m */,
+				D0D54B811B2F218300F8875B /* ETRInformationCell.h */,
+				D0D54B821B2F218300F8875B /* ETRInformationCell.m */,
+				D0D54B831B2F218300F8875B /* ETRKeyValueCell.h */,
+				D0D54B841B2F218300F8875B /* ETRKeyValueCell.m */,
+				D0D54B851B2F218300F8875B /* ETRKeyValueEditorCell.h */,
+				D0D54B861B2F218300F8875B /* ETRKeyValueEditorCell.m */,
+				D0D54B871B2F218300F8875B /* ETRProfileHeaderEditorCell.h */,
+				D0D54B881B2F218300F8875B /* ETRProfileHeaderEditorCell.m */,
+				D0D54B891B2F218300F8875B /* ETRProfileSocialCell.h */,
+				D0D54B8A1B2F218300F8875B /* ETRProfileSocialCell.m */,
+				D0D54B8B1B2F218300F8875B /* ETRReceivedMediaCell.h */,
+				D0D54B8C1B2F218300F8875B /* ETRReceivedMediaCell.m */,
+				D0D54B8D1B2F218300F8875B /* ETRReceivedMessageCell.h */,
+				D0D54B8E1B2F218300F8875B /* ETRReceivedMessageCell.m */,
+				D0D54B8F1B2F218300F8875B /* ETRRoomCell.h */,
+				D0D54B901B2F218300F8875B /* ETRRoomCell.m */,
+				D0D54B911B2F218300F8875B /* ETRSentMediaCell.h */,
+				D0D54B921B2F218300F8875B /* ETRSentMediaCell.m */,
+				D0D54B931B2F218300F8875B /* ETRSentMessageCell.h */,
+				D0D54B941B2F218300F8875B /* ETRSentMessageCell.m */,
+				D0D54B951B2F218300F8875B /* ETRSettingCell.h */,
+				D0D54B961B2F218300F8875B /* ETRSettingCell.m */,
+				D0D54B971B2F218300F8875B /* ETRUserCell.h */,
+				D0D54B981B2F218300F8875B /* ETRUserCell.m */,
+			);
+			path = TableCells;
+			sourceTree = "<group>";
+		};
+		D0D54B991B2F218300F8875B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				D0D54B9A1B2F218300F8875B /* ETRAlertViewFactory.h */,
+				D0D54B9B1B2F218300F8875B /* ETRAlertViewFactory.m */,
+				D0D54B9C1B2F218300F8875B /* ETRAnimator.h */,
+				D0D54B9D1B2F218300F8875B /* ETRAnimator.m */,
+				D0D54B9E1B2F218300F8875B /* ETRImageEditor.h */,
+				D0D54B9F1B2F218300F8875B /* ETRImageEditor.m */,
+				D0D54BA01B2F218300F8875B /* ETRImageLoader.h */,
+				D0D54BA11B2F218300F8875B /* ETRImageLoader.m */,
+				D0D54BA21B2F218300F8875B /* ETRReadabilityHelper.h */,
+				D0D54BA31B2F218300F8875B /* ETRReadabilityHelper.m */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		D0D54BCA1B2F218F00F8875B /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				D0D54BCB1B2F218F00F8875B /* ETRActionManager.h */,
+				D0D54BCC1B2F218F00F8875B /* ETRActionManager.m */,
+				D0D54BCD1B2F218F00F8875B /* ETRBouncer.h */,
+				D0D54BCE1B2F218F00F8875B /* ETRBouncer.m */,
+				D0D54BCF1B2F218F00F8875B /* ETRLocalUserManager.h */,
+				D0D54BD01B2F218F00F8875B /* ETRLocalUserManager.m */,
+				D0D54BD11B2F218F00F8875B /* ETRLocationManager.h */,
+				D0D54BD21B2F218F00F8875B /* ETRLocationManager.m */,
+				D0D54BD31B2F218F00F8875B /* ETRReachabilityManager.h */,
+				D0D54BD41B2F218F00F8875B /* ETRReachabilityManager.m */,
+				D0D54BD51B2F218F00F8875B /* ETRSessionManager.h */,
+				D0D54BD61B2F218F00F8875B /* ETRSessionManager.m */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		D0D54BDD1B2F219500F8875B /* DataModel */ = {
+			isa = PBXGroup;
+			children = (
+				D0D54BDE1B2F219500F8875B /* ETRAction.h */,
+				D0D54BDF1B2F219500F8875B /* ETRAction.m */,
+				D0D54BE01B2F219500F8875B /* ETRChatObject.h */,
+				D0D54BE11B2F219500F8875B /* ETRChatObject.m */,
+				D0D54BE21B2F219500F8875B /* ETRConversation.h */,
+				D0D54BE31B2F219500F8875B /* ETRConversation.m */,
+				D0D54BE41B2F219500F8875B /* ETRCoreDataHelper.h */,
+				D0D54BE51B2F219500F8875B /* ETRCoreDataHelper.m */,
+				D0D54BE61B2F219500F8875B /* ETRRoom.h */,
+				D0D54BE71B2F219500F8875B /* ETRRoom.m */,
+				D0D54BE81B2F219500F8875B /* ETRUser.h */,
+				D0D54BE91B2F219500F8875B /* ETRUser.m */,
+				D0D54B471B2F1F9100F8875B /* Realay.xcdatamodeld */,
+			);
+			path = DataModel;
+			sourceTree = "<group>";
+		};
+		D0D54BF01B2F21A400F8875B /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				D0D54BF11B2F21A400F8875B /* ETRImageConnectionHandler.h */,
+				D0D54BF21B2F21A400F8875B /* ETRImageConnectionHandler.m */,
+				D0D54BF31B2F21A400F8875B /* ETRServerAPIHelper.h */,
+				D0D54BF41B2F21A400F8875B /* ETRServerAPIHelper.m */,
+				D0D54BF51B2F21A400F8875B /* Reachability.h */,
+				D0D54BF61B2F21A400F8875B /* Reachability.m */,
+			);
+			path = Connection;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D0E1970417E276DB00135B8C /* Realay */ = {
+		D0D54B371B2F1F9100F8875B /* Realay */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D0E1972817E276DB00135B8C /* Build configuration list for PBXNativeTarget "Realay" */;
+			buildConfigurationList = D0D54B521B2F1F9100F8875B /* Build configuration list for PBXNativeTarget "Realay" */;
 			buildPhases = (
-				D0E1970117E276DB00135B8C /* Sources */,
-				D0E1970217E276DB00135B8C /* Frameworks */,
-				D0E1970317E276DB00135B8C /* Resources */,
+				D0D54B341B2F1F9100F8875B /* Sources */,
+				D0D54B351B2F1F9100F8875B /* Frameworks */,
+				D0D54B361B2F1F9100F8875B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -582,20 +421,20 @@
 			);
 			name = Realay;
 			productName = Realay;
-			productReference = D0E1970517E276DB00135B8C /* Realay.app */;
+			productReference = D0D54B381B2F1F9100F8875B /* Realay.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D0E196FD17E276DB00135B8C /* Project object */ = {
+		D0D54B301B2F1F9100F8875B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = ETR;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Easy Target";
 				TargetAttributes = {
-					D0E1970417E276DB00135B8C = {
+					D0D54B371B2F1F9100F8875B = {
+						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = X59SC9WX5X;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -605,286 +444,247 @@
 					};
 				};
 			};
-			buildConfigurationList = D0E1970017E276DB00135B8C /* Build configuration list for PBXProject "Realay" */;
+			buildConfigurationList = D0D54B331B2F1F9100F8875B /* Build configuration list for PBXProject "Realay" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				Base,
-				de,
-				English,
 				en,
+				Base,
 			);
-			mainGroup = D0E196FC17E276DB00135B8C;
-			productRefGroup = D0E1970617E276DB00135B8C /* Products */;
+			mainGroup = D0D54B2F1B2F1F9100F8875B;
+			productRefGroup = D0D54B391B2F1F9100F8875B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D0E1970417E276DB00135B8C /* Realay */,
+				D0D54B371B2F1F9100F8875B /* Realay */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		D0E1970317E276DB00135B8C /* Resources */ = {
+		D0D54B361B2F1F9100F8875B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D06E465018D3966D00833C94 /* RightBubble.png in Resources */,
-				D06E465118D3966D00833C94 /* RightBubble@2x.png in Resources */,
-				D002484C1B2E11BA008337A4 /* Realay-Info.plist in Resources */,
-				D00A16111AAA571C0036B25B /* NewStoryboard.storyboard in Resources */,
-				D0E1971317E276DB00135B8C /* InfoPlist.strings in Resources */,
-				D01446B81A9F78F500748378 /* Images.xcassets in Resources */,
-				D071C3C01B28AE6E0037F48E /* LogoWhite_240pt.png in Resources */,
-				D0E1971B17E276DB00135B8C /* Default.png in Resources */,
-				D06E464C18D3945A00833C94 /* LeftBubble.png in Resources */,
-				D032E74A1A9E71570021E501 /* GoogleMaps.bundle in Resources */,
-				D0E4E8DF1AA0A94700ADF026 /* placeholder_map.png in Resources */,
-				D079327F1B014B690086DB3F /* Launch Screen.xib in Resources */,
-				D0E1971D17E276DB00135B8C /* Default@2x.png in Resources */,
-				D0795F901AA4FB92009CCF73 /* lustgarten.gpx in Resources */,
-				D0E1971F17E276DB00135B8C /* Default-568h@2x.png in Resources */,
-				D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */,
-				D0BB824E1AB2483B00276D5C /* Localizable.strings in Resources */,
-				D0DE0DD5184BB1880039DE0E /* Settings.bundle in Resources */,
-				D0F2AB0118FFDA14008B7C32 /* empty.jpg in Resources */,
+				D0D54C021B2F21C200F8875B /* lustgarten.gpx in Resources */,
+				D0D54BB61B2F218300F8875B /* Localizable.strings in Resources */,
+				D0D54B4B1B2F1F9100F8875B /* Assets.xcassets in Resources */,
+				D0D54C081B2F298C00F8875B /* Launch Screen.storyboard in Resources */,
+				D0D54B461B2F1F9100F8875B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D0E1970117E276DB00135B8C /* Sources */ = {
+		D0D54B341B2F1F9100F8875B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0586CF21ACB11F100C55E4C /* ETRReceivedMediaCell.m in Sources */,
-				D071C3C61B28E5860037F48E /* ETRSettingCell.m in Sources */,
-				D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */,
-				D01446B61A9F573900748378 /* ETRChatObject.m in Sources */,
-				D079327D1B011D1E0086DB3F /* ETRBouncer.m in Sources */,
-				D0E1971517E276DB00135B8C /* main.m in Sources */,
-				D00A15FF1AAA1DDF0036B25B /* ETRHeaderCell.m in Sources */,
-				D02965551B16441500FABACD /* ETRUserListBaseViewController.m in Sources */,
-				D01446C31A9FD90A00748378 /* ETRImageConnectionHandler.m in Sources */,
-				D0C821C91AC21B2C00549EEA /* ETRUserCell.m in Sources */,
-				D0DA553A1918165300B8A0F7 /* ETRLocationManager.m in Sources */,
-				D0E1971917E276DB00135B8C /* ETRAppDelegate.m in Sources */,
-				D0FF65F61AFEA06100C8572D /* ETRImageView.m in Sources */,
-				D0917D111AC588E200136D31 /* Reachability.m in Sources */,
-				D026A9AB1AB8D0D0006FB920 /* ETRReceivedMessageCell.m in Sources */,
-				D0081F5818C546B200D0819A /* ETRAlertViewFactory.m in Sources */,
-				D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */,
-				D02E42561AB4B06C00A46CF5 /* ETRReadabilityHelper.m in Sources */,
-				D0190B351ABB726D0010E637 /* ETRUIConstants.m in Sources */,
-				D01A602618E35BF900730A1B /* ETRRoomCell.m in Sources */,
-				D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */,
-				D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */,
-				D0E31B5E1AA377F30008AF9F /* ETRUser.m in Sources */,
-				D0586CEF1ACB11E200C55E4C /* ETRSentMediaCell.m in Sources */,
-				D0917D0B1AC583FE00136D31 /* ETRReachabilityManager.m in Sources */,
-				D0D0CEED17E74EE70079017F /* ETRLoginViewController.m in Sources */,
-				D0EFD9B817E90E5000522146 /* ETRRoomListViewController.m in Sources */,
-				D0EC763C18EDFC5C00CB0BAE /* ETRSessionManager.m in Sources */,
-				D0E31B641AA377F40008AF9F /* ETRAction.m in Sources */,
-				D01087841B00D22100341E07 /* ETRBaseViewController.m in Sources */,
-				D03133981AAB582B004E981B /* ETRKeyValueEditorCell.m in Sources */,
-				D0D7D8C117EFADCF00F8008E /* ETRMapViewController.m in Sources */,
-				D0035C3A18B2AA1E00C5EEAF /* ETRLocalUserManager.m in Sources */,
-				D02465C81AF92CD80049CDB4 /* ETRBlockedUsersViewController.m in Sources */,
-				D0190B381ABB7B050010E637 /* ETRShadowView.m in Sources */,
-				D01446BF1A9F9E0D00748378 /* ETRCircleView.m in Sources */,
-				D0DE0DD3184BAC7E0039DE0E /* ETRConversationViewController.m in Sources */,
-				D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */,
-				D04352491AB3AA9C00CF95AB /* ETRSentMessageCell.m in Sources */,
-				D02965521B1638FF00FABACD /* ETRConversationListViewController.m in Sources */,
-				D0C821CC1AC2247500549EEA /* ETRConversation.m in Sources */,
-				D0E87A5F18D79B73001D5371 /* ETRPasswordViewController.m in Sources */,
-				D00A16081AAA1E330036B25B /* ETRProfileSocialCell.m in Sources */,
-				D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */,
-				D029654F1B15FCE700FABACD /* ETRSessionTabBarController.m in Sources */,
-				D071C3C31B28E0800037F48E /* ETRSettingsTableViewController.m in Sources */,
-				D0B3D46A1AC481290070F282 /* ETRInfoCell.m in Sources */,
-				D00A160B1AAA25BC0036B25B /* ETRDetailsViewController.m in Sources */,
-				D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */,
-				D013BB8E1AFAAD2000DA1895 /* ETRUserListViewController.m in Sources */,
-				D031339B1AAB5860004E981B /* ETRProfileHeaderEditorCell.m in Sources */,
-				D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */,
-				D0E092791AB62B7800D190F8 /* ETRDefaultsHelper.m in Sources */,
-				D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */,
-				D0E31B611AA377F40008AF9F /* ETRRoom.m in Sources */,
-				D07E1C1C1AC9994400B86E1A /* ETRAnimator.m in Sources */,
-				D0529A0D1AA26FED002211A3 /* Realay.xcdatamodeld in Sources */,
+				D0D54BBE1B2F218300F8875B /* ETRReceivedMediaCell.m in Sources */,
+				D0D54BF71B2F21A400F8875B /* ETRImageConnectionHandler.m in Sources */,
+				D0D54BB31B2F218300F8875B /* ETRUIConstants.m in Sources */,
+				D0D54BED1B2F219500F8875B /* ETRCoreDataHelper.m in Sources */,
+				D0D54BC21B2F218300F8875B /* ETRSentMessageCell.m in Sources */,
+				D0D54BD81B2F218F00F8875B /* ETRBouncer.m in Sources */,
+				D0D54BA81B2F218300F8875B /* ETRConversationListViewController.m in Sources */,
+				D0D54BD71B2F218F00F8875B /* ETRActionManager.m in Sources */,
+				D0D54B491B2F1F9100F8875B /* Realay.xcdatamodeld in Sources */,
+				D0D54BF91B2F21A400F8875B /* Reachability.m in Sources */,
+				D0D54BA71B2F218300F8875B /* ETRBlockedUsersViewController.m in Sources */,
+				D0D54BAB1B2F218300F8875B /* ETRJoinViewController.m in Sources */,
+				D0D54BA61B2F218300F8875B /* ETRBaseViewController.m in Sources */,
+				D0D54BBC1B2F218300F8875B /* ETRProfileHeaderEditorCell.m in Sources */,
+				D0D54BC91B2F218300F8875B /* ETRReadabilityHelper.m in Sources */,
+				D0D54BC41B2F218300F8875B /* ETRUserCell.m in Sources */,
+				D0D54BB71B2F218300F8875B /* ETRHeaderCell.m in Sources */,
+				D0D54BC51B2F218300F8875B /* ETRAlertViewFactory.m in Sources */,
+				D0D54BB21B2F218300F8875B /* ETRSettingsTableViewController.m in Sources */,
+				D0D54BB91B2F218300F8875B /* ETRInformationCell.m in Sources */,
+				D0D54BDC1B2F218F00F8875B /* ETRSessionManager.m in Sources */,
+				D0D54BEF1B2F219500F8875B /* ETRUser.m in Sources */,
+				D0D54BDB1B2F218F00F8875B /* ETRReachabilityManager.m in Sources */,
+				D0D54BA51B2F218300F8875B /* ETRShadowView.m in Sources */,
+				D0D54BC81B2F218300F8875B /* ETRImageLoader.m in Sources */,
+				D0D54BD91B2F218F00F8875B /* ETRLocalUserManager.m in Sources */,
+				D0D54BDA1B2F218F00F8875B /* ETRLocationManager.m in Sources */,
+				D0D54BC61B2F218300F8875B /* ETRAnimator.m in Sources */,
+				D0D54BAE1B2F218300F8875B /* ETRPasswordViewController.m in Sources */,
+				D0D54BAD1B2F218300F8875B /* ETRMapViewController.m in Sources */,
+				D0D54B401B2F1F9100F8875B /* ETRAppDelegate.m in Sources */,
+				D0D54BC01B2F218300F8875B /* ETRRoomCell.m in Sources */,
+				D0D54BC31B2F218300F8875B /* ETRSettingCell.m in Sources */,
+				D0D54BAF1B2F218300F8875B /* ETRProfileEditorViewController.m in Sources */,
+				D0D54BA91B2F218300F8875B /* ETRConversationViewController.m in Sources */,
+				D0D54BEC1B2F219500F8875B /* ETRConversation.m in Sources */,
+				D0D54BBF1B2F218300F8875B /* ETRReceivedMessageCell.m in Sources */,
+				D0D54BB11B2F218300F8875B /* ETRSessionTabBarController.m in Sources */,
+				D0D54BC71B2F218300F8875B /* ETRImageEditor.m in Sources */,
+				D0D54BA41B2F218300F8875B /* ETRImageView.m in Sources */,
+				D0D54BBD1B2F218300F8875B /* ETRProfileSocialCell.m in Sources */,
+				D0D54BB01B2F218300F8875B /* ETRRoomListViewController.m in Sources */,
+				D0D54BC11B2F218300F8875B /* ETRSentMediaCell.m in Sources */,
+				D0D54BF81B2F21A400F8875B /* ETRServerAPIHelper.m in Sources */,
+				D0D54BBA1B2F218300F8875B /* ETRKeyValueCell.m in Sources */,
+				D0D54BBB1B2F218300F8875B /* ETRKeyValueEditorCell.m in Sources */,
+				D0D54BB51B2F218300F8875B /* ETRUserListViewController.m in Sources */,
+				D0D54B3D1B2F1F9100F8875B /* main.m in Sources */,
+				D0D54BEB1B2F219500F8875B /* ETRChatObject.m in Sources */,
+				D0D54BAC1B2F218300F8875B /* ETRLoginViewController.m in Sources */,
+				D0D54BB41B2F218300F8875B /* ETRUserListBaseViewController.m in Sources */,
+				D0D54BEE1B2F219500F8875B /* ETRRoom.m in Sources */,
+				D0D54BAA1B2F218300F8875B /* ETRDetailsViewController.m in Sources */,
+				D0D54BB81B2F218300F8875B /* ETRInfoCell.m in Sources */,
+				D0D54BEA1B2F219500F8875B /* ETRAction.m in Sources */,
+				D0D54BFF1B2F21B500F8875B /* ETRDefaultsHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		D0E1971117E276DB00135B8C /* InfoPlist.strings */ = {
+		D0D54B441B2F1F9100F8875B /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D05E3205189EB7E300F3A94C /* de */,
-				D0F02E2F1B2E0CC500D453F4 /* Base */,
+				D0D54B451B2F1F9100F8875B /* Base */,
 			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		D0F02E2C1B2E0A3100D453F4 /* Realay-Info.plist */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D0F02E301B2E0D5900D453F4 /* en */,
-			);
-			name = "Realay-Info.plist";
+			name = Main.storyboard;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		D0E1972617E276DB00135B8C /* Debug */ = {
+		D0D54B501B2F1F9100F8875B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.easytarget.Realay;
-				PRODUCT_NAME = Realay;
 				SDKROOT = iphoneos;
-				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
-		D0E1972717E276DB00135B8C /* Release */ = {
+		D0D54B511B2F1F9100F8875B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.easytarget.Realay;
-				PRODUCT_NAME = Realay;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};
-		D0E1972917E276DB00135B8C /* Debug */ = {
+		D0D54B531B2F1F9100F8875B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Realay/Realay-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"DEBUG_JOIN=1",
-				);
-				INFOPLIST_FILE = "Realay/Realay-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Realay\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.easytarget.${PRODUCT_NAME:rfc1034identifier}";
+				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
+				INFOPLIST_FILE = Realay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.eztarget.Realay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0f9d1310-1fda-4605-8108-115b03dc0312";
-				WRAPPER_EXTENSION = app;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
-		D0E1972A17E276DB00135B8C /* Release */ = {
+		D0D54B541B2F1F9100F8875B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Realay/Realay-Prefix.pch";
-				INFOPLIST_FILE = "Realay/Realay-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Realay\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.easytarget.${PRODUCT_NAME:rfc1034identifier}";
+				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
+				INFOPLIST_FILE = Realay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.eztarget.Realay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0f9d1310-1fda-4605-8108-115b03dc0312";
-				WRAPPER_EXTENSION = app;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D0E1970017E276DB00135B8C /* Build configuration list for PBXProject "Realay" */ = {
+		D0D54B331B2F1F9100F8875B /* Build configuration list for PBXProject "Realay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D0E1972617E276DB00135B8C /* Debug */,
-				D0E1972717E276DB00135B8C /* Release */,
+				D0D54B501B2F1F9100F8875B /* Debug */,
+				D0D54B511B2F1F9100F8875B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D0E1972817E276DB00135B8C /* Build configuration list for PBXNativeTarget "Realay" */ = {
+		D0D54B521B2F1F9100F8875B /* Build configuration list for PBXNativeTarget "Realay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D0E1972917E276DB00135B8C /* Debug */,
-				D0E1972A17E276DB00135B8C /* Release */,
+				D0D54B531B2F1F9100F8875B /* Debug */,
+				D0D54B541B2F1F9100F8875B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -892,17 +692,18 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		D0529A0B1AA26FED002211A3 /* Realay.xcdatamodeld */ = {
+		D0D54B471B2F1F9100F8875B /* Realay.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				D0529A0C1AA26FED002211A3 /* Realay.xcdatamodel */,
+				D0D54B481B2F1F9100F8875B /* Realay.xcdatamodel */,
 			);
-			currentVersion = D0529A0C1AA26FED002211A3 /* Realay.xcdatamodel */;
-			path = Realay.xcdatamodeld;
-			sourceTree = SOURCE_ROOT;
+			currentVersion = D0D54B481B2F1F9100F8875B /* Realay.xcdatamodel */;
+			name = Realay.xcdatamodeld;
+			path = ../Realay.xcdatamodeld;
+			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */
 	};
-	rootObject = D0E196FD17E276DB00135B8C /* Project object */;
+	rootObject = D0D54B301B2F1F9100F8875B /* Project object */;
 }

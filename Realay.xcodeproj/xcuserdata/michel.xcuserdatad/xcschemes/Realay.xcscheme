@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "0700"
-   version = "1.7">
+   version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D0E1970417E276DB00135B8C"
+               BlueprintIdentifier = "D0D54B371B2F1F9100F8875B"
                BuildableName = "Realay.app"
                BlueprintName = "Realay"
                ReferencedContainer = "container:Realay.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D0E1970417E276DB00135B8C"
+            BlueprintIdentifier = "D0D54B371B2F1F9100F8875B"
             BuildableName = "Realay.app"
             BlueprintName = "Realay"
             ReferencedContainer = "container:Realay.xcodeproj">
@@ -50,12 +50,12 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "NO">
+      allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D0E1970417E276DB00135B8C"
+            BlueprintIdentifier = "D0D54B371B2F1F9100F8875B"
             BuildableName = "Realay.app"
             BlueprintName = "Realay"
             ReferencedContainer = "container:Realay.xcodeproj">
@@ -63,10 +63,6 @@
       </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
-      <LocationScenarioReference
-         identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
-         referenceType = "1">
-      </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
       shouldUseLaunchSchemeArgsEnv = "YES"
@@ -78,7 +74,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D0E1970417E276DB00135B8C"
+            BlueprintIdentifier = "D0D54B371B2F1F9100F8875B"
             BuildableName = "Realay.app"
             BlueprintName = "Realay"
             ReferencedContainer = "container:Realay.xcodeproj">

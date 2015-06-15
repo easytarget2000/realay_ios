@@ -14,6 +14,7 @@
 #import "ETRImageLoader.h"
 #import "ETRKeyValueCell.h"
 #import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
 #import "ETRProfileSocialCell.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
@@ -370,12 +371,14 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 #ifdef DEBUG_JOIN
         [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
 #else
-        if (![ETRLocationManager didAuthorize]) {
+        if (![[ETRLocationManager sharedManager] didAuthorize]) {
             // The location access has not been authorized.
-            [ETRAlertViewFactory showAuthorizationAlert];
+            
+            // TODO: Force the dialog.
+            [super updateAlertViews];
         } else if ([ETRLocationManager isInSessionRegion]) {
             // Show the password prompt, if the device location is inside the region.
-            [self performSegueWithIdentifier:ETRDetailsToPasswordSegue sender:nil];
+            [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
         } else {
             // The user is outside of the radius.
             [ETRAlertViewFactory showRoomDistanceAlert];

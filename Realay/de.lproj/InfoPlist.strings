@@ -1,5 +1,0 @@
-/* Localized versions of Info.plist keys */
-
-"NSLocationAlwaysUsageDescription" = "Für unbegrenzte Chatsitzungen, erlaube bitte auch den dauerhaften Standortzugriff.";
-
-"NSLocationWhenInUseUsageDescription" = "Bitte erlaube den Standortzugriff, damit du nur mit Leuten chatten kannst, die gerade in deiner Nähe sind.";

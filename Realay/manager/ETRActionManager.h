@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class ETRAction;
 @class ETRUserListViewController;
