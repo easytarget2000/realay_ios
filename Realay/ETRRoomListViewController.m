@@ -19,23 +19,23 @@
 #import "ETRLoginViewController.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
-#import "ETRRoomListCell.h"
+#import "ETRRoomCell.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
 
 
-static CGFloat const ETRRoomCellHeight = 380.0f;
+static CGFloat const ETRRoomCellHeight = 410.0f;
 
-static NSString *const ETRInfoCellIdentifier = @"infoCell";
+//static NSString *const ETRInfoCellIdentifier = @"infoCell";
 
-static NSString *const ETRRoomCellIdentifier = @"roomCell";
+static NSString *const ETRRoomCellIdentifier = @"RoomCell";
 
 static NSString *const ETRSegueRoomsToMap = @"RoomsToMap";
 
 static NSString *const ETRSegueRoomsToLogin = @"RoomsToLogin";
 
-static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
+static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 @interface ETRRoomListViewController () <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
 
@@ -155,8 +155,8 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
         }
         case NSFetchedResultsChangeUpdate: {
             UITableViewCell * cell = [[self tableView] cellForRowAtIndexPath:indexPath];
-            if (cell && [cell isKindOfClass:[ETRRoomListCell class]]) {
-                [self configureRoomCell:(ETRRoomListCell *)cell atIndexPath:indexPath];
+            if (cell && [cell isKindOfClass:[ETRRoomCell class]]) {
+                [self configureRoomCell:(ETRRoomCell *)cell atIndexPath:indexPath];
             }
             break;
         }
@@ -201,26 +201,14 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (![[_fetchedResultsController fetchedObjects] count]) {
-        return [self infoCellAtIndexPath:indexPath];
-    } else {
-        return [self roomCellAtIndexPath:indexPath];
-    }
+    return [self roomCellAtIndexPath:indexPath];
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (![[_fetchedResultsController fetchedObjects] count]) {
-//        return tableView.bounds.size.height;
-//    } else {
-//       return kRoomCellHeight;
-//    }
-//}
-
-- (ETRRoomListCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
-    ETRRoomListCell *cell;
+- (ETRRoomCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
+    ETRRoomCell *cell;
     cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRRoomCellIdentifier forIndexPath:indexPath];
     if (!cell) {
-        cell = [[ETRRoomListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ETRRoomCellIdentifier];
+        cell = [[ETRRoomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ETRRoomCellIdentifier];
     }
     
     [self configureRoomCell:cell atIndexPath:indexPath];
@@ -228,17 +216,15 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
     return cell;
 }
 
-- (void)configureRoomCell:(ETRRoomListCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)configureRoomCell:(ETRRoomCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     // Get the Room Record from the ResultsController
     // and apply its attributes to the cell views.
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
     [[cell titleLabel] setText:[record title]];
+    [[cell addressLabel] setText:[record address]];
     NSString *size = [ETRReadabilityHelper formattedLength:[record radius]];
     [[cell sizeLabel] setText:size];
-    NSString *timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[record startTime]
-                                                            endDate:[record endDate]];
-    [[cell timeLabel] setText:timeSpan];
-    [[cell descriptionLabel] setText:[record summary]];
+    [[cell hoursLabel] setText:[record hours]];
     
     // Display the distance to the closest region point.
     NSInteger distance = [[ETRLocationManager sharedManager] distanceToRoom:record];
@@ -257,36 +243,6 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
                               intoView:[cell headerImageView]
                       placeHolderImage:[UIImage imageNamed:ETRImageNameRoomPlaceholder]
                            doLoadHiRes:YES];
-}
-
-- (ETRInformationCell *)infoCellAtIndexPath:(NSIndexPath *)indexPath {
-    
-    ETRInformationCell * cell;
-    cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier
-                                                  forIndexPath:indexPath];
-    if (!cell) {
-        cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRInfoCellIdentifier];
-    }
-    ETRInformationCell * infoCell = (ETRInformationCell *) cell;
-    
-    // TODO: Button to location menu
-    // TODO: Localization
-    //        if (_locationIsUnknown) {
-    //            NSString *statusNoLocation = @"Please allow Realay to find places near your location.\n\nPull down to refresh.";
-    //            [[loadingCell infoLabel] setText:statusNoLocation];
-    //        } else if (_noRoomFoundCounter > 5) {
-    //            NSString *radius = [ETRChatObject lengthFromMetres:(kDefaultRangeInKm * 1000)];
-    //            NSString *statusNoRooms = [NSString stringWithFormat:
-    //                                       @"No Realays found in a %@ radius.\n\nPull down to refresh.", radius];
-    //            [[loadingCell textLabel] setText:statusNoRooms];
-    //            [_activityIndicator stopAnimating];
-    //        } else {
-    NSString * searching = @"Searching for Realays...";
-    [[infoCell infoLabel] setText:searching];
-    //        }
-    
-    cell = infoCell;
-    return cell;
 }
 
 #pragma mark -
@@ -343,14 +299,6 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
 
 #pragma mark - Navigation
 
-// Create or view my profile.
-- (IBAction)profileButtonPressed:(id)sender {
-    if ([ETRLocalUserManager userID] > 10) {
-        [self performSegueWithIdentifier:ETRSegueRoomsToProfile sender:self];
-    } else {
-        [self performSegueWithIdentifier:ETRSegueRoomsToLogin sender:self];
-    }
-}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
@@ -362,14 +310,6 @@ static NSString *const ETRSegueRoomsToProfile = @"RoomsToProfile";
         [destination showProfileOnLogin];
         
     }
-//    else if([[segue identifier] isEqualToString:ETRSegueRoomsToProfile]) {
-//        // Just show my own user profile.
-//        
-//        ETRDetailsViewController *destination = [segue destinationViewController];
-//        [destination setUser:[[ETRLocalUserManager sharedManager] user]];
-//        //TODO: Tell the View Profile controller to come back to the Room List on Back.
-//    }
-    
 }
 
 @end

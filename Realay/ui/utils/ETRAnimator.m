@@ -8,9 +8,11 @@
 
 #import "ETRAnimator.h"
 
-static NSTimeInterval const ETRAnimationDurationScale = 0.4;
+
+static NSTimeInterval const ETRAnimationDurationMove = 0.4;
 
 static NSTimeInterval const ETRAnimationDurationFade = 1.2;
+
 
 @implementation ETRAnimator
 
@@ -46,7 +48,7 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
     NSTimeInterval shortDuration = 0.1;
     CGFloat settleScale;
     if (doAppear) {
-        blowupDuration = ETRAnimationDurationScale;
+        blowupDuration = ETRAnimationDurationMove;
         settleDuration = shortDuration;
         settleScale = 1.0f;
         
@@ -56,7 +58,7 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
         [view setCenter:hideCenter];
     } else {
         blowupDuration = shortDuration;
-        settleDuration = ETRAnimationDurationScale;
+        settleDuration = ETRAnimationDurationMove;
         settleScale = 0.1f;
     }
     
@@ -99,9 +101,6 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
                      }];
 }
 
-#pragma mark -
-#pragma mark Fading
-
 + (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear {
 
     if (doAppear) {
@@ -134,6 +133,27 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
                              [view setHidden:YES];
                          }];
     }
+}
+
++ (void)moveView:(UIView *)view
+  toDisappearAtY:(CGFloat)targetY
+      completion:(void(^)(void))completion {
+    
+    CGRect targetFrame = [view frame];
+    targetFrame.origin.y = targetY;
+    
+    [UIView animateWithDuration:ETRAnimationDurationMove
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         [view setFrame:targetFrame];
+                     }
+                     completion:^(BOOL finished) {
+                         if (finished) {
+                             completion();
+                         }
+                     }];
+
 }
 
 @end

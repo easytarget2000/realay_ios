@@ -152,22 +152,31 @@ static CFTimeInterval const ETRPingInterval = 40.0;
                    ^{
                        [NSTimer scheduledTimerWithTimeInterval:_queryInterval
                                                         target:self
-                                                      selector:@selector(queryUpdates:)
+                                                      selector:@selector(fetchUpdates:)
                                                       userInfo:nil
                                                        repeats:NO];
                    });
 }
 
-- (void)queryUpdates:(NSTimer *)timer {
+- (void)fetchUpdates:(NSTimer *)timer {
+    [self fetchUpdatesWithCompletionHandler:nil];
+}
+
+- (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     if (![[ETRSessionManager sharedManager] didBeginSession]) {
         NSLog(@"WARNING: %@: Attempted to query Actions outside of Session.", [self class]);
+        
+        if (completionHandler) {
+            completionHandler(UIBackgroundFetchResultFailed);
+        }
         return;
     }
     
     BOOL isInitial = _lastActionID < 100L;
     
     [ETRServerAPIHelper getActionsAndPerform:^(id<NSObject> receivedObject) {
-        BOOL doResetInterval = NO;
+        BOOL didReceiveNewData = NO;
+        
         if ([receivedObject isKindOfClass:[NSArray class]]) {
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
@@ -181,12 +190,18 @@ static CFTimeInterval const ETRPingInterval = 40.0;
                         }
                     }
                     
-                    doResetInterval = YES;
+                    didReceiveNewData = YES;
                 }
             }
         }
         
-        [self dispatchQueryTimerWithResetInterval:doResetInterval];
+        [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
+        
+        if (completionHandler) {
+            UIBackgroundFetchResult result;
+            result = didReceiveNewData ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultNoData;
+            completionHandler(result);
+        }
     }];
 }
 

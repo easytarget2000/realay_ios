@@ -694,9 +694,7 @@ static NSString * UserEntityName;
     [room setTitle:(NSString *)[JSONDict objectForKey:@"tt"]];
     [room setSummary:(NSString *)[JSONDict objectForKey:@"ds"]];
     [room setPassword:(NSString *)[JSONDict objectForKey:@"pw"]];
-    if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
-        [room setAddress:(NSString *)[JSONDict objectForKey:@"ad"]];
-    }
+
     
     NSInteger startTimestamp = [(NSString *)[JSONDict objectForKey:@"st"] integerValue];
     if (startTimestamp > 1000000000) {
@@ -715,6 +713,14 @@ static NSString * UserEntityName;
     [room setLatitude:@([latitude floatValue])];
     NSString *longitude = (NSString *)[JSONDict objectForKey:@"lng"];
     [room setLongitude:@([longitude floatValue])];
+    
+    NSString * address;
+    if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
+        address = (NSString *)[JSONDict objectForKey:@"ad"];
+    } else {
+        address = [NSString stringWithFormat:@"%@, %@", latitude, longitude];
+    }
+    [room setAddress:address];
     
     NSLog(@"Inserting Room: %@", [room description]);
     [ETRCoreDataHelper saveContext];

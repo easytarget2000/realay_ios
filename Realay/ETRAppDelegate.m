@@ -98,8 +98,11 @@
 
 #pragma mark - Fetch
 
-- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    [[ETRActionManager sharedManager] queryUpdates:nil];
+- (void)application:(UIApplication *)application
+performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    
+    [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:completionHandler];
+    
 }
 
 #pragma mark - Core Data stack

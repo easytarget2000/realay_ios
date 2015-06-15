@@ -14,9 +14,10 @@
             animateFromTop:(BOOL)doAnimateFromTop
                 completion:(void(^)(void))completion;
 
-#pragma mark -
-#pragma mark Fading
-
 + (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear;
+
++ (void)moveView:(UIView *)view
+  toDisappearAtY:(CGFloat)targetY
+      completion:(void(^)(void))completion;
 
 @end

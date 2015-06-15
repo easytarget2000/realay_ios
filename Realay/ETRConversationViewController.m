@@ -409,7 +409,7 @@ UITextFieldDelegate
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([indexPath section] != 0) {
-        NSLog(@"ERROR: Invalid section in Conversation TableView: %ld", [indexPath row]);
+        NSLog(@"ERROR: Invalid section in Conversation TableView: %d", [indexPath row]);
         return [[UITableViewCell alloc] init];
     }
     
@@ -662,7 +662,7 @@ UITextFieldDelegate
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    [self dismissViewControllerAnimated:picker completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     if (_isPublic) {
         [ETRCoreDataHelper dispatchPublicImageMessage:[ETRImageEditor imageFromPickerInfo:info]];
@@ -675,8 +675,20 @@ UITextFieldDelegate
 - (IBAction)moreButtonPressed:(id)sender {
     // The More button is a Profile button in private chats.
     if (_isPublic) {
-        [self performSegueWithIdentifier:ETRConversationToUserListSegue
-                                  sender:nil];
+        
+        if (![[self badgeLabel] isHidden]) {            
+            [ETRAnimator moveView:[self badgeLabel]
+                   toDisappearAtY:(self.view.frame.size.height + 100.0f)
+                       completion:^{
+                           [self performSegueWithIdentifier:ETRConversationToUserListSegue
+                                                     sender:nil];
+                       }];
+        } else {
+            [self performSegueWithIdentifier:ETRConversationToUserListSegue
+                                      sender:nil];
+        }
+        
+
     } else {
         [self performSegueWithIdentifier:ETRConversationToProfileSegue
                                   sender:_partner];

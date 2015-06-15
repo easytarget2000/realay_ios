@@ -15,4 +15,6 @@
 
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
 
+@property (weak, nonatomic) IBOutlet UIImageView *logoView;
+
 @end

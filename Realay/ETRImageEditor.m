@@ -33,6 +33,11 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         imageName:(NSString *)imageName
       applyToView:(ETRImageView *)targetImageView {
     
+    // Adjust the size if needed.
+    UIImage * croppedImage;
+    croppedImage = [ETRImageEditor scaleCropImage:image
+                                           toSize:targetImageView.frame.size];
+    
     dispatch_async(
                    dispatch_get_main_queue(),
                    ^{
@@ -44,10 +49,7 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
                            return;
                        }
                        
-                       // Adjust the size if needed.
-                       UIImage * croppedImage;
-                       croppedImage = [ETRImageEditor scaleCropImage:image
-                                                              toSize:targetImageView.frame.size];
+
                        [targetImageView setImage:croppedImage];
                        
                        [targetImageView setImageName:imageName];

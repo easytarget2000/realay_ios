@@ -373,18 +373,17 @@ static NSMutableArray *connections;
     }
     
     // Prepare the URL to the download script.
-    NSString *URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, ETRGetImageAPICall];
-    NSURL *URL = [NSURL URLWithString:URLString];
+    NSString * URLString = [NSString stringWithFormat:@"%@%@", ETRAPIBaseURL, ETRGetImageAPICall];
+    NSURL * URL = [NSURL URLWithString:URLString];
     
     // Prepare the POST request.
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:URL];
     
-    
-    NSString *bodyString = [NSString stringWithFormat:@"f=%@.jpg", fileID];
-    NSData *bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
+    NSString * bodyString = [NSString stringWithFormat:@"f=%@.jpg", fileID];
+    NSData * bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
     
 #ifdef DEBUG
-    NSLog(@"API: %@?%@",[self class], URLString, bodyString);
+    NSLog(@"API: %@", URLString);
 #endif
 
     [request setHTTPBody:[NSMutableData dataWithData:bodyData]];

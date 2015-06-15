@@ -50,6 +50,8 @@
 
 "No_private_conversations" = "You currently do not have any private conversations in this Realay. Chose a person from the user list to start a 1-on-1 chat.";
 
+"No_time_restriction" = "Without time restriction";
+
 "OK" = "OK";
 
 "Ongoing" = "Ongoing";
@@ -117,6 +119,8 @@
 "Wrong_Password" = "Wrong Password";
 
 "Yes" = "Yes";
+
+"Your_Profile" = "Your Profile";
 
 /*
  Unit symbols

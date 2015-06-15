@@ -235,7 +235,7 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:ETRSegueMapToDetails]) {
-        ETRDetailsViewController *destination;
+        ETRDetailsViewController * destination;
         destination = [segue destinationViewController];
         [destination setRoom:[[ETRSessionManager sharedManager] room]];
     }

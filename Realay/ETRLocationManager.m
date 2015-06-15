@@ -118,6 +118,7 @@ static ETRLocationManager * SharedInstance;
         
         if ([self respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self requestAlwaysAuthorization];
+//            [ETRDefaultsHelper acknowledgeAuthorizationDialogs];
         }
     }
     

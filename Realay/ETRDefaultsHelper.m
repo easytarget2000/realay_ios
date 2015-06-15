@@ -16,6 +16,8 @@
 
 static NSString *const ETRDefaultsKeyAuthID = @"auth_id";
 
+static NSString *const ETRDefaultsKeyAuthDialogs = @"auth_dialogs";
+
 static NSString *const ETRDefaultsKeyDidRunOnce = @"did_run";
 
 static NSString *const ETRDefaultsKeyInputTexts = @"input_texts";
@@ -62,6 +64,17 @@ static CLLocation * LastUpdateLocation;
     } else {
         return YES;
     }
+}
+
++ (BOOL)didShowAuthorizationDialogs{
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:ETRDefaultsKeyAuthDialogs];
+}
+
++ (void)acknowledgeAuthorizationDialogs {
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:YES forKey:ETRDefaultsKeyAuthDialogs];
+    [defaults synchronize];
 }
 
 + (NSNumber *)localUserID {

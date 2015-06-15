@@ -97,8 +97,8 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
     
     if ([destination isKindOfClass:[ETRLoginViewController class]]) {
         ETRLoginViewController *loginViewController;
-        loginViewController = (ETRLoginViewController *)[segue destinationViewController];
-        [destination startSessionOnLogin];
+        loginViewController = (ETRLoginViewController *) [segue destinationViewController];
+        [loginViewController startSessionOnLogin];
     }
 }
 

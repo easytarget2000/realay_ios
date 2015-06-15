@@ -11,6 +11,7 @@
 #import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
 #import "ETRConversationViewController.h"
+#import "ETRDefaultsHelper.h"
 #import "ETRJoinViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRSessionManager.h"
@@ -59,13 +60,15 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
             [settingsAlert dismissWithClickedButtonIndex:-1 animated:YES];
             LastSettingsAlert = CFAbsoluteTimeGetCurrent();
         }
-    } else {
+    } else if ([ETRDefaultsHelper didShowAuthorizationDialogs]){
         CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
         
         if (now - LastSettingsAlert > ETRIntervalSettingsWarnings) {
             [_alertViews showSettingsAlert];
             LastSettingsAlert = now;
         }
+    } else {
+        [ETRDefaultsHelper acknowledgeAuthorizationDialogs];
     }
 }
 
@@ -86,7 +89,7 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
     [[self navigationController] pushViewController:viewController animated:YES];
 }
 
-- (void)setPrivateMessagesBadgeNumber:(NSInteger )number
+- (void)setPrivateMessagesBadgeNumber:(unsigned short)number
                               inLabel:(UILabel *)label
                        animateFromTop:(BOOL)doAnimateFromTop {
     
@@ -98,7 +101,7 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
     } else {
         NSString * displayValue;
         if (number <= 100)  {
-            displayValue = [NSString stringWithFormat:@"%ld", number];
+            displayValue = [NSString stringWithFormat:@"%d", number];
         } else {
             displayValue = @"100+";
         }

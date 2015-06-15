@@ -19,6 +19,10 @@
 
 + (BOOL)didRunOnce;
 
++ (BOOL)didShowAuthorizationDialogs;
+
++ (void)acknowledgeAuthorizationDialogs;
+
 + (NSNumber *)localUserID;
 
 + (void)storeLocalUserID:(NSNumber *)remoteID;

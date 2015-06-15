@@ -57,6 +57,7 @@ static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:NO];
@@ -78,31 +79,5 @@ static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
 - (IBAction)profileButtonPressed:(id)sender {
     [self performSegueWithIdentifier:ETRSegueSessionTabsToProfile sender:nil];
 }
-
-
-//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-//    id destination = [segue destinationViewController];
-//    
-//    if ([destination isKindOfClass:[ETRConversationViewController class]]) {
-//        if ([sender isKindOfClass:[ETRUser class]]) {
-//            ETRConversationViewController *viewController;
-//            viewController = (ETRConversationViewController *)destination;
-//            [viewController setPartner:sender];
-//        }
-//        return;
-//    }
-//    
-//    //    if ([destination isKindOfClass:[ETRMapViewController class]]) {
-//    //        return;
-//    //    }
-//    
-//    if ([destination isKindOfClass:[ETRDetailsViewController class]]) {
-//        if (sender && [sender isKindOfClass:[ETRUser class]]) {
-//            ETRDetailsViewController * profileViewController;
-//            profileViewController = (ETRDetailsViewController *)destination;
-//            [profileViewController setUser:(ETRUser *)sender];
-//        }
-//    }
-//}
 
 @end

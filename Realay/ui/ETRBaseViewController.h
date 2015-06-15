@@ -17,7 +17,7 @@
 
 - (void)pushToJoinViewController;
 
-- (void)setPrivateMessagesBadgeNumber:(NSInteger )number
+- (void)setPrivateMessagesBadgeNumber:(unsigned short)number
                               inLabel:(UILabel *)label
                        animateFromTop:(BOOL)doAnimateFromTop;
 

@@ -40,7 +40,7 @@
 
 - (void)endSession;
 
-- (void)queryUpdates:(NSTimer *)timer;
+- (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 - (BOOL)doSendPing;
 

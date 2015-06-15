@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D002484C1B2E11BA008337A4 /* Realay-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D002484B1B2E11BA008337A4 /* Realay-Info.plist */; };
 		D0035C3A18B2AA1E00C5EEAF /* ETRLocalUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0035C3918B2AA1E00C5EEAF /* ETRLocalUserManager.m */; };
 		D0081F5818C546B200D0819A /* ETRAlertViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = D0081F5718C546B200D0819A /* ETRAlertViewFactory.m */; };
 		D00A15FF1AAA1DDF0036B25B /* ETRHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A15FE1AAA1DDF0036B25B /* ETRHeaderCell.m */; };
@@ -23,7 +24,7 @@
 		D01446C61A9FF04D00748378 /* ETRInformationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01446C51A9FF04D00748378 /* ETRInformationCell.m */; };
 		D0190B351ABB726D0010E637 /* ETRUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D0190B341ABB726D0010E637 /* ETRUIConstants.m */; };
 		D0190B381ABB7B050010E637 /* ETRShadowView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0190B371ABB7B050010E637 /* ETRShadowView.m */; };
-		D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01A602518E35BF900730A1B /* ETRRoomListCell.m */; };
+		D01A602618E35BF900730A1B /* ETRRoomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D01A602518E35BF900730A1B /* ETRRoomCell.m */; };
 		D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */; };
 		D01D3CFE1AAFC26200AE9393 /* ETRActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */; };
 		D02465C81AF92CD80049CDB4 /* ETRBlockedUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */; };
@@ -46,6 +47,9 @@
 		D06E464D18D3945A00833C94 /* LeftBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464B18D3945A00833C94 /* LeftBubble@2x.png */; };
 		D06E465018D3966D00833C94 /* RightBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464E18D3966D00833C94 /* RightBubble.png */; };
 		D06E465118D3966D00833C94 /* RightBubble@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D06E464F18D3966D00833C94 /* RightBubble@2x.png */; };
+		D071C3C01B28AE6E0037F48E /* LogoWhite_240pt.png in Resources */ = {isa = PBXBuildFile; fileRef = D071C3BF1B28AE6E0037F48E /* LogoWhite_240pt.png */; };
+		D071C3C31B28E0800037F48E /* ETRSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D071C3C21B28E0800037F48E /* ETRSettingsTableViewController.m */; };
+		D071C3C61B28E5860037F48E /* ETRSettingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D071C3C51B28E5860037F48E /* ETRSettingCell.m */; };
 		D079327D1B011D1E0086DB3F /* ETRBouncer.m in Sources */ = {isa = PBXBuildFile; fileRef = D079327C1B011D1E0086DB3F /* ETRBouncer.m */; };
 		D079327F1B014B690086DB3F /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D079327E1B014B690086DB3F /* Launch Screen.xib */; };
 		D0795F8E1AA48E76009CCF73 /* ETRCoreDataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0795F8D1AA48E76009CCF73 /* ETRCoreDataHelper.m */; };
@@ -103,6 +107,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D002484B1B2E11BA008337A4 /* Realay-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Realay-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D0035C3818B2AA1E00C5EEAF /* ETRLocalUserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocalUserManager.h; sourceTree = "<group>"; };
 		D0035C3918B2AA1E00C5EEAF /* ETRLocalUserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocalUserManager.m; sourceTree = "<group>"; };
 		D0081F5618C546B200D0819A /* ETRAlertViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRAlertViewFactory.h; sourceTree = "<group>"; };
@@ -133,12 +138,12 @@
 		D0190B341ABB726D0010E637 /* ETRUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRUIConstants.m; sourceTree = "<group>"; };
 		D0190B361ABB7B050010E637 /* ETRShadowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRShadowView.h; path = ui/elements/ETRShadowView.h; sourceTree = "<group>"; };
 		D0190B371ABB7B050010E637 /* ETRShadowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRShadowView.m; path = ui/elements/ETRShadowView.m; sourceTree = "<group>"; };
-		D01A602518E35BF900730A1B /* ETRRoomListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListCell.m; sourceTree = "<group>"; };
+		D01A602518E35BF900730A1B /* ETRRoomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomCell.m; sourceTree = "<group>"; };
 		D01D3CF91AAFA07600AE9393 /* ETRJoinViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRJoinViewController.h; path = ui/ETRJoinViewController.h; sourceTree = "<group>"; };
 		D01D3CFA1AAFA07600AE9393 /* ETRJoinViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRJoinViewController.m; path = ui/ETRJoinViewController.m; sourceTree = "<group>"; };
 		D01D3CFC1AAFC26200AE9393 /* ETRActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRActionManager.h; path = manager/ETRActionManager.h; sourceTree = "<group>"; };
 		D01D3CFD1AAFC26200AE9393 /* ETRActionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRActionManager.m; path = manager/ETRActionManager.m; sourceTree = "<group>"; };
-		D020733117EBB34400453B69 /* ETRRoomListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListCell.h; sourceTree = "<group>"; };
+		D020733117EBB34400453B69 /* ETRRoomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomCell.h; sourceTree = "<group>"; };
 		D02465C61AF92CD80049CDB4 /* ETRBlockedUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRBlockedUsersViewController.h; sourceTree = "<group>"; };
 		D02465C71AF92CD80049CDB4 /* ETRBlockedUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRBlockedUsersViewController.m; sourceTree = "<group>"; };
 		D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRReceivedMessageCell.h; path = ui/TableCells/ETRReceivedMessageCell.h; sourceTree = "<group>"; };
@@ -173,6 +178,11 @@
 		D06E464B18D3945A00833C94 /* LeftBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LeftBubble@2x.png"; sourceTree = "<group>"; };
 		D06E464E18D3966D00833C94 /* RightBubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RightBubble.png; sourceTree = "<group>"; };
 		D06E464F18D3966D00833C94 /* RightBubble@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RightBubble@2x.png"; sourceTree = "<group>"; };
+		D071C3BF1B28AE6E0037F48E /* LogoWhite_240pt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LogoWhite_240pt.png; sourceTree = "<group>"; };
+		D071C3C11B28E0800037F48E /* ETRSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRSettingsTableViewController.h; path = ui/ETRSettingsTableViewController.h; sourceTree = "<group>"; };
+		D071C3C21B28E0800037F48E /* ETRSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRSettingsTableViewController.m; path = ui/ETRSettingsTableViewController.m; sourceTree = "<group>"; };
+		D071C3C41B28E5860037F48E /* ETRSettingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSettingCell.h; sourceTree = "<group>"; };
+		D071C3C51B28E5860037F48E /* ETRSettingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSettingCell.m; sourceTree = "<group>"; };
 		D079327B1B011D1E0086DB3F /* ETRBouncer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ETRBouncer.h; path = manager/ETRBouncer.h; sourceTree = "<group>"; };
 		D079327C1B011D1E0086DB3F /* ETRBouncer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ETRBouncer.m; path = manager/ETRBouncer.m; sourceTree = "<group>"; };
 		D079327E1B014B690086DB3F /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "Launch Screen.xib"; path = "Realay/Launch Screen.xib"; sourceTree = "<group>"; };
@@ -215,7 +225,6 @@
 		D0E1970817E276DB00135B8C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D0E1970A17E276DB00135B8C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D0E1970C17E276DB00135B8C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		D0E1971017E276DB00135B8C /* Realay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Realay-Info.plist"; sourceTree = "<group>"; };
 		D0E1971417E276DB00135B8C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D0E1971617E276DB00135B8C /* Realay-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Realay-Prefix.pch"; sourceTree = "<group>"; };
 		D0E1971717E276DB00135B8C /* ETRAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRAppDelegate.h; sourceTree = "<group>"; };
@@ -247,6 +256,8 @@
 		D0E87A5E18D79B73001D5371 /* ETRPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRPasswordViewController.m; sourceTree = "<group>"; };
 		D0EFD9B617E90E5000522146 /* ETRRoomListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRRoomListViewController.h; sourceTree = "<group>"; };
 		D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRRoomListViewController.m; sourceTree = "<group>"; };
+		D0F02E2F1B2E0CC500D453F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D0F02E301B2E0D5900D453F4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = "en.lproj/Realay-Info.plist"; sourceTree = "<group>"; };
 		D0F0392918C379DF008DDA5F /* ETRSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRSessionManager.h; sourceTree = "<group>"; };
 		D0F0392A18C379DF008DDA5F /* ETRSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRSessionManager.m; sourceTree = "<group>"; };
 		D0F2AB0018FFDA14008B7C32 /* empty.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = empty.jpg; sourceTree = "<group>"; };
@@ -309,6 +320,7 @@
 		D01446B91A9F9BDF00748378 /* Small Elements */ = {
 			isa = PBXGroup;
 			children = (
+				D071C3BF1B28AE6E0037F48E /* LogoWhite_240pt.png */,
 				D01446BD1A9F9E0D00748378 /* ETRCircleView.h */,
 				D01446BE1A9F9E0D00748378 /* ETRCircleView.m */,
 				D0190B361ABB7B050010E637 /* ETRShadowView.h */,
@@ -355,14 +367,16 @@
 				D0586CF11ACB11F100C55E4C /* ETRReceivedMediaCell.m */,
 				D026A9A91AB8D0D0006FB920 /* ETRReceivedMessageCell.h */,
 				D026A9AA1AB8D0D0006FB920 /* ETRReceivedMessageCell.m */,
-				D020733117EBB34400453B69 /* ETRRoomListCell.h */,
-				D01A602518E35BF900730A1B /* ETRRoomListCell.m */,
+				D020733117EBB34400453B69 /* ETRRoomCell.h */,
+				D01A602518E35BF900730A1B /* ETRRoomCell.m */,
 				D0586CED1ACB11E200C55E4C /* ETRSentMediaCell.h */,
 				D0586CEE1ACB11E200C55E4C /* ETRSentMediaCell.m */,
 				D04352471AB3AA9C00CF95AB /* ETRSentMessageCell.h */,
 				D04352481AB3AA9C00CF95AB /* ETRSentMessageCell.m */,
 				D0C821C71AC21B2C00549EEA /* ETRUserCell.h */,
 				D0C821C81AC21B2C00549EEA /* ETRUserCell.m */,
+				D071C3C41B28E5860037F48E /* ETRSettingCell.h */,
+				D071C3C51B28E5860037F48E /* ETRSettingCell.m */,
 			);
 			name = TableCells;
 			sourceTree = "<group>";
@@ -491,9 +505,10 @@
 		D0E1970F17E276DB00135B8C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D002484B1B2E11BA008337A4 /* Realay-Info.plist */,
 				D0DA55311917E6D400B8A0F7 /* Images */,
 				D0ED14E518C9373E002F6CEE /* ChatBubbles */,
-				D0E1971017E276DB00135B8C /* Realay-Info.plist */,
+				D0F02E2C1B2E0A3100D453F4 /* Realay-Info.plist */,
 				D0E1971117E276DB00135B8C /* InfoPlist.strings */,
 				D0E1971417E276DB00135B8C /* main.m */,
 				D0E1971617E276DB00135B8C /* Realay-Prefix.pch */,
@@ -536,6 +551,8 @@
 				D03133941AAB5754004E981B /* ETRProfileEditorViewController.m */,
 				D0EFD9B617E90E5000522146 /* ETRRoomListViewController.h */,
 				D0EFD9B717E90E5000522146 /* ETRRoomListViewController.m */,
+				D071C3C11B28E0800037F48E /* ETRSettingsTableViewController.h */,
+				D071C3C21B28E0800037F48E /* ETRSettingsTableViewController.m */,
 				D0190B331ABB726D0010E637 /* ETRUIConstants.h */,
 				D0190B341ABB726D0010E637 /* ETRUIConstants.m */,
 				D01446B71A9F78F500748378 /* Images.xcassets */,
@@ -575,10 +592,11 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = ETR;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Easy Target";
 				TargetAttributes = {
 					D0E1970417E276DB00135B8C = {
+						DevelopmentTeam = X59SC9WX5X;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -614,9 +632,11 @@
 			files = (
 				D06E465018D3966D00833C94 /* RightBubble.png in Resources */,
 				D06E465118D3966D00833C94 /* RightBubble@2x.png in Resources */,
+				D002484C1B2E11BA008337A4 /* Realay-Info.plist in Resources */,
 				D00A16111AAA571C0036B25B /* NewStoryboard.storyboard in Resources */,
 				D0E1971317E276DB00135B8C /* InfoPlist.strings in Resources */,
 				D01446B81A9F78F500748378 /* Images.xcassets in Resources */,
+				D071C3C01B28AE6E0037F48E /* LogoWhite_240pt.png in Resources */,
 				D0E1971B17E276DB00135B8C /* Default.png in Resources */,
 				D06E464C18D3945A00833C94 /* LeftBubble.png in Resources */,
 				D032E74A1A9E71570021E501 /* GoogleMaps.bundle in Resources */,
@@ -640,6 +660,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0586CF21ACB11F100C55E4C /* ETRReceivedMediaCell.m in Sources */,
+				D071C3C61B28E5860037F48E /* ETRSettingCell.m in Sources */,
 				D048E2951AA65083001631CB /* ETRImageEditor.m in Sources */,
 				D01446B61A9F573900748378 /* ETRChatObject.m in Sources */,
 				D079327D1B011D1E0086DB3F /* ETRBouncer.m in Sources */,
@@ -657,7 +678,7 @@
 				D090E0ED18CF5C1400366E19 /* ETRImageLoader.m in Sources */,
 				D02E42561AB4B06C00A46CF5 /* ETRReadabilityHelper.m in Sources */,
 				D0190B351ABB726D0010E637 /* ETRUIConstants.m in Sources */,
-				D01A602618E35BF900730A1B /* ETRRoomListCell.m in Sources */,
+				D01A602618E35BF900730A1B /* ETRRoomCell.m in Sources */,
 				D00A16021AAA1DFA0036B25B /* ETRKeyValueCell.m in Sources */,
 				D01D3CFB1AAFA07600AE9393 /* ETRJoinViewController.m in Sources */,
 				D0E31B5E1AA377F30008AF9F /* ETRUser.m in Sources */,
@@ -683,6 +704,7 @@
 				D00A16081AAA1E330036B25B /* ETRProfileSocialCell.m in Sources */,
 				D0E6D97318B3A369005B4F7F /* ETRServerAPIHelper.m in Sources */,
 				D029654F1B15FCE700FABACD /* ETRSessionTabBarController.m in Sources */,
+				D071C3C31B28E0800037F48E /* ETRSettingsTableViewController.m in Sources */,
 				D0B3D46A1AC481290070F282 /* ETRInfoCell.m in Sources */,
 				D00A160B1AAA25BC0036B25B /* ETRDetailsViewController.m in Sources */,
 				D03133951AAB5754004E981B /* ETRProfileEditorViewController.m in Sources */,
@@ -704,8 +726,17 @@
 			isa = PBXVariantGroup;
 			children = (
 				D05E3205189EB7E300F3A94C /* de */,
+				D0F02E2F1B2E0CC500D453F4 /* Base */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		D0F02E2C1B2E0A3100D453F4 /* Realay-Info.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D0F02E301B2E0D5900D453F4 /* en */,
+			);
+			name = "Realay-Info.plist";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -725,6 +756,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -736,9 +768,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.easytarget.Realay;
+				PRODUCT_NAME = Realay;
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -763,9 +797,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.easytarget.Realay;
+				PRODUCT_NAME = Realay;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv7 armv7s arm64";
@@ -775,6 +811,9 @@
 		D0E1972917E276DB00135B8C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -787,13 +826,16 @@
 					"DEBUG_JOIN=1",
 				);
 				INFOPLIST_FILE = "Realay/Realay-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Realay\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.easytarget.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "0f9d1310-1fda-4605-8108-115b03dc0312";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -801,6 +843,9 @@
 		D0E1972A17E276DB00135B8C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -809,13 +854,16 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Realay/Realay-Prefix.pch";
 				INFOPLIST_FILE = "Realay/Realay-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Realay\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.easytarget.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "0f9d1310-1fda-4605-8108-115b03dc0312";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

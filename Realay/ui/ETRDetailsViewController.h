@@ -6,14 +6,15 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
 @class ETRRoom;
 @class ETRUser;
 
-// TODO: Morph into ETRBaseViewController child.
 
-@interface ETRDetailsViewController : UITableViewController
+@interface ETRDetailsViewController : ETRBaseViewController
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) ETRRoom * room;
 

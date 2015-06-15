@@ -248,11 +248,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRLocationManager.m"
-            timestampString = "453066910.434907"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
             landmarkName = "-locationManager:didFailWithError:"
             landmarkType = "5">
          </BreakpointContent>
@@ -312,11 +312,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453156578.0636"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "+doUseMetricSystem"
             landmarkType = "5">
          </BreakpointContent>
@@ -568,11 +568,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRCoreDataHelper.m"
-            timestampString = "454541623.524324"
+            timestampString = "455580032.169664"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "742"
-            endingLineNumber = "742"
+            startingLineNumber = "748"
+            endingLineNumber = "748"
             landmarkName = "+roomWithRemoteID:"
             landmarkType = "5">
          </BreakpointContent>
@@ -616,11 +616,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453160433.051697"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
+            startingLineNumber = "225"
+            endingLineNumber = "225"
             landmarkName = "+lastUpdateLocation"
             landmarkType = "5">
          </BreakpointContent>
@@ -632,11 +632,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453160433.051697"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
             landmarkName = "+lastUpdateLocation"
             landmarkType = "5">
          </BreakpointContent>
@@ -648,11 +648,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453160433.051697"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
+            startingLineNumber = "191"
+            endingLineNumber = "191"
             landmarkName = "+lastUpdateLocation"
             landmarkType = "5">
          </BreakpointContent>
@@ -664,11 +664,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453160433.051697"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "+lastUpdateLocation"
             landmarkType = "5">
          </BreakpointContent>
@@ -680,11 +680,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453160433.051697"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
             landmarkName = "+lastUpdateLocation"
             landmarkType = "5">
          </BreakpointContent>
@@ -711,28 +711,12 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Realay/ETRLocationManager.m"
-            timestampString = "453052080.797082"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
-            landmarkName = "-launch:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Realay/ETRImageEditor.m"
-            timestampString = "453408596.838324"
+            timestampString = "456001063.951057"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
             landmarkName = "+scaleCropImage:toSize:"
             landmarkType = "5">
          </BreakpointContent>
@@ -744,11 +728,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRDefaultsHelper.m"
-            timestampString = "453160433.051697"
+            timestampString = "456006988.711961"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "289"
-            endingLineNumber = "289"
+            startingLineNumber = "302"
+            endingLineNumber = "302"
             landmarkName = "+storeMessageInputText:forConversationID:"
             landmarkType = "5">
          </BreakpointContent>
@@ -760,11 +744,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ui/utils/ETRAnimator.m"
-            timestampString = "454545651.758051"
+            timestampString = "454595303.245271"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "+fadeView:doAppear:"
             landmarkType = "5">
          </BreakpointContent>
@@ -776,11 +760,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ui/utils/ETRAnimator.m"
-            timestampString = "454545651.758051"
+            timestampString = "454595303.245271"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "119"
-            endingLineNumber = "119"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
             landmarkName = "+fadeView:doAppear:"
             landmarkType = "5">
          </BreakpointContent>
@@ -820,7 +804,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRAlertViewFactory.m"
@@ -836,7 +820,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/ETRAlertViewFactory.m"
@@ -904,12 +888,140 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/manager/ETRActionManager.m"
-            timestampString = "454546111.476059"
+            timestampString = "455573834.531464"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "295"
-            endingLineNumber = "295"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
             landmarkName = "-dispatchNotificationForAction:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Realay/ui/ETRSettingsTableViewController.m"
+            timestampString = "455668959.550503"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Realay/ui/ETRSettingsTableViewController.m"
+            timestampString = "455668959.550503"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Realay/ui/ETRSettingsTableViewController.m"
+            timestampString = "455668959.550503"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Realay/ui/ETRSettingsTableViewController.m"
+            timestampString = "455668959.550503"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
+            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Realay/ui/ETRBaseViewController.m"
+            timestampString = "456007045.951425"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "-updateAlertViews"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[ETRBaseViewController updateAlertViews]"
+                  moduleName = "Realay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michel/Projekte/Realay/realay-ios/Realay/ui/ETRBaseViewController.m"
+                  timestampString = "456007421.709716"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "394">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[ETRBaseViewController updateAlertViews]"
+                  moduleName = "Realay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michel/Projekte/Realay/realay-ios/Realay/ui/ETRBaseViewController.m"
+                  timestampString = "456007421.709873"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "398">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Realay/ui/ETRBaseViewController.m"
+            timestampString = "456007046.648112"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "-updateAlertViews"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

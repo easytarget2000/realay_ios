@@ -34,9 +34,11 @@
 
 - (NSString *)description;
 
-- (NSString *)formattedCoordinates;
+//- (NSString *)formattedCoordinates;
 
 - (CLLocation *)location;
+
+- (NSString *)hours;
 
 - (NSString *)userCount;
 

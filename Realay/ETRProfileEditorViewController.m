@@ -312,7 +312,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 
 - (void)imagePickerController:(UIImagePickerController *)picker
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    [self dismissViewControllerAnimated:picker completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     // Load the given image and display the progress in the header Cell's icon ImageView.
     NSIndexPath * headerIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];

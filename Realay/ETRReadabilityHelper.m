@@ -122,7 +122,7 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
     if ([ETRDefaultsHelper doUseMetricSystem]) {
         if (meters < kMaxShowMetre) {
             NSString *unit = NSLocalizedString(@"unit_metre", @"m");
-            return [NSString stringWithFormat:@"%ld %@", meters, unit];
+            return [NSString stringWithFormat:@"%d %@", meters, unit];
         } else {
             NSString *unit = NSLocalizedString(@"unit_kilometre", @"km");
             return [NSString stringWithFormat:@"%d %@", (int) (meters / 1000), unit];

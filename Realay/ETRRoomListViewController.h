@@ -17,6 +17,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel * infoLabel;
 
-- (IBAction)profileButtonPressed:(id)sender;
+@property (weak, nonatomic) IBOutlet UIImageView *refreshButton;
 
 @end

@@ -35,7 +35,7 @@ static NSString *const ETRSegueProfileToEditor = @"ProfileToEditor";
 static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 
-@interface ETRDetailsViewController ()
+@interface ETRDetailsViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic) NSInteger phoneRow;
 
@@ -72,9 +72,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     [navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setShadowImage:[UIImage new]];
     
-    if (_room) {
-        [[self navigationController] setToolbarHidden:YES];
-        
+    if (_room) {        
         UIBarButtonItem * barButton;
         
         if ([[ETRSessionManager sharedManager] didBeginSession]) {
@@ -91,11 +89,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         
         [[self navigationItem] setRightBarButtonItem:barButton];
         
-    } else {
-        if (!_user) {
-            _user = [[ETRLocalUserManager sharedManager] user];
-
-            [[self navigationController] setToolbarHidden:NO];
+    } else if (_user) {
+        if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
             
             UIBarButtonItem * editButton;
             
@@ -105,7 +100,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
                                                                       action:@selector(editProfileButtonPressed:)];
             [[self navigationItem] setRightBarButtonItem:editButton];
         } else {
-            [[self navigationController] setToolbarHidden:YES];
             
             UIBarButtonItem * blockButton;
             UIBarButtonItem * addButton;
@@ -127,6 +121,10 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             [[self navigationItem] setRightBarButtonItems:buttonItems];
         }
     }
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[self navigationController] setToolbarHidden:YES];
+    [[[self navigationController] navigationBar] setTranslucent:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -248,11 +246,11 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     switch ([indexPath row]) {
         case 1: {
             [[cell keyLabel] setText:NSLocalizedString(@"location", @"Room address")];
-            NSString *address = [_room address];
-            if (!address) {
-                address = [_room formattedCoordinates];
-            }
-            [[cell valueLabel] setText:address];
+//            NSString * address = [_room address];
+//            if (!address) {
+//                address = [_room formattedCoordinates];
+//            }
+            [[cell valueLabel] setText:[_room address]];
             break;
         }
             
