@@ -40,13 +40,13 @@
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_white_120px.png",
+      "filename" : "realay_appicon_white_02_120px.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_white@3x.png",
+      "filename" : "realay_appicon_white_02_180px.png",
       "scale" : "3x"
     }
   ],

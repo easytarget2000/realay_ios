@@ -42,9 +42,9 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
     [self updateAlertViews];
 }
 
-- (UIStatusBarStyle) preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
-}
+//- (UIStatusBarStyle) preferredStatusBarStyle {
+//    return UIStatusBarStyleLightContent;
+//}
 
 - (void)updateAlertViews {
     // TODO: Check Bouncer for AlertViews first.
@@ -53,6 +53,8 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
     if (!_alertViews) {
         _alertViews = [[ETRAlertViewFactory alloc] init];
     }
+    
+    // TODO: Check if background updates are allowed too.
     
     if ([[ETRLocationManager sharedManager] didAuthorize]) {
         UIAlertView * settingsAlert = [_alertViews existingSettingsAlert];
@@ -97,7 +99,7 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
     //    NSString * title;
     
     if (number < 1) {
-        [ETRAnimator fadeView:label doAppear:NO];
+        [ETRAnimator fadeView:label doAppear:NO completion:nil];
     } else {
         NSString * displayValue;
         if (number <= 100)  {

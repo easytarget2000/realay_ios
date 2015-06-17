@@ -24,7 +24,7 @@ extern NSString *const ETRViewControllerIDJoin;
 
 extern NSString *const ETRImageNameArrowRight;
 
-extern NSString *const ETRImageNameCamera;
+extern NSString *const ETRImageNameAttachFile;
 
 extern NSString *const ETRImageNameImagePlaceholder;
 

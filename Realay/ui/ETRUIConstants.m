@@ -12,7 +12,7 @@ NSString *const ETRCellIdentifierUser = @"userCell";
 
 NSString *const ETRImageNameArrowRight = @"ArrowRight";
 
-NSString *const ETRImageNameCamera = @"Camera";
+NSString *const ETRImageNameAttachFile = @"AttachFile";
 
 NSString *const ETRViewControllerIDBlockedUsers = @"BlockedUsers";
 
@@ -22,12 +22,11 @@ NSString *const ETRViewControllerIDDetails = @"Details";
 
 NSString *const ETRViewControllerIDJoin = @"Join";
 
-NSString *const ETRImageNameProfilePlaceholder = @"PlaceholderProfileW";
+NSString *const ETRImageNameProfilePlaceholder = @"Mood_48pt";
 
-NSString *const ETRImageNameRoomPlaceholder = @"PlaceholderRoomW";
+NSString *const ETRImageNameRoomPlaceholder = @"LocationCity_48pt";
 
-// TODO: Use smaller Image for User Icons than profile placeholder.
-NSString *const ETRImageNameUserIcon = @"PlaceholderProfileW";
+NSString *const ETRImageNameUserIcon = @"Mood_48pt";
 
 NSString *const ETRImageNameImagePlaceholder = @"Camera";
 

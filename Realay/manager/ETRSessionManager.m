@@ -100,9 +100,7 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
  Return: YES, if the Room has been restored
  */
 - (BOOL)restoreSession {
-    if (!_room) {
-        _room = [ETRDefaultsHelper restoreSession];
-    }
+    _room = [ETRDefaultsHelper restoreSession];
     return _room != nil;
 }
 

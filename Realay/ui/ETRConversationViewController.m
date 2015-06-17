@@ -155,7 +155,7 @@ UITextFieldDelegate
     [[self messagesTableView] addSubview:_historyControl];
     
     _didFirstScrolldown = NO;
-    [[self mediaButton] setTintColor:[ETRUIConstants primaryColor]];
+    [[self mediaButton] setTintColor:[UIColor whiteColor]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -193,13 +193,12 @@ UITextFieldDelegate
     
     // Restore any unsent message input.
     NSString * lastText = [ETRDefaultsHelper messageInputTextForConversationID:conversationID];
-    [[self messageTextField] setText:lastText];
+    [[self messageInputView] setText:lastText];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self messagesTableView] reloadData];
-    
     
     [self verifySession];
     [self updateConversationStatus];
@@ -230,7 +229,7 @@ UITextFieldDelegate
     [self dismissKeyboard];
     
     // Disable delegates.
-    [[self messageTextField] setDelegate:nil];
+    [[self messageInputView] setDelegate:nil];
     
     [[self galleryButton] setHidden:YES];
     [[self cameraButton] setHidden:YES];
@@ -249,7 +248,7 @@ UITextFieldDelegate
     NSNumber * conversationID;
     if (_isPublic) {
         conversationID = @(ETRActionPublicUserID);
-    } else if (_partner) {
+    } else if (_partner && [[self messagesTableView] numberOfRowsInSection:0] > 0) {
         conversationID = [_partner remoteID];
         
         // Acknowledge that all messages have been read in this Private Conversation.
@@ -258,7 +257,7 @@ UITextFieldDelegate
         [conversation setHasUnreadMessage:@(NO)];
         [ETRCoreDataHelper saveContext];
     }
-    [ETRDefaultsHelper storeMessageInputText:[[self messageTextField] text]
+    [ETRDefaultsHelper storeMessageInputText:[[self messageInputView] text]
                            forConversationID:conversationID];
 }
 
@@ -364,7 +363,6 @@ UITextFieldDelegate
      forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath {
     
-    NSLog(@"didChangeObject.");
 //    NSLog(@"didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
     
     switch (type) {
@@ -562,7 +560,7 @@ UITextFieldDelegate
     }
     
     // Get the message from the text field.
-    NSString * typedString = [[[self messageTextField] text]
+    NSString * typedString = [[[self messageInputView] text]
                              stringByTrimmingCharactersInSet:
                              [NSCharacterSet whitespaceCharacterSet]];
     
@@ -574,7 +572,7 @@ UITextFieldDelegate
         }
     }
     
-    [[self messageTextField] setText:@""];
+    [[self messageInputView] setText:@""];
 }
 
 - (IBAction)mediaButtonPressed:(id)sender {
@@ -596,7 +594,6 @@ UITextFieldDelegate
         
         // Replace the icon with an arrow and rotate it.
         [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameArrowRight]];
-        [[self mediaButton] setTintColor:[ETRUIConstants primaryColor]];
         [UIView animateWithDuration:0.5
                          animations:^{
                              CGAffineTransform transform;
@@ -632,8 +629,7 @@ UITextFieldDelegate
                              [[self mediaButton] setTransform:transform];
                          }
                          completion:^(BOOL finished) {
-                             [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameCamera]];
-                             [[self mediaButton] setTintColor:[ETRUIConstants primaryColor]];
+                             [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameAttachFile]];
                          }];
     }
 }
@@ -703,7 +699,7 @@ UITextFieldDelegate
 #pragma mark - Keyboard Notifications
 
 - (void)dismissKeyboard {
-    [[self messageTextField] resignFirstResponder];
+    [[self messageInputView] resignFirstResponder];
     [self hideMediaMenu];
 }
 

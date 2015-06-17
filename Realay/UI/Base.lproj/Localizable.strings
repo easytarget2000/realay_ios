@@ -36,13 +36,15 @@
 
 "has_left" = "%@ has left %@.";
 
+"Hours" = "Hours";
+
 "instagram_name" = "instagram username";
 
 "Join" = "Join";
 
 "Leave" = "Leave";
 
-"location" = "location";
+"Location" = "Location";
 
 "Near_You" = "Near You";
 
@@ -86,13 +88,13 @@
 
 "Show_Profile" = "Show Profile";
 
-"size" = "size";
+"Size" = "Size";
 
 "Something_wrong" = "Something went wrong.";
 
 "Sorry" = "Sorry about that.";
 
-"status" = "status";
+"status" = "Status";
 
 "Today" = "Today";
 
@@ -102,11 +104,11 @@
 
 "Unknown_User" = "Unknown User";
 
-"until" = "until";
+"until" = "Until";
 
 "Users_Around_You" = "Users Near You";
 
-"users_online" = "users currently online";
+"Users_online" = "Users currently online";
 
 "Want_block" = "Do you want to block %@?";
 

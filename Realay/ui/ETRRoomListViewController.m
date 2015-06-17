@@ -27,8 +27,6 @@
 
 static CGFloat const ETRRoomCellHeight = 410.0f;
 
-//static NSString *const ETRInfoCellIdentifier = @"infoCell";
-
 static NSString *const ETRRoomCellIdentifier = @"RoomCell";
 
 static NSString *const ETRSegueRoomsToMap = @"RoomsToMap";
@@ -42,6 +40,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 @property (weak, nonatomic) UIRefreshControl * refreshControl;
 
 @property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
+
+@property (nonatomic) BOOL doHideInformationView;
 
 @end
 
@@ -68,21 +68,13 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     
     UIRefreshControl * refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self
-                       action:@selector(updateRoomsTable)
+                       action:@selector(refreshRoomList)
              forControlEvents:UIControlEventValueChanged];
     [refreshControl setTintColor:[ETRUIConstants accentColor]];
     [[self tableView] addSubview:refreshControl];
     [self setRefreshControl:refreshControl];
-        
-
-    if (![ETRDefaultsHelper didRunOnce]) {
-        [[self infoView] setHidden:NO];
-        [[self infoLabel] setHidden:NO];
-        [self setTitle:@""];
-    } else {
-        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
-    }
     
+    [[self infoContainer] setHidden:![ETRDefaultsHelper didRunOnce]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -117,11 +109,54 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    [[self refreshIndicator] stopAnimating];
+    [[self refreshIndicator] setHidden:YES];
+    [[self refreshButton] setHidden:_doHideInformationView];
+    
     if ([[self refreshControl] isRefreshing]) {
         [[self refreshControl] endRefreshing];
     }
     // Disable the Fetched Results Controller.
     [_fetchedResultsController setDelegate:nil];
+}
+
+#pragma mark -
+#pragma mark Information View
+
+- (void)setInformationViewHidden:(BOOL)isHidden {
+//    BOOL wasHidden = _doHideInformationView;
+    _doHideInformationView = isHidden;
+//    
+//    if (wasHidden == _doHideInformationView) {
+//        return;
+//    }
+    
+    [[self infoLabel] setHidden:_doHideInformationView];
+    [[self refreshButton] setHidden:_doHideInformationView];
+    [[self refreshIndicator] setHidden:YES];
+    
+    if (_doHideInformationView) {
+        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
+    } else {
+        [self setTitle:@""];
+    }
+    
+    [ETRAnimator fadeView:[self infoContainer] doAppear:!_doHideInformationView completion:nil];
+//    [ETRAnimator toggleBounceInView:[self infoContainer] animateFromTop:YES completion:nil];
+}
+
+/*
+ Hide the button, show the indicator and get the entire Room List from the Server.
+ */
+- (IBAction)refreshButtonPressed:(id)sender {
+    [[self refreshButton] setHidden:YES];
+    [[self refreshIndicator] startAnimating];
+    [ETRAnimator fadeView:[self refreshIndicator]
+                 doAppear:YES
+               completion:^{
+                   [self refreshRoomList];
+               }];
 }
 
 #pragma mark -
@@ -189,13 +224,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         numberOfRows = [[_fetchedResultsController fetchedObjects] count];
     }
     
-    if (numberOfRows < 1) {
-        [self setTitle:@""];
-        [ETRAnimator fadeView:[self infoView] doAppear:YES];
-    } else {
-        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
-        [ETRAnimator fadeView:[self infoView] doAppear:NO];
-    }
+    [self setInformationViewHidden:(numberOfRows > 0)];
     
     return numberOfRows;
 }
@@ -248,14 +277,11 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark -
 #pragma mark Table View Delegate Methods
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // If the list only shows information cells and no Rooms, do not listen to selections.
-    if (![[_fetchedResultsController fetchedObjects] count]) {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        return;
-    }
-    
+    [self setInformationViewHidden:!_doHideInformationView];
+
     // Hide the selection, prepare the Session and go to the Room Map.
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
     [[ETRSessionManager sharedManager] prepareSessionInRoom:record navigationController:[self navigationController]];
     
@@ -266,14 +292,19 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 #pragma mark - UITableViewDataSource
 
-- (void)updateRoomsTable {
+- (void)refreshRoomList {
     [ETRServerAPIHelper updateRoomListWithCompletionHandler:^(BOOL didReceive) {
         // If no Rooms were received, end refreshing immediately.
         // Otherwise the Table update will end the refresh.
+        [[self refreshIndicator] stopAnimating];
+        [[self refreshIndicator] setHidden:YES];
+        if (!_doHideInformationView) {
+            [ETRAnimator fadeView:[self refreshButton] doAppear:YES completion:nil];
+        }
+        
         if (!didReceive) {
             [[self refreshControl] endRefreshing];
         }
-        
         // TODO: End refreshing after a while.
     }];
 }

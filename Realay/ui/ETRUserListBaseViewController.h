@@ -18,6 +18,6 @@
 
 @property (strong, nonatomic) NSFetchedResultsController * resultsController;
 
-- (void)viewDidLoadForConversationList:(BOOL)doShowConversations;
+- (void)setUpForConversationList:(BOOL)doShowConversations;
 
 @end

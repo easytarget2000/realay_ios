@@ -14,7 +14,7 @@
             animateFromTop:(BOOL)doAnimateFromTop
                 completion:(void(^)(void))completion;
 
-+ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear;
++ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear completion:(void(^)(void))completion;
 
 + (void)moveView:(UIView *)view
   toDisappearAtY:(CGFloat)targetY

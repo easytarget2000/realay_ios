@@ -21,7 +21,7 @@ static ETRActionManager * sharedInstance = nil;
 
 static CFTimeInterval const ETRQueryIntervalFastest = 1.5;
 
-static CFTimeInterval const ETRQueryIntervalMaxJitter = 0.8;
+static CFTimeInterval const ETRQueryIntervalMaxJitter = 1.2;
 
 static CFTimeInterval const ETRQueryIntervalSlowest = 8.0;
 
@@ -182,12 +182,9 @@ static CFTimeInterval const ETRPingInterval = 40.0;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
                     ETRAction * action;
-                    action = [ETRCoreDataHelper actionFromDictionary:(NSDictionary *)jsonAction];
-                    if (action) {
-                        [self setLastActionID:[[action remoteID] longValue]];
-                        if (!isInitial) {
+                    action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
+                    if (action && !isInitial) {
                             [self dispatchNotificationForAction:action];
-                        }
                     }
                     
                     didReceiveNewData = YES;

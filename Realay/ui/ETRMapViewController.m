@@ -8,6 +8,8 @@
 
 #import "ETRMapViewController.h"
 
+//#import <GoogleMaps/GoogleMaps.h>
+
 #import "ETRAlertViewFactory.h"
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
@@ -16,31 +18,79 @@
 #import "ETRUIConstants.h"
 
 
-static CGFloat const ETRMapCloseZoom = 15.0f;
-
-static CGFloat const ETRMapWideZoom = 11.0f;
-
 static NSString *const ETRSegueMapToPassword = @"MapToPassword";
 
 static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 
 
-@implementation ETRMapViewController {
-//    GMSMapView *_mapView;   // Google Maps SDK Object
-}
+@interface ETRMapViewController () <MKMapViewDelegate>
+
+@property (strong, nonatomic) ETRRoom * setUpRoom;
+
+@end
+
+
+@implementation ETRMapViewController
 
 #pragma mark -
 #pragma mark UIViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // Create the room marker.
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
+    if (!sessionRoom) {
+        NSLog(@"ERROR: %@: Cannot start without a prepared Session Room.", [self class]);
+        [[self navigationController] popViewControllerAnimated:YES];
+        return;
+    }
+    
+    CLLocationDistance regionDistance;
+    CLLocation * location = [ETRLocationManager location];
+    CLLocationDistance radius = [[sessionRoom radius] doubleValue];
+    
+    if (!location) {
+        regionDistance = 500.0;
+    } else {
+        regionDistance = [location distanceFromLocation:[sessionRoom location]];
+        if (regionDistance < radius) {
+            regionDistance = radius * 4.0;
+        } else {
+            regionDistance *= 4.0;
+        }
+    }
+    
+    CLLocationCoordinate2D roomCoordinate = sessionRoom.location.coordinate;
+    
+    MKCoordinateRegion roomRegion;
+    roomRegion = MKCoordinateRegionMakeWithDistance(roomCoordinate, regionDistance, regionDistance);
+    
+    //    MKCoordinateRegion visibleRegion = [[self mapView] regionThatFits:roomRegion];
+    [[self mapView] setRegion:roomRegion animated:NO];
+    [[self mapView] setUserTrackingMode:MKUserTrackingModeNone];
+    [[self mapView] setShowsUserLocation:YES];
+    [[self mapView] setShowsPointsOfInterest:YES];
+    [[self mapView] setDelegate:self];
+    
+    MKPointAnnotation * roomAnnotation = [[MKPointAnnotation alloc] init];
+    [roomAnnotation setTitle:[sessionRoom title]];
+    [roomAnnotation setCoordinate:roomCoordinate];
+    [[self mapView] addAnnotation:roomAnnotation];
+    
+    MKCircle * circle = [MKCircle circleWithCenterCoordinate:roomCoordinate radius:radius];
+    [[self mapView] addOverlay:circle];
+}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[[self navigationController] navigationBar] setTranslucent:NO];
+    [[self navigationController] setToolbarHidden:NO animated:NO];
     
     // Basic GUI setup:
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
-    [[self navigationController] setToolbarHidden:NO animated:YES];
     
     // Hide the join button if the user is already in this room.
     if ([[ETRSessionManager sharedManager] didBeginSession]) {
@@ -49,139 +99,50 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     } else {
         [[self navigationItem] setRightBarButtonItem:[self joinButton]];
     }
-    
-    // Send a notification when the device is rotated.
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(orientationChanged:)
-                                                 name:UIDeviceOrientationDidChangeNotification
-                                               object:nil];
 
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    NSInteger myControllerIndex;
-    myControllerIndex = [[[self navigationController] viewControllers] count] - 1;
-    [[ETRSessionManager sharedManager] setMapControllerIndex:myControllerIndex];
-    
-    // Make sure the room manager meets the requirements for this view controller.
-    if (![[ETRSessionManager sharedManager] room]) {
-        [[self navigationController] popViewControllerAnimated:NO];
-        NSLog(@"ERROR: No room set in manager.");
-        return;
-    }
-    
-//    _mapView = [[GMSMapView alloc] init];
-//    [_mapView setFrame:[[self mapSubView] bounds]];
-//    [_mapView setCamera:[self adjustedCamera]];
-//    
-//    // Other map settings:
-//    [_mapView setMyLocationEnabled:YES];
-//    [[_mapView settings] setMyLocationButton:YES];
-//    [[_mapView settings] setIndoorPicker:YES];
-//    [[self mapSubView] addSubview:_mapView];
-//    
-//    // Create the room marker.
-//    ETRRoom * room = [[ETRSessionManager sharedManager] room];
-//    if (!room) {
-//        NSLog(@"ERROR: Cannot start ETRMapViewController without a prepared Session Room.");
-//        return;
-//    }
-//    GMSMarker *roomMarker = [[GMSMarker alloc] init];
-//    
-//    [roomMarker setTitle:[room title]];
-//    [roomMarker setAppearAnimation:kGMSMarkerAnimationPop];
-//    [roomMarker setPosition:[[room location] coordinate]];
-//    [roomMarker setMap:_mapView];
-//    [_mapView setSelectedMarker:roomMarker];
-//    
-//    // Add a radius circle to the marker.
-//    GMSCircle *circle = [[GMSCircle alloc] init];
-//    [circle setRadius:[[room radius] doubleValue]];
-//    [circle setFillColor:[ETRUIConstants primaryTransparentColor]];
-//    [circle setStrokeColor:[ETRUIConstants primaryColor]];
-//    [circle setPosition:[roomMarker position]];
-//    [circle setMap:_mapView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    NSArray * currentAnnotations = [[self mapView] annotations];
+    if (currentAnnotations) {
+        [[self mapView] removeAnnotations:currentAnnotations];
+    }
+    
+    NSArray * currentOverlays = [[self mapView] overlays];
+    if (currentOverlays) {
+        [[self mapView] removeOverlays:currentOverlays];
+    }
+    
+    
+    [[self mapView] setUserTrackingMode:MKUserTrackingModeNone];
+    [[self mapView] setShowsUserLocation:NO];
+    [[self mapView] setDelegate:nil];
     
     [super viewWillDisappear:animated];
-    
-    // Remove the orientation obsever.
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIDeviceOrientationDidChangeNotification
-                                                  object:nil];
-    
-    // Remove the map.
-//    _mapView = nil;
-    
-    // Check if the back button was pressed.
-    NSInteger myNavIndex = [[[self navigationController] viewControllers] indexOfObject:self];
-    if (myNavIndex == NSNotFound) {
-        
-        // If we didn't join this room, discard it.
-        if (![[ETRSessionManager sharedManager] didBeginSession]) {
-            [[ETRSessionManager sharedManager] endSession];
-#ifdef DEBUG
-            NSLog(@"INFO: Manager Room object reset.");
-#endif
-        }
-    }
 }
 
-/*
- Readjusts the frame of the map when the device is rotated
- */
-- (void)orientationChanged:(NSNotification *)notification {
-//    [_mapView setFrame:[[self mapSubView] bounds]];
+#pragma mark -
+#pragma mark MKMapViewDelegate
+
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay {
+    MKCircleView * circleView = [[MKCircleView alloc] initWithOverlay:overlay];
+    [circleView setFillColor:[ETRUIConstants primaryColor]];
+    [circleView setStrokeColor:[ETRUIConstants primaryTransparentColor]];
+    [circleView setAlpha:0.5f];
+    return circleView;
 }
-
-
-#pragma mark - Google Maps
-
-//- (GMSCameraPosition *)adjustedCamera {
-//    
-//    // Get data from the session manager.
-//    CLLocation *currentLocation = [ETRLocationManager location];
-//    ETRRoom *room = [[ETRSessionManager sharedManager] room];
-//    
-//    // Decide which camera to show.
-//    if (currentLocation) {
-//        
-//        if ([ETRLocationManager isInSessionRegion]) {
-//            // Zoom in on the region, not the user, if the user is inside.
-//            
-//            // TODO: Determine a useful zoom level for different region radii.
-//            CGFloat zoom = ETRMapCloseZoom;
-////            if ([room radius] < 250) zoom = 16;
-//            
-//            return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
-//                                                  zoom:zoom];
-//        } else {
-//            // The map should include the device position, as well as the room's location.
-//            GMSCoordinateBounds *bounds;
-//            
-//            bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:[currentLocation coordinate]
-//                                                          coordinate:[[room location] coordinate]];
-//            return [_mapView cameraForBounds:bounds insets:UIEdgeInsetsMake(70.0f, 70.0f, 70.0f, 70.0f)];
-//        }
-//    } else {
-//        // Just show where approximately the region is if the device location is unknown.
-//        // TODO: Use different zoom levels depending on the size of the radius.
-//        return [GMSCameraPosition cameraWithTarget:[[room location] coordinate]
-//                                              zoom:ETRMapWideZoom];
-//    }
-//}
 
 #pragma mark - Toolbar Buttons
 
 - (IBAction)mapTypeSegmentChanged:(id)sender {
     if ([[self mapTypeSegmentedControl] selectedSegmentIndex] == 0) {
-//        [_mapView setMapType:kGMSTypeNormal];
+        [_mapView setMapType:MKMapTypeStandard];
     } else {
-//        [_mapView setMapType:kGMSTypeSatellite];
+        [_mapView setMapType:MKMapTypeHybrid];
     }
 }
 

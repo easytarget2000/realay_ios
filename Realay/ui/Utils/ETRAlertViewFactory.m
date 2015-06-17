@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     _existingSettingsAlert = [[UIAlertView alloc] initWithTitle:nil
                                                         message:NSLocalizedString(@"For_an_uninterrupted", @"Required settings explained")
                                                        delegate:nil
-                                              cancelButtonTitle:nil
+                                              cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
                                               otherButtonTitles:NSLocalizedString(@"Settings", @"Preferences"), nil];
     [_existingSettingsAlert setTag:ETRAlertViewTagSettings];
     [_existingSettingsAlert setDelegate:self];
@@ -394,10 +394,9 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             
         case ETRAlertViewTagSettings: {
             NSString * settingsURL = UIApplicationOpenSettingsURLString;
-            if (settingsURL) {
+            if (settingsURL && buttonIndex == 1) {
                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:settingsURL]];
             }
-            
             break;
         }
             

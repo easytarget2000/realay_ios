@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  Realay
+
+  Created by Michel on 15/06/15.
+  Copyright © 2015 Easy Target. All rights reserved.
+*/
+
+"NSLocationAlwaysUsageDescription" = "Background updates keep the list of nearby Realays fresh and enable endless sessions.";
+
+"NSLocationWhenInUseUsageDescription" = "This is required to make sure that you only chat with people that are really around you.";

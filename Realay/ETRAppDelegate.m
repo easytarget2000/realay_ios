@@ -20,10 +20,9 @@
 @implementation ETRAppDelegate
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    // Google Maps API Key:
-    //    [GMSServices provideAPIKey:@"AIzaSyBi51VpGsRlkDh7rz-1-cv73DOS7aE_yGA"];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+//     Google Maps API Key:
+//    [GMSServices provideAPIKey:@"AIzaSyDiLvq1foJVgVyXaHgYQqFk0Ig9rb4XUSM"];
     
     // Initialise the Reachability and Location Managers, in order to avoid delayed Reachability states later.
     [ETRReachabilityManager sharedManager];

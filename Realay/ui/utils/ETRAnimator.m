@@ -101,10 +101,13 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
                      }];
 }
 
-+ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear {
++ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear completion:(void(^)(void))completion {
 
     if (doAppear) {
         if (![view isHidden] && [view alpha] > 0.9f) {
+            if (completion) {
+                completion();
+            }
             return;
         }
         
@@ -117,7 +120,11 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
                          animations:^{
                              [view setAlpha:1.0f];
                          }
-                         completion:nil];
+                         completion:^(BOOL finished){
+                             if (completion) {
+                                 completion();
+                             }
+                         }];
     } else {
         if ([view isHidden]) {
             return;
@@ -131,6 +138,9 @@ static NSTimeInterval const ETRAnimationDurationFade = 1.2;
                          }
                          completion:^(BOOL finished) {
                              [view setHidden:YES];
+                             if (completion) {
+                                 completion();
+                             }
                          }];
     }
 }

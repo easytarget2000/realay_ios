@@ -27,7 +27,8 @@
 #pragma mark UIViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoadForConversationList:NO];
+    [super viewDidLoad];
+    [super setUpForConversationList:NO];
         
     // Configure manual refresher.
     UIRefreshControl * refreshControl = [[UIRefreshControl alloc] init];
@@ -47,7 +48,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[self refreshControl] endRefreshing];
-    [ETRAnimator fadeView:[self unreadCounterLabel] doAppear:NO];
+    [ETRAnimator fadeView:[self unreadCounterLabel] doAppear:NO completion:nil];
 }
 
 - (void)setPrivateMessagesBadgeNumber:(NSInteger)number {

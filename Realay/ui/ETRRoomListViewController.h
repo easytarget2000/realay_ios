@@ -13,10 +13,14 @@
 
 @property (weak, nonatomic) IBOutlet UITableView * tableView;
 
-@property (weak, nonatomic) IBOutlet UIView * infoView;
+@property (weak, nonatomic) IBOutlet UIView * infoContainer;
 
 @property (weak, nonatomic) IBOutlet UILabel * infoLabel;
 
-@property (weak, nonatomic) IBOutlet UIImageView *refreshButton;
+@property (weak, nonatomic) IBOutlet UIButton *refreshButton;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *refreshIndicator;
+
+- (IBAction)refreshButtonPressed:(id)sender;
 
 @end

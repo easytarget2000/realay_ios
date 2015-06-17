@@ -119,7 +119,6 @@ static NSString * UserEntityName;
     }
 }
 
-
 #pragma mark -
 #pragma mark Actions
 
@@ -155,7 +154,7 @@ static NSString * UserEntityName;
     return action;
 }
 
-+ (ETRAction *)actionFromDictionary:(NSDictionary *)jsonDictionary {
++ (ETRAction *)addActionFromJSONDictionary:(NSDictionary *)jsonDictionary {
     long remoteID = [jsonDictionary longValueForKey:@"a" withFallbackValue:-102];
     if (remoteID < 10) {
         NSLog(@"WARNING: Ignoring incoming Action with Remote ID %ld." , remoteID);
@@ -163,18 +162,19 @@ static NSString * UserEntityName;
     }
     
     // Acknowledge this Action's ID.
-    
-    
+    [[ETRActionManager sharedManager] ackknowledgeActionID:remoteID];
+
     // Sender and recipient IDs may be a valid User ID, i.e. positive long,
     // or -10, the pre-defined ID for public (as recipient ID) and admin (as sender ID) messages.
     
     long senderID = [jsonDictionary longValueForKey:@"sn" withFallbackValue:-104];
     ETRUser * sender;
-    if (senderID > 10) {
+    if (senderID > 100L) {
         sender = [ETRCoreDataHelper userWithRemoteID:@(senderID)
                                  doLoadIfUnavailable:YES];
     } else if (senderID == ETRActionPublicUserID) {
         // TODO: Handle Server messages.
+        return nil;
     } else {
         NSLog(@"WARNING: Received Action with invalid sender ID: %@", jsonDictionary);
         return nil;
@@ -182,7 +182,7 @@ static NSString * UserEntityName;
     
     long recipientID = [jsonDictionary longValueForKey:@"rc" withFallbackValue:-105];
     ETRUser * recipient;
-    if (recipientID > 10) {
+    if (recipientID > 100L) {
         recipient = [ETRCoreDataHelper userWithRemoteID:@(recipientID)
                                     doLoadIfUnavailable:YES];
     } else if (recipientID != ETRActionPublicUserID) {
@@ -326,7 +326,7 @@ static NSString * UserEntityName;
     }
     
 #ifdef DEBUG
-    NSLog(@"New local User image ID: %ld", newImageID);
+    NSLog(@"Dispatching image. Temporary local ID: %ld", newImageID);
 #endif
     
     [mediaAction setImageID:@(newImageID)];

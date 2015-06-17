@@ -36,8 +36,14 @@
 #pragma mark -
 #pragma mark UIViewController
 
-- (void)viewDidLoadForConversationList:(BOOL)doShowConversations {
+- (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // The User list has a fixed row height.
+    [[self tableView] setRowHeight:ETRRowHeightUser];
+}
+
+- (void)setUpForConversationList:(BOOL)doShowConversations {
     
     _doShowConversations = doShowConversations;
     _doShowInfoView = NO;
@@ -57,9 +63,7 @@
     
     //    // Do not display empty cells at the end.
     //    [[self usersTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-    
-    // The User list has a fixed row height.
-    [[self tableView] setRowHeight:ETRRowHeightUser];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -146,11 +150,13 @@
                        400,
                        dispatch_get_main_queue(),
                        ^{
-                           [ETRAnimator fadeView:[self infoView] doAppear:_doShowInfoView];
+                           [ETRAnimator fadeView:[self infoView]
+                                        doAppear:_doShowInfoView
+                                      completion:nil];
                        });
     } else {
         // Hiding the Info View happens immediately.
-        [ETRAnimator fadeView:[self infoView] doAppear:NO];
+        [ETRAnimator fadeView:[self infoView] doAppear:NO completion:nil];
     }
     
     return numberOfRows;

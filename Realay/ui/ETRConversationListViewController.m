@@ -12,7 +12,8 @@
 @implementation ETRConversationListViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoadForConversationList:YES];
+    [super viewDidLoad];
+    [super setUpForConversationList:YES];
 }
 
 @end

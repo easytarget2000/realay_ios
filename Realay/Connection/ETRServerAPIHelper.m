@@ -163,11 +163,14 @@ static NSMutableArray *connections;
             NSArray *jsonActions = (NSArray *) receivedObject;
             for (NSObject *jsonAction in jsonActions) {
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    [ETRCoreDataHelper actionFromDictionary:(NSDictionary *)jsonAction];
+                    dispatch_async(
+                                   dispatch_get_main_queue(),
+                                   ^{
+                                       [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
+                                   });
                 }
             }
         }
-        
         
         [ETRServerAPIHelper getLastActionIDAndPerform:getlastActionIDCompletionHandler];
     };
@@ -223,7 +226,11 @@ static NSMutableArray *connections;
         completionHandler(NO);
     };
     
-    [ETRCoreDataHelper clearPublicActions];
+    dispatch_async(
+                   dispatch_get_main_queue(),
+                   ^{
+                       [ETRCoreDataHelper clearPublicActions];
+                   });
     
     NSMutableDictionary * joinParams = [NSMutableDictionary dictionaryWithDictionary:authParams];
     [joinParams setObject:[ETRDefaultsHelper authID] forKey:ETRAPIParamAuth];

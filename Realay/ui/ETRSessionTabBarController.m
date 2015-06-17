@@ -18,7 +18,7 @@
 
 static NSString *const ETRSegueSessionTabsToMap = @"SessionTabsToMap";
 
-static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
+static NSString *const ETRSegueSessionTabsToSettings = @"SessionTabsToSettings";
 
 
 @interface ETRSessionTabBarController ()
@@ -37,7 +37,9 @@ static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
     // The title is the current Room
     // and the back-button TO this View Controller is supposed to be empty.
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
-    [[[self navigationItem] backBarButtonItem] setTitle:@""];
+
+    NSString * backButtonTitle = NSLocalizedString(@"Users", @"List of Users");
+    [[[self navigationItem] backBarButtonItem] setTitle:backButtonTitle];
     
     // Create the Map and Profile BarButtons and place them in the NavigationBar.
     UIImage * mapButtonIcon = [UIImage imageNamed:@"Map"];
@@ -46,13 +48,19 @@ static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
                                                                    style:UIBarButtonItemStylePlain
                                                                   target:self
                                                                   action:@selector(mapButtonPressed:)];
-    UIImage * profileButtonIcon = [UIImage imageNamed:@"Profile"];
-    UIBarButtonItem * profileButton = [[UIBarButtonItem alloc] initWithImage:profileButtonIcon
-                                                         landscapeImagePhone:profileButtonIcon
+    UIImage * settingsIcon = [UIImage imageNamed:@"Settings_24pt"];
+    UIBarButtonItem * settingsButton = [[UIBarButtonItem alloc] initWithImage:settingsIcon
+                                                         landscapeImagePhone:settingsIcon
                                                                        style:UIBarButtonItemStylePlain target:self
-                                                                      action:@selector(profileButtonPressed:)];
+                                                                      action:@selector(settingsButtonPressed:)];
     
-    NSArray * rightBarButtons = [[NSArray alloc] initWithObjects:profileButton, mapButton, nil];
+//    NSString * settings = NSLocalizedString(@"Settings", @"Preferences");
+//    UIBarButtonItem * settingsButton = [[UIBarButtonItem alloc] initWithTitle:settings
+//                                                                        style:UIBarButtonItemStylePlain
+//                                                                       target:self
+//                                                                       action:@selector(settingsButtonPressed:)];
+    
+    NSArray * rightBarButtons = [[NSArray alloc] initWithObjects:settingsButton, mapButton, nil];
     [[self navigationItem] setRightBarButtonItems:rightBarButtons];
 }
 
@@ -76,8 +84,8 @@ static NSString *const ETRSegueSessionTabsToProfile = @"SessionTabsToProfile";
     [self performSegueWithIdentifier:ETRSegueSessionTabsToMap sender:nil];
 }
 
-- (IBAction)profileButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:ETRSegueSessionTabsToProfile sender:nil];
+- (IBAction)settingsButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:ETRSegueSessionTabsToSettings sender:nil];
 }
 
 @end

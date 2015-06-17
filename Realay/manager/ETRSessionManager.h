@@ -30,21 +30,6 @@
 @property (nonatomic, readonly) BOOL didBeginSession;
 
 /*
- Return to this view when clicking the map button after joining.
-  */
-@property (nonatomic) NSInteger mapControllerIndex;
-
-///*
-// Font that is to be used for the sender label of a message:
-//  */
-//@property (strong, nonatomic, readonly) UIFont *msgSenderFont;
-//
-///*
-// Font that is to be used for the message itself:
-//  */
-//@property (strong, nonatomic, readonly) UIFont *msgTextFont;
-
-/*
  Session is able to push/pop view controller.
   */
 @property (strong, nonatomic) UINavigationController * navigationController;

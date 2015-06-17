@@ -62,7 +62,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     [[self tableView] setRowHeight:UITableViewAutomaticDimension];
     [[self tableView] setEstimatedRowHeight:128.0f];
     [[self tableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -126,11 +125,26 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:YES];
+    
+    // Send a notification when the device is rotated.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(orientationChanged:)
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self tableView] reloadData];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    // Remove the orientation obsever.
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIDeviceOrientationDidChangeNotification
+                                                  object:nil];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -139,6 +153,11 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     CGRect rect = self.navigationController.navigationBar.frame;
     
     [[self tableView] setContentInset:UIEdgeInsetsMake(-rect.origin.y, 0.0f, 0.0f, 0.0f)];
+}
+
+- (void)orientationChanged:(NSNotification *)notification {
+    // TODO: Invalidate shadow views.
+    [[self tableView] reloadData];
 }
 
 #pragma mark - Table view data source
@@ -246,7 +265,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     
     switch ([indexPath row]) {
         case 1: {
-            [[cell keyLabel] setText:NSLocalizedString(@"location", @"Room address")];
+            [[cell keyLabel] setText:NSLocalizedString(@"Location", @"Room address")];
 //            NSString * address = [_room address];
 //            if (!address) {
 //                address = [_room formattedCoordinates];
@@ -256,7 +275,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         }
             
         case 2: {
-            [[cell keyLabel] setText:NSLocalizedString(@"size", @"Room Size")];
+            [[cell keyLabel] setText:NSLocalizedString(@"Size", @"Room Size")];
             NSString *size;
             size = [ETRReadabilityHelper formattedLength:[_room radius]];
             [[cell valueLabel] setText:size];
@@ -264,8 +283,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         }
             
         case 3: {
-            [[cell keyLabel] setText:@""];
-            NSString *timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startTime]
+            [[cell keyLabel] setText:NSLocalizedString(@"Hours", @"Opening hours")];
+            NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startTime]
                                                                     endDate:[_room endDate]];
             [[cell valueLabel] setText:timeSpan];
             break;
@@ -273,14 +292,14 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             
         case 4: {
             NSString *labelText;
-            labelText = NSLocalizedString(@"users_online", @"Number of Users");
+            labelText = NSLocalizedString(@"Users_online", @"Number of Users");
             [[cell keyLabel] setText:labelText];
             [[cell valueLabel] setText:[_room userCount]];
             break;
         }
             
         case 5: {
-            [[cell keyLabel] setText:@""];
+            [[cell keyLabel] setHidden:YES];
             [[cell valueLabel] setText:[_room summary]];
             break;
         }
@@ -332,7 +351,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         return valueCell;
     }
     
-    if (row == _mailRow && [_user website] && [[_user website] length]) {
+    if (row == _websiteRow && [_user website] && [[_user website] length]) {
         NSString *websiteKey = NSLocalizedString(@"website", "Website URL");
         [[valueCell keyLabel] setText:websiteKey];
         [[valueCell valueLabel] setText:[_user website]];

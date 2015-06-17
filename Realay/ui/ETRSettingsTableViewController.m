@@ -10,6 +10,7 @@
 
 #import "ETRDetailsViewController.h"
 #import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
 
 
 static NSString *const ETRSegueSettingsToBlockedUsers = @"SettingsToBlockedUsers";
@@ -23,18 +24,32 @@ static NSString *const ETRSegueSettingsToProfile = @"SettingsToProfile";
 
 @end
 
+
 @implementation ETRSettingsTableViewController
 
-//#pragma mark - Table view data source
-//
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-//    return 1;
-//}
-//
-//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    return 4;
-//}
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+    [[self navigationController] setToolbarHidden:NO animated:YES];
+}
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    UITableViewCell * locationSettings;
+    locationSettings = [[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]];
+    if (locationSettings) {
+        if (![[ETRLocationManager sharedManager] didAuthorize]) {
+            [locationSettings setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
+        } else {
+            [locationSettings setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+        }
+    }
+    
+    
+}
 
 #pragma mark - UITableViewDelegate
 
