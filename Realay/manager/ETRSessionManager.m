@@ -85,8 +85,8 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     
     _didBeginSession = NO;
     
-    // Remove all public Actions from the local DB.
-    [ETRCoreDataHelper clearPublicActions];
+    // Remove all public and queued Actions from the local DB.
+    [ETRCoreDataHelper cleanActions];
     [[ETRActionManager sharedManager] endSession];
     [ETRDefaultsHelper removePublicMessageInputTexts];
     [_navigationController popToRootViewControllerAnimated:YES];

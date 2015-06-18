@@ -21,36 +21,86 @@ extern long const ETRActionPublicUserID;
 
 @interface ETRCoreDataHelper : NSObject
 
+#pragma mark -
+#pragma mark General Context Accessories
+
+/**
+ 
+ */
 + (BOOL)saveContext;
 
 #pragma mark -
 #pragma mark Actions
 
+/**
+ 
+ */
 + (ETRAction *)addActionFromJSONDictionary:(NSDictionary *)jsonDictionary;
 
+/**
+ 
+ */
 + (void)dispatchPublicMessage:(NSString *)messageContent;
 
+/**
+ 
+ */
 + (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient;
 
+/**
+ 
+ */
 + (void)dispatchPublicImageMessage:(UIImage *)image;
 
+/**
+ 
+ */
 + (void)dispatchImageMessage:(UIImage *)image toRecipient:(ETRUser *)recipient;
 
-+ (void)dispatchUserUpdateAction;
+/**
+ 
+ */
++ (void)queueUserUpdate;
 
-+ (void)clearPublicActions;
+/**
+ 
+ */
++ (void)retrySendingQueuedActions;
 
+/**
+ 
+ */
++ (void)cleanActions;
+
+/**
+ 
+ */
 + (void)addActionToQueue:(ETRAction *)unsentAction;
 
+/**
+ 
+ */
 + (void)removeActionFromQueue:(ETRAction *)sentAction;
 
+/**
+ 
+ */
 + (void)removeUserUpdateActionsFromQueue;
 
+/**
+ 
+ */
 + (ETRAction *)blankOutgoingAction;
 
+/**
+ 
+ */
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate
                                                        numberOfLastMessages:(NSUInteger)numberOfLastMessages;
 
+/**
+ 
+ */
 + (NSFetchedResultsController *)messagesResultsControllerForPartner:(ETRUser *)partner
                                                numberOfLastMessages:(NSUInteger)numberOfLastMessages
                                                            delegate:(id<NSFetchedResultsControllerDelegate>)delegate;
@@ -59,6 +109,8 @@ extern long const ETRActionPublicUserID;
 #pragma mark Conversations
 
 + (ETRConversation *)conversationWithPartner:(ETRUser *)partner;
+
++ (void)deleteConversation:(ETRConversation *)conversation;
 
 + (NSFetchedResultsController *)conversationResulsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 

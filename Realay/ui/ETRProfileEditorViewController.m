@@ -28,10 +28,14 @@ static NSString *const ETRHeaderEditorCellIdentifier = @"headerEditorCell";
 static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 
 
-@interface ETRProfileEditorViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate>
+@interface ETRProfileEditorViewController () <UITextFieldDelegate>
+
+@property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
 
 @property (strong, nonatomic) ETRUser *localUserCopy;
+
 @property (nonatomic) BOOL didChangeAttribute;
+
 @property (nonatomic) NSInteger lastTouchedTextFieldTag;
 
 @end
@@ -291,23 +295,11 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 }
 
 #pragma mark -
-#pragma mark Buttons
+#pragma mark Image Picker
 
 - (void)imagePickerButtonPressed:(id)sender {
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    [picker setDelegate:self];
-    [picker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
-    [picker setAllowsEditing:YES];
-    
-    [self presentViewController:picker animated:YES completion:nil];
-}
-
-- (void)cameraButtonPressed:(id)sender {
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    [picker setDelegate:self];
-    [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
-    
-    [self presentViewController:picker animated:YES completion:nil];
+    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
+    [_alertViewFactory showPictureSourcePickerForProfileEditor:self];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker
@@ -322,6 +314,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [[ETRLocalUserManager sharedManager] setImage:[ETRImageEditor imageFromPickerInfo:info]
                                     withImageView:[headerCell iconImageView]];
 }
+
+- (void)navigationController:(UINavigationController *)navigationController
+      willShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated {
+    [[navigationController navigationBar] setBarStyle:UIBarStyleBlack];
+}
+
+#pragma mark -
+#pragma mark Save Button
 
 - (void)saveButtonPressed:(id)sender {
     NSInteger lastTouchedRow = _lastTouchedTextFieldTag - ETRCellTagOffset;
@@ -401,11 +402,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     }
     
     if (doSendUpdate && [ETRCoreDataHelper saveContext]) {
-        // TODO: Add Action to query with Action Code "User update".
-        // This will fetch the local User object and upload it to the server.
-        [ETRServerAPIHelper sendLocalUserUpdate];
+        // This will fetch the local User object, upload it to the server
+        // and queue a retry if a connection problem occurred.
+        [ETRServerAPIHelper dispatchUserUpdate];
     }
-    
     
     [[self navigationController] popViewControllerAnimated:YES];
 }

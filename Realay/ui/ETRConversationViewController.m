@@ -142,6 +142,7 @@ UITextFieldDelegate
     } else if (_partner) {
         [self setTitle:[_partner name]];
         [[self moreButton] setTitle:NSLocalizedString(@"Profile", @"User Profile")];
+        [[self messagesTableView] setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
     }
     
     // Configure manual refresher.
@@ -160,6 +161,9 @@ UITextFieldDelegate
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [[self galleryButton] setHidden:YES];
+    [[self cameraButton] setHidden:YES];
     
     // Listen for keyboard changes.
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -230,9 +234,6 @@ UITextFieldDelegate
     
     // Disable delegates.
     [[self messageInputView] setDelegate:nil];
-    
-    [[self galleryButton] setHidden:YES];
-    [[self cameraButton] setHidden:YES];
     
     // Show all notifications because no chat is visible.
     [[ETRSessionManager sharedManager] setActiveChatID:-1];
@@ -407,7 +408,7 @@ UITextFieldDelegate
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([indexPath section] != 0) {
-        NSLog(@"ERROR: Invalid section in Conversation TableView: %d", [indexPath row]);
+        NSLog(@"ERROR: Invalid section in Conversation TableView: %d", (int) [indexPath row]);
         return [[UITableViewCell alloc] init];
     }
     
@@ -428,6 +429,9 @@ UITextFieldDelegate
                                    doLoadHiRes:NO];
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
+            if (_partner) {
+                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
+            }
             return cell;
         } else {
             ETRSentMessageCell * cell;
@@ -437,11 +441,12 @@ UITextFieldDelegate
             [[cell messageLabel] setText:[action messageContent]];
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
+            if (_partner) {
+                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
+            }
             return cell;
         }
     } else {
-        // CONTINUE HERE: Fix layout of private received messages.
-        
         ETRUser * sender = [action sender];
         NSString * senderName;
         if (_isPublic) {
@@ -473,6 +478,9 @@ UITextFieldDelegate
             
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
+            if (_partner) {
+                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
+            }
             return cell;
         } else {
             ETRReceivedMessageCell * cell;
@@ -494,6 +502,9 @@ UITextFieldDelegate
             [[cell messageLabel] setText:[action messageContent]];
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
             [[cell timeLabel] setText:timestamp];
+            if (_partner) {
+                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
+            }
             return cell;
         }
     }
@@ -534,7 +545,8 @@ UITextFieldDelegate
     [[self historyControl] endRefreshing];
 }
 
-#pragma mark - Alert Views
+#pragma mark -
+#pragma mark Message Long Press
 
 -(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer {
     if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
@@ -545,7 +557,6 @@ UITextFieldDelegate
         _alertViewFactory = [[ETRAlertViewFactory alloc] init];
         [_alertViewFactory showMenuForMessage:record calledByViewController:self];
     }
-
 }
 
 
@@ -668,32 +679,10 @@ UITextFieldDelegate
     }
 }
 
-- (IBAction)moreButtonPressed:(id)sender {
-    // The More button is a Profile button in private chats.
-    if (_isPublic) {
-        
-        if (![[self badgeLabel] isHidden]) {            
-            [ETRAnimator moveView:[self badgeLabel]
-                   toDisappearAtY:(self.view.frame.size.height + 100.0f)
-                       completion:^{
-                           [self performSegueWithIdentifier:ETRConversationToUserListSegue
-                                                     sender:nil];
-                       }];
-        } else {
-            [self performSegueWithIdentifier:ETRConversationToUserListSegue
-                                      sender:nil];
-        }
-        
-
-    } else {
-        [self performSegueWithIdentifier:ETRConversationToProfileSegue
-                                  sender:_partner];
-    }
-}
-
-- (void)exitButtonPressed:(id)sender {
-    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
-    [_alertViewFactory showLeaveConfirmView];
+- (void)navigationController:(UINavigationController *)navigationController
+      willShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated {
+    [[navigationController navigationBar] setBarStyle:UIBarStyleBlack];
 }
 
 #pragma mark - Keyboard Notifications
@@ -749,6 +738,34 @@ UITextFieldDelegate
 }
 
 #pragma mark - Navigation
+
+- (IBAction)moreButtonPressed:(id)sender {
+    // The More button is a Profile button in private chats.
+    if (_isPublic) {
+        
+        if (![[self badgeLabel] isHidden]) {
+            [ETRAnimator moveView:[self badgeLabel]
+                   toDisappearAtY:(self.view.frame.size.height + 100.0f)
+                       completion:^{
+                           [self performSegueWithIdentifier:ETRConversationToUserListSegue
+                                                     sender:nil];
+                       }];
+        } else {
+            [self performSegueWithIdentifier:ETRConversationToUserListSegue
+                                      sender:nil];
+        }
+        
+        
+    } else {
+        [self performSegueWithIdentifier:ETRConversationToProfileSegue
+                                  sender:_partner];
+    }
+}
+
+- (void)exitButtonPressed:(id)sender {
+    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
+    [_alertViewFactory showLeaveConfirmView];
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     id destination = [segue destinationViewController];

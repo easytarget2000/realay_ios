@@ -229,7 +229,7 @@ static NSMutableArray *connections;
     dispatch_async(
                    dispatch_get_main_queue(),
                    ^{
-                       [ETRCoreDataHelper clearPublicActions];
+                       [ETRCoreDataHelper cleanActions];
                    });
     
     NSMutableDictionary * joinParams = [NSMutableDictionary dictionaryWithDictionary:authParams];
@@ -345,14 +345,15 @@ static NSMutableArray *connections;
                              NSNumber *didSucceed = (NSNumber *)receivedObject;
                              if ([didSucceed boolValue]) {
 #ifdef DEBUG
-                                 NSLog(@"Did successfully send Action: %@", [outgoingAction messageContent]);
+                                 NSLog(@"Did successfully send Action: %@", outgoingAction);
 #endif
-                                 
                                  [ETRCoreDataHelper removeActionFromQueue:outgoingAction];
                                  return;
                              }
                          }
-                         
+#ifdef DEBUG
+                         NSLog(@"Could not send Action: %@", outgoingAction);
+#endif
                          [ETRCoreDataHelper addActionToQueue:outgoingAction];
                      }];
 }
@@ -679,7 +680,7 @@ static NSMutableArray *connections;
                      }];
 }
 
-+ (void)sendLocalUserUpdate {
++ (void)dispatchUserUpdate {
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     if (!localUser) {
         return;
@@ -721,8 +722,11 @@ static NSMutableArray *connections;
                          if (receivedObject && [receivedObject isKindOfClass:[NSNumber class]]) {
                              if ([((NSNumber *) receivedObject) boolValue]) {
                                  [ETRCoreDataHelper removeUserUpdateActionsFromQueue];
+                                 return;
                              }
                          }
+                        
+                         [ETRCoreDataHelper queueUserUpdate];
                      }];
 }
 

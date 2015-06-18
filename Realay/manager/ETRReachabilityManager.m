@@ -10,8 +10,11 @@
 
 #import "Reachability.h"
 
+#import "ETRCoreDataHelper.h"
+#import "ETRDefaultsHelper.h"
+#import "ETRLocationManager.h"
 #import "ETRServerAPIHelper.h"
-
+#import "ETRSessionManager.h"
 
 @interface ETRReachabilityManager ()
 
@@ -92,11 +95,19 @@
 //    Reachability * curReach = [note object];
 //    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
 #ifdef DEBUG
-    NSLog(@"Reachability did change");
+    NSLog(@"Reachability did change.");
 #endif
     
     if ([ETRReachabilityManager isReachable]) {
+        [ETRCoreDataHelper retrySendingQueuedActions];
         
+        CLLocation * currentLocation = [ETRLocationManager location];
+        if ([ETRDefaultsHelper doUpdateRoomListAtLocation:currentLocation]) {
+#ifdef DEBUG
+            NSLog(@"%@: Updating Rooms.", [self class]);
+#endif
+            [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
+        }
     }
 }
 

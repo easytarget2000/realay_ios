@@ -36,8 +36,6 @@ static NSString *const ETRActionDateKey = @"sentDate";
 
 static NSString *const ETRActionRoomKey = @"room";
 
-static NSString *const ETRActionInQueueKey = @"inQueue";
-
 static NSString *const ETRConversationPartnerKey = @"partner";
 
 static NSString *const ETRInRoomKey = @"inRoom";
@@ -108,6 +106,9 @@ static NSString * UserEntityName;
     return UserEntityName;
 }
 
+#pragma mark -
+#pragma mark General Context Accessories
+
 + (BOOL)saveContext {
     // Save Record.
     NSError * error;
@@ -117,6 +118,10 @@ static NSString * UserEntityName;
     } else {
         return true;
     }
+}
+
++ (void)deleteObject:(nonnull NSManagedObject *)object {
+    [[ETRCoreDataHelper context] deleteObject:object];
 }
 
 #pragma mark -
@@ -342,32 +347,38 @@ static NSString * UserEntityName;
                                      inAction:mediaAction];
 }
 
-+ (void)dispatchUserUpdateAction {
+/**
+ 
+ */
++ (void)queueUserUpdate {
     ETRAction * action = [ETRCoreDataHelper blankOutgoingAction];
     if (!action) {
         return;
     }
     
     [action setCode:@(ETRActionCodeUserUpdate)];
+    [action setIsInQueue:@(YES)];
     
-    // Immediately store them in the Context, so that they appear in the Conversation.
     [ETRCoreDataHelper saveContext];
-    
-    [ETRServerAPIHelper sendLocalUserUpdate];
 }
 
+
+//TODO: Delete queued Actions when leaving and entering a Room.
+
+/**
+ 
+ */
 + (void)retrySendingQueuedActions {
     NSFetchRequest * request = [[NSFetchRequest alloc] init];
     [request setEntity:[ETRCoreDataHelper actionEntity]];
     
     NSPredicate * predicate;
-    predicate = [NSPredicate predicateWithFormat:@"%@ == 1", ETRActionInQueueKey];
+    predicate = [NSPredicate predicateWithFormat:@"isInQueue == 1", @(YES)];
     [request setPredicate:predicate];
     
     NSError * error = nil;
     NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
                                                                    error:&error];
-    
     if (error) {
         NSLog(@"ERROR: %@", error);
     }
@@ -380,10 +391,14 @@ static NSString * UserEntityName;
         
         ETRAction * action = (ETRAction *)object;
         
+#ifdef DEBUG
+        NSLog(@"Retrying to send Action %@.", action);
+#endif
+        
         // Some Actions trigger specific API calls.
         switch ([[action code] shortValue]) {
             case ETRActionCodeUserUpdate:
-                [ETRServerAPIHelper sendLocalUserUpdate];
+                [ETRServerAPIHelper dispatchUserUpdate];
                 break;
                 
             default:
@@ -529,9 +544,6 @@ static NSString * UserEntityName;
     NSFetchRequest * request = [[NSFetchRequest alloc] init];
     [request setEntity:[ETRCoreDataHelper actionEntity]];
     
-    // TODO: Compare Object predicate vs. ID predicate.
-//    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-    
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
     [request setPredicate:[NSPredicate predicateWithFormat:@"(sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@)",
@@ -556,31 +568,38 @@ static NSString * UserEntityName;
     return resultsController;
 }
 
-+ (void)clearPublicActions {
-    NSFetchRequest * allPublicActions;
-    allPublicActions = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
+// CONTINUE HERE: Kick after connection inactivity & fix profile updates.
+
++ (void)cleanActions {
+    NSFetchRequest * request;
+    request = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
     
-    NSString *where = [NSString stringWithFormat:@"%@ == %i OR %@ == %i",
-                       ETRActionCodeKey,
-                       ETRActionCodePublicMessage,
-                       ETRActionCodeKey,
-                       ETRActionCodePublicMedia];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [allPublicActions setPredicate:predicate];
+    // Request all public messages and public media files
+    // and anything in the queue that is not a User update.
+    NSString * where = [NSString stringWithFormat:@"(%@ == %i OR %@ == %i) OR (isInQueue == 1 AND code != %i)",
+                        ETRActionCodeKey,
+                        ETRActionCodePublicMessage,
+                        ETRActionCodeKey,
+                        ETRActionCodePublicMedia,
+                        ETRActionCodeUserUpdate];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
+    [request setPredicate:predicate];
     // Only fetch the ManagedObjectID.
-    [allPublicActions setIncludesPropertyValues:NO];
+    [request setIncludesPropertyValues:NO];
     
     NSError * error = nil;
-    NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:allPublicActions
+    NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
                                                                    error:&error];
-    //error handling goes here
+    if (error) {
+        NSLog(@"ERROR: While cleaning: %@", error);
+    }
+    
     for (NSManagedObject * action in actions) {
         [[ETRCoreDataHelper context] deleteObject:action];
     }
-    
+
     [ETRCoreDataHelper saveContext];
 }
-
 
 #pragma mark -
 #pragma mark Converations
@@ -642,6 +661,36 @@ static NSString * UserEntityName;
     [convo setInRoom:sessionRoom];
     [convo setPartner:partner];
     return convo;
+}
+
++ (void)deleteConversation:(ETRConversation *)conversation {
+    if (!conversation) {
+        return;
+    }
+    
+    // First delete all messages in this Conversation.
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper actionEntity]];
+    
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"(code == %i OR code == %i) AND (sender == %@ OR recipient == %@)",
+                 ETRActionCodePrivateMessage,
+                 ETRActionCodePrivateMedia,
+                 [conversation partner],
+                 [conversation partner]];
+    [request setPredicate:predicate];
+    [request setIncludesPropertyValues:NO];
+    
+    NSError * error = nil;
+    NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
+                                                                   error:&error];
+    for (NSManagedObject * action in actions) {
+        [[ETRCoreDataHelper context] deleteObject:action];
+    }
+    
+    
+    [ETRCoreDataHelper deleteObject:conversation];
+    [ETRCoreDataHelper saveContext];
 }
 
 
@@ -707,20 +756,14 @@ static NSString * UserEntityName;
     }
     
     // We query the database with km values and only use metre integer precision.
-    NSString *distance = (NSString *)[JSONDict objectForKey:@"dst"];
+    NSString * distance = (NSString *)[JSONDict objectForKey:@"dst"];
     [room setQueryDistance:@([distance integerValue] * 1000)];
-    NSString *latitude = (NSString *)[JSONDict objectForKey:@"lat"];
+    NSString * latitude = (NSString *)[JSONDict objectForKey:@"lat"];
     [room setLatitude:@([latitude floatValue])];
-    NSString *longitude = (NSString *)[JSONDict objectForKey:@"lng"];
+    NSString * longitude = (NSString *)[JSONDict objectForKey:@"lng"];
     [room setLongitude:@([longitude floatValue])];
     
-    NSString * address;
-    if ([[JSONDict objectForKey:@"ad"] isMemberOfClass:[NSString class]]) {
-        address = (NSString *)[JSONDict objectForKey:@"ad"];
-    } else {
-        address = [NSString stringWithFormat:@"%@, %@", latitude, longitude];
-    }
-    [room setAddress:address];
+    [room setAddress:[JSONDict stringForKey:@"ad"]];
     
     NSLog(@"Inserting Room: %@", [room description]);
     [ETRCoreDataHelper saveContext];
@@ -755,7 +798,7 @@ static NSString * UserEntityName;
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRRoomDistanceKey ascending:YES]]];
     
     // Initialize Fetched Results Controller
-    NSFetchedResultsController *resultsController;
+    NSFetchedResultsController * resultsController;
     resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                    managedObjectContext:[ETRCoreDataHelper context]
                                                                      sectionNameKeyPath:nil

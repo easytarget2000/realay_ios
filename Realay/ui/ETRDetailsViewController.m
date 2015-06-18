@@ -265,12 +265,17 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     
     switch ([indexPath row]) {
         case 1: {
-            [[cell keyLabel] setText:NSLocalizedString(@"Location", @"Room address")];
-//            NSString * address = [_room address];
-//            if (!address) {
-//                address = [_room formattedCoordinates];
-//            }
-            [[cell valueLabel] setText:[_room address]];
+            if ([[_room address] length]) {
+                [[cell keyLabel] setText:NSLocalizedString(@"Address", @"Physical address")];
+                [[cell valueLabel] setText:[_room address]];
+            } else {
+                [[cell keyLabel] setText:NSLocalizedString(@"Coordinates", @"GPS Coordinates")];
+                
+                NSString * coordinates;
+                coordinates = [NSString stringWithFormat:@"%@, %@", [_room longitude], [_room latitude]];
+                [[cell valueLabel] setText:coordinates];
+            }
+
             break;
         }
             

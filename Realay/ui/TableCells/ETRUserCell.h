@@ -19,4 +19,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel * infoLabel;
 
+@property (weak, nonatomic) IBOutlet UILabel * timeLabel;
+
 @end

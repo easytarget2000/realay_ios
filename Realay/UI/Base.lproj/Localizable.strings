@@ -6,6 +6,8 @@
   Copyright (c) 2015 Easy Target. All rights reserved.
 */
 
+"Address" = "Address";
+
 "Before_join" = "Before you can join, you need to be within the radius of this place.\n\nThe circle on the map displays the area of a Realay.";
 
 "Block" = "Block";
@@ -16,15 +18,21 @@
 
 "Blocking_hides" = "This person and their messages will be hidden from you.";
 
+"Camera" = "Camera";
+
 "Cancel" = "Cancel";
 
 "Chat" = "Chat";
 
 "Connecting_seems_longer" = "Connecting seems to take longer than usual.";
 
+"Coordinates" = "Coordinates";
+
 "Copy_Message" = "Copy Message";
 
 "Current_distance" = "You are currently %@ away.";
+
+"Delete_Conversation" = "Delete Conversation";
 
 "Do_not_leave" = "Please do not leave the region of a Realay permanently.";
 
@@ -44,13 +52,11 @@
 
 "Leave" = "Leave";
 
-"Location" = "Location";
-
 "Near_You" = "Near You";
 
 "No" = "No";
 
-"No_private_conversations" = "You currently do not have any private conversations in this Realay. Chose a person from the user list to start a 1-on-1 chat.";
+//"No_private_messages" = "";
 
 "No_time_restriction" = "Without time restriction";
 
@@ -60,9 +66,13 @@
 
 "phone" = "phone";
 
+"Photos" = "Photos";
+
 "Picture" = "Picture";
 
-"Private_Conversation" = "Private Conversation";
+"Private_Message" = "Private Message";
+
+"Private_Chat_with" = "Private Chat with %@";
 
 "Private_Chats" = "Private Chats";
 
@@ -77,6 +87,8 @@
 "Return_to_area" = "Please make sure that your location can be estimated and return until %@.";
 
 "Regular_location_updates" = "Please make sure that your device regularly updates your location.";
+
+"Select_or_camera" = "Would you like to select an image from the Photos gallery or take a new picture?";
 
 "send_me_realhey" = "Send me a RealHey!";
 
@@ -123,6 +135,8 @@
 "Yes" = "Yes";
 
 "Your_Profile" = "Your Profile";
+
+"Your_Profile_Picture" = "Your Profile Picture";
 
 /*
  Unit symbols

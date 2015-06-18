@@ -11,6 +11,7 @@
 		D09D36521B2F42D000930E02 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D36541B2F42D000930E02 /* Localizable.strings */; };
 		D09D36591B2F43BC00930E02 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D09D36581B2F43BC00930E02 /* Settings.bundle */; };
 		D0BA69701B2F79FA001262FF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0BA696F1B2F79FA001262FF /* MapKit.framework */; };
+		D0CBFDD21B334B1700E98E49 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */; };
 		D0D54B3D1B2F1F9100F8875B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3C1B2F1F9100F8875B /* main.m */; };
 		D0D54B401B2F1F9100F8875B /* ETRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3F1B2F1F9100F8875B /* ETRAppDelegate.m */; };
 		D0D54B461B2F1F9100F8875B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0D54B441B2F1F9100F8875B /* Main.storyboard */; };
@@ -69,7 +70,6 @@
 		D0D54BF91B2F21A400F8875B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BF61B2F21A400F8875B /* Reachability.m */; };
 		D0D54BFF1B2F21B500F8875B /* ETRDefaultsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54BFD1B2F21B500F8875B /* ETRDefaultsHelper.m */; };
 		D0D54C021B2F21C200F8875B /* lustgarten.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D0D54C001B2F21C200F8875B /* lustgarten.gpx */; };
-		D0D54C081B2F298C00F8875B /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0D54C071B2F298C00F8875B /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +79,7 @@
 		D09D36531B2F42D000930E02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D09D36581B2F43BC00930E02 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		D0BA696F1B2F79FA001262FF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		D0D54B381B2F1F9100F8875B /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0D54B3C1B2F1F9100F8875B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D0D54B3E1B2F1F9100F8875B /* ETRAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETRAppDelegate.h; sourceTree = "<group>"; };
@@ -192,7 +193,6 @@
 		D0D54BFC1B2F21B500F8875B /* ETRDefaultsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRDefaultsHelper.h; sourceTree = "<group>"; };
 		D0D54BFD1B2F21B500F8875B /* ETRDefaultsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRDefaultsHelper.m; sourceTree = "<group>"; };
 		D0D54C001B2F21C200F8875B /* lustgarten.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lustgarten.gpx; sourceTree = "<group>"; };
-		D0D54C071B2F298C00F8875B /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -265,7 +265,6 @@
 			children = (
 				D0D54B4A1B2F1F9100F8875B /* Assets.xcassets */,
 				D0D54B441B2F1F9100F8875B /* Main.storyboard */,
-				D0D54C071B2F298C00F8875B /* Launch Screen.storyboard */,
 				D09D36541B2F42D000930E02 /* Localizable.strings */,
 				D0D54B561B2F218300F8875B /* Elements */,
 				D0D54B7C1B2F218300F8875B /* TableCells */,
@@ -302,6 +301,7 @@
 				D0D54B781B2F218300F8875B /* ETRUserListBaseViewController.m */,
 				D0D54B791B2F218300F8875B /* ETRUserListViewController.h */,
 				D0D54B7A1B2F218300F8875B /* ETRUserListViewController.m */,
+				D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -490,8 +490,8 @@
 				D09D364D1B2F42A000930E02 /* InfoPlist.strings in Resources */,
 				D09D36521B2F42D000930E02 /* Localizable.strings in Resources */,
 				D0D54B4B1B2F1F9100F8875B /* Assets.xcassets in Resources */,
-				D0D54C081B2F298C00F8875B /* Launch Screen.storyboard in Resources */,
 				D0D54B461B2F1F9100F8875B /* Main.storyboard in Resources */,
+				D0CBFDD21B334B1700E98E49 /* Launch Screen.xib in Resources */,
 				D09D36591B2F43BC00930E02 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

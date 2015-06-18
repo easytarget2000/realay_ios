@@ -67,6 +67,6 @@ extern NSString * ETRAPIBaseURL;
 
 + (void)getUserWithID:(NSNumber *)remoteID;
 
-+ (void)sendLocalUserUpdate;
++ (void)dispatchUserUpdate;
 
 @end

@@ -10,7 +10,8 @@
 
 #import "ETRDetailsViewController.h"
 #import "ETRLocalUserManager.h"
-#import "ETRLocationManager.h"
+//#import "ETRLocationManager.h"
+//#import "ETRUIConstants.h"
 
 
 static NSString *const ETRSegueSettingsToBlockedUsers = @"SettingsToBlockedUsers";
@@ -27,29 +28,31 @@ static NSString *const ETRSegueSettingsToProfile = @"SettingsToProfile";
 
 @implementation ETRSettingsTableViewController
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    // Reset Bar elements that might have been changed during navigation to other View Controllers.
-    [[[self navigationController] navigationBar] setTranslucent:NO];
-    [[self navigationController] setToolbarHidden:NO animated:YES];
-}
-
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    UITableViewCell * locationSettings;
-    locationSettings = [[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]];
-    if (locationSettings) {
-        if (![[ETRLocationManager sharedManager] didAuthorize]) {
-            [locationSettings setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-        } else {
-            [locationSettings setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-        }
-    }
-    
-    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+    [[self navigationController] setToolbarHidden:YES animated:YES];
 }
+
+//- (void)viewDidAppear:(BOOL)animated {
+//    [super viewDidAppear:animated];
+//    
+//    UITableViewCell * locationSettings;
+//    locationSettings = [[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]];
+//    if (locationSettings) {
+//        if (![[ETRLocationManager sharedManager] didAuthorize]) {
+//            [locationSettings setBackgroundColor:[ETRUIConstants accentColor]];
+//            [locationSettings setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
+//        } else {
+//            [locationSettings setBackgroundColor:[UIColor whiteColor]];
+//            [locationSettings setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+//        }
+//    }
+//    
+//    
+//}
 
 #pragma mark - UITableViewDelegate
 

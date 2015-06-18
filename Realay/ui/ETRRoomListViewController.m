@@ -25,7 +25,7 @@
 #import "ETRUIConstants.h"
 
 
-static CGFloat const ETRRoomCellHeight = 410.0f;
+static CGFloat const ETRRoomCellHeight = 424.0f;
 
 static NSString *const ETRRoomCellIdentifier = @"RoomCell";
 
@@ -248,9 +248,20 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 - (void)configureRoomCell:(ETRRoomCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     // Get the Room Record from the ResultsController
     // and apply its attributes to the cell views.
-    ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
+    ETRRoom * record = [_fetchedResultsController objectAtIndexPath:indexPath];
+    
     [[cell titleLabel] setText:[record title]];
-    [[cell addressLabel] setText:[record address]];
+    
+    if ([[record address] length]) {
+//        [[cell keyLabel] setText:NSLocalizedString(@"Address", @"Physical address")];
+        [[cell addressLabel] setText:[record address]];
+    } else {
+//        [[cell keyLabel] setText:NSLocalizedString(@"Coordinates", @"GPS Coordinates")];
+        NSString * coordinates;
+        coordinates = [NSString stringWithFormat:@"%@, %@", [record longitude], [record latitude]];
+        [[cell addressLabel] setText:coordinates];
+    }
+    
     NSString *size = [ETRReadabilityHelper formattedLength:[record radius]];
     [[cell sizeLabel] setText:size];
     [[cell hoursLabel] setText:[record hours]];

@@ -83,6 +83,9 @@ static ETRLocationManager * SharedInstance;
 #endif
     
     if ([ETRDefaultsHelper doUpdateRoomListAtLocation:_location]) {
+#ifdef DEBUG
+        NSLog(@"%@: Updating Rooms.", [self class]);
+#endif
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     }
     

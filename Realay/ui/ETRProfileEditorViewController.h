@@ -8,12 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ETRProfileEditorViewController : UITableViewController 
+@interface ETRProfileEditorViewController : UITableViewController
+<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 - (IBAction)saveButtonPressed:(id)sender;
 
 - (IBAction)imagePickerButtonPressed:(id)sender;
-
-- (IBAction)cameraButtonPressed:(id)sender;
 
 @end

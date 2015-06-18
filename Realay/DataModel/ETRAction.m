@@ -25,27 +25,18 @@
 @dynamic sender;
 @dynamic conversation;
 
-//+ (ETRAction *)actionFromJSONDictionary:(NSDictionary *)JSONDict {
-//    if (!JSONDict) return nil;
-//    
-//    long senderID = [[JSONDict objectForKey:@"sn"] longValue];
-//    if (senderID < 10) return nil;
-//    
-//    long timeStamp = [[JSONDict objectForKey:@"t"] longValue];
-//    if (timeStamp < 1) return nil;
-//    
-//    ETRAction *receivedAction = [[ETRAction alloc] init];
-//    
-//    [receivedAction setRemoteID:[NSNumber numberWithLong:kActionIDUnknown]];
-//    // TODO: Set Sender & Receiver attributes.
-//    [receivedAction setSentDate:[NSDate dateWithTimeIntervalSince1970:timeStamp]];
-//    [receivedAction setCode:[NSNumber numberWithShort:[[JSONDict objectForKey:@"cd"] shortValue]]];
-//    
-//    NSString *content = (NSString *)[JSONDict objectForKey:@"m"];
-//    if (content && [content length]) [receivedAction setMessageContent:content];
-//    
-//    return receivedAction;
-//}
+#pragma mark -
+#pragma mark NSObject
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@: %@ to %@ at %@: %@, %@",
+            [self remoteID],
+            [[self sender] name],
+            [[self recipient] name],
+            [self sentDate],
+            [self code],
+            [self messageContent]];
+}
 
 #pragma mark -
 #pragma mark Derived Values

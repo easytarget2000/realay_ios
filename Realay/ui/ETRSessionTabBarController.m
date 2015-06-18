@@ -21,11 +21,6 @@ static NSString *const ETRSegueSessionTabsToMap = @"SessionTabsToMap";
 static NSString *const ETRSegueSessionTabsToSettings = @"SessionTabsToSettings";
 
 
-@interface ETRSessionTabBarController ()
-
-@end
-
-
 @implementation ETRSessionTabBarController
 
 #pragma mark -
@@ -50,9 +45,10 @@ static NSString *const ETRSegueSessionTabsToSettings = @"SessionTabsToSettings";
                                                                   action:@selector(mapButtonPressed:)];
     UIImage * settingsIcon = [UIImage imageNamed:@"Settings_24pt"];
     UIBarButtonItem * settingsButton = [[UIBarButtonItem alloc] initWithImage:settingsIcon
-                                                         landscapeImagePhone:settingsIcon
-                                                                       style:UIBarButtonItemStylePlain target:self
-                                                                      action:@selector(settingsButtonPressed:)];
+                                                          landscapeImagePhone:settingsIcon
+                                                                        style:UIBarButtonItemStylePlain
+                                                                       target:self
+                                                                       action:@selector(settingsButtonPressed:)];
     
 //    NSString * settings = NSLocalizedString(@"Settings", @"Preferences");
 //    UIBarButtonItem * settingsButton = [[UIBarButtonItem alloc] initWithTitle:settings

@@ -25,7 +25,7 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 
 @interface ETRMapViewController () <MKMapViewDelegate>
 
-@property (strong, nonatomic) ETRRoom * setUpRoom;
+@property (nonatomic) BOOL didSetUpMap;
 
 @end
 
@@ -38,11 +38,64 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    [self setUpMap];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+    [[self navigationController] setToolbarHidden:NO animated:NO];
+    
+    // Basic GUI setup:
+    [self setTitle:[[ETRSessionManager sessionRoom] title]];
+    
+    // Hide the join button if the user is already in this room.
+    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+        [[self navigationItem] setRightBarButtonItem:nil];
+        [self setDirectionsButton:nil];
+    } else {
+        [[self navigationItem] setRightBarButtonItem:[self joinButton]];
+    }
+
+//    if (!_didSetUpMap) {
+//        [self setUpMap];
+//    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self setUpMap];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    _didSetUpMap = NO;
+    
+    NSArray * currentAnnotations = [[self mapView] annotations];
+    if (currentAnnotations) {
+        [[self mapView] removeAnnotations:currentAnnotations];
+    }
+    
+    NSArray * currentOverlays = [[self mapView] overlays];
+    if (currentOverlays) {
+        [[self mapView] removeOverlays:currentOverlays];
+    }
+    
+    
+    [[self mapView] setUserTrackingMode:MKUserTrackingModeNone];
+    [[self mapView] setShowsUserLocation:NO];
+    [[self mapView] setDelegate:nil];
+    
+    [super viewWillDisappear:animated];
+}
+
+- (void)setUpMap {
     // Create the room marker.
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom) {
         NSLog(@"ERROR: %@: Cannot start without a prepared Session Room.", [self class]);
-        [[self navigationController] popViewControllerAnimated:YES];
+        [[self navigationController] popToRootViewControllerAnimated:YES];
         return;
     }
     
@@ -82,49 +135,6 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     [[self mapView] addOverlay:circle];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    // Reset Bar elements that might have been changed during navigation to other View Controllers.
-    [[[self navigationController] navigationBar] setTranslucent:NO];
-    [[self navigationController] setToolbarHidden:NO animated:NO];
-    
-    // Basic GUI setup:
-    [self setTitle:[[ETRSessionManager sessionRoom] title]];
-    
-    // Hide the join button if the user is already in this room.
-    if ([[ETRSessionManager sharedManager] didBeginSession]) {
-        [[self navigationItem] setRightBarButtonItem:nil];
-        [self setDirectionsButton:nil];
-    } else {
-        [[self navigationItem] setRightBarButtonItem:[self joinButton]];
-    }
-
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    NSArray * currentAnnotations = [[self mapView] annotations];
-    if (currentAnnotations) {
-        [[self mapView] removeAnnotations:currentAnnotations];
-    }
-    
-    NSArray * currentOverlays = [[self mapView] overlays];
-    if (currentOverlays) {
-        [[self mapView] removeOverlays:currentOverlays];
-    }
-    
-    
-    [[self mapView] setUserTrackingMode:MKUserTrackingModeNone];
-    [[self mapView] setShowsUserLocation:NO];
-    [[self mapView] setDelegate:nil];
-    
-    [super viewWillDisappear:animated];
-}
-
 #pragma mark -
 #pragma mark MKMapViewDelegate
 
@@ -149,19 +159,27 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 #pragma mark - Navigation
 
 - (IBAction)navigateButtonPressed:(id)sender {
-    NSString *URLString;
     
-    NSURL *gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
-    NSString *address = [[[ETRSessionManager sharedManager] room] address];
-    if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
-        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
+    NSString * address;
+    if ([[sessionRoom address] length] > 4) {
+        address = [sessionRoom address];
     } else {
-        // No app was found that opens Google Maps URLs.
-#ifdef DEBUG
-        NSLog(@"INFO: Can not use comgooglemaps://.");
-#endif
-        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%@", address];
+        address = [NSString stringWithFormat:@"%@,%@", [sessionRoom longitude], [sessionRoom latitude]];
     }
+    
+    NSString * URLString;
+//    NSURL * gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
+    
+//    if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
+//        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
+//    } else {
+//        // No app was found that opens Google Maps URLs.
+//#ifdef DEBUG
+//        NSLog(@"INFO: Can not use comgooglemaps://.");
+//#endif
+        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%@", address];
+//    }
     
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
 }

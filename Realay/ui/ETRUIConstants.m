@@ -34,6 +34,7 @@ CGFloat const ETRFontSizeSmall = 15.0f;
 
 CGFloat const ETRRowHeightUser = 64.0f;
 
+
 static UIColor * PrimaryColor;
 
 static UIColor * PrimaryTransparentColor;
@@ -41,6 +42,9 @@ static UIColor * PrimaryTransparentColor;
 static UIColor * DarkPrimaryColor;
 
 static UIColor * AccentColor;
+
+static UIColor * SecondaryBackgroundColor;
+
 
 @implementation ETRUIConstants
 
@@ -86,6 +90,16 @@ CGFloat const ETRIconViewCornerRadius = 20.0f;
                                       alpha:1.0f];
     }
     return AccentColor;
+}
+
++ (UIColor *)secondaryBackgroundColor {
+    if (!SecondaryBackgroundColor) {
+        SecondaryBackgroundColor = [UIColor colorWithRed:(0xDC/255.0f)
+                                                   green:(0xED/255.0f)
+                                                    blue:(0xC8/255.0f)
+                                                   alpha:1.0f];
+    }
+    return SecondaryBackgroundColor;
 }
 
 @end

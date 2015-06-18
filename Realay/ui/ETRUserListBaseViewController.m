@@ -14,6 +14,7 @@
 #import "ETRConversationViewController.h"
 #import "ETRImageLoader.h"
 #import "ETRImageView.h"
+#import "ETRReadabilityHelper.h"
 #import "ETRSessionTabBarController.h"
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
@@ -41,6 +42,9 @@
     
     // The User list has a fixed row height.
     [[self tableView] setRowHeight:ETRRowHeightUser];
+    
+    NSString * backButtonTitle = NSLocalizedString(@"Users", @"List of Users");
+    [[[self navigationItem] backBarButtonItem] setTitle:backButtonTitle];
 }
 
 - (void)setUpForConversationList:(BOOL)doShowConversations {
@@ -178,14 +182,16 @@
         ETRConversation * convo = [_resultsController objectAtIndexPath:indexPath];
         user = [convo partner];
         
-        NSString * message;
-        if ([[convo lastMessage] isPhotoMessage]) {
-            message = NSLocalizedString(@"Picture", @"Picture");
+        ETRAction * lastMessage = [convo lastMessage];
+        
+        if ([lastMessage isPhotoMessage]) {
+            [[cell infoLabel] setText:NSLocalizedString(@"Picture", @"Picture")];
         } else {
-            message = [[convo lastMessage] messageContent];
+            [[cell infoLabel] setText:[lastMessage messageContent]];
         }
         
-        [[cell infoLabel] setText:message];
+        NSString * timeStamp = [ETRReadabilityHelper formattedDate:[lastMessage sentDate]];
+        [[cell timeLabel] setText:timeStamp];
         
         if ([[convo hasUnreadMessage] boolValue]) {
             [[cell infoLabel] setTextColor:[ETRUIConstants accentColor]];

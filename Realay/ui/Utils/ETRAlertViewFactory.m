@@ -9,10 +9,12 @@
 #import "ETRAlertViewFactory.h"
 
 #import "ETRAction.h"
+#import "ETRConversation.h"
 #import "ETRConversationViewController.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
+#import "ETRProfileEditorViewController.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
@@ -20,9 +22,11 @@
 #import "ETRUser.h"
 
 typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
+    ETRAlertViewTagBlock = 70,
+    ETRAlertViewTagConversationMenu = 78,
     ETRAlertViewTagLeave = 66,
     ETRAlertViewTagMessageMenu = 68,
-    ETRAlertViewTagBlock = 70,
+    ETRAlertViewTagPictureSource = 76,
     ETRAlertViewTagSettings = 72,
     ETRAlertViewTagUnblock = 74
 };
@@ -33,6 +37,8 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
 @property (strong, nonatomic) ETRUser * selectedUser;
 
 @property (strong, nonatomic) ETRAction * selectedMessage;
+
+@property (strong, nonatomic) ETRConversation * selectedConversation;
 
 @property (strong, nonatomic) UIViewController * viewController;
 
@@ -56,6 +62,27 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     [_existingSettingsAlert setTag:ETRAlertViewTagSettings];
     [_existingSettingsAlert setDelegate:self];
     [_existingSettingsAlert show];
+}
+
+/*
+ 
+ */
+- (void)showPictureSourcePickerForProfileEditor:(ETRProfileEditorViewController *)viewController {
+    _viewController = viewController;
+    
+    NSString * title  = NSLocalizedString(@"Your_Profile_Picture", @"Your Profile Picture");
+    NSString * message = NSLocalizedString(@"Select_or_camera", @"Selection explanation");
+    NSString * gallery = NSLocalizedString(@"Photos", @"Apple Photos app name");
+    NSString * camera = NSLocalizedString(@"Camera", @"Apple Camera app name");
+    
+    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title
+                                                         message:message
+                                                        delegate:self
+                                               cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
+                                               otherButtonTitles:gallery, camera, nil];
+    
+    [alertView setTag:ETRAlertViewTagPictureSource];
+    [alertView show];
 }
 
 #pragma mark -
@@ -140,7 +167,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     NSMutableArray * buttonTitles = [NSMutableArray arrayWithObjects:copyMessage, nil];
     
     if (![_selectedMessage isSentAction] && [_selectedMessage isPublicAction]) {
-        [buttonTitles addObject:NSLocalizedString(@"Private_Conversation", @"Open Private Chat")];
+        [buttonTitles addObject:NSLocalizedString(@"Private_Message", @"Open Private Chat")];
         [buttonTitles addObject:NSLocalizedString(@"Show_Profile", @"User Details")];
         [buttonTitles addObject:NSLocalizedString(@"Block_User", @"Block User")];
     }
@@ -156,6 +183,33 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     }
     
     [alertView setTag:ETRAlertViewTagMessageMenu];
+    [alertView show];
+}
+
+/*
+ 
+ */
+- (void)showMenuForConversation:(ETRConversation *)conversation
+         calledByViewController:(UIViewController *)viewController {
+    
+    if (!conversation) {
+        return;
+    }
+    
+    _selectedConversation = conversation;
+    _viewController = viewController;
+    
+    NSString * privateConversationFormat;
+    privateConversationFormat = NSLocalizedString(@"Private_Chat_with", @"Chat with %s");
+    NSString * title = [NSString stringWithFormat:privateConversationFormat, [[_selectedConversation partner] name]];
+    NSString * deleteTitle = NSLocalizedString(@"Delete_Conversation", @"Remove Private Chat");
+    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title
+                                                         message:nil
+                                                        delegate:self
+                                               cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
+                                               otherButtonTitles:deleteTitle, nil];
+    
+    [alertView setTag:ETRAlertViewTagConversationMenu];
     [alertView show];
 }
 
@@ -302,12 +356,12 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
+    if (buttonIndex == 0) {
+        return;
+    }
+    
     switch ([alertView tag]) {
         case ETRAlertViewTagBlock:
-            if (buttonIndex == 0) {
-                return;
-            }
-            
             if (!_selectedUser) {
                 NSLog(@"ERROR: Cannot perform next blocking step. User reference lost.");
             } else {
@@ -330,11 +384,11 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             }
             break;
             
-        case ETRAlertViewTagLeave:
-            if (buttonIndex == 0) {
-                return;
-            }
+        case ETRAlertViewTagConversationMenu:
+            [ETRCoreDataHelper deleteConversation:_selectedConversation];
+            break;
             
+        case ETRAlertViewTagLeave:
             [[ETRSessionManager sharedManager] endSession];
             break;
             
@@ -389,7 +443,31 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                 // Show Block Alert View.
                 [self showBlockConfirmViewForUser:[_selectedMessage sender] viewController:nil];
             }
+            break;
             
+        case ETRAlertViewTagPictureSource: {
+            if (!_viewController) {
+                NSLog(@"ERROR: Picture Source Picker selected without View Controller to handle result.");
+                return;
+            } else if (![_viewController isKindOfClass:[ETRProfileEditorViewController class]]) {
+                NSLog(@"ERROR: %@: View Controller is not of expected kind of class.", [self class]);
+                return;
+            }
+            
+            UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+            [picker setDelegate:(ETRProfileEditorViewController *)_viewController];
+            [picker setAllowsEditing:YES];
+            [picker setNeedsStatusBarAppearanceUpdate];
+
+            if (buttonIndex == 1) {
+                // TODO: SavedPhotosAlbum vs. PhotosLibrary?
+                [picker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+            } else if (buttonIndex == 2) {
+                [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
+            }
+            
+            [_viewController presentViewController:picker animated:YES completion:nil];
+        }
             break;
             
         case ETRAlertViewTagSettings: {
@@ -397,13 +475,11 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             if (settingsURL && buttonIndex == 1) {
                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:settingsURL]];
             }
-            break;
         }
-            
+            break;
+
         case ETRAlertViewTagUnblock:
-            if (buttonIndex == 0) {
-                return;
-            } else if (_selectedUser) {
+            if (_selectedUser) {
                 [_selectedUser setIsBlocked:@(NO)];
                 [ETRCoreDataHelper saveContext];
             }

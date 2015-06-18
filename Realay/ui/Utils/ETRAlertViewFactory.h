@@ -10,6 +10,8 @@
 
 
 @class ETRAction;
+@class ETRConversation;
+@class ETRProfileEditorViewController;
 @class ETRUser;
 
 
@@ -27,6 +29,11 @@
  
  */
 - (void)showSettingsAlert;
+
+/*
+ 
+ */
+- (void)showPictureSourcePickerForProfileEditor:(ETRProfileEditorViewController *)viewController;
 
 #pragma mark -
 #pragma mark Session Exit
@@ -56,6 +63,12 @@
  */
 - (void)showMenuForMessage:(ETRAction *)message
     calledByViewController:(UIViewController *)viewController;
+
+/*
+ 
+ */
+- (void)showMenuForConversation:(ETRConversation *)conversation
+         calledByViewController:(UIViewController *)viewController;
 
 /*
  

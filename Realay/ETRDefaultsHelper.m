@@ -176,49 +176,33 @@ static CLLocation * LastUpdateLocation;
 + (CLLocation *)lastUpdateLocation {
     if (!LastUpdateLocation) {
         NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-        id<NSObject> lastUpdateTime = [defaults objectForKey:ETRDefaultsKeyLastUpdateTime];
-        if (lastUpdateTime && [lastUpdateTime isKindOfClass:[NSNumber class]]) {
-            CFAbsoluteTime lastUpdateAbsolutTime = [((NSNumber *) lastUpdateTime) doubleValue];
-            if (CFAbsoluteTimeGetCurrent() - lastUpdateAbsolutTime > ETRRoomListUpdateInterval) {
+        CFAbsoluteTime lastUpdateTime = [defaults doubleForKey:ETRDefaultsKeyLastUpdateTime];
+        if (lastUpdateTime != 0.0) {
+            if (CFAbsoluteTimeGetCurrent() - lastUpdateTime > ETRRoomListUpdateInterval) {
                 return nil;
             }
         } else {
             return nil;
         }
         
-        CLLocationDegrees latDegrees;
-        id<NSObject> latitude = [defaults objectForKey:ETRDefaultsKeyLastUpdateLat];
-        if (latitude && [latitude isKindOfClass:[NSNumber class]]) {
-            latDegrees = [((NSNumber *)latitude) doubleValue];
-        } else {
+        CLLocationDegrees latitude = [defaults doubleForKey:ETRDefaultsKeyLastUpdateLat];
+        if (latitude == 0.0) {
             return nil;
         }
         
-        CLLocationDegrees lngDegrees;
-        id<NSObject> longitude = [defaults objectForKey:ETRDefaultsKeyLastUpdateLng];
-        if (longitude && [longitude isKindOfClass:[NSNumber class]]) {
-            lngDegrees = [((NSNumber *)longitude) doubleValue];
-        } else {
+        CLLocationDegrees longitude = [defaults doubleForKey:ETRDefaultsKeyLastUpdateLng];
+        if (longitude == 0.0) {
             return nil;
         }
         
         CLLocationCoordinate2D coordinate;
-        coordinate.latitude = latDegrees;
-        coordinate.longitude = lngDegrees;
+        coordinate.latitude = latitude;
+        coordinate.longitude = longitude;
         
-        CLLocationDistance altitude;
-        id<NSObject> storedAlt = [defaults objectForKey:ETRDefaultsKeyLastUpdateAlt];
-        if (storedAlt && [storedAlt isKindOfClass:[NSNumber class]]) {
-            altitude = [((NSNumber *) storedAlt) doubleValue];
-        } else {
-            return nil;
-        }
+        CLLocationDistance altitude = [defaults doubleForKey:ETRDefaultsKeyLastUpdateAlt];
         
-        CLLocationAccuracy accuracy;
-        id<NSObject> storedAccuracy = [defaults objectForKey:ETRDefaultsKeyLastUpdateAccuracy];
-        if (storedAccuracy && [storedAccuracy isKindOfClass:[NSNumber class]]) {
-            accuracy = [((NSNumber *) storedAccuracy) doubleValue];
-        } else {
+        CLLocationAccuracy accuracy = [defaults doubleForKey:ETRDefaultsKeyLastUpdateAccuracy];
+        if (accuracy == 0.0) {
             return nil;
         }
         
@@ -245,7 +229,9 @@ static CLLocation * LastUpdateLocation;
     [defaults setDouble:[location altitude] forKey:ETRDefaultsKeyLastUpdateAlt];
     [defaults setDouble:location.coordinate.latitude forKey:ETRDefaultsKeyLastUpdateLat];
     [defaults setDouble:location.coordinate.longitude forKey:ETRDefaultsKeyLastUpdateLng];
-    [defaults setDouble:[[location timestamp] timeIntervalSinceNow] forKey:ETRDefaultsKeyLastUpdateTime];
+    
+    CFAbsoluteTime time = [[location timestamp] timeIntervalSinceReferenceDate];
+    [defaults setDouble:time forKey:ETRDefaultsKeyLastUpdateTime];
     
     // Store the larger Accuracy.
     if ([location horizontalAccuracy] > [location verticalAccuracy]) {
