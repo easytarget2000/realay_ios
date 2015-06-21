@@ -398,12 +398,15 @@ UITextFieldDelegate
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_fetchedResultsController || ![[_fetchedResultsController fetchedObjects] count]) {
-        return 0;
+    NSInteger numberOfRows = [[_fetchedResultsController fetchedObjects] count];
+    
+    if (numberOfRows < 1) {
+        [[self infoLabel] setHidden:NO];
+    } else if (![[self infoLabel] isHidden]){
+        [ETRAnimator fadeView:[self infoLabel] doAppear:NO completion:nil];
     }
     
-    id<NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];
+    return numberOfRows;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

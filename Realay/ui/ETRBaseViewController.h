@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 
 
+static CFAbsoluteTime LastSettingsAlert = 0.0;
+
+
 @interface ETRBaseViewController : UIViewController
 
 - (void)updateAlertViews;

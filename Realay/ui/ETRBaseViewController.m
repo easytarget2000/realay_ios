@@ -10,14 +10,13 @@
 
 #import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRBouncer.h"
 #import "ETRConversationViewController.h"
 #import "ETRDefaultsHelper.h"
 #import "ETRJoinViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
-
-static CFAbsoluteTime LastSettingsAlert = 0.0;
 
 static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
 
@@ -47,8 +46,16 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
 //}
 
 - (void)updateAlertViews {
-    // TODO: Check Bouncer for AlertViews first.
+    // Check Bouncer for AlertViews first.
     // Other dialogs will not be displayed if a kick or warning is to be shown.
+    
+    // Let the LocationManager check its Authorization to handle possible changes.
+    [ETRLocationManager isInSessionRegion];
+    
+    if ([[ETRBouncer sharedManager] showPendingAlertViewsInViewController:self]) {
+        LastSettingsAlert = CFAbsoluteTimeGetCurrent();
+        return;
+    }
     
     if (!_alertViews) {
         _alertViews = [[ETRAlertViewFactory alloc] init];

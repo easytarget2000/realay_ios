@@ -281,33 +281,33 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             
         case 2: {
             [[cell keyLabel] setText:NSLocalizedString(@"Size", @"Room Size")];
-            NSString *size;
-            size = [ETRReadabilityHelper formattedLength:[_room radius]];
+            NSInteger diameter = [[_room radius] integerValue] * 2;
+            NSString * size = [ETRReadabilityHelper formattedIntegerLength:diameter];
             [[cell valueLabel] setText:size];
-            break;
         }
+            break;
             
         case 3: {
             [[cell keyLabel] setText:NSLocalizedString(@"Hours", @"Opening hours")];
             NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startTime]
                                                                     endDate:[_room endDate]];
             [[cell valueLabel] setText:timeSpan];
-            break;
         }
+            break;
             
         case 4: {
             NSString *labelText;
             labelText = NSLocalizedString(@"Users_online", @"Number of Users");
             [[cell keyLabel] setText:labelText];
             [[cell valueLabel] setText:[_room userCount]];
-            break;
         }
+            break;
             
         case 5: {
             [[cell keyLabel] setHidden:YES];
             [[cell valueLabel] setText:[_room summary]];
-            break;
         }
+            break;
         
     }
     
@@ -398,8 +398,11 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         if (![[ETRLocationManager sharedManager] didAuthorize]) {
             // The location access has not been authorized.
             
-            // TODO: Force the dialog.
-            [super updateAlertViews];
+            // CONTINUE HERE.
+            
+            // TODO: Show different text in settings dialog.
+            LastSettingsAlert = CFAbsoluteTimeGetCurrent();
+            
         } else if ([ETRLocationManager isInSessionRegion]) {
             // Show the password prompt, if the device location is inside the region.
             [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];

@@ -16,6 +16,6 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *usersTableView;
 
-@property (weak, nonatomic) IBOutlet ETRImageView *infoView;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 
 @end

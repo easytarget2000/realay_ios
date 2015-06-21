@@ -46,13 +46,6 @@
 
 - (void)ackknowledgeActionID:(long)remoteActionID;
 
-#pragma mark -
-#pragma mark Notifications
-
-- (void)dispatchNotificationForAction:(ETRAction *)action;
-
 - (void)setForegroundPartnerID:(NSNumber *)foregroundPartnerID;
-
-- (NSInteger)numberOfPrivateNotifs;
 
 @end

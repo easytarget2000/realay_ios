@@ -22,6 +22,8 @@ extern NSString *const ETRViewControllerIDDetails;
 
 extern NSString *const ETRViewControllerIDJoin;
 
+extern NSString *const ETRViewControllerIDMap;
+
 extern NSString *const ETRImageNameArrowRight;
 
 extern NSString *const ETRImageNameAttachFile;

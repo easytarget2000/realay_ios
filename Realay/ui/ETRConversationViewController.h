@@ -32,6 +32,8 @@
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem * moreButton;
 
+@property (weak, nonatomic) IBOutlet UILabel * infoLabel;
+
 @property (strong, nonatomic) ETRUser * partner;
 
 @property (nonatomic) BOOL isPublic;

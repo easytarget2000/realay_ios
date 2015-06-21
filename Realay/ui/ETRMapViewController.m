@@ -200,8 +200,8 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     if (![[ETRLocationManager sharedManager] didAuthorize]) {
         // The location access has not been authorized.
         
-        // TODO: Force the dialog.
-        [super updateAlertViews];
+        // TODO: Show different text in settings dialog.
+        LastSettingsAlert = CFAbsoluteTimeGetCurrent();
         
     } else if ([ETRLocationManager isInSessionRegion]) {
         // Show the password prompt, if the device location is inside the region.

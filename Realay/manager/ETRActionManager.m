@@ -9,8 +9,10 @@
 #import "ETRActionManager.h"
 
 #import "ETRAction.h"
+#import "ETRBouncer.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDefaultsHelper.h"
+#import "ETRNotificationManager.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
@@ -31,10 +33,10 @@ static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 
 static CFTimeInterval const ETRPingInterval = 40.0;
 
+static CFTimeInterval const ETRTimeIntervalTimeout = 2.0 * 60.0;
+
 
 @interface ETRActionManager ()
-
-//@property (strong, nonatomic) NSInvocation * invocation;           // Invocation for action query timer.
 
 /*
  Last ID of received actions
@@ -67,25 +69,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
  */
 @property (strong, nonatomic) NSMutableDictionary * notificationCounters;
 
-/*
- 
- */
-@property (nonatomic) BOOL didAllowNotifs;
-
-/*
- 
- */
-@property (nonatomic) BOOL didAllowAlerts;
-
-/*
- 
- */
-@property (nonatomic) BOOL didAllowBadges;
-
-/*
- 
- */
-@property (nonatomic) BOOL didAllowSounds;
 
 @end
 
@@ -113,7 +96,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 - (void)startSession {
     // Consider the join successful and start the query timer.
     _lastActionTime = CFAbsoluteTimeGetCurrent();
-    [self cancelAllNotifications];
+//    [[ETRNotificationManager sharedManager] cancelAllNotifications];
 
     [self dispatchQueryTimerWithResetInterval:YES];
     
@@ -122,7 +105,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 
 - (void)endSession {
     _lastActionID = 0L;
-    [self cancelAllNotifications];
+//    [[ETRNotificationManager sharedManager] cancelAllNotifications];
 }
 
 - (void)dispatchQueryTimerWithResetInterval:(BOOL)doResetInterval {
@@ -159,7 +142,11 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 }
 
 - (void)fetchUpdates:(NSTimer *)timer {
-    [self fetchUpdatesWithCompletionHandler:nil];
+    if (CFAbsoluteTimeGetCurrent() - _lastActionTime < ETRTimeIntervalTimeout) {
+        [self fetchUpdatesWithCompletionHandler:nil];
+    } else {
+        [[ETRBouncer sharedManager] kickForReason:ETRKickReasonTimeout calledBy:[[self class] description]];
+    }
 }
 
 - (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
@@ -184,7 +171,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
                     ETRAction * action;
                     action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
                     if (action && !isInitial) {
-                            [self dispatchNotificationForAction:action];
+                        [self dispatchNotificationForAction:action];
                     }
                     
                     didReceiveNewData = YES;
@@ -205,9 +192,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 - (BOOL)doSendPing {
     return CFAbsoluteTimeGetCurrent() - _lastPingTime > ETRPingInterval;
 }
-
-#pragma mark -
-#pragma mark Notifications
 
 - (void)ackknowledgeActionID:(long)remoteActionID {
     if (_lastActionID < remoteActionID) {
@@ -241,6 +225,9 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         [self updateBadgeNumber];
     }
 }
+
+#pragma mark -
+#pragma mark Notifications
 
 - (void)setInternalNotificationHandler:(id<ETRInternalNotificationHandler>)internalNotificationHandler {
     _internalNotificationHandler = internalNotificationHandler;
@@ -289,7 +276,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
     }
     
     [_notificationCounters setObject:numberOfNotifs forKey:counterKey];
-
+    
     
     if (!isPublicAction && _internalNotificationHandler) {
         dispatch_async(
@@ -303,14 +290,13 @@ static CFTimeInterval const ETRPingInterval = 40.0;
     // before showing the desired and appropriate information.
     [self updateBadgeNumber];
     
-    if (!_didAllowNotifs) {
+    if (![[ETRNotificationManager sharedManager] didAllowAlerts]) {
         return;
     }
     
     UILocalNotification * notification = [[UILocalNotification alloc] init];
     
-    
-    if (_didAllowAlerts) {
+    if ([[ETRNotificationManager sharedManager] didAllowAlerts]) {
         
         // TODO: Implement admin/other mesage notifications.
         
@@ -343,16 +329,14 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         [notification setAlertBody:alertBody];
     }
     
-    if (_didAllowSounds) {
-        [notification setSoundName:UILocalNotificationDefaultSoundName];
-    }
+    [[ETRNotificationManager sharedManager] playSoundForNotification:notification];
     
     [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
 }
 
 - (void)updateBadgeNumber {
-    [self updateAllowedNotificationTypes];
-    if (!_didAllowBadges) {
+    [[ETRNotificationManager sharedManager] updateAllowedNotificationTypes];
+    if (![[ETRNotificationManager sharedManager] didAllowBadges]) {
         NSInteger number = [self numberOfPrivateNotifs] + [self numberOfOtherNotifs];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:number];
     }
@@ -373,10 +357,10 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         // that have a key of class User.
         // Public messages are stored with a NSNumber key: @(-10).
         for (id counterKey in counterKeys) {
-//            if ([counterKey isKindOfClass:[ETRUser class]]) {
-                NSNumber * count = [_notificationCounters objectForKey:counterKey];
-                numberOfPrivateNotifs += [count integerValue];
-//            }
+            //            if ([counterKey isKindOfClass:[ETRUser class]]) {
+            NSNumber * count = [_notificationCounters objectForKey:counterKey];
+            numberOfPrivateNotifs += [count integerValue];
+            //            }
         }
         
         return numberOfPrivateNotifs;
@@ -399,16 +383,6 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 - (void)cancelAllNotifications {
     _notificationCounters = nil;
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-}
-
-- (void)updateAllowedNotificationTypes {
-    UIUserNotificationType types;
-    types = [[[UIApplication sharedApplication] currentUserNotificationSettings] types];
-    
-    _didAllowNotifs = (types != UIUserNotificationTypeNone);
-    _didAllowAlerts = (types & UIUserNotificationTypeAlert) != 0;
-    _didAllowBadges = (types & UIUserNotificationTypeBadge) != 0;
-    _didAllowSounds = (types & UIUserNotificationTypeSound) != 0;
 }
 
 @end

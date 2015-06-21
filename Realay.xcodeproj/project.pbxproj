@@ -10,6 +10,7 @@
 		D09D364D1B2F42A000930E02 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D364F1B2F42A000930E02 /* InfoPlist.strings */; };
 		D09D36521B2F42D000930E02 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D36541B2F42D000930E02 /* Localizable.strings */; };
 		D09D36591B2F43BC00930E02 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D09D36581B2F43BC00930E02 /* Settings.bundle */; };
+		D0A3494E1B361E3C0031FCEC /* ETRNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */; };
 		D0BA69701B2F79FA001262FF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0BA696F1B2F79FA001262FF /* MapKit.framework */; };
 		D0CBFDD21B334B1700E98E49 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */; };
 		D0D54B3D1B2F1F9100F8875B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3C1B2F1F9100F8875B /* main.m */; };
@@ -78,6 +79,8 @@
 		D09D36511B2F42BD00930E02 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D09D36531B2F42D000930E02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D09D36581B2F43BC00930E02 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		D0A3494C1B361E3C0031FCEC /* ETRNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRNotificationManager.h; sourceTree = "<group>"; };
+		D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRNotificationManager.m; sourceTree = "<group>"; };
 		D0BA696F1B2F79FA001262FF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		D0D54B381B2F1F9100F8875B /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -378,6 +381,8 @@
 				D0D54BD01B2F218F00F8875B /* ETRLocalUserManager.m */,
 				D0D54BD11B2F218F00F8875B /* ETRLocationManager.h */,
 				D0D54BD21B2F218F00F8875B /* ETRLocationManager.m */,
+				D0A3494C1B361E3C0031FCEC /* ETRNotificationManager.h */,
+				D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */,
 				D0D54BD31B2F218F00F8875B /* ETRReachabilityManager.h */,
 				D0D54BD41B2F218F00F8875B /* ETRReachabilityManager.m */,
 				D0D54BD51B2F218F00F8875B /* ETRSessionManager.h */,
@@ -511,6 +516,7 @@
 				D0D54BD81B2F218F00F8875B /* ETRBouncer.m in Sources */,
 				D0D54BA81B2F218300F8875B /* ETRConversationListViewController.m in Sources */,
 				D0D54BD71B2F218F00F8875B /* ETRActionManager.m in Sources */,
+				D0A3494E1B361E3C0031FCEC /* ETRNotificationManager.m in Sources */,
 				D0D54B491B2F1F9100F8875B /* Realay.xcdatamodeld in Sources */,
 				D0D54BF91B2F21A400F8875B /* Reachability.m in Sources */,
 				D0D54BA71B2F218300F8875B /* ETRBlockedUsersViewController.m in Sources */,

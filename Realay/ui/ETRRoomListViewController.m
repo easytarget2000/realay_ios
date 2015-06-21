@@ -98,13 +98,16 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [super viewDidAppear:animated];
     
     ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
-    if ([sessionMan didBeginSession] && [sessionMan room]) {
-        [super pushToPublicConversationViewController];
-    } else if ([sessionMan restoreSession]) {
-        [super pushToJoinViewController];
-    } else {
-        [[self tableView] reloadData];
+    if ([ETRLocationManager isInSessionRegion]) {
+        if ([sessionMan didBeginSession] && [sessionMan room]) {
+            [super pushToPublicConversationViewController];
+            return;
+        } else if ([sessionMan restoreSession]) {
+            [super pushToJoinViewController];
+            return;
+        }
     }
+    [[self tableView] reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -262,7 +265,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         [[cell addressLabel] setText:coordinates];
     }
     
-    NSString *size = [ETRReadabilityHelper formattedLength:[record radius]];
+    NSInteger diameter = [[record radius] integerValue] * 2;
+    NSString * size = [ETRReadabilityHelper formattedIntegerLength:diameter];
     [[cell sizeLabel] setText:size];
     [[cell hoursLabel] setText:[record hours]];
     

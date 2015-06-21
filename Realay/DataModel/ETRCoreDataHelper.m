@@ -266,6 +266,9 @@ static NSString * UserEntityName;
     return receivedAction;
 }
 
+/**
+ 
+ */
 + (void)dispatchPublicMessage:(NSString *)messageContent {
     ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
     if (!message) {
@@ -281,6 +284,9 @@ static NSString * UserEntityName;
     [ETRServerAPIHelper putAction:message];
 }
 
+/**
+ 
+ */
 + (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient {
     ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
     if (!message) {
@@ -299,6 +305,9 @@ static NSString * UserEntityName;
     [ETRServerAPIHelper putAction:message];
 }
 
+/**
+ 
+ */
 + (void)dispatchPublicImageMessage:(UIImage *)image {
     ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
     if (!message) {
@@ -308,6 +317,9 @@ static NSString * UserEntityName;
     [ETRCoreDataHelper dispatchImage:image inAction:message];
 }
 
+/**
+ 
+ */
 + (void)dispatchImageMessage:(UIImage *)image toRecipient:(ETRUser *)recipient {
     ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
     if (!message) {
@@ -318,6 +330,9 @@ static NSString * UserEntityName;
     [ETRCoreDataHelper dispatchImage:image inAction:message];
 }
 
+/**
+ 
+ */
 + (void)dispatchImage:(UIImage *)image inAction:(ETRAction *)mediaAction {
     if (!image || !mediaAction) {
         return;
@@ -362,9 +377,6 @@ static NSString * UserEntityName;
     [ETRCoreDataHelper saveContext];
 }
 
-
-//TODO: Delete queued Actions when leaving and entering a Room.
-
 /**
  
  */
@@ -408,7 +420,6 @@ static NSString * UserEntityName;
     }
 }
 
-
 + (ETRAction *)blankOutgoingAction {
     // Outgoing messages are always unique. Just initalise a new one.
     ETRAction * message = [[ETRAction alloc] initWithEntity:[ETRCoreDataHelper actionEntity]
@@ -430,7 +441,7 @@ static NSString * UserEntityName;
 }
 
 + (void)addActionToQueue:(ETRAction *)unsentAction {
-    if (!unsentAction) {
+    if (!unsentAction || [[unsentAction code] isEqualToNumber:@(ETRActionCodeUserQuit)]) {
         return;
     }
     
@@ -546,29 +557,43 @@ static NSString * UserEntityName;
     
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
-    [request setPredicate:[NSPredicate predicateWithFormat:@"(sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@)",
-                                partner,
-                                localUser,
-                                partner,
-                                localUser]];
+    NSString * format;
+    format = @"room == %@ AND ((sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@))";
+    [request setPredicate:[NSPredicate predicateWithFormat:format,
+                           sessionRoom,
+                           partner,
+                           localUser,
+                           partner,
+                           localUser]];
+    NSArray * sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey
+                                                                ascending:YES]];
+    [request setSortDescriptors:sortDescriptors];
     
-    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey ascending:YES]]];
-    [request setFetchLimit:numberOfLastMessages];
+    // The first request is a quick one to get the total number of records,
+    // so that the fetch offset can be calculated:
+    // count - numberOfLastMessages
+    [request setIncludesPropertyValues:NO];
+    
+    NSError * error = nil;
+    NSUInteger count = [[ETRCoreDataHelper context] countForFetchRequest:request
+                                                                   error:&error];
+    
+    // Prepare the actual Fetch Request that is used for the Results Controller.
+    [request setIncludesPropertyValues:YES];
+    if (count >= numberOfLastMessages) {
+        [request setFetchOffset:(count - numberOfLastMessages)];
+    }
     
     NSFetchedResultsController * resultsController;
     resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
-    
-//    CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - startTime;
-//    NSLog(@"Fetched Results Controller %@ in %f ms.", [partner remoteID], duration);
-
     [resultsController setDelegate:delegate];
     return resultsController;
 }
 
-// CONTINUE HERE: Kick after connection inactivity & fix profile updates.
+// TODO: Kick after connection inactivity & fix profile updates.
 
 + (void)cleanActions {
     NSFetchRequest * request;

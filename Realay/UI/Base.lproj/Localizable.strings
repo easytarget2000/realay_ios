@@ -38,6 +38,8 @@
 
 "email" = "email";
 
+"Event_ended" = "The Realay you were in ended a while ago.";
+
 "facebook_id" = "facebook id";
 
 "For_an_uninterrupted" = "For an uninterrupted experience, please allow Realay to always verify your location and request new messages in the background.";
@@ -52,17 +54,21 @@
 
 "Leave" = "Leave";
 
+"Location_Settings" = "Location Settings";
+
+"Map" = "Map";
+
 "Near_You" = "Near You";
 
 "No" = "No";
-
-//"No_private_messages" = "";
 
 "No_time_restriction" = "Without time restriction";
 
 "OK" = "OK";
 
 "Ongoing" = "Ongoing";
+
+"Part_of_event" = "This Realay is part of an event that ended at %@.\n\nYou can stay logged in here until %@.";
 
 "phone" = "phone";
 
@@ -86,15 +92,21 @@
 
 "Return_to_area" = "Please make sure that your location can be estimated and return until %@.";
 
+"Return_until" = "Please return to the area of the current Realay until %@.";
+
 "Regular_location_updates" = "Please make sure that your device regularly updates your location.";
+
+"Requested_to_leave" = "You have been requested to leave.";
 
 "Select_or_camera" = "Would you like to select an image from the Photos gallery or take a new picture?";
 
 "send_me_realhey" = "Send me a RealHey!";
 
-"Session_terminated" = "Your session has been terminated.";
+"Session_Terminated" = "Session Ended";
 
 "Settings" = "Settings";
+
+"Stay_in_area" = "Please stay within the area of the Realay and make sure that your location can be verified every once in a while.";
 
 "Share" = "Share";
 
@@ -107,6 +119,8 @@
 "Sorry" = "Sorry about that.";
 
 "status" = "Status";
+
+"Timeout_occurred" = "A timeout occurred.\n\nCould not connect to the internet to receive new messages for several minutes.";
 
 "Today" = "Today";
 
@@ -127,6 +141,8 @@
 "Want_leave" = "Do you want to leave %@?\n\nYou will no longer receive any messages.";
 
 "Want_unblock" = "Do you want to unblock %@?";
+
+"Where_Are_You" = "Where Are You?";
 
 "website" = "website";
 

@@ -22,6 +22,8 @@ NSString *const ETRViewControllerIDDetails = @"Details";
 
 NSString *const ETRViewControllerIDJoin = @"Join";
 
+NSString *const ETRViewControllerIDMap = @"Map";
+
 NSString *const ETRImageNameProfilePlaceholder = @"Mood_48pt";
 
 NSString *const ETRImageNameRoomPlaceholder = @"LocationCity_48pt";

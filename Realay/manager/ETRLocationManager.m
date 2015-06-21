@@ -9,6 +9,7 @@
 #import "ETRLocationManager.h"
 
 #import "ETRAlertViewFactory.h"
+#import "ETRBouncer.h"
 #import "ETRDefaultsHelper.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
@@ -24,7 +25,7 @@ static ETRLocationManager * SharedInstance;
 
 @property (nonatomic) BOOL doUpdateFast;
 
-//@property (nonatomic) BOOL didAuthorize;
+@property (nonatomic) BOOL isInSessionRegion;
 
 @end
 
@@ -91,15 +92,36 @@ static ETRLocationManager * SharedInstance;
     
     [self stopUpdatingLocation];
     [self startMonitoringSignificantLocationChanges];
+    
+    // Monitor entering and exiting the Room radius if a Session has been started.
+    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+        [self updateSessionRegionDistance];
+    }
 }
 
 + (BOOL)isInSessionRegion {
+    return [[ETRLocationManager sharedManager] updateSessionRegionDistance];
+}
+
+- (BOOL)updateSessionRegionDistance {
+    BOOL wasInSessionRegion = _isInSessionRegion;
+    
     if ([[ETRLocationManager sharedManager] didAuthorize]) {
         ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
-        return [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom] < 10;
+        _isInSessionRegion = [self distanceToRoom:sessionRoom] < 10;
     } else {
-        return NO;
+        _isInSessionRegion = NO;
     }
+        
+    if (wasInSessionRegion != _isInSessionRegion) {
+        if (_isInSessionRegion) {
+            [[ETRBouncer sharedManager] cancelLocationWarnings];
+        } else {
+            [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation];
+        }
+    }
+    
+    return _isInSessionRegion;
 }
 
 - (BOOL)didAuthorize {

@@ -9,6 +9,7 @@
 #import "ETRBlockedUsersViewController.h"
 
 #import "ETRAlertViewFactory.h"
+#import "ETRAnimator.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRImageLoader.h"
 #import "ETRImageView.h"
@@ -67,17 +68,23 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self usersTableView] reloadData];
+    [self updateInformationView];
+}
+
+- (void)updateInformationView {
+    NSInteger numberOfBlockedUsers = [[self usersTableView] numberOfRowsInSection:0];
+    if (numberOfBlockedUsers < 1) {
+        [ETRAnimator fadeView:[self infoLabel] doAppear:YES completion:nil];
+    } else {
+        [ETRAnimator fadeView:[self infoLabel] doAppear:NO completion:nil];
+    }
 }
 
 #pragma mark -
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_resultsController) {
-        return 0;
-    } else {
-        return [[_resultsController fetchedObjects] count];
-    }
+    return [[_resultsController fetchedObjects] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -148,6 +155,8 @@
                                          withRowAnimation:UITableViewRowAnimationFade];
         }
     }
+    
+    [self updateInformationView];
 }
 
 @end
