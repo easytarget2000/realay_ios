@@ -9,10 +9,15 @@
 #import <UIKit/UIKit.h>
 
 
+@class ETRAlertViewFactory;
+
+
 static CFAbsoluteTime LastSettingsAlert = 0.0;
 
 
 @interface ETRBaseViewController : UIViewController
+
+@property (strong, nonatomic) ETRAlertViewFactory * alertHelper;
 
 - (void)updateAlertViews;
 

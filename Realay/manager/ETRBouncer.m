@@ -8,6 +8,7 @@
 
 #import "ETRBouncer.h"
 
+#import "ETRDefaultsHelper.h"
 #import "ETRMapViewController.h"
 #import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
@@ -20,6 +21,8 @@ static ETRBouncer * sharedInstance = nil;
 static NSTimeInterval const ETRTimeIntervalFiveMinutes = 5.0 * 60.0;
 
 static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
+
+static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
 
 
 @interface ETRBouncer () <UIAlertViewDelegate>
@@ -37,6 +40,8 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 @property (nonatomic) NSInteger lastReason;
 
 @property (strong, nonatomic) NSString * sessionEnd;
+
+@property (nonatomic) CFAbsoluteTime lastConnectionTime;
 
 @end
 
@@ -82,6 +87,7 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
     [_warnTimer invalidate];
     _numberOfWarnings = 0;
     _hasPendingKick = NO;
+    _lastConnectionTime = CFAbsoluteTimeGetCurrent();
 }
 
 - (BOOL)showPendingAlertViewsInViewController:(UIViewController *)viewController {
@@ -153,6 +159,19 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 }
 
 #pragma mark -
+#pragma mark Connection
+
+- (void)acknowledgeConnection {
+    _lastConnectionTime = CFAbsoluteTimeGetCurrent();
+}
+
+- (void)acknowledgeFailedConnection {
+    if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
+        [self kickForReason:ETRTimeIntervalTimeout calledBy:@"acknowledgeFailedConnection"];
+    }
+}
+
+#pragma mark -
 #pragma mark Notificiations & AlertViews
 
 - (void)notifyUser {    
@@ -185,8 +204,8 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
                 messageFormat = NSLocalizedString(@"Return_until", @"Come back until %@");
                 message = [NSString stringWithFormat:messageFormat, [self kickTime]];
                 
-                firstButton = NSLocalizedString(@"Map", @"Session Map");
-                secondButton = NSLocalizedString(@"Location_Settings", @"Preferences");
+                secondButton = NSLocalizedString(@"Map", @"Session Map");
+                firstButton = NSLocalizedString(@"Location_Settings", @"Preferences");
             }
             break;
             
@@ -201,7 +220,12 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
             break;
             
         case ETRKickReasonTimeout:
-            message = NSLocalizedString(@"Timeout_occurred", @"Connection timeout");
+            if ([ETRDefaultsHelper didAllowBackgroundUpdates]) {
+                message = NSLocalizedString(@"Timeout_occurred", @"Connection timeout");
+            } else {
+                message = NSLocalizedString(@"Background_updates_disabled", @"Enable background updates");
+                firstButton = NSLocalizedString(@"Background_Updates", @"Same wording as in System Settings");
+            }
             break;
         
         case ETRKickReasonDataOff:
@@ -229,31 +253,23 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if (buttonIndex == 0) {
-        return;
-    }
-    
-    switch ([alertView tag]) {
-        case ETRKickReasonLocation:
-            if (buttonIndex == 1) {
-                // Map button:
-                if (_viewController) {
-                    UIStoryboard * storyBoard = [_viewController storyboard];
-                    ETRMapViewController * conversationViewController;
-                    conversationViewController = [storyBoard instantiateViewControllerWithIdentifier:ETRViewControllerIDMap];
-                    [[_viewController navigationController] pushViewController:conversationViewController
-                                                                      animated:YES];
-                }
-                
-                
-            } else {
-                // Settings button:
-                NSString * settingsURL = UIApplicationOpenSettingsURLString;
-                if (settingsURL) {
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:settingsURL]];
-                }
-            }
+    if (buttonIndex == 1 && _viewController) {
+        // Map button:
+        if (_viewController) {
+            UIStoryboard * storyBoard = [_viewController storyboard];
+            ETRMapViewController * conversationViewController;
+            conversationViewController = [storyBoard instantiateViewControllerWithIdentifier:ETRViewControllerIDMap];
+            [[_viewController navigationController] pushViewController:conversationViewController
+                                                              animated:YES];
+        }
+        
+        
+    } else if (buttonIndex == 2){
+        // Settings button:
+        NSString * settingsURL = UIApplicationOpenSettingsURLString;
+        if (settingsURL) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:settingsURL]];
+        }
     }
 }
 

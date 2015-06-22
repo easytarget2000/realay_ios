@@ -47,6 +47,8 @@
 
 + (CLLocation *)lastUpdateLocation;
 
++ (BOOL)didAllowBackgroundUpdates;
+
 #pragma mark -
 #pragma mark Session Persistence
 

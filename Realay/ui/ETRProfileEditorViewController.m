@@ -116,7 +116,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
         return headerCell;
     }
     
-    ETRKeyValueEditorCell *valueCell;
+    ETRKeyValueEditorCell * valueCell;
     valueCell = [tableView dequeueReusableCellWithIdentifier:ETRValueEditorCellIdentifier
                                                 forIndexPath:indexPath];
     switch (row) {
@@ -155,6 +155,8 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
                                                  forUser:_localUserCopy];
             break;
     }
+    
+    [[valueCell valueField] setDelegate:self];
     
     return valueCell;
 }
@@ -230,66 +232,63 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     }
 
     // Read in the new field value and apply it to the User duplicate.
-    NSCharacterSet *trimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-    NSString *enteredText;
+    NSCharacterSet * trimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSString * enteredText;
     enteredText = [[textField text] stringByTrimmingCharactersInSet:trimSet];
     
     switch ([textField tag] - ETRCellTagOffset) {
-        case 0: {
+        case 0:
             if (![enteredText length]) {
                 [ETRAlertViewFactory showTypedNameTooShortAlert];
             } else {
                 [_localUserCopy setName:enteredText];
             }
             break;
-        }
-        case 1: {
-            if (![enteredText length]) {
-                [_localUserCopy setStatus:@"..."];
-            } else {
+
+        case 1:
+            if ([enteredText length]) {
                 [_localUserCopy setStatus:enteredText];
+            } else {
+                [[self tableView] reloadData];
             }
             break;
-        }
             
-        case 2: {
-            if ([enteredText length] && [self isValidPhoneNumber:enteredText]) {
+        case 2:
+            if (![enteredText length]) {
+                [_localUserCopy setPhone:nil];
+                [[self tableView] reloadData];
+            } else if ([self isValidPhoneNumber:enteredText]) {
                 [_localUserCopy setPhone:enteredText];
             } else {
-                // TODO: Show alert.
-                [_localUserCopy setPhone:nil];
+                [[self tableView] reloadData];
             }
             break;
-        }
             
-        case 3: {
-            if ([enteredText length] && [self isValidEmailAddress:enteredText]) {
+        case 3:
+            if (![enteredText length]) {
+                [_localUserCopy setMail:nil];
+                [[self tableView] reloadData];
+            } else if ([self isValidEmailAddress:enteredText]) {
                 [_localUserCopy setMail:enteredText];
             } else {
-                // TODO: Show alert.
-                [_localUserCopy setMail:nil];
+                [[self tableView] reloadData];
             }
             break;
-        }
             
-        case 4: {
+        case 4:
             [_localUserCopy setWebsite:enteredText];
             break;
-        }
             
-        case 5: {
+        case 5:
             [_localUserCopy setFacebook:enteredText];
             break;
-        }
             
-        case 6: {
+        case 6:
             [_localUserCopy setInstagram:enteredText];
             break;
-        }
             
-        case 7: {
+        case 7:
             [_localUserCopy setTwitter:enteredText];
-        }
     }
     
 }
@@ -298,8 +297,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 #pragma mark Image Picker
 
 - (void)imagePickerButtonPressed:(id)sender {
-    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
-    [_alertViewFactory showPictureSourcePickerForProfileEditor:self];
+    [[self alertHelper] showPictureSourcePickerForProfileEditor:self];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker

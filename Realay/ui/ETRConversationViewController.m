@@ -59,11 +59,6 @@ UITextFieldDelegate
 >
 
 /*
- Reference to Alert View builder and click handler
- */
-@property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
-
-/*
  
  */
 @property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
@@ -557,8 +552,7 @@ UITextFieldDelegate
         NSIndexPath * indexPath = [[self messagesTableView] indexPathForRowAtPoint:point];
         
         ETRAction * record = [_fetchedResultsController objectAtIndexPath:indexPath];
-        _alertViewFactory = [[ETRAlertViewFactory alloc] init];
-        [_alertViewFactory showMenuForMessage:record calledByViewController:self];
+        [[self alertHelper] showMenuForMessage:record calledByViewController:self];
     }
 }
 
@@ -766,8 +760,7 @@ UITextFieldDelegate
 }
 
 - (void)exitButtonPressed:(id)sender {
-    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
-    [_alertViewFactory showLeaveConfirmView];
+    [[self alertHelper] showLeaveConfirmView];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

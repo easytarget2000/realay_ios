@@ -46,8 +46,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 @property (nonatomic) NSInteger socialMediaRow;
 
-@property (strong, nonatomic) ETRAlertViewFactory * alertHelper;
-
 @end
 
 
@@ -281,8 +279,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             
         case 2: {
             [[cell keyLabel] setText:NSLocalizedString(@"Size", @"Room Size")];
-            NSInteger diameter = [[_room radius] integerValue] * 2;
-            NSString * size = [ETRReadabilityHelper formattedIntegerLength:diameter];
+            int diameter = (int) [[_room radius] integerValue] * 2;
+            NSString * size = [ETRReadabilityHelper formattedIntLength:diameter];
             [[cell valueLabel] setText:size];
         }
             break;
@@ -336,28 +334,28 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     
     if (row == 1) {     // Configure the status cell.
         NSString *statusKey;
-        statusKey = NSLocalizedString(@"status", @"Status message");
+        statusKey = NSLocalizedString(@"Status", @"Status message");
         [[valueCell keyLabel] setText:statusKey];
         [[valueCell valueLabel] setText:[_user status]];
         return valueCell;
     }
     
     if (row == _phoneRow && [_user phone] && [[_user phone] length]) {
-        NSString *phoneKey = NSLocalizedString(@"phone", @"Phone number");
+        NSString *phoneKey = NSLocalizedString(@"Phone_Number", @"Phone number");
         [[valueCell keyLabel] setText:phoneKey];
         [[valueCell valueLabel] setText:[_user phone]];
         return valueCell;
     }
     
     if (row == _mailRow && [_user mail] && [[_user mail] length]) {
-        NSString *emailKey = NSLocalizedString(@"email", @"Email address");
+        NSString *emailKey = NSLocalizedString(@"Email_Address", @"Email address");
         [[valueCell keyLabel] setText:emailKey];
         [[valueCell valueLabel] setText:[_user mail]];
         return valueCell;
     }
     
     if (row == _websiteRow && [_user website] && [[_user website] length]) {
-        NSString *websiteKey = NSLocalizedString(@"website", "Website URL");
+        NSString *websiteKey = NSLocalizedString(@"Website", "Website URL");
         [[valueCell keyLabel] setText:websiteKey];
         [[valueCell valueLabel] setText:[_user website]];
         return valueCell;
@@ -374,8 +372,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 }
 
 - (IBAction)blockUserButtonPressed:(id)sender {
-    _alertHelper = [[ETRAlertViewFactory alloc] init];
-    [_alertHelper showBlockConfirmViewForUser:_user viewController:self];
+    [[self alertHelper] showBlockConfirmViewForUser:_user viewController:self];
 }
 
 - (IBAction)blockedUsersButtonPressed:(id)sender {
@@ -395,12 +392,9 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 #ifdef DEBUG_JOIN
         [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
 #else
-        if (![[ETRLocationManager sharedManager] didAuthorize]) {
+        if (![ETRLocationManager didAuthorizeWhenInUse]) {
             // The location access has not been authorized.
-            
-            // CONTINUE HERE.
-            
-            // TODO: Show different text in settings dialog.
+            [[self alertHelper] showSettingsAlertBeforeJoin];
             LastSettingsAlert = CFAbsoluteTimeGetCurrent();
             
         } else if ([ETRLocationManager isInSessionRegion]) {

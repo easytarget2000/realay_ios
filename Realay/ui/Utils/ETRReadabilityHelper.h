@@ -6,11 +6,13 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
+
 #import <UIKit/UIKit.h>
+
 
 @interface ETRReadabilityHelper : NSObject
 
-/*
+/**
  Takes any Date timestamp and turns it into a reasonably long text,
  read: as short as possible;
  Today's timestamps only show the hours and minutes;
@@ -21,14 +23,14 @@
  */
 + (NSString *)formattedDate:(NSDate *)date;
 
-/*
+/**
  Creates a stylised text which describes a time span
  between two, optional Date objects;
  Either Date may be nil
  */
 + (NSString *)timeSpanForStartDate:(NSDate *)startDate endDate:(NSDate *)endDate;
 
-/*
+/**
  Takes a value in metres and returns a human readable text,
  depending on the value and the system locale:
  100 returns "100 m" or "109 yd"
@@ -38,12 +40,12 @@
 + (NSString *)formattedLength:(NSNumber *)meters;
 
 
-/*
+/**
  Takes a value in metres and returns a human readable text,
  depending on the value and the system locale:
  100 returns "100 m" or "109 yd"
  15000 returns "15 km" or "8 mi"
  */
-+ (NSString *)formattedIntegerLength:(int)meters;
++ (NSString *)formattedIntLength:(int)meters;
 
 @end

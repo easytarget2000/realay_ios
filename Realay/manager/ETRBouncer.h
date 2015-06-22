@@ -33,4 +33,11 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
 
 - (void)cancelLocationWarnings;
 
+#pragma mark -
+#pragma mark Connection
+
+- (void)acknowledgeConnection;
+
+- (void)acknowledgeFailedConnection;
+
 @end

@@ -11,11 +11,6 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRConversation.h"
 
-@interface ETRConversationListViewController ()
-
-@property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
-
-@end
 
 @implementation ETRConversationListViewController
 
@@ -41,8 +36,7 @@
         NSIndexPath * indexPath = [[self tableView] indexPathForRowAtPoint:point];
         
         ETRConversation * record = [[self resultsController] objectAtIndexPath:indexPath];
-        _alertViewFactory = [[ETRAlertViewFactory alloc] init];
-        [_alertViewFactory showMenuForConversation:record calledByViewController:self];
+        [[self alertHelper] showMenuForConversation:record calledByViewController:self];
     }
 }
 

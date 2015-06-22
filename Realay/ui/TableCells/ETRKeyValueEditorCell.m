@@ -19,9 +19,12 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeDefault];
-    [[self keyLabel] setText:NSLocalizedString(@"status", @"Status message")];
+    [[self valueField] setSpellCheckingType:UITextSpellCheckingTypeYes];
+    [[self valueField] setAutocorrectionType:UITextAutocorrectionTypeYes];
+    [[self valueField] setAutocapitalizationType:UITextAutocapitalizationTypeSentences];
+    [[self keyLabel] setText:NSLocalizedString(@"Status", @"Status Message")];
     
-    NSString *statusMessage = [user status];
+    NSString * statusMessage = [user status];
     if (statusMessage) {
         [[self valueField] setText:statusMessage];
     } else {
@@ -36,7 +39,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypePhonePad];
-    [[self keyLabel] setText:NSLocalizedString(@"phone", @"Phone number")];
+    [[self keyLabel] setText:NSLocalizedString(@"Phone_Number", @"Phone Number")];
     
     NSString *phoneNumber = [user phone];
     if (phoneNumber) {
@@ -54,7 +57,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeEmailAddress];
-    [[self keyLabel] setText:NSLocalizedString(@"email", @"Email address")];
+    [[self keyLabel] setText:NSLocalizedString(@"Email_Address", @"Email Address")];
     
     NSString *emailAddress = [user mail];
     if (emailAddress) {
@@ -71,7 +74,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeURL];
-    [[self keyLabel] setText:NSLocalizedString(@"website", @"Website URL")];
+    [[self keyLabel] setText:NSLocalizedString(@"Website", @"Website URL")];
     
     NSString *websiteURL = [user website];
     if (websiteURL) {
@@ -89,7 +92,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:NSLocalizedString(@"facebook_id", @"Facebook ID")];
+    [[self keyLabel] setText:NSLocalizedString(@"Facebook_ID", @"Facebook ID")];
     
     NSString *facebookName = [user facebook];
     if (facebookName) {
@@ -106,7 +109,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:NSLocalizedString(@"instagram_name", @"Instagram username")];
+    [[self keyLabel] setText:NSLocalizedString(@"Instagram_Name", @"Instagram username")];
     
     NSString *instagramName = [user instagram];
     if (instagramName) {
@@ -123,7 +126,7 @@
     
     [[self valueField] setTag:tag];
     [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:NSLocalizedString(@"twitter_name", @"Twitter username")];
+    [[self keyLabel] setText:NSLocalizedString(@"Twitter_Name", @"Twitter username")];
     
     NSString *twitterName = [user twitter];
     if (twitterName) {

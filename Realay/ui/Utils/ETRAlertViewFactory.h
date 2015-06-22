@@ -20,17 +20,22 @@
 #pragma mark -
 #pragma mark Settings/Authorization
 
-/*
+/**
  
  */
 @property (strong, nonatomic, readonly) UIAlertView * existingSettingsAlert;
 
-/*
+/**
  
  */
 - (void)showSettingsAlert;
 
-/*
+/**
+ 
+ */
+- (void)showSettingsAlertBeforeJoin;
+
+/**
  
  */
 - (void)showPictureSourcePickerForProfileEditor:(ETRProfileEditorViewController *)viewController;

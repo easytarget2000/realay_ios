@@ -24,7 +24,6 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
 #pragma mark - UIViewController
 
 - (void)viewWillAppear:(BOOL)animated {
-    
     [super viewWillAppear:animated];
     
     [[self passwordTextField] setDelegate:self];
@@ -34,6 +33,11 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[[self navigationController] navigationBar] setTranslucent:NO];
     [[self navigationController] setToolbarHidden:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [[self passwordTextField] becomeFirstResponder];
 }
 
 #pragma mark - IBAction

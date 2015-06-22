@@ -33,8 +33,6 @@ static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 
 static CFTimeInterval const ETRPingInterval = 40.0;
 
-static CFTimeInterval const ETRTimeIntervalTimeout = 2.0 * 60.0;
-
 
 @interface ETRActionManager ()
 
@@ -142,11 +140,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 2.0 * 60.0;
 }
 
 - (void)fetchUpdates:(NSTimer *)timer {
-    if (CFAbsoluteTimeGetCurrent() - _lastActionTime < ETRTimeIntervalTimeout) {
-        [self fetchUpdatesWithCompletionHandler:nil];
-    } else {
-        [[ETRBouncer sharedManager] kickForReason:ETRKickReasonTimeout calledBy:[[self class] description]];
-    }
+    [self fetchUpdatesWithCompletionHandler:nil];
 }
 
 - (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
@@ -177,7 +171,11 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 2.0 * 60.0;
                     didReceiveNewData = YES;
                 }
             }
+            [[ETRBouncer sharedManager] acknowledgeConnection];
+        } else {
+            [[ETRBouncer sharedManager] acknowledgeFailedConnection];
         }
+//        CONTINUE HERE: Test timeouts.
         
         [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
         

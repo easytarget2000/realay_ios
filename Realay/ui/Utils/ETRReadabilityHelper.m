@@ -112,13 +112,13 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
     }
 }
 
-/*
+/**
  Takes a value in metres and returns a human readable text,
  depending on the value and the system locale:
  100 returns "100 m" or "109 yd"
  15000 returns "15 km" or "8 mi"
  */
-+ (NSString *)formattedIntegerLength:(int)meters {
++ (NSString *)formattedIntLength:(int)meters {
     if ([ETRDefaultsHelper doUseMetricSystem]) {
         if (meters < kMaxShowMetre) {
             NSString *unit = NSLocalizedString(@"unit_metre", @"m");
@@ -150,9 +150,9 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
  */
 + (NSString *)formattedLength:(NSNumber *)meters {
     if (meters) {
-        return [ETRReadabilityHelper formattedIntegerLength:(int)[meters integerValue]];
+        return [ETRReadabilityHelper formattedIntLength:(int)[meters integerValue]];
     } else {
-        return [ETRReadabilityHelper formattedIntegerLength:0];
+        return [ETRReadabilityHelper formattedIntLength:0];
     }
 }
 

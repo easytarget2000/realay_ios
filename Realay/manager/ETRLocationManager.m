@@ -32,8 +32,6 @@ static ETRLocationManager * SharedInstance;
 
 @implementation ETRLocationManager
 
-//@synthesize didAuthorize = _didAuthorize;
-@synthesize doUpdateFast = _doUpdateFast;
 @synthesize location = _location;
 
 + (void)initialize {
@@ -106,7 +104,7 @@ static ETRLocationManager * SharedInstance;
 - (BOOL)updateSessionRegionDistance {
     BOOL wasInSessionRegion = _isInSessionRegion;
     
-    if ([[ETRLocationManager sharedManager] didAuthorize]) {
+    if ([ETRLocationManager didAuthorizeWhenInUse]) {
         ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
         _isInSessionRegion = [self distanceToRoom:sessionRoom] < 10;
     } else {
@@ -124,26 +122,29 @@ static ETRLocationManager * SharedInstance;
     return _isInSessionRegion;
 }
 
-- (BOOL)didAuthorize {
++ (BOOL)didAuthorizeAlways {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     
     if (status == kCLAuthorizationStatusAuthorizedAlways) {
         return YES;
     } else {
-        NSLog(@"Location Authorization: %d", status);
         return NO;
     }
 }
 
++ (BOOL)didAuthorizeWhenInUse {
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    return status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusAuthorizedAlways;
+}
+
 - (void)launch:(NSTimer *)timer {
-    if (![self didAuthorize]) {
+    if (![ETRLocationManager didAuthorizeAlways]) {
         if ([self respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
             [self requestWhenInUseAuthorization];
         }
         
         if ([self respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self requestAlwaysAuthorization];
-//            [ETRDefaultsHelper acknowledgeAuthorizationDialogs];
         }
     }
     
@@ -176,19 +177,19 @@ static ETRLocationManager * SharedInstance;
  Uses the server API / query distance value, if the device location is unknown;
  Values below 10 are handled as 0 to avoid unnecessary precision
  */
-- (NSInteger)distanceToRoom:(ETRRoom *)room {
+- (int)distanceToRoom:(ETRRoom *)room {
     if (!room) {
         return 7715;
     }
     
-    NSInteger distanceToCenter;
+    int distanceToCenter;
     if (![self location]) {
-        distanceToCenter = [[room queryDistance] integerValue];
+        distanceToCenter = (int) [[room queryDistance] integerValue];
     } else {
         distanceToCenter = [[self location] distanceFromLocation:[room location]];
     }
     
-    NSInteger distanceToRadius = distanceToCenter - [[room radius] integerValue];
+    int distanceToRadius = distanceToCenter - [[room radius] integerValue];
     if (distanceToRadius < 10) {
         return 0;
     } else {

@@ -9,6 +9,7 @@
 #import "ETRJoinViewController.h"
 
 #import "ETRAlertViewFactory.h"
+#import "ETRAnimator.h"
 #import "ETRConversationViewController.h"
 #import "ETRRoom.h"
 #import "ETRUIConstants.h"
@@ -22,6 +23,8 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 
 @property (strong, nonatomic) NSThread * joinThread;
 
+@property (nonatomic) BOOL didFinish;
+
 @property (nonatomic) BOOL isCanceled;
 
 @property (nonatomic) NSTimer * delayTimer;
@@ -34,7 +37,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
+//    [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
     
     ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
     if (!preparedRoom) {
@@ -91,30 +94,43 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    _didFinish = NO;
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
-    [[[self navigationController] navigationBar] setTranslucent:NO];
+    [[[self navigationController] navigationBar] setTranslucent:YES];
 }
 
-- (void)backButtonPressed:(id)sender {
-    if (_joinThread) {
-        [_joinThread cancel];
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    if (!_didFinish) {
+        [_delayTimer invalidate];
+        _isCanceled = YES;
+        
+        if (_joinThread) {
+            [_joinThread cancel];
+        }
+        [[self navigationController] popToRootViewControllerAnimated:YES];
     }
-    [[self navigationController] popToRootViewControllerAnimated:YES];
 }
+
+//- (void)backButtonPressed:(id)sender {
+//    if (_joinThread) {
+//        [_joinThread cancel];
+//    }
+//    [[self navigationController] popToRootViewControllerAnimated:YES];
+//}
 
 - (void)startJoinThreadforRoom:(ETRRoom *)room {
-    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
-
     _isCanceled = NO;
     
+    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
     [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
-                                          progressView:_progressView
-                                     completionHandler:^(BOOL didSucceed) {
-                                         [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
-                                                                  toTarget:self
-                                                                withObject:@(didSucceed)];
-                                     }];
+                                 progressView:_progressView
+                            completionHandler:^(BOOL didSucceed) {
+                                [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+                                                         toTarget:self
+                                                       withObject:@(didSucceed)];
+                            }];
 }
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {
@@ -125,24 +141,21 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
     }
     
     if ([didSucceed boolValue]) {
-        [[self statusLabel] setText:@"Done."];
-        [[self progressView] setProgress:1.0f];
-        [super pushToPublicConversationViewController];
+        _didFinish = YES;
+        [ETRAnimator fadeView:[self progressView] doAppear:NO completion:nil];
+        [ETRAnimator fadeView:[self statusLabel] doAppear:NO completion:nil];
+        [ETRAnimator toggleBounceInView:[self logoView]
+                         animateFromTop:NO
+                             completion:^{
+                                 if (_isCanceled) {
+                                     [[self navigationController] popToRootViewControllerAnimated:YES];
+                                 } else {
+                                     [super pushToPublicConversationViewController];
+                                 }
+                             }];
     } else {
         [ETRAlertViewFactory showGeneralErrorAlert];
         [[self navigationController] popToRootViewControllerAnimated:YES];
-    }
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    [_delayTimer invalidate];
-    
-    // TODO: Cancel if back/cancel button pressed.
-    
-    if ([self isMovingFromParentViewController] || [self isBeingDismissed]) {
-        _isCanceled = YES;
     }
 }
 

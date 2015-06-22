@@ -50,17 +50,33 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
 #pragma mark -
 #pragma mark Settings/Authorization
 
-/*
+/**
  
  */
 - (void)showSettingsAlert {
-    _existingSettingsAlert = [[UIAlertView alloc] initWithTitle:nil
-                                                        message:NSLocalizedString(@"For_an_uninterrupted", @"Required settings explained")
-                                                       delegate:nil
+    NSString * title = NSLocalizedString(@"Recommended_Settings", @"Required Preferences");
+    NSString * message = NSLocalizedString(@"For_an_uninterrupted", @"Required settings explained");
+    _existingSettingsAlert = [[UIAlertView alloc] initWithTitle:title
+                                                        message:message
+                                                       delegate:self
                                               cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
                                               otherButtonTitles:NSLocalizedString(@"Settings", @"Preferences"), nil];
     [_existingSettingsAlert setTag:ETRAlertViewTagSettings];
-    [_existingSettingsAlert setDelegate:self];
+    [_existingSettingsAlert show];
+}
+
+/**
+ 
+ */
+- (void)showSettingsAlertBeforeJoin {
+    NSString * title = NSLocalizedString(@"Where_Are_You", @"Problem Header");
+    NSString * message = NSLocalizedString(@"Before_join_allow", @"Allow location before join");
+    _existingSettingsAlert = [[UIAlertView alloc] initWithTitle:title
+                                                        message:message
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
+                                              otherButtonTitles:NSLocalizedString(@"Location Settings", @"Preferences"), nil];
+    [_existingSettingsAlert setTag:ETRAlertViewTagSettings];
     [_existingSettingsAlert show];
 }
 
@@ -217,14 +233,16 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
  
  */
 + (void)showHasLeftViewForUser:(ETRUser *)user {
-    NSString * message;
-    message = [NSString stringWithFormat:NSLocalizedString(@"has_left", @"%User has left %Room."),
+    NSString * title;
+    title = [NSString stringWithFormat:NSLocalizedString(@"has_left", @"%User has left %Room."),
                [user name],
                [[ETRSessionManager sessionRoom] title]];
     
-    [[[UIAlertView alloc] initWithTitle:nil
+    NSString * message = NSLocalizedString(@"Until_person_returns", @"Explanation of deactivated input");
+    
+    [[[UIAlertView alloc] initWithTitle:title
                                 message:message
-                               delegate:self
+                               delegate:nil
                       cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
 }
@@ -294,7 +312,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                       otherButtonTitles:nil] show];
 }
 
-/*
+/**
  Displays a warning in an alert view saying that the device location cannot be found.
  */
 + (void)showNoLocationAlertViewWithMinutes:(NSInteger)minutes {
@@ -309,7 +327,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                       otherButtonTitles:nil] show];
 }
 
-/*
+/**
  Displays an alert view that says the user cannot join the room
  until stepping inside the region.
  */
@@ -321,8 +339,8 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     
     NSString * distanceFormat;
     distanceFormat = NSLocalizedString(@"Current_distance", @"Current distance: %@");
-    NSInteger distanceValue = [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom];
-    NSString *distance = [ETRReadabilityHelper formattedIntegerLength:distanceValue];
+    int distanceValue = [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom];
+    NSString * distance = [ETRReadabilityHelper formattedIntLength:distanceValue];
     NSString *title = [NSString stringWithFormat:distanceFormat, distance];
     NSString *message = NSLocalizedString(@"Before_join", @"Before you can join, enter");
     [[[UIAlertView alloc] initWithTitle:title
@@ -402,7 +420,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             // Photo Messages do not have the first entry "Copy Message".
             
             if ((buttonIndex == 1 && !isPhotoMessage)) {
-                [[UIPasteboard generalPasteboard] setString:[_selectedMessage messageContent]];
+                [[UIPasteboard generalPasteboard] setString:[_selectedMessage shortDescription]];
             } else if ((buttonIndex == 1 && isPhotoMessage) || buttonIndex == 2) {
                 // Open the private conversation.
                 

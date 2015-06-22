@@ -6,10 +6,12 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ETRBaseViewController.h"
 
-@interface ETRProfileEditorViewController : UITableViewController
+@interface ETRProfileEditorViewController : ETRBaseViewController
 <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 - (IBAction)saveButtonPressed:(id)sender;
 

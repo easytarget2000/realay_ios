@@ -22,27 +22,27 @@
 
 long const ETRActionPublicUserID = -10;
 
-static NSString *const ETRRemoteIDKey = @"remoteID";
-
-static NSString *const ETRRoomDistanceKey = @"queryDistance";
-
-static NSString *const ETRActionCodeKey = @"code";
-
-static NSString *const ETRActionSenderKey = @"sender";
-
-static NSString *const ETRActionRecipientKey = @"recipient";
-
-static NSString *const ETRActionDateKey = @"sentDate";
-
-static NSString *const ETRActionRoomKey = @"room";
-
-static NSString *const ETRConversationPartnerKey = @"partner";
-
-static NSString *const ETRInRoomKey = @"inRoom";
-
-static NSString *const ETRUserNameKey = @"name";
-
-static NSString *const ETRUserIsBlockedKey = @"isBlocked";
+//static NSString *const ETRRemoteIDKey = @"remoteID";
+//
+//static NSString *const ETRRoomDistanceKey = @"queryDistance";
+//
+//static NSString *const ETRActionCodeKey = @"code";
+//
+//static NSString *const ETRActionSenderKey = @"sender";
+//
+//static NSString *const ETRActionRecipientKey = @"recipient";
+//
+//static NSString *const ETRActionDateKey = @"sentDate";
+//
+//static NSString *const ETRActionRoomKey = @"room";
+//
+//static NSString *const ETRConversationPartnerKey = @"partner";
+//
+//static NSString *const ETRInRoomKey = @"inRoom";
+//
+//static NSString *const ETRUserNameKey = @"name";
+//
+//static NSString *const ETRUserIsBlockedKey = @"isBlocked";
 
 static NSManagedObjectContext * ManagedObjectContext;
 
@@ -142,11 +142,9 @@ static NSString * UserEntityName;
     return ActionEntityName;
 }
 
-+ (ETRAction *)actionWithRemoteID:(long)remoteID {
++ (ETRAction *)actionWithRemoteID:(NSNumber *)remoteID {
     NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper actionEntityName]];
-    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetch setPredicate:predicate];
+    [fetch setPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@", remoteID]];
     NSArray *storedActions = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
     
     ETRAction *action;
@@ -229,7 +227,7 @@ static NSString * UserEntityName;
     // Skip this Action, if an Object with this remote ID has already been stored locally
     // or if the Action has been sent by the local User.
     // Actions should not change, so they will not be updated.
-    ETRAction * existingAction = [ETRCoreDataHelper actionWithRemoteID:remoteID];
+    ETRAction * existingAction = [ETRCoreDataHelper actionWithRemoteID:@(remoteID)];
     if (existingAction) {
         return nil;
     }
@@ -469,9 +467,7 @@ static NSString * UserEntityName;
     NSFetchRequest * request = [[NSFetchRequest alloc] init];
     [request setEntity:[ETRCoreDataHelper actionEntity]];
     
-    NSPredicate * predicate;
-    predicate = [NSPredicate predicateWithFormat:@"%@ == %@", ETRActionCodeKey, @(ETRActionCodeUserUpdate)];
-    [request setPredicate:predicate];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"code == %i", ETRActionCodeUserUpdate]];
     [request setIncludesPropertyValues:NO];
     
     NSError * error = nil;
@@ -497,21 +493,13 @@ static NSString * UserEntityName;
     NSEntityDescription * entity = [ETRCoreDataHelper actionEntity];
     [request setEntity:entity];
     
-    NSString * where = [NSString stringWithFormat:@"%@.%@ == %ld AND (%@ == %i OR %@ == %i) AND %@.%@ != %@",
-                        ETRActionRoomKey,
-                        ETRRemoteIDKey,
-                        [[sessionRoom remoteID] longValue],
-                        ETRActionCodeKey,
-                        ETRActionCodePublicMessage,
-                        ETRActionCodeKey,
-                        ETRActionCodePublicMedia,
-                        ETRActionSenderKey,
-                        ETRUserIsBlockedKey,
-                        @(YES)];
-    
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"room == %@ AND (code == %i OR code == %i) AND sender.isBlocked != 1",
+                 sessionRoom,
+                 ETRActionCodePublicMessage,
+                 ETRActionCodePublicMedia];
     [request setPredicate:predicate];
-    NSArray * sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey
+    NSArray * sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"sentDate"
                                                                 ascending:YES]];
     [request setSortDescriptors:sortDescriptors];
     
@@ -557,15 +545,15 @@ static NSString * UserEntityName;
     
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
-    NSString * format;
-    format = @"room == %@ AND ((sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@))";
-    [request setPredicate:[NSPredicate predicateWithFormat:format,
-                           sessionRoom,
-                           partner,
-                           localUser,
-                           partner,
-                           localUser]];
-    NSArray * sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:ETRActionDateKey
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"room == %@ AND ((sender == %@ AND recipient == %@) OR (recipient == %@ AND sender == %@))",
+                 sessionRoom,
+                 partner,
+                 localUser,
+                 partner,
+                 localUser];
+    [request setPredicate:predicate];
+    NSArray * sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"sentDate"
                                                                 ascending:YES]];
     [request setSortDescriptors:sortDescriptors];
     
@@ -601,13 +589,11 @@ static NSString * UserEntityName;
     
     // Request all public messages and public media files
     // and anything in the queue that is not a User update.
-    NSString * where = [NSString stringWithFormat:@"(%@ == %i OR %@ == %i) OR (isInQueue == 1 AND code != %i)",
-                        ETRActionCodeKey,
-                        ETRActionCodePublicMessage,
-                        ETRActionCodeKey,
-                        ETRActionCodePublicMedia,
-                        ETRActionCodeUserUpdate];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"(code == %i OR code == %i) OR (isInQueue == 1 AND code != %i)",
+                 ETRActionCodePublicMessage,
+                 ETRActionCodePublicMedia,
+                 ETRActionCodeUserUpdate];
     [request setPredicate:predicate];
     // Only fetch the ManagedObjectID.
     [request setIncludesPropertyValues:NO];
@@ -729,13 +715,7 @@ static NSString * UserEntityName;
     NSFetchRequest *fetchRequest;
     fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper conversationEntityName]];
     
-    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld",
-                       ETRInRoomKey,
-                       ETRRemoteIDKey,
-                       [[sessionRoom remoteID] longValue]];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:where];
-    [fetchRequest setPredicate:predicate];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"inRoom == %@", sessionRoom]];
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"lastMessage.sentDate" ascending:YES]]];
     
     NSFetchedResultsController *resultsController;
@@ -799,9 +779,7 @@ static NSString * UserEntityName;
     
     NSFetchRequest * fetch = [[NSFetchRequest alloc] init];
     [fetch setEntity:[ETRCoreDataHelper roomEntity]];
-    NSString * where = [NSString stringWithFormat:@"%@ == %@", ETRRemoteIDKey, remoteID];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:where];
-    [fetch setPredicate:predicate];
+    [fetch setPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@", remoteID]];
     NSArray *existingRooms = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
     
     if (existingRooms && [existingRooms count]) {
@@ -820,7 +798,9 @@ static NSString * UserEntityName;
     NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
     
     // Add Sort Descriptors
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRRoomDistanceKey ascending:YES]]];
+    NSSortDescriptor * sortDescriptor;
+    sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"queryDistance" ascending:YES];
+    [fetchRequest setSortDescriptors:@[sortDescriptor]];
     
     // Initialize Fetched Results Controller
     NSFetchedResultsController * resultsController;
@@ -847,15 +827,12 @@ static NSString * UserEntityName;
     NSFetchRequest * request;
     request = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
     
-//    NSString *where = [NSString stringWithFormat:@"%@.%@ == %ld AND %@ != 1",
-//                       ETRInRoomKey,
-//                       ETRRemoteIDKey,
-//                       [[sessionRoom remoteID] longValue],
-//                       ETRUserIsBlockedKey];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"inRoom == %@ AND isBlocked != 1", sessionRoom];
+    NSPredicate * predicate;
+    predicate = [NSPredicate predicateWithFormat:@"inRoom == %@ AND isBlocked != 1", sessionRoom];
     [request setPredicate:predicate];
-    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
+    NSSortDescriptor * sortDescriptor;
+    sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+    [request setSortDescriptors:@[sortDescriptor]];
     
     NSFetchedResultsController * resultsController;
     resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
@@ -873,7 +850,9 @@ static NSString * UserEntityName;
     
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"isBlocked == 1"];
     [request setPredicate:predicate];
-    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:ETRUserNameKey ascending:YES]]];
+    NSSortDescriptor * sortDescriptor;
+    sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+    [request setSortDescriptors:@[sortDescriptor]];
     
     NSFetchedResultsController * resultsController;
     resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
@@ -942,9 +921,7 @@ static NSString * UserEntityName;
     // Check the context CoreData, if an object with this remote ID exists.
     NSFetchRequest * request;
     request = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
-//    NSString *where = [NSString stringWithFormat:@"%@ == %ld", ETRRemoteIDKey, remoteID];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"remoteID = %@", remoteID];
-    [request setPredicate:predicate];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"remoteID = %@", remoteID]];
     NSArray *existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
     
     if (existingUsers && [existingUsers count]) {

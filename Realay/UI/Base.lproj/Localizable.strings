@@ -8,7 +8,13 @@
 
 "Address" = "Address";
 
+"Background_Updates" = "Background Updates";
+
+"Background_updates_disabled" = "Please allow Realay to update messages and locations in the background.\n\nFeel free to join again.";
+
 "Before_join" = "Before you can join, you need to be within the radius of this place.\n\nThe circle on the map displays the area of a Realay.";
+
+"Before_join_allow" = "Before you can join, you need to allow Realay to validate your location. This way, we make sure only people that are actually around you get to chat with you.";
 
 "Block" = "Block";
 
@@ -36,11 +42,11 @@
 
 "Do_not_leave" = "Please do not leave the region of a Realay permanently.";
 
-"email" = "email";
+"Email_Address" = "Email Address";
 
 "Event_ended" = "The Realay you were in ended a while ago.";
 
-"facebook_id" = "facebook id";
+"Facebook_ID" = "Facebook ID";
 
 "For_an_uninterrupted" = "For an uninterrupted experience, please allow Realay to always verify your location and request new messages in the background.";
 
@@ -48,7 +54,7 @@
 
 "Hours" = "Hours";
 
-"instagram_name" = "instagram username";
+"Instagram_Name" = "Instagram Username";
 
 "Join" = "Join";
 
@@ -70,7 +76,7 @@
 
 "Part_of_event" = "This Realay is part of an event that ended at %@.\n\nYou can stay logged in here until %@.";
 
-"phone" = "phone";
+"Phone_Number" = "Phone Number";
 
 "Photos" = "Photos";
 
@@ -89,6 +95,8 @@
 "Pull_down_load_older" = "Pull down to load older messages.";
 
 "Profile" = "Profile";
+
+"Recommended_Settings" = "Recommended Settings";
 
 "Return_to_area" = "Please make sure that your location can be estimated and return until %@.";
 
@@ -118,19 +126,21 @@
 
 "Sorry" = "Sorry about that.";
 
-"status" = "Status";
+"Status" = "Status";
 
 "Timeout_occurred" = "A timeout occurred.\n\nCould not connect to the internet to receive new messages for several minutes.";
 
 "Today" = "Today";
 
-"twitter_name" = "twitter username";
+"Twitter_Name" = "Twitter Username";
 
 "Unknown_location" = "Your location is unknown.";
 
 "Unknown_User" = "Unknown User";
 
 "until" = "Until";
+
+"Until_person_returns" = "You cannot send a message to this person, until they return.";
 
 "Users_Around_You" = "Users Near You";
 
@@ -144,7 +154,7 @@
 
 "Where_Are_You" = "Where Are You?";
 
-"website" = "website";
+"Website" = "Website";
 
 "Wrong_Password" = "Wrong Password";
 

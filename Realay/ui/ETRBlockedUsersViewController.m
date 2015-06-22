@@ -21,11 +21,6 @@
 @interface ETRBlockedUsersViewController ()
 <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
 
-/*
- Reference to Alert View builder and click handler
- */
-@property (strong, nonatomic) ETRAlertViewFactory * alertViewFactory;
-
 @property (strong, nonatomic) NSFetchedResultsController * resultsController;
 
 @property (nonatomic) BOOL doShowInfoView;
@@ -113,8 +108,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     ETRUser * record = [_resultsController objectAtIndexPath:indexPath];
-    _alertViewFactory = [[ETRAlertViewFactory alloc] init];
-    [_alertViewFactory showUnblockViewForUser:record];
+    [[self alertHelper] showUnblockViewForUser:record];
 }
 
 #pragma mark -

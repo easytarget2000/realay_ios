@@ -9,6 +9,7 @@
 #import "ETRAction.h"
 
 #import "ETRLocalUserManager.h"
+#import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
@@ -42,6 +43,12 @@
 #pragma mark Derived Values
 
 @synthesize imageID = _imageID;
+
+- (NSString *)shortDescription {
+    NSString * sender = [[self sender] name];
+    NSString * time = [ETRReadabilityHelper formattedDate:[self sentDate]];
+    return [NSString stringWithFormat:@"%@, %@, %@", sender, time, [self messageContent]];
+}
 
 - (BOOL)isPublicAction {
     short code = [[self code] shortValue];

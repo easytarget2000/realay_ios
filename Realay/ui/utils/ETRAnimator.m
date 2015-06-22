@@ -9,9 +9,9 @@
 #import "ETRAnimator.h"
 
 
-static NSTimeInterval const ETRAnimationDurationMove = 0.4;
+static NSTimeInterval const ETRAnimationDurationMove = 0.5;
 
-static NSTimeInterval const ETRAnimationDurationFade = 1.2;
+static NSTimeInterval const ETRAnimationDurationFade = 0.5;
 
 
 @implementation ETRAnimator

@@ -18,14 +18,8 @@
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
 
-static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
 
-
-@interface ETRBaseViewController ()
-
-@property (strong, nonatomic) ETRAlertViewFactory * alertViews;
-
-@end
+static CFTimeInterval ETRIntervalSettingsWarnings = 5.0 * 60.0;
 
 
 @implementation ETRBaseViewController
@@ -45,6 +39,16 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
 //    return UIStatusBarStyleLightContent;
 //}
 
+#pragma mark -
+#pragma mark Alerts
+
+- (ETRAlertViewFactory *)alertHelper {
+    if (!_alertHelper) {
+        _alertHelper = [[ETRAlertViewFactory alloc] init];
+    }
+    return _alertHelper;
+}
+
 - (void)updateAlertViews {
     // Check Bouncer for AlertViews first.
     // Other dialogs will not be displayed if a kick or warning is to be shown.
@@ -57,23 +61,31 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 60.0;
         return;
     }
     
-    if (!_alertViews) {
-        _alertViews = [[ETRAlertViewFactory alloc] init];
+    BOOL hasRequiredPreferences = NO;
+    // The Authorization AlertViews of the System have been shown.
+    // Before a Session has been started,
+    // only show a dialog if all Location Access has been denied.
+    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+        if ([ETRLocationManager didAuthorizeWhenInUse]) {
+            if ([ETRDefaultsHelper didAllowBackgroundUpdates]) {
+                hasRequiredPreferences = YES;
+            }
+        }
+    } else {
+        hasRequiredPreferences = [ETRLocationManager didAuthorizeWhenInUse];
     }
     
-    // TODO: Check if background updates are allowed too.
-    
-    if ([[ETRLocationManager sharedManager] didAuthorize]) {
-        UIAlertView * settingsAlert = [_alertViews existingSettingsAlert];
+    if (hasRequiredPreferences) {
+        UIAlertView * settingsAlert = [[self alertHelper] existingSettingsAlert];
         if (settingsAlert) {
             [settingsAlert dismissWithClickedButtonIndex:-1 animated:YES];
             LastSettingsAlert = CFAbsoluteTimeGetCurrent();
         }
-    } else if ([ETRDefaultsHelper didShowAuthorizationDialogs]){
+    } else if ([ETRDefaultsHelper didShowAuthorizationDialogs]) {
         CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
         
         if (now - LastSettingsAlert > ETRIntervalSettingsWarnings) {
-            [_alertViews showSettingsAlert];
+            [[self alertHelper] showSettingsAlert];
             LastSettingsAlert = now;
         }
     } else {

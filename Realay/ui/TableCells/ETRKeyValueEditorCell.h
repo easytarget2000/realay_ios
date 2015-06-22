@@ -13,6 +13,7 @@
 @interface ETRKeyValueEditorCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *keyLabel;
+
 @property (weak, nonatomic) IBOutlet UITextField *valueField;
 
 - (void)setUpStatusEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user;

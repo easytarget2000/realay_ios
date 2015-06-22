@@ -211,11 +211,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark Table View Data Source Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if (!_fetchedResultsController) {
-        return 0;
-    } else {
-        return [[_fetchedResultsController sections] count];
-    }
+    return [[_fetchedResultsController fetchedObjects] count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -238,9 +234,11 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 - (ETRRoomCell *)roomCellAtIndexPath:(NSIndexPath *)indexPath {
     ETRRoomCell *cell;
-    cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRRoomCellIdentifier forIndexPath:indexPath];
+    cell = [[self tableView] dequeueReusableCellWithIdentifier:ETRRoomCellIdentifier
+                                                  forIndexPath:indexPath];
     if (!cell) {
-        cell = [[ETRRoomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ETRRoomCellIdentifier];
+        cell = [[ETRRoomCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                  reuseIdentifier:ETRRoomCellIdentifier];
     }
     
     [self configureRoomCell:cell atIndexPath:indexPath];
@@ -265,13 +263,13 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         [[cell addressLabel] setText:coordinates];
     }
     
-    NSInteger diameter = [[record radius] integerValue] * 2;
-    NSString * size = [ETRReadabilityHelper formattedIntegerLength:diameter];
+    int diameter = (int) [[record radius] integerValue] * 2;
+    NSString * size = [ETRReadabilityHelper formattedIntLength:diameter];
     [[cell sizeLabel] setText:size];
     [[cell hoursLabel] setText:[record hours]];
     
     // Display the distance to the closest region point.
-    NSInteger distance = [[ETRLocationManager sharedManager] distanceToRoom:record];
+    int distance = [[ETRLocationManager sharedManager] distanceToRoom:record];
     if (distance < 20) {
         [[cell distanceLabel] setHidden:YES];
         [[cell placeIcon] setHidden:NO];
@@ -279,7 +277,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         [[cell placeIcon] setHidden:YES];
         [[cell distanceLabel] setHidden:NO];
         NSString * formattedDistance;
-        formattedDistance = [ETRReadabilityHelper formattedIntegerLength:distance];
+        formattedDistance = [ETRReadabilityHelper formattedIntLength:distance];
         [[cell distanceLabel] setText:formattedDistance];
     }
     
@@ -292,8 +290,6 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark -
 #pragma mark Table View Delegate Methods
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self setInformationViewHidden:!_doHideInformationView];
-
     // Hide the selection, prepare the Session and go to the Room Map.
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     

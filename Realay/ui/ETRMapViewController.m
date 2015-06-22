@@ -197,10 +197,10 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 #ifdef DEBUG_JOIN
     [self performSegueWithIdentifier:ETRSegueMapToPassword sender:nil];
 #else
-    if (![[ETRLocationManager sharedManager] didAuthorize]) {
+    if (![ETRLocationManager didAuthorizeWhenInUse]) {
         // The location access has not been authorized.
-        
-        // TODO: Show different text in settings dialog.
+
+        [[self alertHelper] showSettingsAlertBeforeJoin];
         LastSettingsAlert = CFAbsoluteTimeGetCurrent();
         
     } else if ([ETRLocationManager isInSessionRegion]) {

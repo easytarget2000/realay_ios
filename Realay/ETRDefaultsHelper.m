@@ -215,6 +215,12 @@ static CLLocation * LastUpdateLocation;
     return LastUpdateLocation;
 }
 
++ (BOOL)didAllowBackgroundUpdates {
+    UIBackgroundRefreshStatus backgroundRefreshStatus;
+    backgroundRefreshStatus = [[UIApplication sharedApplication] backgroundRefreshStatus];
+    return backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable;
+}
+
 + (void)acknowledgeRoomListUpdateAtLocation:(CLLocation *)location {
     if (!location) {
         return;
