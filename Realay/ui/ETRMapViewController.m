@@ -52,7 +52,7 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     [self setTitle:[[ETRSessionManager sessionRoom] title]];
     
     // Hide the join button if the user is already in this room.
-    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
         [[self navigationItem] setRightBarButtonItem:nil];
         [self setDirectionsButton:nil];
     } else {
@@ -190,7 +190,7 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 
 - (IBAction)joinButtonPressed:(id)sender {
     // Only perform a join action, if the user did not join yet.
-    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
         return;
     }
     

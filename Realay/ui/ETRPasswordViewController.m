@@ -47,7 +47,7 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
     [self verifyPasswordAndJoin];
 #else
     // Only perform a join action, if the user did not join yet.
-    if (![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (![[ETRSessionManager sharedManager] didStartSession]) {
         // Show the password prompt, if the device location is inside the region.
         if ([ETRLocationManager isInSessionRegion]) {
            [self verifyPasswordAndJoin];

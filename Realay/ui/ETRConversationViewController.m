@@ -274,7 +274,7 @@ UITextFieldDelegate
     }
     
     // Make sure the room manager meets the requirements for this view controller.
-    if (![ETRSessionManager sessionRoom] || ![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (![ETRSessionManager sessionRoom] || ![[ETRSessionManager sharedManager] didStartSession]) {
         NSLog(@"ERROR: No Room object in manager or user did not join.");
         [[ETRSessionManager sharedManager] endSession];
         [[self navigationController] popToRootViewControllerAnimated:YES];

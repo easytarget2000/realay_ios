@@ -8,6 +8,7 @@
 
 #import "ETRLocationManager.h"
 
+#import "ETRActionManager.h"
 #import "ETRAlertViewFactory.h"
 #import "ETRBouncer.h"
 #import "ETRDefaultsHelper.h"
@@ -91,9 +92,10 @@ static ETRLocationManager * SharedInstance;
     [self stopUpdatingLocation];
     [self startMonitoringSignificantLocationChanges];
     
-    // Monitor entering and exiting the Room radius if a Session has been started.
-    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
+        // If a Session has been started, monitor entering and exiting the Room radius.
         [self updateSessionRegionDistance];
+        [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
     }
 }
 
@@ -106,7 +108,12 @@ static ETRLocationManager * SharedInstance;
     
     if ([ETRLocationManager didAuthorizeWhenInUse]) {
         ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
-        _isInSessionRegion = [self distanceToRoom:sessionRoom] < 10;
+        int roomDistance = [self distanceToRoom:sessionRoom];
+        _isInSessionRegion = roomDistance < 10;
+        if (roomDistance > 4500) {
+            [[ETRBouncer sharedManager] kickForReason:ETRKickReasonLocation calledBy:@"farAway"];
+            return NO;
+        }
     } else {
         _isInSessionRegion = NO;
     }
@@ -171,7 +178,7 @@ static ETRLocationManager * SharedInstance;
     NSLog(@"ERROR: LocationManager failed: %@", [error description]);
 }
 
-/*
+/**
  Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
  and the current device location;
  Uses the server API / query distance value, if the device location is unknown;
@@ -186,10 +193,10 @@ static ETRLocationManager * SharedInstance;
     if (![self location]) {
         distanceToCenter = (int) [[room queryDistance] integerValue];
     } else {
-        distanceToCenter = [[self location] distanceFromLocation:[room location]];
+        distanceToCenter = (int) [[self location] distanceFromLocation:[room location]];
     }
     
-    int distanceToRadius = distanceToCenter - [[room radius] integerValue];
+    int distanceToRadius = distanceToCenter - (int) [[room radius] integerValue];
     if (distanceToRadius < 10) {
         return 0;
     } else {

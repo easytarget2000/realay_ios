@@ -65,7 +65,7 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 5.0 * 60.0;
     // The Authorization AlertViews of the System have been shown.
     // Before a Session has been started,
     // only show a dialog if all Location Access has been denied.
-    if ([[ETRSessionManager sharedManager] didBeginSession]) {
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
         if ([ETRLocationManager didAuthorizeWhenInUse]) {
             if ([ETRDefaultsHelper didAllowBackgroundUpdates]) {
                 hasRequiredPreferences = YES;

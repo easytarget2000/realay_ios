@@ -34,7 +34,7 @@
 
 + (BOOL)doUseMetricSystem;
 
-+ (BOOL)doShowPrivateNotifs;
+//+ (BOOL)doShowPrivateNotifs;
 
 + (BOOL)doShowPublicNotifs;
 

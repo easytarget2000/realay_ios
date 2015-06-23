@@ -101,4 +101,12 @@
     return _imageID;
 }
 
+- (NSString *)readableMessageContent {
+    if ([self isPhotoMessage]) {
+        return NSLocalizedString(@"Picture", @"Photo Message");
+    } else {
+        return [self messageContent];
+    }
+}
+
 @end

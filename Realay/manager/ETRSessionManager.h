@@ -27,7 +27,7 @@
 /*
  Stores if the user has joined a room.
   */
-@property (nonatomic, readonly) BOOL didBeginSession;
+@property (nonatomic, readonly) BOOL didStartSession;
 
 /*
  Session is able to push/pop view controller.

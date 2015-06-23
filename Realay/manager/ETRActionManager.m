@@ -9,7 +9,6 @@
 #import "ETRActionManager.h"
 
 #import "ETRAction.h"
-#import "ETRBouncer.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDefaultsHelper.h"
 #import "ETRNotificationManager.h"
@@ -31,10 +30,12 @@ static CFTimeInterval const ETRQueryIntervalIdle = 45.0;
 
 static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 
-static CFTimeInterval const ETRPingInterval = 40.0;
+static CFTimeInterval const ETRPingInterval = 20.0;
 
 
 @interface ETRActionManager ()
+
+@property (strong, nonatomic) NSTimer * timer;
 
 /*
  Last ID of received actions
@@ -94,7 +95,8 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 - (void)startSession {
     // Consider the join successful and start the query timer.
     _lastActionTime = CFAbsoluteTimeGetCurrent();
-//    [[ETRNotificationManager sharedManager] cancelAllNotifications];
+//    _queryInterval = ETRQueryIntervalFastest;
+    [self cancelAllNotifications];
 
     [self dispatchQueryTimerWithResetInterval:YES];
     
@@ -103,10 +105,19 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 
 - (void)endSession {
     _lastActionID = 0L;
-//    [[ETRNotificationManager sharedManager] cancelAllNotifications];
+    [self cancelAllNotifications];
+}
+
+- (void)didEnterBackground {
+    [_timer invalidate];
 }
 
 - (void)dispatchQueryTimerWithResetInterval:(BOOL)doResetInterval {
+    UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
+    if (applicationState == UIApplicationStateBackground) {
+        return;
+    }
+    
     if (doResetInterval || _queryInterval < ETRQueryIntervalFastest) {
         _queryInterval = ETRQueryIntervalFastest;
         _lastActionTime = CFAbsoluteTimeGetCurrent();
@@ -128,10 +139,16 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 #endif
     }
     
+//    dispatch_queue_t q_background = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _queryInterval * NSEC_PER_SEC);
+//    dispatch_after(popTime, q_background, ^(void){
+//        [self fetchUpdates:nil];
+//    });
+    
     dispatch_async(
                    dispatch_get_main_queue(),
                    ^{
-                       [NSTimer scheduledTimerWithTimeInterval:_queryInterval
+                       _timer = [NSTimer scheduledTimerWithTimeInterval:_queryInterval
                                                         target:self
                                                       selector:@selector(fetchUpdates:)
                                                       userInfo:nil
@@ -140,49 +157,52 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 }
 
 - (void)fetchUpdates:(NSTimer *)timer {
-    [self fetchUpdatesWithCompletionHandler:nil];
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
+        [self fetchUpdatesWithCompletionHandler:nil];
+    }
 }
 
+/**
+ Check didStartSession == YES before calling this.
+*/
 - (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    if (![[ETRSessionManager sharedManager] didBeginSession]) {
-        NSLog(@"WARNING: %@: Attempted to query Actions outside of Session.", [self class]);
-        
-        if (completionHandler) {
-            completionHandler(UIBackgroundFetchResultFailed);
-        }
-        return;
-    }
-    
     BOOL isInitial = _lastActionID < 100L;
-    
+        
     [ETRServerAPIHelper getActionsAndPerform:^(id<NSObject> receivedObject) {
         BOOL didReceiveNewData = NO;
         
+        int new = -1;
+        
         if ([receivedObject isKindOfClass:[NSArray class]]) {
-            NSArray *jsonActions = (NSArray *) receivedObject;
+            NSArray * jsonActions = (NSArray *) receivedObject;
+            new++;
             for (NSObject *jsonAction in jsonActions) {
+                
                 if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    ETRAction * action;
-                    action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
-                    if (action && !isInitial) {
-                        [self dispatchNotificationForAction:action];
-                    }
-                    
+                    new++;
+                    dispatch_async(
+                                   dispatch_get_main_queue(),
+                                   ^{
+                                       ETRAction * action;
+                                       action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
+                                       if (action && !isInitial) {
+                                           [self dispatchNotificationForAction:action];
+                                       }
+                                   });
                     didReceiveNewData = YES;
                 }
             }
-            [[ETRBouncer sharedManager] acknowledgeConnection];
-        } else {
-            [[ETRBouncer sharedManager] acknowledgeFailedConnection];
         }
-//        CONTINUE HERE: Test timeouts.
+        
+        NSLog(@"New: %d", new);
         
         [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
         
         if (completionHandler) {
-            UIBackgroundFetchResult result;
-            result = didReceiveNewData ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultNoData;
-            completionHandler(result);
+//            UIBackgroundFetchResult result;
+//            result = didReceiveNewData ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultNoData;
+//            completionHandler(result);
+            completionHandler(UIBackgroundFetchResultNewData);
         }
     }];
 }
@@ -265,6 +285,11 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         counterKey = [[action sender] remoteID];
     }
     
+    if ([_foregroundPartnerID isEqualToNumber:counterKey]) {
+        // Do not create Notifications if the Conversation is in the foreground.
+        return;
+    }
+    
     NSNumber * numberOfNotifs = [_notificationCounters objectForKey:counterKey];
     if (!numberOfNotifs) {
         numberOfNotifs = @(1);
@@ -298,33 +323,32 @@ static CFTimeInterval const ETRPingInterval = 40.0;
         
         // TODO: Implement admin/other mesage notifications.
         
-        [notification setAlertTitle:[[action sender] name]];
-        
-        NSString * alertSuffix;
+        NSString * title;
         if ([action isPublicAction]) {
-            if ([ETRDefaultsHelper doShowPublicNotifs]) {
-                alertSuffix = NSLocalizedString(@"Public_Message", @"Public Message");
-            } else {
+            if (![ETRDefaultsHelper doShowPublicNotifs]) {
                 // Do not prepare this type of Notification any further,
                 // if public message notifications have been disabled in the Settings.
                 return;
             }
-        } else if ([action isPrivateMessage]){
-            
-            if ([ETRDefaultsHelper doShowPrivateNotifs]) {
-                alertSuffix = NSLocalizedString(@"Private_Message", @"Private Message");
-            } else {
-                // Do not prepare this type of Notification any further,
-                // if private message notifications have been disabled in the Settings.
-                return;
-            }
+            title = NSLocalizedString(@"Public_Message", @"Public Message");
         } else {
-            alertSuffix = @"n/a";
+            title = NSLocalizedString(@"Private_Message", @"Private Message");
         }
-        NSString * alertBody;
-        alertBody = [NSString stringWithFormat:@"%@:\n%@", alertSuffix, [action messageContent]];
+        [notification setAlertTitle:title];
+
+        NSString * body = [NSString stringWithFormat:@"%@:\n%@", [[action sender] name], [action readableMessageContent]];
+        [notification setAlertBody:body];
+//        else if ([action isPrivateMessage]){
+//            alertBody = NSLocalizedString(@"Private_Message", @"Private Message");
+//
+//            if ([ETRDefaultsHelper doShowPrivateNotifs]) {
+//                alertSuffix = NSLocalizedString(@"Private_Message", @"Private Message");
+//            } else {
+//                // Do not prepare this type of Notification any further,
+//                // if private message notifications have been disabled in the Settings.
+//                return;
+//            }
         
-        [notification setAlertBody:alertBody];
     }
     
     [[ETRNotificationManager sharedManager] playSoundForNotification:notification];
@@ -380,7 +404,7 @@ static CFTimeInterval const ETRPingInterval = 40.0;
 
 - (void)cancelAllNotifications {
     _notificationCounters = nil;
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 
 @end

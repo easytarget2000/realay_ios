@@ -484,7 +484,7 @@ static NSString * UserEntityName;
                                                        numberOfLastMessages:(NSUInteger)numberOfLastMessages {
     
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
-    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didStartSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
@@ -535,7 +535,7 @@ static NSString * UserEntityName;
     }
     
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
-    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didStartSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
@@ -707,7 +707,7 @@ static NSString * UserEntityName;
 
 + (NSFetchedResultsController *)conversationResulsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
     ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
-    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didStartSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
@@ -819,7 +819,7 @@ static NSString * UserEntityName;
 
 + (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
-    if (!sessionRoom || ![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (!sessionRoom || ![[ETRSessionManager sharedManager] didStartSession]) {
         NSLog(@"ERROR: Session is not prepared.");
         return nil;
     }
@@ -876,7 +876,7 @@ static NSString * UserEntityName;
     // Get the existing Object or an empty one to fill.
     ETRUser * user = [ETRCoreDataHelper userWithRemoteID:@(remoteID) doLoadIfUnavailable:NO];
     
-    [user setImageID:@([jsonDictionary longValueForKey:@"i" withFallbackValue:-5])];
+    [user setImageID:@([jsonDictionary longValueForKey:@"i" withFallbackValue:-5L])];
     [user setName:[jsonDictionary stringForKey:@"n"]];
     [user setStatus:[jsonDictionary stringForKey:@"s"]];
     [user setMail:[jsonDictionary stringForKey:@"em"]];

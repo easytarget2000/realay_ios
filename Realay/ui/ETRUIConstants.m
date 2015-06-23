@@ -96,9 +96,9 @@ CGFloat const ETRIconViewCornerRadius = 20.0f;
 
 + (UIColor *)secondaryBackgroundColor {
     if (!SecondaryBackgroundColor) {
-        SecondaryBackgroundColor = [UIColor colorWithRed:(0xB6/255.0f)
-                                                   green:(0xB6/255.0f)
-                                                    blue:(0xB6/255.0f)
+        SecondaryBackgroundColor = [UIColor colorWithRed:(0xD4f/255.0f)
+                                                   green:(0xEAf/255.0f)
+                                                    blue:(0xBCf/255.0f)
                                                    alpha:1.0f];
     }
     return SecondaryBackgroundColor;

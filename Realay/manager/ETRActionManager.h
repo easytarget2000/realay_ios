@@ -40,6 +40,8 @@
 
 - (void)endSession;
 
+- (void)didEnterBackground;
+
 - (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 - (BOOL)doSendPing;

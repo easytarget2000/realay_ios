@@ -10,6 +10,7 @@
 
 #import "ETRAction.h"
 #import "ETRActionManager.h"
+#import "ETRBouncer.h"
 #import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
@@ -265,7 +266,7 @@ static NSMutableArray *connections;
                      }];
 }
 
-+ (void)getActionsAndPerform:(void (^)(id<NSObject>))completionHandler {
++ (void)getActionsAndPing:(BOOL)doSendPing completion:(void (^)(id<NSObject>))completionHandler {
     
     NSDictionary * authDict = [ETRServerAPIHelper sessionAuthDictionary];
     if (!authDict) {
@@ -288,7 +289,7 @@ static NSMutableArray *connections;
         [paramDict setObject:[NSString stringWithFormat:@"%ld", lastActionID] forKey:@"last"];
     }
     
-    if ([actionMan doSendPing]) {
+    if (doSendPing) {
         [paramDict setObject:@"1" forKey:@"ping"];
     }
     
@@ -847,6 +848,7 @@ static NSMutableArray *connections;
         completionHandler:(void (^)(id<NSObject> receivedObject)) handler {
     if (![ETRReachabilityManager isReachable]) {
         NSLog(@"WARNING: Reachability is negative.");
+//        [[ETRBouncer sharedManager] acknowledgeFailedConnection];
         handler(@(NO));
         return;
     }
@@ -868,6 +870,8 @@ static NSMutableArray *connections;
                                }
                                
                                if (!connectionError && data) {
+                                   [[ETRBouncer sharedManager] acknowledgeConnection];
+                                   
                                    NSError *error;
                                    NSDictionary *JSONDict = [NSJSONSerialization JSONObjectWithData:data
                                                                                             options:kNilOptions
@@ -906,7 +910,9 @@ static NSMutableArray *connections;
                                    }
                                }
                                
-                               // Something went wrong.
+//                               // Something went wrong.
+//                               [[ETRBouncer sharedManager] acknowledgeFailedConnection];
+                               
                                // If an Object was expected, return nil.
                                // If a boolean was expected, return NO.
                                if (!objectTag) {

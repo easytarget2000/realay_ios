@@ -98,11 +98,15 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [super viewDidAppear:animated];
     
     ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
-    if ([ETRLocationManager isInSessionRegion]) {
-        if ([sessionMan didBeginSession] && [sessionMan room]) {
+    if ([sessionMan restoreSession] && [ETRLocationManager isInSessionRegion]) {
+        // isInSessionRegion implies that a Session Room has been set.
+        // Check if the Session has already been started.
+        if ([sessionMan didStartSession] && [sessionMan room]) {
             [super pushToPublicConversationViewController];
             return;
-        } else if ([sessionMan restoreSession]) {
+        } else {
+            // Usually a reconnect is neccessary,
+            // because the app has been restarted at this point.
             [super pushToJoinViewController];
             return;
         }

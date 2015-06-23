@@ -22,7 +22,9 @@ static NSTimeInterval const ETRTimeIntervalFiveMinutes = 5.0 * 60.0;
 
 static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 
-static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
+//static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
+
+static CFTimeInterval const ETRTimeIntervalTimeout = 10.0;
 
 
 @interface ETRBouncer () <UIAlertViewDelegate>
@@ -66,10 +68,10 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
 
 + (NSArray *)locationWarningIntervals {
     return [NSArray arrayWithObjects:
-            @(60.0),
-            @(60.0),
-            @(60.0),
-            @(60.0),
+            @(10.0),
+            @(10.0),
+            @(10.0),
+            @(10.0),
             nil];
     
 //    return [NSArray arrayWithObjects:
@@ -90,6 +92,25 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
     _lastConnectionTime = CFAbsoluteTimeGetCurrent();
 }
 
+- (void)acknowledgeConnection {
+    _lastConnectionTime = CFAbsoluteTimeGetCurrent();
+}
+
+- (void)acknowledgeFailedConnection {
+    // Check if the app has been offline or not updating for a while.
+    // If so, any warning is a kick.
+    if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
+        [self kickForReason:ETRTimeIntervalTimeout calledBy:@"NoConnection"];
+    }
+}
+
+#pragma mark -
+#pragma mark App Foreground/Background
+
+- (void)didEnterBackground {
+    _viewController = nil;
+}
+
 - (BOOL)showPendingAlertViewsInViewController:(UIViewController *)viewController {
     _viewController = viewController;
     if (_hasPendingAlertView) {
@@ -100,12 +121,18 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
     }
 }
 
-- (void)didEnterBackground {
-    _viewController = nil;
-}
+#pragma mark -
+#pragma mark Warnings & Kicks
 
 - (void)warnForReason:(short)reason {
-    if (![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (![[ETRSessionManager sharedManager] didStartSession]) {
+        return;
+    }
+    
+    // Check if the app has been offline or not updating for a while.
+    // If so, any warning is a kick.
+    if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
+        [self kickForReason:reason calledBy:@"NoConnection"];
         return;
     }
     
@@ -115,7 +142,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
     
     if (_numberOfWarnings < [intervals count]) {
 #ifdef DEBUG
-        NSLog(@"Bouncer warning: %d/4 - %d.", _numberOfWarnings, reason);
+        NSLog(@"Bouncer warning: %d/3 - %d.", _numberOfWarnings, reason);
 #endif
         
         [self notifyUser];
@@ -158,18 +185,15 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0 * 60.0;
     [self warnForReason:_lastReason];
 }
 
-#pragma mark -
-#pragma mark Connection
-
-- (void)acknowledgeConnection {
-    _lastConnectionTime = CFAbsoluteTimeGetCurrent();
-}
-
-- (void)acknowledgeFailedConnection {
-    if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
-        [self kickForReason:ETRTimeIntervalTimeout calledBy:@"acknowledgeFailedConnection"];
-    }
-}
+//- (void)acknowledgeFailedConnection {
+//    if (_hasPendingKick) {
+//        return;
+//    }
+//    
+//    if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
+//        [self kickForReason:ETRKickReasonTimeout calledBy:@"acknowledgeFailedConnection"];
+//    }
+//}
 
 #pragma mark -
 #pragma mark Notificiations & AlertViews

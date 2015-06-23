@@ -73,7 +73,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     if (_room) {        
         UIBarButtonItem * barButton;
         
-        if ([[ETRSessionManager sharedManager] didBeginSession]) {
+        if ([[ETRSessionManager sharedManager] didStartSession]) {
 //            barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Share location")
 //                                                         style:UIBarButtonItemStylePlain
 //                                                        target:self
@@ -388,7 +388,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
-    if (![[ETRSessionManager sharedManager] didBeginSession]) {
+    if (![[ETRSessionManager sharedManager] didStartSession]) {
 #ifdef DEBUG_JOIN
         [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
 #else

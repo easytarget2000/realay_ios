@@ -140,7 +140,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
         return;
     }
     
-    if ([didSucceed boolValue]) {
+    if ([didSucceed boolValue] && [[ETRSessionManager sharedManager] startSession]) {
         _didFinish = YES;
         [ETRAnimator fadeView:[self progressView] doAppear:NO completion:nil];
         [ETRAnimator fadeView:[self statusLabel] doAppear:NO completion:nil];

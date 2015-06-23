@@ -20,26 +20,6 @@
 			<key>DefaultValue</key>
 			<false/>
 		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Private_Messages</string>
-			<key>Key</key>
-			<string>notifications_private</string>
-			<key>DefaultValue</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>Toggle_Switch</string>
-			<key>Title</key>
-			<string>Other</string>
-			<key>Key</key>
-			<string>notifications_other</string>
-			<key>DefaultValue</key>
-			<true/>
-		</dict>
 	</array>
 	<key>StringsTable</key>
 	<string>Root</string>

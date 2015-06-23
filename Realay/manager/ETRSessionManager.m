@@ -11,6 +11,7 @@
 #import "ETRAction.h"
 #import "ETRActionManager.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRBouncer.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
@@ -72,8 +73,9 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     
     // Consider the join successful so far and start the Action Manager.
     [[ETRActionManager sharedManager] startSession];
-    _didBeginSession = YES;
+    _didStartSession = YES;
     [ETRDefaultsHelper storeSession:[_room remoteID]];
+    [[ETRBouncer sharedManager] resetSession];
     return YES;
 }
 
@@ -83,7 +85,7 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     _room = nil;
     [ETRDefaultsHelper removeSession];
     
-    _didBeginSession = NO;
+    _didStartSession = NO;
     
     // Remove all public and queued Actions from the local DB.
     [ETRCoreDataHelper cleanActions];
@@ -109,7 +111,7 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     
     [self setNavigationController:navigationController];
     
-    if ([self didBeginSession]) {
+    if ([self didStartSession]) {
         [self endSession];
         NSLog(@"ERROR: Room set during running session.");
         return;

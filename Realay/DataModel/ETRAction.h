@@ -58,4 +58,6 @@ typedef NS_ENUM(short, ETRActionCode) {
 
 - (BOOL)isSentAction;
 
+- (NSString *)readableMessageContent;
+
 @end

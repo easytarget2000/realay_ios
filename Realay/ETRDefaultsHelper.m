@@ -32,11 +32,9 @@ static NSString *const ETRDefaultsKeyLastUpdateLng = @"last_update_lng";
 
 static NSString *const ETRDefaultsKeyLastUpdateTime = @"last_update_time";
 
-static NSString *const ETRdefaultsKeyNotificationsOther = @"notifications_other";
-
 static NSString *const ETRDefaultsKeyNotificationsPublic = @"notifications_public";
 
-static NSString *const ETRDefaultsKeyNotificationsPrivate = @"notifications_private";
+//static NSString *const ETRDefaultsKeyNotificationsPrivate = @"notifications_private";
 
 static NSString *const ETRDefaultsKeySession = @"session_r";
 
@@ -129,10 +127,10 @@ static CLLocation * LastUpdateLocation;
     return YES;
 }
 
-+ (BOOL)doShowPrivateNotifs {
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    return [defaults boolForKey:ETRDefaultsKeyNotificationsPrivate];
-}
+//+ (BOOL)doShowPrivateNotifs {
+//    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+//    return [defaults boolForKey:ETRDefaultsKeyNotificationsPrivate];
+//}
 
 + (BOOL)doShowPublicNotifs {
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
