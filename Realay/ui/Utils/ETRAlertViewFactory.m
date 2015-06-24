@@ -351,19 +351,11 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
 }
 
 /*
- Displays an alert view that says the typed name is not long enough to be used.
- */
-+ (void)showTypedNameTooShortAlert {
-    // TODO: Replace with warning icon.
-    [ETRAlertViewFactory showGeneralErrorAlert];
-}
-
-/*
  Displays an alert view that says the entered room password is wrong.
  */
 + (void)showWrongPasswordAlertView {
     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Wrong_Password", "Incorrect password")
-                                message:nil
+                                message:NSLocalizedString(@"Try_again", @"Please try again.")
                                delegate:nil
                       cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];

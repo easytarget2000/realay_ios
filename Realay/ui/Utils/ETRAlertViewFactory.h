@@ -107,11 +107,6 @@
 + (void)showRoomDistanceAlert;
 
 /*
- Displays an alert view that says the typed name is not long enough to be used.
- */
-+ (void)showTypedNameTooShortAlert;
-
-/*
  Displays an alert view that says the entered room password is wrong.
  */
 + (void)showWrongPasswordAlertView;

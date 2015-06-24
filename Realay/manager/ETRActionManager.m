@@ -167,44 +167,46 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 */
 - (void)fetchUpdatesWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     BOOL isInitial = _lastActionID < 100L;
-        
-    [ETRServerAPIHelper getActionsAndPerform:^(id<NSObject> receivedObject) {
-        BOOL didReceiveNewData = NO;
-        
-        int new = -1;
-        
-        if ([receivedObject isKindOfClass:[NSArray class]]) {
-            NSArray * jsonActions = (NSArray *) receivedObject;
-            new++;
-            for (NSObject *jsonAction in jsonActions) {
-                
-                if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                    new++;
-                    dispatch_async(
-                                   dispatch_get_main_queue(),
-                                   ^{
-                                       ETRAction * action;
-                                       action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
-                                       if (action && !isInitial) {
-                                           [self dispatchNotificationForAction:action];
+    BOOL doSendPing = [self doSendPing];
+    
+    [ETRServerAPIHelper getActionsAndPing:doSendPing
+                               completion:^(id<NSObject> receivedObject) {
+                                   BOOL didReceiveNewData = NO;
+                                   
+                                   int new = -1;
+                                   
+                                   if ([receivedObject isKindOfClass:[NSArray class]]) {
+                                       NSArray * jsonActions = (NSArray *) receivedObject;
+                                       new++;
+                                       for (NSObject *jsonAction in jsonActions) {
+                                           
+                                           if ([jsonAction isKindOfClass:[NSDictionary class]]) {
+                                               new++;
+                                               ETRAction * action;
+                                               action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
+                                               if (action && !isInitial) {
+                                                   [self dispatchNotificationForAction:action];
+                                               }
+                                               didReceiveNewData = YES;
+                                           }
                                        }
-                                   });
-                    didReceiveNewData = YES;
-                }
-            }
-        }
-        
-        NSLog(@"New: %d", new);
-        
-        [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
-        
-        if (completionHandler) {
-//            UIBackgroundFetchResult result;
-//            result = didReceiveNewData ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultNoData;
-//            completionHandler(result);
-            completionHandler(UIBackgroundFetchResultNewData);
-        }
-    }];
+                                   }
+                                   
+                                   NSLog(@"New: %d", new);
+                                   
+                                   [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
+                                   
+                                   if (doSendPing) {
+                                       _lastPingTime = CFAbsoluteTimeGetCurrent();
+                                   }
+                                   
+                                   if (completionHandler) {
+                                       //            UIBackgroundFetchResult result;
+                                       //            result = didReceiveNewData ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultNoData;
+                                       //            completionHandler(result);
+                                       completionHandler(UIBackgroundFetchResultNewData);
+                                   }
+                               }];
 }
 
 - (BOOL)doSendPing {

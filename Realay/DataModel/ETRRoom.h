@@ -25,7 +25,7 @@
 @property (nonatomic, retain) NSNumber * queryUserCount;
 @property (nonatomic, retain) NSNumber * radius;
 @property (nonatomic, retain) NSNumber * remoteID;
-@property (nonatomic, retain) NSDate * startTime;
+@property (nonatomic, retain) NSDate * startDate;
 @property (nonatomic, retain) NSString * summary;
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSSet *actions;

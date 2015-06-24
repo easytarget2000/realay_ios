@@ -287,7 +287,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             
         case 3: {
             [[cell keyLabel] setText:NSLocalizedString(@"Hours", @"Opening hours")];
-            NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startTime]
+            NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startDate]
                                                                     endDate:[_room endDate]];
             [[cell valueLabel] setText:timeSpan];
         }

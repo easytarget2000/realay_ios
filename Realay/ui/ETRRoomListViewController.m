@@ -215,20 +215,12 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark Table View Data Source Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return [[_fetchedResultsController fetchedObjects] count];
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSInteger numberOfRows;
-    
-    if (!_fetchedResultsController) {
-        numberOfRows = 0;
-    } else {
-        numberOfRows = [[_fetchedResultsController fetchedObjects] count];
-    }
-    
+    NSInteger numberOfRows = [[_fetchedResultsController fetchedObjects] count];
     [self setInformationViewHidden:(numberOfRows > 0)];
-    
     return numberOfRows;
 }
 

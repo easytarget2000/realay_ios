@@ -195,7 +195,7 @@ static NSMutableArray *connections;
                                      toTarget:self
                                    withObject:@"Loading messages..."];
             
-            [ETRServerAPIHelper getActionsAndPerform:getMessagesCompletionHandler];
+            [ETRServerAPIHelper getActionsAndPing:NO completion:getMessagesCompletionHandler];
         }
     };
     
@@ -361,6 +361,9 @@ static NSMutableArray *connections;
 
 + (void)endSession {
     ETRAction * exitAction = [ETRCoreDataHelper blankOutgoingAction];
+    if (!exitAction) {
+        return;
+    }
     [exitAction setCode:@(ETRActionCodeUserQuit)];
     [ETRServerAPIHelper putAction:exitAction];
 }

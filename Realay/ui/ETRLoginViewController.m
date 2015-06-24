@@ -9,6 +9,7 @@
 #import "ETRLoginViewController.h"
 
 #import "ETRAlertViewFactory.h"
+#import "ETRAnimator.h"
 #import "ETRLocalUserManager.h"
 #import "ETRDetailsViewController.h"
 #import "ETRServerAPIHelper.h"
@@ -45,18 +46,28 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
     }
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [[self nameTextField] becomeFirstResponder];
+}
+
 - (void)threadStartAnimating:(id)data {
     [_activityIndicator startAnimating];
 }
 
 #pragma mark - UITextFieldDelegate
 
-- (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
-    if(theTextField == [self nameTextField]) {
-        [theTextField resignFirstResponder];
-    }
+- (BOOL)textFieldShouldReturn:(nonnull UITextField *)textField {
+    [self saveButtonPressed:nil];
     return YES;
 }
+
+//- (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
+//    if(theTextField == [self nameTextField]) {
+//        [theTextField resignFirstResponder];
+//    }
+//    return YES;
+//}
 
 #pragma mark - Navigation
 
@@ -77,7 +88,26 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
     typedName = [[_nameTextField text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if ([typedName length] < 1) {
-        [ETRAlertViewFactory showTypedNameTooShortAlert];
+        [ETRAnimator fadeView:[self nameTextField]
+                     doAppear:NO
+                   completion:^{
+                       [ETRAnimator fadeView:[self nameTextField]
+                                    doAppear:YES
+                                  completion:^{
+                                      [[self nameTextField] becomeFirstResponder];
+                                  }];
+        }];
+    } else if ([typedName length] > ETRUserNameMaxLength) {
+        [_nameTextField setText:[typedName substringToIndex:ETRUserNameMaxLength]];
+        [ETRAnimator fadeView:[self nameTextField]
+                     doAppear:NO
+                   completion:^{
+                       [ETRAnimator fadeView:[self nameTextField]
+                                    doAppear:YES
+                                  completion:^{
+                                      [[self nameTextField] becomeFirstResponder];
+                                  }];
+                   }];
     } else {
         // The typed name is long enough.
         

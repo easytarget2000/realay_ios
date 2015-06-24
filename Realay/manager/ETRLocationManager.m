@@ -106,8 +106,9 @@ static ETRLocationManager * SharedInstance;
 - (BOOL)updateSessionRegionDistance {
     BOOL wasInSessionRegion = _isInSessionRegion;
     
-    if ([ETRLocationManager didAuthorizeWhenInUse]) {
-        ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
+    
+    if (sessionRoom && [ETRLocationManager didAuthorizeWhenInUse]) {
         int roomDistance = [self distanceToRoom:sessionRoom];
         _isInSessionRegion = roomDistance < 10;
         if (roomDistance > 4500) {

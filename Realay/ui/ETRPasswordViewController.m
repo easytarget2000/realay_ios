@@ -66,10 +66,7 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
     return YES;
 }
 
-- (void)verifyPasswordAndJoin {        
-    // Hide the keyboard.
-    [[self passwordTextField] resignFirstResponder];
-    
+- (void)verifyPasswordAndJoin {
     // Get the password values.
     NSString * typedPassword = [[self passwordTextField] text];
     NSString * password = [[[ETRSessionManager sharedManager] room] password];
@@ -79,6 +76,9 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
 #endif
     
     if([typedPassword isEqualToString:password]) {
+        // Hide the keyboard.
+        [[self passwordTextField] resignFirstResponder];
+        
         // The right password was given.
         // If the user is already registered, attempt to join the room.
         // Otherwise let the user create a profile first.

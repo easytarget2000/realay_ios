@@ -11,7 +11,7 @@
 
 static NSTimeInterval const ETRAnimationDurationMove = 0.5;
 
-static NSTimeInterval const ETRAnimationDurationFade = 0.5;
+static NSTimeInterval const ETRAnimationDurationFade = 0.4;
 
 
 @implementation ETRAnimator
@@ -111,7 +111,6 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.5;
             return;
         }
         
-//        [view setAlpha:0.0f];
         [view setHidden:NO];
         
         [UIView animateWithDuration:ETRAnimationDurationFade

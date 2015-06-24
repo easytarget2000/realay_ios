@@ -31,7 +31,7 @@
 @dynamic queryUserCount;
 @dynamic radius;
 @dynamic remoteID;
-@dynamic startTime;
+@dynamic startDate;
 @dynamic summary;
 @dynamic title;
 @dynamic actions;
@@ -57,7 +57,7 @@
     if ([self hasStarted]) {
         start = NSLocalizedString(@"Ongoing", @"Started");
     } else {
-        start = [ETRReadabilityHelper formattedDate:[self startTime]];
+        start = [ETRReadabilityHelper formattedDate:[self startDate]];
     }
     
     NSString * end;
@@ -87,10 +87,10 @@
 }
 
 - (BOOL)hasStarted {
-    if (![self startTime]) {
+    if (![self startDate]) {
         return YES;
     } else {
-        return [[self startTime] compare:[NSDate date]] == NSOrderedAscending;
+        return [[self startDate] compare:[NSDate date]] == NSOrderedAscending;
     }
 }
 

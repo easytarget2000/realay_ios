@@ -22,28 +22,6 @@
 
 long const ETRActionPublicUserID = -10;
 
-//static NSString *const ETRRemoteIDKey = @"remoteID";
-//
-//static NSString *const ETRRoomDistanceKey = @"queryDistance";
-//
-//static NSString *const ETRActionCodeKey = @"code";
-//
-//static NSString *const ETRActionSenderKey = @"sender";
-//
-//static NSString *const ETRActionRecipientKey = @"recipient";
-//
-//static NSString *const ETRActionDateKey = @"sentDate";
-//
-//static NSString *const ETRActionRoomKey = @"room";
-//
-//static NSString *const ETRConversationPartnerKey = @"partner";
-//
-//static NSString *const ETRInRoomKey = @"inRoom";
-//
-//static NSString *const ETRUserNameKey = @"name";
-//
-//static NSString *const ETRUserIsBlockedKey = @"isBlocked";
-
 static NSManagedObjectContext * ManagedObjectContext;
 
 static NSEntityDescription * ActionEntity;
@@ -750,14 +728,14 @@ static NSString * UserEntityName;
     [room setPassword:(NSString *)[JSONDict objectForKey:@"pw"]];
 
     
-    NSInteger startTimestamp = [(NSString *)[JSONDict objectForKey:@"st"] integerValue];
-    if (startTimestamp > 1000000000) {
-        [room setStartTime:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+    NSInteger unixStartDate = [(NSString *)[JSONDict objectForKey:@"st"] integerValue];
+    if (unixStartDate > 1000) {
+        [room setStartDate:[NSDate dateWithTimeIntervalSince1970:unixStartDate]];
     }
     
-    NSInteger endTimestamp = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
-    if (endTimestamp > 1000000000) {
-        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:startTimestamp]];
+    NSInteger unixEndDate = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
+    if (unixEndDate > 1000) {
+        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:unixStartDate]];
     }
     
     // We query the database with km values and only use metre integer precision.

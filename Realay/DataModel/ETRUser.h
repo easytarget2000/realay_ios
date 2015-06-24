@@ -8,7 +8,14 @@
 
 #import "ETRChatObject.h"
 
+
 @class ETRAction, ETRConversation, ETRRoom;
+
+
+extern short const ETRUserNameMaxLength;
+
+extern short const ETRUserSocialMaxLength;
+
 
 @interface ETRUser : ETRChatObject
 

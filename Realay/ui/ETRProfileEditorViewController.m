@@ -8,6 +8,7 @@
 
 #import "ETRProfileEditorViewController.h"
 
+#import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRImageEditor.h"
@@ -235,18 +236,27 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     NSCharacterSet * trimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
     NSString * enteredText;
     enteredText = [[textField text] stringByTrimmingCharactersInSet:trimSet];
+    NSUInteger textLength = [enteredText length];
     
     switch ([textField tag] - ETRCellTagOffset) {
         case 0:
-            if (![enteredText length]) {
-                [ETRAlertViewFactory showTypedNameTooShortAlert];
+            if (textLength < 1) {
+                [ETRAnimator fadeView:textField doAppear:NO completion:^{
+                    [textField setText:[_localUserCopy name]];
+                    [ETRAnimator fadeView:textField doAppear:YES completion:nil];
+                }];
+            } else if (textLength > ETRUserNameMaxLength) {
+                [ETRAnimator fadeView:textField doAppear:NO completion:^{
+                    [textField setText:[enteredText substringToIndex:ETRUserNameMaxLength]];
+                    [ETRAnimator fadeView:textField doAppear:YES completion:nil];
+                }];
             } else {
                 [_localUserCopy setName:enteredText];
             }
             break;
 
         case 1:
-            if ([enteredText length]) {
+            if (textLength > 0 && textLength < 140) {
                 [_localUserCopy setStatus:enteredText];
             } else {
                 [[self tableView] reloadData];
@@ -254,7 +264,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
             break;
             
         case 2:
-            if (![enteredText length]) {
+            if (textLength == 0 || textLength > ETRUserSocialMaxLength) {
                 [_localUserCopy setPhone:nil];
                 [[self tableView] reloadData];
             } else if ([self isValidPhoneNumber:enteredText]) {
@@ -265,7 +275,7 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
             break;
             
         case 3:
-            if (![enteredText length]) {
+            if (textLength == 0 || textLength > ETRUserSocialMaxLength) {
                 [_localUserCopy setMail:nil];
                 [[self tableView] reloadData];
             } else if ([self isValidEmailAddress:enteredText]) {
@@ -276,21 +286,36 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
             break;
             
         case 4:
-            [_localUserCopy setWebsite:enteredText];
+            if (textLength < ETRUserSocialMaxLength) {
+                [_localUserCopy setWebsite:enteredText];
+            } else {
+                [[self tableView] reloadData];
+            }
             break;
-            
+    
         case 5:
-            [_localUserCopy setFacebook:enteredText];
+            if (textLength < ETRUserSocialMaxLength) {
+                [_localUserCopy setFacebook:enteredText];
+            } else {
+                [[self tableView] reloadData];
+            }
             break;
             
         case 6:
-            [_localUserCopy setInstagram:enteredText];
+            if (textLength < ETRUserSocialMaxLength) {
+                [_localUserCopy setInstagram:enteredText];
+            } else {
+                [[self tableView] reloadData];
+            }
             break;
             
         case 7:
-            [_localUserCopy setTwitter:enteredText];
+            if (textLength < ETRUserSocialMaxLength) {
+                [_localUserCopy setTwitter:enteredText];
+            } else {
+                [[self tableView] reloadData];
+            }
     }
-    
 }
 
 #pragma mark -

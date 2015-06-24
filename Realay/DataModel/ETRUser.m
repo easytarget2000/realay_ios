@@ -10,6 +10,12 @@
 
 #import <AddressBook/AddressBook.h>
 
+
+short const ETRUserNameMaxLength = 40;
+
+short const ETRUserSocialMaxLength = 60;
+
+
 @implementation ETRUser
 
 @dynamic remoteID;
