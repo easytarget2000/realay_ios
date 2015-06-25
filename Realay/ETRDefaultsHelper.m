@@ -34,13 +34,13 @@ static NSString *const ETRDefaultsKeyLastUpdateTime = @"last_update_time";
 
 static NSString *const ETRDefaultsKeyNotificationsPublic = @"notifications_public";
 
-//static NSString *const ETRDefaultsKeyNotificationsPrivate = @"notifications_private";
-
 static NSString *const ETRDefaultsKeySession = @"session_r";
 
 static NSString *const ETRDefaultsKeyUserID = @"local_user";
 
-static CFTimeInterval const ETRRoomListUpdateInterval = 20.0 * 60.0;
+static NSString *const ETRDefaultsUsesMetricSystem = @"uses_metric_system";
+
+static CFTimeInterval const ETRRoomListUpdateInterval = 15.0 * 60.0;
 
 static CLLocationDistance const ETRRoomListUpdateDistance = 500.0;
 
@@ -56,7 +56,18 @@ static CLLocation * LastUpdateLocation;
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     BOOL didRunOnce = [defaults boolForKey:ETRDefaultsKeyDidRunOnce];
     if (!didRunOnce) {
+        // Store that the app has been started once.
         [defaults setBool:YES forKey:ETRDefaultsKeyDidRunOnce];
+        
+        // Also read the Locale to set the unit system.
+        NSLocale * locale = [NSLocale currentLocale];
+        id localeMeasurement = [locale objectForKey:NSLocaleUsesMetricSystem];
+        BOOL doUseMetric = YES;
+        if (localeMeasurement && [localeMeasurement isKindOfClass:[NSNumber class]]) {
+            doUseMetric = [localeMeasurement boolValue];
+        }
+        [defaults setBool:doUseMetric forKey:ETRDefaultsUsesMetricSystem];
+        
         [defaults synchronize];
         return NO;
     } else {
@@ -115,22 +126,9 @@ static CLLocation * LastUpdateLocation;
 #pragma mark Settings
 
 + (BOOL)doUseMetricSystem {
-    // TODO: Read from Settings.
-    
-    NSLocale * locale = [NSLocale currentLocale];
-    
-    id localeMeasurement = [locale objectForKey:NSLocaleUsesMetricSystem];
-    if (localeMeasurement && [localeMeasurement isKindOfClass:[NSNumber class]]) {
-        return [localeMeasurement boolValue];
-    }
-    
-    return YES;
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:ETRDefaultsKeyNotificationsPublic];
 }
-
-//+ (BOOL)doShowPrivateNotifs {
-//    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-//    return [defaults boolForKey:ETRDefaultsKeyNotificationsPrivate];
-//}
 
 + (BOOL)doShowPublicNotifs {
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];

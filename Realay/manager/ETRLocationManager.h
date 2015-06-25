@@ -16,6 +16,8 @@
 
 + (ETRLocationManager *)sharedManager;
 
+- (void)launch:(NSTimer *)timer;
+
 + (CLLocation *)location;
 
 + (BOOL)isInSessionRegion;

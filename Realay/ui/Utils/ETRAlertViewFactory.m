@@ -312,20 +312,17 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                       otherButtonTitles:nil] show];
 }
 
-/**
- Displays a warning in an alert view saying that the device location cannot be found.
- */
-+ (void)showNoLocationAlertViewWithMinutes:(NSInteger)minutes {
-    NSString *msg;
-    
-    // TODO: Use different way of handling unknown locations.
-    
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Unknown_location", @"Unknown device location")
-                                message:msg
-                               delegate:nil
-                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
-                      otherButtonTitles:nil] show];
-}
+///**
+// Displays a warning in an alert view saying that the device location cannot be found.
+// */
+//+ (void)showNoLocationAlertViewWithMinutes:(NSInteger)minutes {
+//    NSString *msg;
+//    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Unknown_location", @"Unknown device location")
+//                                message:msg
+//                               delegate:nil
+//                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
+//                      otherButtonTitles:nil] show];
+//}
 
 /**
  Displays an alert view that says the user cannot join the room
@@ -376,10 +373,21 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                 NSLog(@"ERROR: Cannot perform next blocking step. User reference lost.");
             } else {
                 [_selectedUser setIsBlocked:@(YES)];
-                [ETRCoreDataHelper saveContext];
-                // TODO: Clear and push to Public Conversation View Controller.
+                ETRConversation * conversation = [ETRCoreDataHelper conversationWithPartner:_selectedUser];
+                [ETRCoreDataHelper deleteConversation:conversation];
                 
                 if (_viewController) {
+                    if ([_viewController isMemberOfClass:[ETRConversationViewController class]]) {
+                        ETRConversationViewController * conversationViewController;
+                        conversationViewController = (ETRConversationViewController *) _viewController;
+                        if ([conversationViewController isPublic]) {
+                            // If the View Controller that started this menu
+                            // is showing the Public Conversation, do not continue.
+                            return;
+                        }
+                    }
+                    
+                    // Pop to the Public Conversation.
                     UIStoryboard * storyBoard = [_viewController storyboard];
                     
                     ETRConversationViewController * publicConversation;
@@ -470,7 +478,6 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             [picker setNeedsStatusBarAppearanceUpdate];
 
             if (buttonIndex == 1) {
-                // TODO: SavedPhotosAlbum vs. PhotosLibrary?
                 [picker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
             } else if (buttonIndex == 2) {
                 [picker setSourceType:UIImagePickerControllerSourceTypeCamera];

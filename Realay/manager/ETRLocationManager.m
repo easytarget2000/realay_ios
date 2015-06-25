@@ -43,13 +43,15 @@ static ETRLocationManager * SharedInstance;
         [SharedInstance setDelegate:SharedInstance];
         [SharedInstance launch:nil];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:ETRScheduleInterval
-                                             target:SharedInstance
-                                           selector:@selector(launch:)
-                                           userInfo:nil
-                                            repeats:YES];
-        });
+        dispatch_async(
+                       dispatch_get_main_queue(),
+                       ^{
+                           [NSTimer scheduledTimerWithTimeInterval:ETRScheduleInterval
+                                                            target:SharedInstance
+                                                          selector:@selector(launch:)
+                                                          userInfo:nil
+                                                           repeats:NO];
+                       });
     }
 }
 
@@ -84,7 +86,7 @@ static ETRLocationManager * SharedInstance;
     
     if ([ETRDefaultsHelper doUpdateRoomListAtLocation:_location]) {
 #ifdef DEBUG
-        NSLog(@"%@: Updating Rooms.", [self class]);
+        NSLog(@"Updating Rooms, new Location.");
 #endif
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     }
@@ -154,6 +156,13 @@ static ETRLocationManager * SharedInstance;
         if ([self respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             [self requestAlwaysAuthorization];
         }
+    }
+    
+    if ([ETRDefaultsHelper doUpdateRoomListAtLocation:_location]) {
+#ifdef DEBUG
+        NSLog(@"Updating Rooms, LocationManager relaunch.");
+#endif
+        [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     }
     
     [super startUpdatingLocation];

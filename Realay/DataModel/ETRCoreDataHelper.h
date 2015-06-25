@@ -133,6 +133,8 @@ extern long const ETRActionPublicUserID;
 
 + (ETRUser *)copyUser:(ETRUser *)user;
 
++ (NSArray *)blockedUsers;
+
 + (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 + (NSFetchedResultsController *)blockedUserListControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;

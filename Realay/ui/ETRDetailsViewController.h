@@ -14,6 +14,8 @@
 
 @interface ETRDetailsViewController : ETRBaseViewController
 
+@property (weak, nonatomic) IBOutlet UIView *topShadow;
+
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) ETRRoom * room;

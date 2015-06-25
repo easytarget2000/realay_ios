@@ -23,7 +23,6 @@ extern NSString * ETRAPIBaseURL;
 #pragma mark Actions
 
 - (void)joinRoomAndShowProgressInLabel:(UILabel *)label
-                          progressView:(UIProgressView *)progressView
                      completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 + (void)getActionsAndPing:(BOOL)doSendPing completion:(void (^)(id<NSObject>))completionHandler;

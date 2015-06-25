@@ -108,8 +108,6 @@ static NSMutableArray *connections;
 
 @property (strong, nonatomic) UILabel *progressLabel;
 
-@property (strong, nonatomic) UIProgressView *progressView;
-
 @end
 
 
@@ -119,7 +117,6 @@ static NSMutableArray *connections;
 #pragma mark Actions
 
 - (void)joinRoomAndShowProgressInLabel:(UILabel *)label
-                          progressView:(UIProgressView *)progressView
                      completionHandler:(void(^)(BOOL didSucceed))completionHandler {
 
     NSDictionary * authParams = [ETRServerAPIHelper sessionAuthDictionary];
@@ -129,7 +126,6 @@ static NSMutableArray *connections;
     }
     
     _progressLabel = label;
-    _progressView = progressView;
     
     // Prepare the block that will be called at the end.
     void (^getlastActionIDCompletionHandler) (long) = ^(long lastActionID) {
@@ -150,10 +146,6 @@ static NSMutableArray *connections;
             [NSThread exit];
             return;
         }
-        
-        [NSThread detachNewThreadSelector:@selector(updateProgress:)
-                                 toTarget:self
-                               withObject:@(0.9f)];
         
         if (!receivedObject) {
             completionHandler(NO);
@@ -188,9 +180,6 @@ static NSMutableArray *connections;
             completionHandler(NO);
         } else {
             // Update the UI to show the upcoming step.
-            [NSThread detachNewThreadSelector:@selector(updateProgress:)
-                                     toTarget:self
-                                   withObject:@(0.55f)];
             [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
                                      toTarget:self
                                    withObject:@"Loading messages..."];
@@ -212,9 +201,6 @@ static NSMutableArray *connections;
             NSNumber * didSucceed = (NSNumber *) receivedObject;
             if ([didSucceed boolValue]) {
                 // Update the UI to show the upcoming step.
-                [NSThread detachNewThreadSelector:@selector(updateProgress:)
-                                         toTarget:self
-                                       withObject:@(0.4f)];
                 [NSThread detachNewThreadSelector:@selector(updateProgressLabelText:)
                                          toTarget:self
                                        withObject:@"Loading Users..."];
@@ -242,6 +228,14 @@ static NSMutableArray *connections;
                          successStatus:ETRJoinRoomSuccessStatus
                              objectTag:nil
                      completionHandler:joinBlock];
+}
+
+- (void)updateProgressLabelText:(NSString *)text {
+    if (!_progressLabel) {
+        return;
+    }
+    
+    [_progressLabel setText:text];
 }
 
 + (void)getLastActionIDAndPerform:(void (^)(long))completionHandler {
@@ -277,9 +271,6 @@ static NSMutableArray *connections;
     
     ETRActionManager * actionMan = [ETRActionManager sharedManager];
     
-    NSString * blockedIDs = @"0";
-    [paramDict setObject:blockedIDs forKey:@"blocked"];
-    
     long lastActionID = [actionMan lastActionID];
     
     if (lastActionID < 100L) {
@@ -293,7 +284,19 @@ static NSMutableArray *connections;
         [paramDict setObject:@"1" forKey:@"ping"];
     }
     
-    // TODO: Add IDs of blocked Users.
+    NSArray * blockedUsers = [ETRCoreDataHelper blockedUsers];
+    if ([blockedUsers count]) {
+        // If Users have been blocked, add a coma-separated parameter to the API call.
+        NSMutableString * blockedUserIDs = [NSMutableString string];
+        for (ETRUser * smug in blockedUsers) {
+            if ([blockedUserIDs length]) {
+                [blockedUserIDs appendString:@","];
+            }
+            [blockedUserIDs appendString:[[smug remoteID] stringValue]];
+        }
+        [paramDict setObject:blockedUserIDs forKey:@"blocked"];
+    }
+    
     [ETRServerAPIHelper performAPICall:ETRGetActionsAPICall
                                 withID:ETRGetActionsAPICall
                              paramDict:paramDict
@@ -754,24 +757,24 @@ static NSMutableArray *connections;
                          successStatus:ETRSessionUsersSuccessStatus
                              objectTag:ETRUserListObjectTag
                      completionHandler:^(id<NSObject> receivedObject) {
+                         
                          // Remove all User relationships in this Room, then add the current ones.
-                         [sessionRoom setUsers:[NSSet set]];
-                         [ETRCoreDataHelper saveContext];
                          
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
+                             [sessionRoom setUsers:[NSSet set]];
+                             [ETRCoreDataHelper saveContext];
+                             
                              NSArray *jsonUsers = (NSArray *) receivedObject;
-                             for (NSObject *jsonUser in jsonUsers) {
+                             for (NSObject * jsonUser in jsonUsers) {
                                  if ([jsonUser isKindOfClass:[NSDictionary class]]) {
-                                     ETRUser *sessionUser;
+                                     ETRUser * sessionUser;
                                      sessionUser = [ETRCoreDataHelper insertUserFromDictionary:(NSDictionary *)jsonUser];
                                      if (sessionUser && ![[ETRLocalUserManager sharedManager] isLocalUser:sessionUser]) {
                                          [sessionUser setInRoom:sessionRoom];
                                      }
                                  }
                              }
-                             
-                             [[ETRSessionManager sharedManager] acknowledegeUserListUpdate];
-                             
+                                                          
                              if (handler) {
                                  handler(YES);
                              }
@@ -806,6 +809,8 @@ static NSMutableArray *connections;
                              NSDictionary * jsonDictionary;
                              jsonDictionary = (NSDictionary *) receivedObject;
                              [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
+                         } else {
+                             NSLog(@"ERROR: Could not find User %@ on the Server.", remoteID);
                          }
                      }];
 }
@@ -988,25 +993,6 @@ static NSMutableArray *connections;
     [authParams setObject:sessionID forKey:ETRAPIParamSession];
     
     return authParams;
-}
-
-
-#pragma mark -
-#pragma mark UI Updates
-
-- (void)updateProgressLabelText:(NSString *)text {
-    if (!_progressLabel) {
-        return;
-    }
-    
-    [_progressLabel setText:text];
-}
-
-- (void)updateProgress:(NSNumber *)progress {
-    if (!_progressView || !progress) {
-        return;
-    }
-    [_progressView setProgress:[progress floatValue]];
 }
 
 @end

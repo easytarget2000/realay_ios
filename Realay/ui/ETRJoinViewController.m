@@ -49,12 +49,9 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
     if (_joinThread) {
         return;
     }
-    
-    // TODO: Remove this line or translate it.
-    
-    NSString * entering = [NSString stringWithFormat:@"Entering %@...", [preparedRoom title]];
+        
+    NSString * entering = [NSString stringWithFormat:@"%@...", [preparedRoom title]];
     [[self statusLabel] setText:entering];
-    [[self progressView] setProgress:0.1f];
     
     _joinThread = [[NSThread alloc] initWithTarget:self
                                           selector:@selector(startJoinThreadforRoom:)
@@ -95,6 +92,8 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     _didFinish = NO;
+    [[self activityIndicator] startAnimating];
+    
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:YES];
@@ -125,7 +124,6 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
     
     ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
     [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
-                                 progressView:_progressView
                             completionHandler:^(BOOL didSucceed) {
                                 [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
                                                          toTarget:self
@@ -140,9 +138,9 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
         return;
     }
     
-    if ([didSucceed boolValue] && [[ETRSessionManager sharedManager] startSession]) {
+    if ([didSucceed boolValue]) {
         _didFinish = YES;
-        [ETRAnimator fadeView:[self progressView] doAppear:NO completion:nil];
+        [ETRAnimator fadeView:[self activityIndicator] doAppear:NO completion:nil];
         [ETRAnimator fadeView:[self statusLabel] doAppear:NO completion:nil];
         [ETRAnimator toggleBounceInView:[self logoView]
                          animateFromTop:NO

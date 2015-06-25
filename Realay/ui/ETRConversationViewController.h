@@ -18,8 +18,6 @@
 
 @property (weak, nonatomic) IBOutlet UITableView * messagesTableView;
 
-// TODO: Replace inputCover with UIView * cover;
-
 @property (weak, nonatomic) IBOutlet UILabel * inputCover;
 
 @property (weak, nonatomic) IBOutlet UITextView *messageInputView;

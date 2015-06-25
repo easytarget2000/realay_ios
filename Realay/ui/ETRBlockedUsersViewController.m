@@ -53,17 +53,14 @@
     [[self usersTableView] setRowHeight:ETRRowHeightUser];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    // Reset Bar elements that might have been changed during navigation to other View Controllers.
-    [[self navigationController] setToolbarHidden:YES];
-    [[[self navigationController] navigationBar] setTranslucent:NO];
-}
-
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self usersTableView] reloadData];
     [self updateInformationView];
+    
+    // Reset Bar elements that might have been changed during navigation to other View Controllers.
+    [[[self navigationController] navigationBar] setTranslucent:NO];
+    [[self navigationController] setToolbarHidden:YES animated:YES];
 }
 
 - (void)updateInformationView {

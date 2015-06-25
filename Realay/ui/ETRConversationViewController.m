@@ -96,7 +96,7 @@ UITextFieldDelegate
     UITapGestureRecognizer * tap;
     tap = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                   action:@selector(dismissKeyboard)];
-    [[self view] addGestureRecognizer:tap];
+    [[self messagesTableView] addGestureRecognizer:tap];
     
     // Do not display empty cells at the end.
     [[self messagesTableView] setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
@@ -259,7 +259,12 @@ UITextFieldDelegate
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // TODO: Reset message limit.
+    
+    _messagesLimit = 10;
+    
+    [self setUpFetchedResultsController];
+    [[self messagesTableView] reloadData];
+    [[self historyControl] endRefreshing];
 }
 
 #pragma mark -
@@ -287,7 +292,7 @@ UITextFieldDelegate
 - (BOOL)updateConversationStatus {
     if (_partner) {
         if (![[ETRSessionManager sessionRoom] isEqual:[_partner inRoom]]) {
-            [ETRAlertViewFactory showHasLeftViewForUser:_partner];
+            [[self inputCover] setHidden:NO];
             return NO;
         }
     }
@@ -511,7 +516,7 @@ UITextFieldDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self hideMediaMenu];
+    [self hideMediaMenuWithCompletion:nil];
 }
 
 /*
@@ -602,23 +607,21 @@ UITextFieldDelegate
         
         // Replace the icon with an arrow and rotate it.
         [[self mediaButton] setImage:[UIImage imageNamed:ETRImageNameArrowRight]];
-        [UIView animateWithDuration:0.5
+        [UIView animateWithDuration:0.2
                          animations:^{
                              CGAffineTransform transform;
                              transform = CGAffineTransformMakeRotation(-90.0f * M_PI_4);
                              [[self mediaButton] setTransform:transform];
                          }];
     } else {
-        [self hideMediaMenu];
+        [self hideMediaMenuWithCompletion:nil];
     }
 }
 
 /*
  Closes the menu, if the upper button, the gallery button, is visible
  */
-- (void)hideMediaMenu {
-    //    [self updateConversationStatus];
-    
+- (void)hideMediaMenuWithCompletion:(void(^)(void))completion {
     if(![[self galleryButton] isHidden]) {
         // Collapse the menu from the top.
         [ETRAnimator toggleBounceInView:[self galleryButton]
@@ -626,11 +629,15 @@ UITextFieldDelegate
                              completion:^{
                                  [ETRAnimator toggleBounceInView:[self cameraButton]
                                                   animateFromTop:NO
-                                                      completion:nil];
-        }];
+                                                      completion:^{
+                                                          if (completion) {
+                                                              completion();
+                                                          }
+                                                      }];
+                             }];
         
         // Rotate the arrow back and show the default icon when finished.
-        [UIView animateWithDuration:0.5
+        [UIView animateWithDuration:0.2
                          animations:^{
                              CGAffineTransform transform;
                              transform = CGAffineTransformMakeRotation(0.0f);
@@ -643,26 +650,24 @@ UITextFieldDelegate
 }
 
 - (IBAction)galleryButtonPressed:(id)sender {
-    [[self galleryButton] setHidden:YES];
-    [[self cameraButton] setHidden:YES];
-    
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    [picker setDelegate:self];
-    [picker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
-    [picker setAllowsEditing:YES];
-    
-    [self presentViewController:picker animated:YES completion:nil];
+    [self hideMediaMenuWithCompletion:^{
+        UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+        [picker setDelegate:self];
+        [picker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+        [picker setAllowsEditing:YES];
+        
+        [self presentViewController:picker animated:YES completion:nil];
+    }];
 }
 
 - (IBAction)cameraButtonPressed:(id)sender {
-    [[self galleryButton] setHidden:YES];
-    [[self cameraButton] setHidden:YES];
-    
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    [picker setDelegate:self];
-    [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
-    
-    [self presentViewController:picker animated:YES completion:nil];
+    [self hideMediaMenuWithCompletion:^{
+        UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+        [picker setDelegate:self];
+        [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
+        
+        [self presentViewController:picker animated:YES completion:nil];
+    }];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -686,7 +691,7 @@ UITextFieldDelegate
 
 - (void)dismissKeyboard {
     [[self messageInputView] resignFirstResponder];
-    [self hideMediaMenu];
+    [self hideMediaMenuWithCompletion:nil];
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {

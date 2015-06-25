@@ -793,7 +793,24 @@ static NSString * UserEntityName;
 }
 
 #pragma mark -
-#pragma mark User Objects
+#pragma mark Users
+
++ (NSArray *)blockedUsers {
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper userEntity]];
+    
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"isBlocked == 1"];
+    [request setPredicate:predicate];
+    
+    NSError * error;
+    NSArray * blockedUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:&error];
+    if (error) {
+        NSLog(@"ERROR: Fetching blocked Users: %@",error);
+        return nil;
+    } else {
+        return blockedUsers;
+    }
+}
 
 + (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate {
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
@@ -900,7 +917,7 @@ static NSString * UserEntityName;
     NSFetchRequest * request;
     request = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
     [request setPredicate:[NSPredicate predicateWithFormat:@"remoteID = %@", remoteID]];
-    NSArray *existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
+    NSArray * existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
     
     if (existingUsers && [existingUsers count]) {
         if ([existingUsers[0] isKindOfClass:[ETRUser class]]) {
@@ -912,7 +929,7 @@ static NSString * UserEntityName;
         [ETRServerAPIHelper getUserWithID:remoteID];
     }
     
-    ETRUser *newUser = [[ETRUser alloc] initWithEntity:[ETRCoreDataHelper userEntity]
+    ETRUser * newUser = [[ETRUser alloc] initWithEntity:[ETRCoreDataHelper userEntity]
                         insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
     [newUser setRemoteID:remoteID];
     [newUser setName:NSLocalizedString(@"Unknown_User", @"Name placeholder")];

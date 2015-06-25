@@ -11,10 +11,10 @@
 
 @interface ETRJoinViewController : ETRBaseViewController
 
-@property (weak, nonatomic) IBOutlet UILabel *statusLabel;
+@property (weak, nonatomic) IBOutlet UILabel * statusLabel;
 
-@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView * activityIndicator;
 
-@property (weak, nonatomic) IBOutlet UIImageView *logoView;
+@property (weak, nonatomic) IBOutlet UIImageView * logoView;
 
 @end

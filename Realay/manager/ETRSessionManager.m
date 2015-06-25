@@ -16,13 +16,14 @@
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRDefaultsHelper.h"
+#import "ETRReadabilityHelper.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 
 
 static ETRSessionManager * sharedInstance = nil;
 
-static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
+static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
 
 
 @interface ETRSessionManager()
@@ -54,21 +55,28 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     return [sharedInstance room];
 }
 
-#pragma mark - Session State
+#pragma mark -
+#pragma mark Session Lifecycle
 
 - (BOOL)startSession {
-    //TODO: Handle errors
+//    NSLog(@"Starting Session. Called by %@.", caller);
+    
     if (![self room]) {
         NSLog(@"ERROR: No room object given before starting a session.");
         return NO;
     }
     
-    if ([_room endDate]) {
-        if ([[_room endDate] compare:[NSDate date]] != 1) {
-            NSLog(@"ERROR: Room was already closed.");
-            //TODO: Display error message.
-            return NO;
-        }
+    if ([self didReachEndDate]) {
+        NSString * messageFormat = NSLocalizedString(@"Closed_at", @"%@ closed at %@.");
+        NSString * endDate = [ETRReadabilityHelper formattedDate:[_room endDate]];
+        NSString * message = [NSString stringWithFormat:messageFormat, [_room title], endDate];
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Too_Late", @"Cannot Join Anymore")
+                                    message:message
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
+                          otherButtonTitles:nil] show];
+        return NO;
     }
     
     // Consider the join successful so far and start the Action Manager.
@@ -76,6 +84,8 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
     _didStartSession = YES;
     [ETRDefaultsHelper storeSession:[_room remoteID]];
     [[ETRBouncer sharedManager] resetSession];
+    
+    [self startDeepUpdateTimer];
     return YES;
 }
 
@@ -116,29 +126,53 @@ static CFTimeInterval const ETRUserListRefreshInterval = 10.0 * 60.0;
         NSLog(@"ERROR: Room set during running session.");
         return;
     }
-    
-    // TODO: Only query user ID here?
     _room = room;
-    
-    // Adjust the location manager for a higher accuracy.
-    // TODO: Increase location update speed?
+}
+
+- (BOOL)didReachEndDate {
+    if ([_room endDate]) {
+        return [[_room endDate] compare:[NSDate date]] != 1;
+    } else {
+        return NO;
+    }
 }
 
 #pragma mark -
-#pragma mark Regular User List Update
+#pragma mark Deep Updates
 
-/*
+/**
  
  */
-- (void)acknowledegeUserListUpdate {
-    _lastUserListUpdate = CFAbsoluteTimeGetCurrent();
+- (void)startDeepUpdateTimer {
+    dispatch_async(
+                   dispatch_get_main_queue(),
+                   ^{
+                       [NSTimer scheduledTimerWithTimeInterval:ETRTimeIntervalDeepUpdate
+                                                        target:self
+                                                      selector:@selector(performDeepUpdate:)
+                                                      userInfo:nil
+                                                       repeats:NO];
+                   });
 }
 
-/*
+/**
  
  */
-- (BOOL)doUpdateUserList {
-    return CFAbsoluteTimeGetCurrent() - _lastUserListUpdate > ETRUserListRefreshInterval;
+- (void)performDeepUpdate:(NSTimer *)timer {
+    if (!_didStartSession) {
+        return;
+    }
+    
+#ifdef DEBUG
+    NSLog(@"Deep Update.");
+#endif
+    [ETRServerAPIHelper getSessionUsersWithCompletionHandler:nil];
+    
+    if ([self didReachEndDate]) {
+        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonClosed];
+    }
+    
+    [self startDeepUpdateTimer];
 }
 
 @end

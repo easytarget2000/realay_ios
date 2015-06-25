@@ -8,6 +8,8 @@
 
 "Address" = "Address";
 
+"Add_Contact" = "Add Contact";
+
 "Background_Updates" = "Background Updates";
 
 "Background_updates_disabled" = "Please allow Realay to update messages and locations in the background.\n\nFeel free to join again.";
@@ -29,6 +31,8 @@
 "Cancel" = "Cancel";
 
 "Chat" = "Chat";
+
+"Closed_at" = "%@ closed at %@.";
 
 "Connecting_seems_longer" = "Connecting seems to take longer than usual.";
 
@@ -131,6 +135,8 @@
 "Timeout_occurred" = "A timeout occurred.\n\nCould not connect to the internet to receive new messages for several minutes.";
 
 "Today" = "Today";
+
+"Too_Late" = "Too Late";
 
 "Try_again" = "Please try again.";
 

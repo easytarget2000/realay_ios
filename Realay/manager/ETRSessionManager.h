@@ -92,17 +92,4 @@
 - (void)prepareSessionInRoom:(ETRRoom *)room
         navigationController:(UINavigationController *)navigationController;
 
-#pragma mark -
-#pragma mark Regular User List Update
-
-/*
- 
- */
-- (void)acknowledegeUserListUpdate;
-
-/*
- 
- */
-- (BOOL)doUpdateUserList;
-
 @end

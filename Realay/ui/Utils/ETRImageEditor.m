@@ -96,15 +96,14 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         return image;
     }
     
-    UIImage * fixedimage = [UIImage imageWithCGImage:[image CGImage]
-                                                scale:1.0f
-                                          orientation:UIImageOrientationUp];
+    UIImage * fixedimage = [UIImage imageWithCGImage:[image CGImage]];
     
     CGFloat shortestImageSide;
     if (imageSize.width > imageSize.height) {
         shortestImageSide = imageSize.height;
     } else {
         shortestImageSide = imageSize.width;
+        // CONTINUE HERE.
     }
     
     CGFloat resizeFactor;
@@ -118,12 +117,12 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     scaleSize.width *= resizeFactor;
     scaleSize.height *= resizeFactor;
     
-//    NSLog(@"Scaling Image %g x %g to %g x %g to fit %g x %g.", imageSize.width, imageSize.height, scaleSize.width, scaleSize.height, targetSize.width, targetSize.width);
-    
     UIGraphicsBeginImageContext(scaleSize);
     
     CGContextRef scaleContext = UIGraphicsGetCurrentContext();
     CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [fixedimage CGImage]);
+//    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [image CGImage]);
+
     UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
@@ -139,9 +138,8 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     CGRect cropRect = CGRectMake(cropX, cropY, targetSize.width, targetSize.height);
     
     CGImageRef imageRef = CGImageCreateWithImageInRect([scaledImage CGImage], cropRect);
-    UIImage * outputImage = [UIImage imageWithCGImage:imageRef
-                                          scale:[scaledImage scale]
-                                    orientation:UIImageOrientationDownMirrored];
+    UIImage * outputImage = [UIImage imageWithCGImage:imageRef];
+    
     CGImageRelease(imageRef);
     
     return outputImage;

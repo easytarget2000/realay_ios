@@ -9,9 +9,7 @@
 #import "ETRAnimator.h"
 
 
-static NSTimeInterval const ETRAnimationDurationMove = 0.5;
-
-static NSTimeInterval const ETRAnimationDurationFade = 0.4;
+static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
 
 
 @implementation ETRAnimator
@@ -20,7 +18,16 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.4;
             animateFromTop:(BOOL)doAnimateFromTop
                 completion:(void(^)(void))completion {
     
-//    CGPoint newCenter = CGPointMake(100.0,100.0);
+    [ETRAnimator toggleBounceInView:view
+                     animateFromTop:doAnimateFromTop
+                           duration:ETRIntervalAnimationDefault
+                         completion:completion];
+}
+
++ (void)toggleBounceInView:(UIView *)view
+            animateFromTop:(BOOL)doAnimateFromTop
+                  duration:(NSTimeInterval)duration
+                completion:(void(^)(void))completion {
     
     CGSize size = view.frame.size;
     CGPoint origin = view.frame.origin;
@@ -48,17 +55,16 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.4;
     NSTimeInterval shortDuration = 0.1;
     CGFloat settleScale;
     if (doAppear) {
-        blowupDuration = ETRAnimationDurationMove;
+        blowupDuration = duration;
         settleDuration = shortDuration;
         settleScale = 1.0f;
-        
         
         [view setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 1.0f, 0.0f)];
         [view setHidden:NO];
         [view setCenter:hideCenter];
     } else {
         blowupDuration = shortDuration;
-        settleDuration = ETRAnimationDurationMove;
+        settleDuration = duration;
         settleScale = 0.1f;
     }
     
@@ -101,7 +107,9 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.4;
                      }];
 }
 
-+ (void)fadeView:(UIView *)view doAppear:(BOOL)doAppear completion:(void(^)(void))completion {
++ (void)fadeView:(UIView *)view
+        doAppear:(BOOL)doAppear
+      completion:(void(^)(void))completion {
 
     if (doAppear) {
         if (![view isHidden] && [view alpha] > 0.9f) {
@@ -113,7 +121,7 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.4;
         
         [view setHidden:NO];
         
-        [UIView animateWithDuration:ETRAnimationDurationFade
+        [UIView animateWithDuration:ETRIntervalAnimationDefault
                               delay:0.0
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
@@ -129,7 +137,7 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.4;
             return;
         }
         
-        [UIView animateWithDuration:ETRAnimationDurationFade
+        [UIView animateWithDuration:ETRIntervalAnimationDefault
                               delay:0.0
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
@@ -151,7 +159,7 @@ static NSTimeInterval const ETRAnimationDurationFade = 0.4;
     CGRect targetFrame = [view frame];
     targetFrame.origin.y = targetY;
     
-    [UIView animateWithDuration:ETRAnimationDurationMove
+    [UIView animateWithDuration:ETRIntervalAnimationDefault
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{

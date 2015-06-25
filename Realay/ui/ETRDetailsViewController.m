@@ -31,6 +31,8 @@ static NSString *const ETRSocialMediaCellIdentifier = @"profileSocialCell";
 
 static NSString *const ETRButtonCellIDentifier = @"profileButtonCell";
 
+static NSString *const ETRCellBlockButton = @"BlockButton";
+
 static NSString *const ETRSegueProfileToEditor = @"ProfileToEditor";
 
 static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
@@ -45,6 +47,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 @property (nonatomic) NSInteger websiteRow;
 
 @property (nonatomic) NSInteger socialMediaRow;
+
+@property (nonatomic) NSInteger blockButtonRow;
 
 @end
 
@@ -98,25 +102,13 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
                                                                       action:@selector(editProfileButtonPressed:)];
             [[self navigationItem] setRightBarButtonItem:editButton];
         } else {
-            
-            UIBarButtonItem * blockButton;
-            UIBarButtonItem * addButton;
-            
-            // TODO: Apply custom icon to block button.
-            
-            // Block Contact Button:
-            blockButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Block"]
-                                                           style:UIBarButtonItemStylePlain
-                                                          target:self
-                                                          action:@selector(blockUserButtonPressed:)];
-            
             // Add Contact Button:
-            addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
-                                                                      target:self
-                                                                      action:@selector(addUserButtonPressed:)];
-            
-            NSArray * buttonItems = [NSArray arrayWithObjects:addButton, blockButton, nil];
-            [[self navigationItem] setRightBarButtonItems:buttonItems];
+            UIBarButtonItem * addButton;
+            addButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Add_Contact", @"Save To Contacts")
+                                                         style:UIBarButtonItemStylePlain
+                                                        target:self
+                                                        action:@selector(addUserButtonPressed:)];
+            [[self navigationItem] setRightBarButtonItem:addButton];
         }
     }
     
@@ -154,7 +146,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
-    // TODO: Invalidate shadow views.
+    [[self topShadow] setNeedsLayout];
     [[self tableView] reloadData];
 }
 
@@ -181,22 +173,19 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         
         NSInteger numberOfRows = 2;
         if ([_user phone] && [[_user phone] length]) {
-            numberOfRows++;
-            _phoneRow = numberOfRows - 1;
+            _phoneRow = numberOfRows++;
         } else {
             _phoneRow = -1;
         }
         
         if ([_user mail] && [[_user mail] length]) {
-            numberOfRows++;
-            _mailRow = numberOfRows - 1;
+            _mailRow = numberOfRows++;
         } else {
             _mailRow = -1;
         }
         
         if ([_user website] && [[_user website] length]) {
-            numberOfRows++;
-            _websiteRow = numberOfRows - 1;
+            _websiteRow = numberOfRows++;
         } else {
             _websiteRow = -1;
         }
@@ -206,6 +195,12 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             _socialMediaRow = numberOfRows - 1;
         } else {
             _socialMediaRow = -1;
+        }
+        
+        if (![[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
+            _blockButtonRow = numberOfRows++;
+        } else {
+            _blockButtonRow = -1;
         }
         
         return numberOfRows;
@@ -324,6 +319,9 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
                                                           forIndexPath:indexPath];
         [socialMediaCell setUpForUser:_user];
         return socialMediaCell;
+    } else if (row == _blockButtonRow) {
+        return [tableView dequeueReusableCellWithIdentifier:ETRCellBlockButton
+                                               forIndexPath:indexPath];
     }
     
     // The cell for this row displays one specific attribute.
@@ -364,15 +362,22 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     return valueCell;
 }
 
+#pragma mark -
+#pragma mark UITableViewDelegate
+
+- (void)tableView:(nonnull UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if ([indexPath row] == _blockButtonRow) {
+        [[self alertHelper] showBlockConfirmViewForUser:_user viewController:self];
+    }
+}
+
 #pragma mark - Navigation
 
 - (IBAction)addUserButtonPressed:(id)sender {
     // TODO: Handle unauthorization.
     [_user addToAddressBook];
-}
-
-- (IBAction)blockUserButtonPressed:(id)sender {
-    [[self alertHelper] showBlockConfirmViewForUser:_user viewController:self];
 }
 
 - (IBAction)blockedUsersButtonPressed:(id)sender {

@@ -173,15 +173,15 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                completion:^(id<NSObject> receivedObject) {
                                    BOOL didReceiveNewData = NO;
                                    
-                                   int new = -1;
+//                                   int new = -1;
                                    
                                    if ([receivedObject isKindOfClass:[NSArray class]]) {
                                        NSArray * jsonActions = (NSArray *) receivedObject;
-                                       new++;
+//                                       new++;
                                        for (NSObject *jsonAction in jsonActions) {
                                            
                                            if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-                                               new++;
+//                                               new++;
                                                ETRAction * action;
                                                action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
                                                if (action && !isInitial) {
@@ -192,7 +192,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                        }
                                    }
                                    
-                                   NSLog(@"New: %d", new);
+//                                   NSLog(@"New: %d", new);
                                    
                                    [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
                                    
