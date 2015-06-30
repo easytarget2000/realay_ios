@@ -322,7 +322,13 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 #pragma mark Image Picker
 
 - (void)imagePickerButtonPressed:(id)sender {
-    [[self alertHelper] showPictureSourcePickerForProfileEditor:self];
+    NSIndexPath * headerIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    ETRProfileHeaderEditorCell * headerCell;
+    headerCell = (ETRProfileHeaderEditorCell *)[[self tableView] cellForRowAtIndexPath:headerIndexPath];
+    
+    [ETRAnimator flashFadeView:(UIView *)[headerCell iconImageView] completion:^{
+        [[self alertHelper] showPictureSourcePickerForProfileEditor:self];
+    }];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker

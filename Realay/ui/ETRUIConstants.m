@@ -24,13 +24,15 @@ NSString *const ETRViewControllerIDJoin = @"Join";
 
 NSString *const ETRViewControllerIDMap = @"Map";
 
+NSString *const ETRViewControllerMedia = @"Media";
+
 NSString *const ETRImageNameProfilePlaceholder = @"Mood_48pt";
 
 NSString *const ETRImageNameRoomPlaceholder = @"LocationCity_48pt";
 
 NSString *const ETRImageNameUserIcon = @"Mood_48pt";
 
-NSString *const ETRImageNameImagePlaceholder = @"Camera";
+NSString *const ETRImageCamera = @"Camera";
 
 CGFloat const ETRFontSizeSmall = 15.0f;
 

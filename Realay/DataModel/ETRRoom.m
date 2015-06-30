@@ -27,7 +27,7 @@
 @dynamic latitude;
 @dynamic longitude;
 @dynamic password;
-@dynamic queryDistance;
+@dynamic distance;
 @dynamic queryUserCount;
 @dynamic radius;
 @dynamic remoteID;
@@ -41,38 +41,12 @@
 @synthesize location = _location;
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: %@", [self remoteID], [self title]];
-}
-
-//- (NSString *)formattedCoordinates {
-//    NSString *coordinates = [NSString stringWithFormat:@"%f,%f",
-//                   [[self latitude] floatValue],
-//                   [[self longitude] floatValue]];
-//    [self setAddress:coordinates];
-//    return coordinates;
-//}
-
-- (NSString *)hours {
-    NSString * start;
-    if ([self hasStarted]) {
-        start = NSLocalizedString(@"Ongoing", @"Started");
-    } else {
-        start = [ETRReadabilityHelper formattedDate:[self startDate]];
-    }
-    
-    NSString * end;
-    if (![self endDate]) {
-        end = NSLocalizedString(@"No_time_restriction", @"Does not end");
-    } else {
-        end = [ETRReadabilityHelper formattedDate:[self endDate]];
-    }
-    
-    return [NSString stringWithFormat:@"%@\n%@", start, end];
-}
-
-- (NSString *)userCount {
-    // TODO: Count users in CoreData.
-    return [NSString stringWithFormat:@"%d", [[self queryUserCount] shortValue]];
+    return [NSString stringWithFormat:@"%@: %@, %@ until %@, %@ users.",
+            [self remoteID],
+            [self title],
+            [self startDate],
+            [self endDate],
+            [self queryUserCount]];
 }
 
 - (CLLocation *)location {
@@ -84,14 +58,6 @@
     CGFloat longitude = [[self longitude] floatValue];
     _location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
     return _location;
-}
-
-- (BOOL)hasStarted {
-    if (![self startDate]) {
-        return YES;
-    } else {
-        return [[self startDate] compare:[NSDate date]] == NSOrderedAscending;
-    }
 }
 
 @end

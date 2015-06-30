@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D05649161B41E53C00BDC1E5 /* ETRMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */; };
 		D09D364D1B2F42A000930E02 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D364F1B2F42A000930E02 /* InfoPlist.strings */; };
 		D09D36521B2F42D000930E02 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D36541B2F42D000930E02 /* Localizable.strings */; };
 		D09D36591B2F43BC00930E02 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D09D36581B2F43BC00930E02 /* Settings.bundle */; };
@@ -74,6 +75,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D05649141B41E53C00BDC1E5 /* ETRMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMediaViewController.h; sourceTree = "<group>"; };
+		D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMediaViewController.m; sourceTree = "<group>"; };
 		D09D364E1B2F42A000930E02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D09D36501B2F42BD00930E02 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
 		D09D36511B2F42BD00930E02 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -288,6 +291,8 @@
 				D0D54B681B2F218300F8875B /* ETRLoginViewController.m */,
 				D0D54B691B2F218300F8875B /* ETRMapViewController.h */,
 				D0D54B6A1B2F218300F8875B /* ETRMapViewController.m */,
+				D05649141B41E53C00BDC1E5 /* ETRMediaViewController.h */,
+				D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */,
 				D0D54B6B1B2F218300F8875B /* ETRPasswordViewController.h */,
 				D0D54B6C1B2F218300F8875B /* ETRPasswordViewController.m */,
 				D0D54B6D1B2F218300F8875B /* ETRProfileEditorViewController.h */,
@@ -543,6 +548,7 @@
 				D0D54BC01B2F218300F8875B /* ETRRoomCell.m in Sources */,
 				D0D54BC31B2F218300F8875B /* ETRSettingCell.m in Sources */,
 				D0D54BAF1B2F218300F8875B /* ETRProfileEditorViewController.m in Sources */,
+				D05649161B41E53C00BDC1E5 /* ETRMediaViewController.m in Sources */,
 				D0D54BA91B2F218300F8875B /* ETRConversationViewController.m in Sources */,
 				D0D54BEC1B2F219500F8875B /* ETRConversation.m in Sources */,
 				D0D54BBF1B2F218300F8875B /* ETRReceivedMessageCell.m in Sources */,

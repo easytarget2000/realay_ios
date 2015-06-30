@@ -46,5 +46,9 @@
 
 - (IBAction)moreButtonPressed:(id)sender;
 
+- (IBAction)receivedMediaPressed:(id)sender;
+
+- (IBAction)sentMediaPressed:(id)sender;
+
 @end
 

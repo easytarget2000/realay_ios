@@ -52,6 +52,8 @@
 
 "Facebook_ID" = "Facebook ID";
 
+"File_in_photos" = "The picture is now available in your Photos app."
+
 "For_an_uninterrupted" = "For an uninterrupted experience, please allow Realay to always verify your location and request new messages in the background.";
 
 "has_left" = "%@ has left %@.";
@@ -110,6 +112,8 @@
 
 "Requested_to_leave" = "You have been requested to leave.";
 
+"Saved_Image" = "Image Saved";
+
 "Select_or_camera" = "Would you like to select an image from the Photos gallery or take a new picture?";
 
 "send_me_realhey" = "Send me a RealHey!";
@@ -167,6 +171,8 @@
 "Wrong_Password" = "Wrong Password";
 
 "Yes" = "Yes";
+
+"You" = "You";
 
 "Your_Profile" = "Your Profile";
 

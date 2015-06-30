@@ -18,6 +18,8 @@
 #import "ETRDetailsViewController.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
+#import "ETRImageView.h"
+#import "ETRMediaViewController.h"
 #import "ETRUser.h"
 #import "ETRReceivedMediaCell.h"
 #import "ETRReceivedMessageCell.h"
@@ -393,6 +395,9 @@ UITextFieldDelegate
 //    [self scrollDownTableViewAnimated];
 }
 
+#pragma mark -
+#pragma mark UITableViewDataSource
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -410,44 +415,38 @@ UITextFieldDelegate
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([indexPath section] != 0) {
-        NSLog(@"ERROR: Invalid section in Conversation TableView: %d", (int) [indexPath row]);
-        return [[UITableViewCell alloc] init];
-    }
-    
-    if (!_fetchedResultsController || ![_fetchedResultsController fetchedObjects]) {
-        return [[UITableViewCell alloc] init];
-    }
-    
     ETRAction * action = [_fetchedResultsController objectAtIndexPath:indexPath];
+    
+    UITableViewCell * cell;
+    ETRImageView * userIconView;
+    ETRImageView * mediaView;
     
     if ([action isSentAction]) {
         if ([action isPhotoMessage]) {
-            ETRSentMediaCell * cell;
-            cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier
-                                                   forIndexPath:indexPath];
-            [ETRImageLoader loadImageForObject:action
-                                      intoView:[cell iconView]
-                              placeHolderImage:[UIImage imageNamed:ETRImageNameImagePlaceholder]
-                                   doLoadHiRes:NO];
+            ETRSentMediaCell * sentMediaCell;
+            sentMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier];
+            
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
-            [[cell timeLabel] setText:timestamp];
+            [[sentMediaCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
             }
-            return cell;
+            
+            cell = sentMediaCell;
+            mediaView = [sentMediaCell iconView];
+
         } else {
-            ETRSentMessageCell * cell;
-            cell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
+            ETRSentMessageCell * sentMessageCell;
+            sentMessageCell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
-            [[cell messageLabel] setText:[action messageContent]];
+            [[sentMessageCell messageLabel] setText:[action messageContent]];
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
-            [[cell timeLabel] setText:timestamp];
+            [[sentMessageCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
             }
-            return cell;
+            return sentMessageCell;
         }
     } else {
         ETRUser * sender = [action sender];
@@ -461,62 +460,89 @@ UITextFieldDelegate
         }
         
         if ([action isPhotoMessage]) {
-            ETRReceivedMediaCell * cell;
-            cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMediaCellIdentifier
+            ETRReceivedMediaCell * receivedMediaCell;
+            receivedMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMediaCellIdentifier
                                                    forIndexPath:indexPath];
-            [ETRImageLoader loadImageForObject:[action sender]
-                                      intoView:[cell userIconView]
-                              placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
-                                   doLoadHiRes:NO];
             if (_isPublic) {
-                [[cell nameLabel] setText:senderName];
+                [[receivedMediaCell nameLabel] setText:senderName];
             } else {
-                [[cell nameLabel] setHidden:YES];
-//                [[cell nameLabel] setConstr];
+                [[receivedMediaCell nameLabel] setHidden:YES];
             }
-            [ETRImageLoader loadImageForObject:action
-                                      intoView:[cell iconView]
-                              placeHolderImage:[UIImage imageNamed:ETRImageNameImagePlaceholder]
-                                   doLoadHiRes:NO];
             
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
-            [[cell timeLabel] setText:timestamp];
+            [[receivedMediaCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
             }
-            return cell;
+            
+            cell = receivedMediaCell;
+            userIconView = [receivedMediaCell userIconView];
+            mediaView = [receivedMediaCell iconView];
+            
         } else {
-            ETRReceivedMessageCell * cell;
-            cell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
+            ETRReceivedMessageCell * receivedMsgCell;
+            receivedMsgCell = [tableView dequeueReusableCellWithIdentifier:ETRReceivedMessageCellIdentifier
                                                    forIndexPath:indexPath];
             
-            [ETRImageLoader loadImageForObject:[action sender]
-                                      intoView:[cell userIconView]
-                              placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
-                                   doLoadHiRes:NO];
             if (_isPublic) {
-                [[cell nameLabel] setText:senderName];
+                [[receivedMsgCell nameLabel] setText:senderName];
             } else {
-                [[cell nameLabel] removeFromSuperview];
+                [[receivedMsgCell nameLabel] removeFromSuperview];
             }
             
-            [[cell nameLabel] setText:senderName];
+            [[receivedMsgCell nameLabel] setText:senderName];
             
-            [[cell messageLabel] setText:[action messageContent]];
+            [[receivedMsgCell messageLabel] setText:[action messageContent]];
             NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
-            [[cell timeLabel] setText:timestamp];
+            [[receivedMsgCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
             }
-            return cell;
+            
+            cell = receivedMsgCell;
+            userIconView = [receivedMsgCell userIconView];
         }
     }
     
-}
+    BOOL doLoadImage = ![[self messagesTableView] isDragging] && ![[self messagesTableView] isDecelerating];
+    
+    if (userIconView) {
+        if ([[action sender] lowResImage]) {
+            [ETRImageEditor cropImage:[[action sender] lowResImage]
+                            imageName:[[action sender] imageFileName:NO]
+                          applyToView:userIconView];
+        } else {
+            UIImage * userIconPlaceHolder;
+            userIconPlaceHolder = [UIImage imageNamed:ETRImageNameUserIcon];
+            [userIconView setImage:[userIconPlaceHolder imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+        }
+        
+        if (doLoadImage) {
+            [ETRImageLoader loadImageForObject:[action sender]
+                                      intoView:userIconView
+                              placeHolderImage:nil doLoadHiRes:NO];
+        }
+    }
+    
+    if (mediaView) {
+        if ([action lowResImage]) {
+            [ETRImageEditor cropImage:[action lowResImage]
+                            imageName:[action imageFileName:NO]
+                          applyToView:mediaView];
+        } else {
+            UIImage * mediaPlaceHolder;
+            mediaPlaceHolder = [UIImage imageNamed:ETRImageCamera];
+            [mediaView setImage:[mediaPlaceHolder imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+        }
+        
+        if (doLoadImage) {
+            [ETRImageLoader loadImageForObject:[action sender]
+                                      intoView:userIconView
+                              placeHolderImage:nil doLoadHiRes:NO];
+        }
+    }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self hideMediaMenuWithCompletion:nil];
+    return cell;
 }
 
 /*
@@ -539,17 +565,73 @@ UITextFieldDelegate
                    });
 }
 
-- (void)extendHistory {
-    // Increase the message limit and request a new Results Controller.
-    _messagesLimit += ETRMessagesLimitStep;
-    
-    [self setUpFetchedResultsController];
-    [[self messagesTableView] reloadData];
-    [[self historyControl] endRefreshing];
+#pragma mark -
+#pragma mark UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self hideMediaMenuWithCompletion:nil];
 }
 
 #pragma mark -
-#pragma mark Message Long Press
+#pragma mark UIScrollViewDelegate
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    [self loadImagesForOnScreenRows];
+}
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView
+                 willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        [self loadImagesForOnScreenRows];
+    }
+}
+
+- (void)loadImagesForOnScreenRows {
+    if ([[self messagesTableView] numberOfRowsInSection:0] > 0) {
+        
+        NSArray * visiblePaths = [[self messagesTableView] indexPathsForVisibleRows];
+        for (NSIndexPath * indexPath in visiblePaths) {
+            ETRAction * action = [_fetchedResultsController objectAtIndexPath:indexPath];
+            
+            if ([action isSentAction]) {
+                if ([action isPhotoMessage]) {
+                    ETRSentMediaCell * cell;
+                    cell = (ETRSentMediaCell *)[[self messagesTableView] cellForRowAtIndexPath:indexPath];
+                    [ETRImageLoader loadImageForObject:action
+                                              intoView:[cell iconView]
+                                      placeHolderImage:nil
+                                           doLoadHiRes:NO];
+                }
+            } else {
+                if ([action isPhotoMessage]) {
+                    ETRReceivedMediaCell * cell;
+                    cell = (ETRReceivedMediaCell *)[[self messagesTableView] cellForRowAtIndexPath:indexPath];
+                    
+                    [ETRImageLoader loadImageForObject:[action sender]
+                                              intoView:[cell userIconView]
+                                      placeHolderImage:nil
+                                           doLoadHiRes:NO];
+                    [ETRImageLoader loadImageForObject:action
+                                              intoView:[cell iconView]
+                                      placeHolderImage:nil
+                                           doLoadHiRes:NO];
+                } else {
+                    ETRReceivedMessageCell * cell;
+                    cell = (ETRReceivedMessageCell *)[[self messagesTableView] cellForRowAtIndexPath:indexPath];
+                    [ETRImageLoader loadImageForObject:[action sender]
+                                              intoView:[cell userIconView]
+                                      placeHolderImage:nil
+                                           doLoadHiRes:NO];
+                }
+            }
+
+        }
+    }
+}
+
+#pragma mark -
+#pragma mark Additional Table Input
 
 -(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer {
     if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
@@ -561,6 +643,14 @@ UITextFieldDelegate
     }
 }
 
+- (void)extendHistory {
+    // Increase the message limit and request a new Results Controller.
+    _messagesLimit += ETRMessagesLimitStep;
+    
+    [self setUpFetchedResultsController];
+    [[self messagesTableView] reloadData];
+    [[self historyControl] endRefreshing];
+}
 
 #pragma mark -
 #pragma mark Input
@@ -599,9 +689,11 @@ UITextFieldDelegate
         // Expand the menu from the bottom.
         [ETRAnimator toggleBounceInView:[self cameraButton]
                          animateFromTop:NO
+                               duration:ETRTimeIntervalAnimationFast
                              completion:^{
                                  [ETRAnimator toggleBounceInView:[self galleryButton]
                                                   animateFromTop:NO
+                                                        duration:ETRTimeIntervalAnimationFast
                                                       completion:nil];
                              }];
         
@@ -626,9 +718,11 @@ UITextFieldDelegate
         // Collapse the menu from the top.
         [ETRAnimator toggleBounceInView:[self galleryButton]
                          animateFromTop:NO
+                               duration:ETRTimeIntervalAnimationFast
                              completion:^{
                                  [ETRAnimator toggleBounceInView:[self cameraButton]
                                                   animateFromTop:NO
+                                                        duration:ETRTimeIntervalAnimationFast
                                                       completion:^{
                                                           if (completion) {
                                                               completion();
@@ -761,6 +855,36 @@ UITextFieldDelegate
     } else {
         [self performSegueWithIdentifier:ETRConversationToProfileSegue
                                   sender:_partner];
+    }
+}
+
+- (IBAction)receivedMediaPressed:(id)sender {
+    [self mediaPressed:sender];
+}
+
+- (IBAction)sentMediaPressed:(id)sender {
+    [self mediaPressed:sender];
+}
+
+- (void)mediaPressed:(id)sender {
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:[self messagesTableView]];
+    NSIndexPath * indexPath = [[self messagesTableView] indexPathForRowAtPoint:buttonPosition];
+    
+    if (indexPath) {
+        ETRAction * message = [_fetchedResultsController objectAtIndexPath:indexPath];
+
+        UIView * activityIndicatorContainer;
+        UITableViewCell * cell = [[self messagesTableView] cellForRowAtIndexPath:indexPath];
+        if ([cell isKindOfClass:[ETRReceivedMediaCell class]]) {
+            activityIndicatorContainer = [(ETRReceivedMediaCell *) cell iconView];
+        } else if ([cell isKindOfClass:[ETRSentMediaCell class]]) {
+            activityIndicatorContainer = [(ETRSentMediaCell *) cell iconView];
+        }
+        
+        [ETRImageLoader loadImageForObject:message
+                               doLoadHiRes:YES
+                activityIndicatorContainer:activityIndicatorContainer
+                      navigationController:[self navigationController]];
     }
 }
 

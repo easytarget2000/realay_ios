@@ -104,16 +104,20 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     [_navigationController popToRootViewControllerAnimated:YES];
 }
 
-/*
+/**
  Attempts to restore the last Session Room from Defaults;
  Does not start the Session;
  Start the Join View Controller to continue, if returning YES.
  
- Return: YES, if the Room has been restored
+ Return: YES, if the Room has been restored and current time is within Room Hours
  */
 - (BOOL)restoreSession {
     _room = [ETRDefaultsHelper restoreSession];
-    return _room != nil;
+    if (_room) {
+        return ![self didReachEndDate];
+    } else {
+        return NO;
+    }
 }
 
 - (void)prepareSessionInRoom:(ETRRoom *)room
@@ -131,7 +135,11 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
 
 - (BOOL)didReachEndDate {
     if ([_room endDate]) {
-        return [[_room endDate] compare:[NSDate date]] != 1;
+        NSTimeInterval intervalUntilClosing = [[_room endDate] timeIntervalSinceNow];
+#ifdef DEBUG
+        NSLog(@"End Date Time Interval since now: %g", intervalUntilClosing);
+#endif
+        return intervalUntilClosing < 0;
     } else {
         return NO;
     }
@@ -169,8 +177,8 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     [ETRServerAPIHelper getSessionUsersWithCompletionHandler:nil];
     
     if ([self didReachEndDate]) {
-        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonClosed];
-    }
+        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonClosed allowDuplicate:NO];
+    } 
     
     [self startDeepUpdateTimer];
 }

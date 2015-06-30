@@ -178,9 +178,13 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     _selectedMessage = message;
     _viewController = viewController;
     
-    NSString * copyMessage = NSLocalizedString(@"Copy_Message", @"Copy message to clipboard");
-    
-    NSMutableArray * buttonTitles = [NSMutableArray arrayWithObjects:copyMessage, nil];
+    NSMutableArray * buttonTitles;
+    if ([message isPhotoMessage]) {
+        buttonTitles = [NSMutableArray array];
+    } else {
+        NSString * copyMessage = NSLocalizedString(@"Copy_Message", @"Copy message to clipboard");
+        buttonTitles = [NSMutableArray arrayWithObjects:copyMessage, nil];
+    }
     
     if (![_selectedMessage isSentAction] && [_selectedMessage isPublicAction]) {
         [buttonTitles addObject:NSLocalizedString(@"Private_Message", @"Open Private Chat")];
@@ -336,8 +340,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     
     NSString * distanceFormat;
     distanceFormat = NSLocalizedString(@"Current_distance", @"Current distance: %@");
-    int distanceValue = [[ETRLocationManager sharedManager] distanceToRoom:sessionRoom];
-    NSString * distance = [ETRReadabilityHelper formattedIntLength:distanceValue];
+    NSString * distance = [ETRReadabilityHelper formattedLength:[sessionRoom distance]];
     NSString *title = [NSString stringWithFormat:distanceFormat, distance];
     NSString *message = NSLocalizedString(@"Before_join", @"Before you can join, enter");
     [[[UIAlertView alloc] initWithTitle:title

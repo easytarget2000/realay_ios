@@ -194,6 +194,9 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
         return;
     }
     
+    // Update the current location.
+    [[ETRLocationManager sharedManager] launch:nil];
+    
 #ifdef DEBUG_JOIN
     [self performSegueWithIdentifier:ETRSegueMapToPassword sender:nil];
 #else

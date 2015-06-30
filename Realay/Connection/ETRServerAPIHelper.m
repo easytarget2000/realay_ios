@@ -14,6 +14,8 @@
 #import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
+#import "ETRImageView.h"
+#import "ETRMediaViewController.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
@@ -22,6 +24,7 @@
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
+
 
 static NSTimeInterval const ETRIntervalAPITimeOut = 10.0;
 
@@ -374,7 +377,9 @@ static NSMutableArray *connections;
 #pragma mark -
 #pragma mark Images
 
-+ (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes {
++ (void)getImageForLoader:(ETRImageLoader *)imageLoader
+              doLoadHiRes:(BOOL)doLoadHiRes
+                 doAdjust:(BOOL)doAdjust {
     if (!imageLoader) {
         return;
     }
@@ -430,13 +435,28 @@ static NSMutableArray *connections;
                                
                                // Display the image and store the image file
                                // and the low-res image inside of the Object.
-                               [ETRImageEditor cropImage:image
-                                               imageName:fileID
-                                             applyToView:[imageLoader targetImageView]];
+                               if (doAdjust) {
+                                   [ETRImageEditor cropImage:image
+                                                   imageName:fileID
+                                                 applyToView:[imageLoader targetImageView]];
+                               } else if ([imageLoader targetImageView]) {
+                                   [[imageLoader targetImageView] setImage:image];
+                               }
+                               
+                               if ([imageLoader activityIndicator]) {
+                                   [[imageLoader activityIndicator] stopAnimating];
+                                   [[imageLoader activityIndicator] setHidden:YES];
+                               }
+                               
+                               if ([imageLoader navigationController]) {
+                                   [[imageLoader navigationController] pushViewController:[imageLoader mediaViewController]
+                                                                                 animated:YES];
+                               }
                                
                                if (!doLoadHiRes && loaderObject) {
                                    [loaderObject setLowResImage:image];
                                }
+                               
                                [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[loaderObject imageFilePath:doLoadHiRes]
                                                                         atomically:YES];
                            }];

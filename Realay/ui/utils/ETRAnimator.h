@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+
+extern NSTimeInterval const ETRTimeIntervalAnimationFast;
+
+extern NSTimeInterval const ETRTimeIntervalAnimationDefault;
+
+
+
 @interface ETRAnimator : NSObject
 
 + (void)toggleBounceInView:(UIView *)view
@@ -17,6 +24,8 @@
 + (void)fadeView:(UIView *)view
         doAppear:(BOOL)doAppear
       completion:(void(^)(void))completion;
+
++ (void)flashFadeView:(UIView *)view completion:(void(^)(void))completion;
 
 + (void)moveView:(UIView *)view
   toDisappearAtY:(CGFloat)targetY

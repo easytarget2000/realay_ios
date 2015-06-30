@@ -117,6 +117,8 @@ extern long const ETRActionPublicUserID;
 #pragma mark -
 #pragma mark Rooms
 
++ (NSArray *)rooms;
+
 + (void)insertRoomFromDictionary:(NSDictionary *)jsonDictionary;
 
 + (ETRRoom *)roomWithRemoteID:(NSNumber *)remoteID;

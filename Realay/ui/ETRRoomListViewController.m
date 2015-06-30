@@ -13,6 +13,8 @@
 #import "ETRDefaultsHelper.h"
 #import "ETRDetailsViewController.h"
 #import "ETRImageLoader.h"
+#import "ETRImageEditor.h"
+#import "ETRImageView.h"
 #import "ETRInformationCell.h"
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
@@ -41,6 +43,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 @property (strong, nonatomic) NSFetchedResultsController * fetchedResultsController;
 
+@property (strong, nonatomic) NSMutableDictionary * imageDownloadsInProgress;
+
 @property (nonatomic) BOOL doHideInformationView;
 
 @end
@@ -51,7 +55,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 @synthesize fetchedResultsController = _fetchedResultsController;
 
 #pragma mark - 
-#pragma mark UIViewController Overrides
+#pragma mark UIViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -75,6 +79,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [self setRefreshControl:refreshControl];
     
     [[self infoContainer] setHidden:![ETRDefaultsHelper didRunOnce]];
+    
+    [self setImageDownloadsInProgress:[NSMutableDictionary dictionary]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -128,46 +134,17 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [_fetchedResultsController setDelegate:nil];
 }
 
-#pragma mark -
-#pragma mark Information View
-
-- (void)setInformationViewHidden:(BOOL)isHidden {
-//    BOOL wasHidden = _doHideInformationView;
-    _doHideInformationView = isHidden;
-//    
-//    if (wasHidden == _doHideInformationView) {
-//        return;
-//    }
-    
-    [[self infoLabel] setHidden:_doHideInformationView];
-    [[self refreshButton] setHidden:_doHideInformationView];
-    [[self refreshIndicator] setHidden:YES];
-    
-    if (_doHideInformationView) {
-        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
-    } else {
-        [self setTitle:@""];
-    }
-    
-    [ETRAnimator fadeView:[self infoContainer] doAppear:!_doHideInformationView completion:nil];
-//    [ETRAnimator toggleBounceInView:[self infoContainer] animateFromTop:YES completion:nil];
-}
-
-/*
- Hide the button, show the indicator and get the entire Room List from the Server.
- */
-- (IBAction)refreshButtonPressed:(id)sender {
-    [[self refreshButton] setHidden:YES];
-    [[self refreshIndicator] startAnimating];
-    [ETRAnimator fadeView:[self refreshIndicator]
-                 doAppear:YES
-               completion:^{
-                   [self refreshRoomList];
-               }];
-}
+//- (void)didReceiveMemoryWarning {
+//    [super didReceiveMemoryWarning];
+//    [self terminateAllDownloads];
+//}
+//
+//- (void)dealloc {
+//    [self terminateAllDownloads];
+//}
 
 #pragma mark -
-#pragma mark Fetched Results Controller Delegate Methods
+#pragma mark NSFetchedResultsControllerDelegate
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [[self tableView] beginUpdates];
@@ -212,7 +189,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 }
 
 #pragma mark -
-#pragma mark Table View Data Source Methods
+#pragma mark UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -262,10 +239,12 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     int diameter = (int) [[record radius] integerValue] * 2;
     NSString * size = [ETRReadabilityHelper formattedIntLength:diameter];
     [[cell sizeLabel] setText:size];
-    [[cell hoursLabel] setText:[record hours]];
+    NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[record startDate]
+                                                             endDate:[record endDate]];
+    [[cell hoursLabel] setText:timeSpan];
     
     // Display the distance to the closest region point.
-    int distance = [[ETRLocationManager sharedManager] distanceToRoom:record];
+    int distance = (int) [[record distance] integerValue];
     if (distance < 20) {
         [[cell distanceLabel] setHidden:YES];
         [[cell placeIcon] setHidden:NO];
@@ -277,14 +256,25 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         [[cell distanceLabel] setText:formattedDistance];
     }
     
-    [ETRImageLoader loadImageForObject:record
-                              intoView:[cell headerImageView]
-                      placeHolderImage:[UIImage imageNamed:ETRImageNameRoomPlaceholder]
-                           doLoadHiRes:YES];
+    if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
+        [ETRImageLoader loadImageForObject:record
+                                  intoView:[cell headerImageView]
+                          placeHolderImage:[UIImage imageNamed:ETRImageNameRoomPlaceholder]
+                               doLoadHiRes:YES];
+    } else {
+        if ([record lowResImage]) {
+            [ETRImageEditor cropImage:[record lowResImage]
+                            imageName:[record imageFileName:NO]
+                          applyToView:[cell headerImageView]];
+        } else {
+            [[cell headerImageView] setImage:[UIImage imageNamed:ETRImageNameRoomPlaceholder]];
+        }
+    }
 }
 
 #pragma mark -
-#pragma mark Table View Delegate Methods
+#pragma mark UITableViewDelegate
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Hide the selection, prepare the Session and go to the Room Map.
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -297,9 +287,11 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [self performSegueWithIdentifier:ETRSegueRoomsToMap sender:record];
 }
 
-#pragma mark - UITableViewDataSource
+#pragma mark -
+#pragma mark Manual Refresh
 
 - (void)refreshRoomList {
+    [[ETRLocationManager sharedManager] launch:nil];
     [ETRServerAPIHelper updateRoomListWithCompletionHandler:^(BOOL didReceive) {
         // If no Rooms were received, end refreshing immediately.
         // Otherwise the Table update will end the refresh.
@@ -317,26 +309,78 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 }
 
 
+#pragma mark -
+#pragma mark Information View
+
+- (void)setInformationViewHidden:(BOOL)isHidden {
+    //    BOOL wasHidden = _doHideInformationView;
+    _doHideInformationView = isHidden;
+    //
+    //    if (wasHidden == _doHideInformationView) {
+    //        return;
+    //    }
+    
+    [[self infoLabel] setHidden:_doHideInformationView];
+    [[self refreshButton] setHidden:_doHideInformationView];
+    [[self refreshIndicator] setHidden:YES];
+    
+    if (_doHideInformationView) {
+        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
+    } else {
+        [self setTitle:@""];
+    }
+    
+    [ETRAnimator fadeView:[self infoContainer] doAppear:!_doHideInformationView completion:nil];
+    //    [ETRAnimator toggleBounceInView:[self infoContainer] animateFromTop:YES completion:nil];
+}
+
+/*
+ Hide the button, show the indicator and get the entire Room List from the Server.
+ */
+- (IBAction)refreshButtonPressed:(id)sender {
+    [[self refreshButton] setHidden:YES];
+    [[self refreshIndicator] startAnimating];
+    [ETRAnimator fadeView:[self refreshIndicator]
+                 doAppear:YES
+               completion:^{
+                   [self refreshRoomList];
+               }];
+}
+
+
 #pragma mark - UIScrollViewDelegate
 
-// In case of SCROLLING into a set of cells which do not have their icons yet,
-// load the images at the end of the scroll.
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     [self loadImagesForOnScreenRows];
 }
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView
                  willDecelerate:(BOOL)decelerate {
-    
-    if (!decelerate) [self loadImagesForOnScreenRows];
+    if (!decelerate) {
+        [self loadImagesForOnScreenRows];
+    }
 }
 
 - (void)loadImagesForOnScreenRows {
-    
+    if ([[self tableView] numberOfRowsInSection:0] > 0) {
+
+        
+        NSArray * visiblePaths = [self.tableView indexPathsForVisibleRows];
+        for (NSIndexPath * indexPath in visiblePaths) {
+            ETRRoomCell * cell;
+            cell = (ETRRoomCell *)[[self tableView] cellForRowAtIndexPath:indexPath];
+            
+            
+            [ETRImageLoader loadImageForObject:[_fetchedResultsController objectAtIndexPath:indexPath]
+                                      intoView:[cell headerImageView]
+                              placeHolderImage:nil
+                                   doLoadHiRes:YES];
+        }
+    }
 }
 
-#pragma mark - Navigation
-
+#pragma mark -
+#pragma mark Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     

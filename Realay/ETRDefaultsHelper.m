@@ -8,6 +8,7 @@
 
 #import "ETRDefaultsHelper.h"
 
+#import <AdSupport/AdSupport.h>
 #import <CoreLocation/CoreLocation.h>
 
 #import "ETRCoreDataHelper.h"
@@ -104,22 +105,15 @@ static CLLocation * LastUpdateLocation;
 + (NSString *)authID {
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     
-    // Check that the user ID exists.
-    NSString * userID = [defaults stringForKey:ETRDefaultsKeyAuthID];
+    NSString * authID = [defaults stringForKey:ETRDefaultsKeyAuthID];
     
-    if (!userID) {
-        if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
-            // IOS 6 new Unique Identifier implementation, IFA
-            userID = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-        } else {
-            userID = [NSString stringWithFormat:@"%@-%ld", [[UIDevice currentDevice] systemVersion], random()];
-        }
-        
-        [defaults setObject:userID forKey:ETRDefaultsKeyAuthID];
+    if (!authID) {
+        authID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+        [defaults setObject:authID forKey:ETRDefaultsKeyAuthID];
         [defaults synchronize];
     }
     
-    return userID;
+    return authID;
 }
 
 #pragma mark -
@@ -127,7 +121,7 @@ static CLLocation * LastUpdateLocation;
 
 + (BOOL)doUseMetricSystem {
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    return [defaults boolForKey:ETRDefaultsKeyNotificationsPublic];
+    return [defaults boolForKey:ETRDefaultsUsesMetricSystem];
 }
 
 + (BOOL)doShowPublicNotifs {

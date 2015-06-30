@@ -292,7 +292,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             NSString *labelText;
             labelText = NSLocalizedString(@"Users_online", @"Number of Users");
             [[cell keyLabel] setText:labelText];
-            [[cell valueLabel] setText:[_room userCount]];
+            [[cell valueLabel] setText:[[_room queryUserCount] stringValue]];
         }
             break;
             
@@ -393,6 +393,10 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
+    
+    // Update the current location.
+    [[ETRLocationManager sharedManager] launch:nil];
+    
     if (![[ETRSessionManager sharedManager] didStartSession]) {
 #ifdef DEBUG_JOIN
         [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];

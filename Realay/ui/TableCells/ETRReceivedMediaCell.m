@@ -8,15 +8,19 @@
 
 #import "ETRReceivedMediaCell.h"
 
+#import "ETRAnimator.h"
 #import "ETRImageView.h"
+
 
 @implementation ETRReceivedMediaCell
 
 - (void)prepareForReuse {
-//    [[self userIconView] setImageName:nil];
     [[self nameLabel] setText:@""];
-//    [[self iconView] setImageName:nil];
     [[self timeLabel] setText:@""];
+}
+
+- (IBAction)imageButtonPressed:(id)sender {
+    
 }
 
 @end

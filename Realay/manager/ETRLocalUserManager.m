@@ -83,22 +83,22 @@ static ETRLocalUserManager * sharedInstance = nil;
         return;
     }
     
-    if (imageView) {
-        [imageView setImage:newUserImage];
-    }
-    
-    
     // Temporary image IDs are negative, random values.
-    long newImageID = drand48() * LONG_MIN;
-    if (newImageID > 0L) {
-        newImageID *= -1L;
+    long randomID = drand48() * LONG_MIN;
+    if (randomID > 0L) {
+        randomID = -randomID;
+    }
+    NSNumber * newImageID = @(randomID);
+    
+    if (imageView) {
+        [ETRImageEditor cropImage:newUserImage imageName:[newImageID stringValue] applyToView:imageView];
     }
     
 #ifdef DEBUG
-    NSLog(@"New local User image ID: %ld", newImageID);
+    NSLog(@"New local User image ID: %@", [newImageID stringValue]);
 #endif
     
-    [_user setImageID:@(newImageID)];
+    [_user setImageID:newImageID];
     
     NSData * loResData = [ETRImageEditor cropLoResImage:newUserImage
                                             writeToFile:[_user imageFilePath:NO]];

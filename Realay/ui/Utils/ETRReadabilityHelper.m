@@ -1,4 +1,4 @@
-//
+    //
 //  ETRReadabilityHelper.m
 //  Realay
 //
@@ -106,9 +106,9 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
     if (!endDate) {
         return start;
     } else {
-        NSString *until = NSLocalizedString(@"until", @"From ... until ...");
-        NSString *end = [ETRReadabilityHelper formattedDate:endDate];
-        return [NSString stringWithFormat:@"%@ %@ %@", start, until, end];
+        NSString * until = NSLocalizedString(@"until", @"From ... until ...");
+        NSString * end = [ETRReadabilityHelper formattedDate:endDate];
+        return [NSString stringWithFormat:@"%@\n%@ %@", start, until, end];
     }
 }
 

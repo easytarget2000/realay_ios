@@ -24,7 +24,7 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 
 //static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 
-static CFTimeInterval const ETRTimeIntervalTimeout = 10.0;
+static CFTimeInterval const ETRTimeIntervalTimeout = 60.0;
 
 
 @interface ETRBouncer () <UIAlertViewDelegate>
@@ -97,8 +97,6 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0;
 }
 
 - (void)acknowledgeFailedConnection {
-    // Check if the app has been offline or not updating for a while.
-    // If so, any warning is a kick.
     if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
         [self kickForReason:ETRTimeIntervalTimeout calledBy:@"NoConnection"];
     }
@@ -124,7 +122,11 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0;
 #pragma mark -
 #pragma mark Warnings & Kicks
 
-- (void)warnForReason:(short)reason {
+- (void)warnForReason:(short)reason allowDuplicate:(BOOL)doAllowDuplicate{
+    if (!doAllowDuplicate && _lastReason == reason) {
+        return;
+    }
+    
     if (![[ETRSessionManager sharedManager] didStartSession]) {
         return;
     }
@@ -134,6 +136,15 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0;
     if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
         [self kickForReason:reason calledBy:@"NoConnection"];
         return;
+    }
+    
+    // A warning is also a kick, if the Session has ended a long time ago.
+    NSDate * endDate = [[ETRSessionManager sessionRoom] endDate];
+    if (endDate) {
+        if ([endDate timeIntervalSinceNow] < -1800) {
+            [self kickForReason:reason calledBy:@"SessionEndDueLong"];
+            return;
+        }
     }
     
     NSArray * intervals = [ETRBouncer locationWarningIntervals];
@@ -182,7 +193,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 10.0;
 }
 
 - (void)triggerNextWarning:(NSTimer *)timer {
-    [self warnForReason:_lastReason];
+    [self warnForReason:_lastReason allowDuplicate:YES];
 }
 
 //- (void)acknowledgeFailedConnection {

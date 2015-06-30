@@ -48,7 +48,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
                        if ([targetImageView hasImage:imageName]) {
                            return;
                        }
-                       
 
                        [targetImageView setImage:croppedImage];
                        
@@ -63,16 +62,23 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         return nil;
     }
     
-    UIImage *pickedImage = [info objectForKey:UIImagePickerControllerEditedImage];
+    UIImage * pickedImage = [info objectForKey:UIImagePickerControllerEditedImage];
     if (!pickedImage) {
         NSLog(@"WARNING: No Edit Image Object found in Picker Info. Using original image.");
         pickedImage = [info objectForKeyedSubscript:UIImagePickerControllerOriginalImage];
         if (!pickedImage) {
             NSLog(@"ERROR: No image found in Picker Info.");
+            return nil;
         }
     }
     
-    return pickedImage;
+    NSData * data = UIImagePNGRepresentation(pickedImage);
+    
+    UIImage * tempImage = [UIImage imageWithData:data];
+    UIImage * fixedOrientationImage = [UIImage imageWithCGImage:[tempImage CGImage]
+                                                         scale:[pickedImage scale]
+                                                   orientation:[pickedImage imageOrientation]];
+    return fixedOrientationImage;
 }
 
 + (NSData *)cropHiResImage:(UIImage *)image writeToFile:(NSString *)filePath {
@@ -96,14 +102,11 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         return image;
     }
     
-    UIImage * fixedimage = [UIImage imageWithCGImage:[image CGImage]];
-    
     CGFloat shortestImageSide;
     if (imageSize.width > imageSize.height) {
         shortestImageSide = imageSize.height;
     } else {
         shortestImageSide = imageSize.width;
-        // CONTINUE HERE.
     }
     
     CGFloat resizeFactor;
@@ -117,12 +120,12 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     scaleSize.width *= resizeFactor;
     scaleSize.height *= resizeFactor;
     
+    //    NSLog(@"Scaling Image %g x %g to %g x %g to fit %g x %g.", imageSize.width, imageSize.height, scaleSize.width, scaleSize.height, targetSize.width, targetSize.width);
+    
     UIGraphicsBeginImageContext(scaleSize);
     
     CGContextRef scaleContext = UIGraphicsGetCurrentContext();
-    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [fixedimage CGImage]);
-//    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [image CGImage]);
-
+    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [image CGImage]);
     UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
@@ -138,12 +141,12 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     CGRect cropRect = CGRectMake(cropX, cropY, targetSize.width, targetSize.height);
     
     CGImageRef imageRef = CGImageCreateWithImageInRect([scaledImage CGImage], cropRect);
-    UIImage * outputImage = [UIImage imageWithCGImage:imageRef];
-    
+    UIImage * outputImage = [UIImage imageWithCGImage:imageRef
+                                                scale:[image scale]
+                                          orientation:UIImageOrientationDownMirrored];
     CGImageRelease(imageRef);
     
     return outputImage;
 }
-
 
 @end

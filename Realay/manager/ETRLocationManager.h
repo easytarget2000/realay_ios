@@ -22,7 +22,7 @@
 
 + (BOOL)isInSessionRegion;
 
-- (int)distanceToRoom:(ETRRoom *)room;
+//- (int)distanceToRoom:(ETRRoom *)room;
 
 + (BOOL)didAuthorizeAlways;
 

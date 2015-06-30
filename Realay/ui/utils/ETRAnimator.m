@@ -9,7 +9,9 @@
 #import "ETRAnimator.h"
 
 
-static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
+NSTimeInterval const ETRTimeIntervalAnimationFast = 0.2;
+
+NSTimeInterval const ETRTimeIntervalAnimationDefault = 0.4;
 
 
 @implementation ETRAnimator
@@ -20,7 +22,7 @@ static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
     
     [ETRAnimator toggleBounceInView:view
                      animateFromTop:doAnimateFromTop
-                           duration:ETRIntervalAnimationDefault
+                           duration:ETRTimeIntervalAnimationDefault
                          completion:completion];
 }
 
@@ -121,7 +123,7 @@ static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
         
         [view setHidden:NO];
         
-        [UIView animateWithDuration:ETRIntervalAnimationDefault
+        [UIView animateWithDuration:ETRTimeIntervalAnimationDefault
                               delay:0.0
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
@@ -137,7 +139,7 @@ static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
             return;
         }
         
-        [UIView animateWithDuration:ETRIntervalAnimationDefault
+        [UIView animateWithDuration:ETRTimeIntervalAnimationDefault
                               delay:0.0
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
@@ -152,6 +154,33 @@ static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
     }
 }
 
++ (void)flashFadeView:(UIView *)view completion:(void(^)(void))completion {
+    if (!view) {
+        return;
+    }
+    
+    [view setHidden:NO];
+    [UIView animateWithDuration:0.05
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         [view setAlpha:0.5f];
+                     }
+                     completion:^(BOOL finished){
+                         [UIView animateWithDuration:0.05
+                                               delay:0.0
+                                             options:UIViewAnimationOptionCurveEaseInOut
+                                          animations:^{
+                                              [view setAlpha:1.0f];
+                                          }
+                                          completion:^(BOOL finished){
+                                              if (completion) {
+                                                  completion();
+                                              }
+                                          }];
+                     }];
+}
+
 + (void)moveView:(UIView *)view
   toDisappearAtY:(CGFloat)targetY
       completion:(void(^)(void))completion {
@@ -159,7 +188,7 @@ static NSTimeInterval const ETRIntervalAnimationDefault = 0.4;
     CGRect targetFrame = [view frame];
     targetFrame.origin.y = targetY;
     
-    [UIView animateWithDuration:ETRIntervalAnimationDefault
+    [UIView animateWithDuration:ETRTimeIntervalAnimationDefault
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{

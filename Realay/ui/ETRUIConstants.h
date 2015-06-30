@@ -24,11 +24,13 @@ extern NSString *const ETRViewControllerIDJoin;
 
 extern NSString *const ETRViewControllerIDMap;
 
+extern NSString *const ETRViewControllerMedia;
+
 extern NSString *const ETRImageNameArrowRight;
 
 extern NSString *const ETRImageNameAttachFile;
 
-extern NSString *const ETRImageNameImagePlaceholder;
+extern NSString *const ETRImageCamera;
 
 extern NSString *const ETRImageNameProfilePlaceholder;
 

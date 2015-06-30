@@ -34,7 +34,9 @@ extern NSString * ETRAPIBaseURL;
 #pragma mark -
 #pragma mark Images
 
-+ (void)getImageForLoader:(ETRImageLoader *)imageLoader doLoadHiRes:(BOOL)doLoadHiRes;
++ (void)getImageForLoader:(ETRImageLoader *)imageLoader
+              doLoadHiRes:(BOOL)doLoadHiRes
+                 doAdjust:(BOOL)doAdjust;
 
 + (void)putImageWithHiResData:(NSData *)hiResData
                     loResData:(NSData *)loResData

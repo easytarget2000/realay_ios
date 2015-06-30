@@ -709,6 +709,20 @@ static NSString * UserEntityName;
 #pragma mark -
 #pragma mark Rooms
 
++ (NSArray *)rooms {
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper roomEntity]];
+    
+    NSError * error;
+    NSArray * rooms = [[ETRCoreDataHelper context] executeFetchRequest:request error:&error];
+    if (error) {
+        NSLog(@"ERROR: Fetching blocked Users: %@",error);
+        return nil;
+    } else {
+        return rooms;
+    }
+}
+
 + (void)insertRoomFromDictionary:(NSDictionary *)JSONDict {
     
     // Get the remote DB ID from the JSON data.
@@ -735,12 +749,12 @@ static NSString * UserEntityName;
     
     NSInteger unixEndDate = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
     if (unixEndDate > 1000) {
-        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:unixStartDate]];
+        [room setEndDate:[NSDate dateWithTimeIntervalSince1970:unixEndDate]];
     }
     
     // We query the database with km values and only use metre integer precision.
     NSString * distance = (NSString *)[JSONDict objectForKey:@"dst"];
-    [room setQueryDistance:@([distance integerValue] * 1000)];
+    [room setDistance:@([distance integerValue] * 1000)];
     NSString * latitude = (NSString *)[JSONDict objectForKey:@"lat"];
     [room setLatitude:@([latitude floatValue])];
     NSString * longitude = (NSString *)[JSONDict objectForKey:@"lng"];
@@ -773,16 +787,24 @@ static NSString * UserEntityName;
 }
 
 + (NSFetchedResultsController *)roomListResultsController {
-    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper roomEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper roomEntity]];
     
-    // Add Sort Descriptors
+    
+    NSPredicate * predicate;
+    NSDate * nowDate = [NSDate date];
+    predicate = [NSPredicate predicateWithFormat:@"(startDate < %@) && (endDate > %@ || endDate == nil) && distance < 20000", nowDate, nowDate];
+    [request setPredicate:predicate];
+    
+    // Sort by distance.
     NSSortDescriptor * sortDescriptor;
-    sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"queryDistance" ascending:YES];
-    [fetchRequest setSortDescriptors:@[sortDescriptor]];
+    sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"distance" ascending:YES];
+    [request setSortDescriptors:@[sortDescriptor]];
+    
     
     // Initialize Fetched Results Controller
     NSFetchedResultsController * resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                                    managedObjectContext:[ETRCoreDataHelper context]
                                                                      sectionNameKeyPath:nil
                                                                               cacheName:nil];

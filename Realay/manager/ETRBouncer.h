@@ -43,9 +43,8 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
 
 - (void)kickForReason:(short)reason calledBy:(NSString *)caller;
 
-- (void)warnForReason:(short)reason;
+- (void)warnForReason:(short)reason allowDuplicate:(BOOL)doAllowDuplicate;
 
 - (void)cancelLocationWarnings;
-
 
 @end

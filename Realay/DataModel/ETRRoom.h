@@ -21,7 +21,7 @@
 @property (nonatomic, retain) NSNumber * latitude;
 @property (nonatomic, retain) NSNumber * longitude;
 @property (nonatomic, retain) NSString * password;
-@property (nonatomic, retain) NSNumber * queryDistance;
+@property (nonatomic, retain) NSNumber * distance;
 @property (nonatomic, retain) NSNumber * queryUserCount;
 @property (nonatomic, retain) NSNumber * radius;
 @property (nonatomic, retain) NSNumber * remoteID;
@@ -34,13 +34,9 @@
 
 - (NSString *)description;
 
-//- (NSString *)formattedCoordinates;
-
 - (CLLocation *)location;
 
-- (NSString *)hours;
-
-- (NSString *)userCount;
+// TODO: Use CoreData user count for in-session count.
 
 @end
 
