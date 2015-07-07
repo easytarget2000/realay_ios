@@ -9,7 +9,7 @@
 #import "ETRAction.h"
 
 #import "ETRLocalUserManager.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
@@ -46,7 +46,7 @@
 
 - (NSString *)shortDescription {
     NSString * sender = [[self sender] name];
-    NSString * time = [ETRReadabilityHelper formattedDate:[self sentDate]];
+    NSString * time = [ETRFormatter formattedDate:[self sentDate]];
     return [NSString stringWithFormat:@"%@, %@, %@", sender, time, [self messageContent]];
 }
 

@@ -11,7 +11,7 @@
 #import "ETRAction.h"
 #import "ETRActionManager.h"
 #import "ETRBouncer.h"
-#import "ETRImageConnectionHandler.h"
+//#import "ETRImageConnectionHandler.h"
 #import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
 #import "ETRImageView.h"
@@ -23,6 +23,7 @@
 #import "ETRReachabilityManager.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
 
 
@@ -448,8 +449,15 @@ static NSMutableArray *connections;
                                    [[imageLoader activityIndicator] setHidden:YES];
                                }
                                
-                               if ([imageLoader navigationController]) {
-                                   [[imageLoader navigationController] pushViewController:[imageLoader mediaViewController]
+                               if ([imageLoader navigationController] && [loaderObject isKindOfClass:[ETRAction class]]) {
+                                   UIStoryboard * storyboard;
+                                   storyboard = [[imageLoader navigationController] storyboard];
+                                   ETRMediaViewController * mediaViewController;
+                                   mediaViewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerMedia];
+                                   
+                                   [mediaViewController setMessage:(ETRAction *)loaderObject];
+                                   
+                                   [[imageLoader navigationController] pushViewController:mediaViewController
                                                                                  animated:YES];
                                }
                                
@@ -457,7 +465,11 @@ static NSMutableArray *connections;
                                    [loaderObject setLowResImage:image];
                                }
                                
-                               [UIImageJPEGRepresentation(image, 1.0f) writeToFile:[loaderObject imageFilePath:doLoadHiRes]
+//                               UIImage * fixedOrientationImage = [UIImage imageWithCGImage:[image CGImage]
+//                                                                                     scale:[image scale]
+//                                                                               orientation:UIImageOrientationUp];
+                               NSData * imageData = UIImageJPEGRepresentation(image, 1.0f);
+                               [imageData writeToFile:[loaderObject imageFilePath:doLoadHiRes]
                                                                         atomically:YES];
                            }];
 }

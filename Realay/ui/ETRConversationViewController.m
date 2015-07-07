@@ -23,7 +23,7 @@
 #import "ETRUser.h"
 #import "ETRReceivedMediaCell.h"
 #import "ETRReceivedMessageCell.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSentMediaCell.h"
 #import "ETRSentMessageCell.h"
@@ -32,7 +32,7 @@
 #import "ETRUser.h"
 
 
-static CGFloat const ETREstimatedMessageRowHeight = 100.0f;
+static CGFloat const ETREstimatedMessageRowHeight = 150.0f;
 
 static NSString *const ETRConversationToUserListSegue = @"PublicChatToSessionTabs";
 
@@ -223,6 +223,17 @@ UITextFieldDelegate
         [self scrollDownTableViewAnimated];
         _didFirstScrolldown = YES;
     }
+    
+    // Load any remaining images after a while, if the table is calm.
+    dispatch_after(
+                   dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+                   dispatch_get_main_queue(),
+                   ^{
+                       if (![[self messagesTableView] isDragging] && ![[self messagesTableView] isDecelerating]) {
+                           [self loadImagesForOnScreenRows];
+                       }
+                   }
+                   );
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -426,7 +437,7 @@ UITextFieldDelegate
             ETRSentMediaCell * sentMediaCell;
             sentMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier];
             
-            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
             [[sentMediaCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
@@ -441,7 +452,7 @@ UITextFieldDelegate
                                                    forIndexPath:indexPath];
             
             [[sentMessageCell messageLabel] setText:[action messageContent]];
-            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
             [[sentMessageCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
@@ -469,7 +480,7 @@ UITextFieldDelegate
                 [[receivedMediaCell nameLabel] setHidden:YES];
             }
             
-            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
             [[receivedMediaCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
@@ -493,7 +504,7 @@ UITextFieldDelegate
             [[receivedMsgCell nameLabel] setText:senderName];
             
             [[receivedMsgCell messageLabel] setText:[action messageContent]];
-            NSString * timestamp = [ETRReadabilityHelper formattedDate:[action sentDate]];
+            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
             [[receivedMsgCell timeLabel] setText:timestamp];
             if (_partner) {
                 [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
@@ -549,20 +560,29 @@ UITextFieldDelegate
  Scrolls to the bottom of a table
  */
 - (void)scrollDownTableViewAnimated {
+    dispatch_block_t scrollBlock = ^{
+                           NSInteger bottomRow;
+                           bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
+                           if (bottomRow >= 0) {
+                               NSIndexPath * indexPath;
+                               indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
+                               [[self messagesTableView] scrollToRowAtIndexPath:indexPath
+                                                               atScrollPosition:UITableViewScrollPositionBottom
+                                                                       animated:YES];
+                           }
+    };
+    
     dispatch_after(
-                   800,
-                   dispatch_get_main_queue(),
-                   ^{
-                       NSInteger bottomRow;
-                       bottomRow = [_messagesTableView numberOfRowsInSection:0] - 1;
-                       if (bottomRow >= 0) {
-                           NSIndexPath * indexPath;
-                           indexPath = [NSIndexPath indexPathForRow:bottomRow inSection:0];
-                           [[self messagesTableView] scrollToRowAtIndexPath:indexPath
-                                                           atScrollPosition:UITableViewScrollPositionBottom
-                                                                   animated:YES];
-                       }
-                   });
+               dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
+               dispatch_get_main_queue(),
+               scrollBlock
+               );
+    
+//    dispatch_after(
+//                   1200,
+//                   dispatch_get_main_queue(),
+//                   scrollBlock
+//                   );
 }
 
 #pragma mark -
@@ -744,6 +764,8 @@ UITextFieldDelegate
 }
 
 - (IBAction)galleryButtonPressed:(id)sender {
+    [ETRAnimator flashFadeView:[self galleryButton] completion:nil];
+    
     [self hideMediaMenuWithCompletion:^{
         UIImagePickerController * picker = [[UIImagePickerController alloc] init];
         [picker setDelegate:self];
@@ -755,6 +777,8 @@ UITextFieldDelegate
 }
 
 - (IBAction)cameraButtonPressed:(id)sender {
+    [ETRAnimator flashFadeView:[self cameraButton] completion:nil];
+    
     [self hideMediaMenuWithCompletion:^{
         UIImagePickerController * picker = [[UIImagePickerController alloc] init];
         [picker setDelegate:self];

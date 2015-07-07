@@ -21,7 +21,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 
 @interface ETRJoinViewController ()
 
-@property (strong, nonatomic) NSThread * joinThread;
+//@property (strong, nonatomic) NSThread * joinThread;
 
 @property (nonatomic) BOOL didFinish;
 
@@ -37,26 +37,25 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    [[[self navigationItem] backBarButtonItem] setAction:@selector(backButtonPressed:)];
-    
     ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
     if (!preparedRoom) {
         [[self navigationController] popToRootViewControllerAnimated:YES];
         NSLog(@"ERROR: No Room prepared in SessionManager. Cancelling join procedure.");
         return;
     }
-    
-    if (_joinThread) {
-        return;
-    }
         
     NSString * entering = [NSString stringWithFormat:@"%@...", [preparedRoom title]];
     [[self statusLabel] setText:entering];
     
-    _joinThread = [[NSThread alloc] initWithTarget:self
-                                          selector:@selector(startJoinThreadforRoom:)
-                                            object:preparedRoom];
-    [_joinThread start];
+    _isCanceled = NO;
+    
+    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
+    [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
+                            completionHandler:^(BOOL didSucceed) {
+                                [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+                                                         toTarget:self
+                                                       withObject:@(didSucceed)];
+                            }];
     
     _delayTimer = [NSTimer scheduledTimerWithTimeInterval:ETRIntervalJoinDelayed
                                                    target:self
@@ -83,6 +82,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
             
         } else if ([timerID isEqualToValue:@(2)]) {
             // The process timed out.
+            [[ETRSessionManager sharedManager] endSession];
             [ETRAlertViewFactory showGeneralErrorAlert];
             [[self navigationController] popToRootViewControllerAnimated:YES];
         }
@@ -105,19 +105,9 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
         [_delayTimer invalidate];
         _isCanceled = YES;
         
-        if (_joinThread) {
-            [_joinThread cancel];
-        }
         [[self navigationController] popToRootViewControllerAnimated:YES];
     }
 }
-
-//- (void)backButtonPressed:(id)sender {
-//    if (_joinThread) {
-//        [_joinThread cancel];
-//    }
-//    [[self navigationController] popToRootViewControllerAnimated:YES];
-//}
 
 - (void)startJoinThreadforRoom:(ETRRoom *)room {
     _isCanceled = NO;
@@ -135,6 +125,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
     [_delayTimer invalidate];
     
     if (_isCanceled) {
+        [[ETRSessionManager sharedManager] endSession];
         return;
     }
     
@@ -156,13 +147,5 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
         [[self navigationController] popToRootViewControllerAnimated:YES];
     }
 }
-
-//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-//    if ([[segue destinationViewController] isKindOfClass:[ETRConversationViewController class]]) {
-//        ETRConversationViewController * destination;
-//        destination = (ETRConversationViewController *)[segue destinationViewController];
-//        [destination setIsPublic:YES];
-//    }
-//}
 
 @end

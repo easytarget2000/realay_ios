@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 
 #import "ETRDefaultsHelper.h"
 
@@ -20,9 +20,11 @@ static int const kMaxShowMetre = 2500;
 
 static int const kMaxShowYard = 500;
 
-static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
+static NSTimeInterval const ETRTimeIntervalToday = 12.0 * 60.0 * 60.0;
 
-@implementation ETRReadabilityHelper
+static NSTimeInterval const ETRTimeIntervalYear = 180.0 * 20.0 * 60.0 * 60.0;
+
+@implementation ETRFormatter
 
 /*
  Takes any Date timestamp and turns it into a reasonably long text,
@@ -38,52 +40,29 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
         return @"--:--";
     }
     
-    
+    NSString * formatString;
     NSTimeInterval interval = [date timeIntervalSinceNow];
-    if (interval < maxIntervalToday && interval > -maxIntervalToday) {
-        return [ETRReadabilityHelper hoursAndMinutesFromDate:date];
+    if (interval < ETRTimeIntervalToday && interval > -ETRTimeIntervalToday) {
+        // The date is within a few hours from now. Only show HH:mm.
+        formatString = [NSDateFormatter dateFormatFromTemplate:@"jmm"
+                                                                 options:0
+                                                                  locale:[NSLocale currentLocale]];
+    } else if (interval < ETRTimeIntervalYear && interval > -ETRTimeIntervalYear){
+        // The Date is within the current year but not today.
+        formatString = [NSDateFormatter dateFormatFromTemplate:@"ddMMMjmm"
+                                                       options:0
+                                                        locale:[NSLocale currentLocale]];
+    } else {
+        // Display the complete date, if it is not the current year.
+        // [timeFormat setDateFormat:@"dd MMM YYYY, HH:mm"];
+        formatString = [NSDateFormatter dateFormatFromTemplate:@"ddMMMYYYYjmm"
+                                                       options:0
+                                                        locale:[NSLocale currentLocale]];
     }
     
-    
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    // Split the current datetime into its components.
-    NSDate *currentDate = [NSDate date];
-    NSDateComponents *currentCompontents;
-    currentCompontents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay
-                                     fromDate:currentDate];
-    
-    // Split the given datetime into its components.
-    NSDateComponents *givenComponents;
-    givenComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay
-                                  fromDate:date];
-    NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
-    
-    BOOL isSameMonth = [givenComponents month] == [currentCompontents month];
-    BOOL isSameDay = [givenComponents day] == [currentCompontents day];
-    if (isSameMonth && isSameDay) {
-        // The Date is several hours old but still today.
-        return [ETRReadabilityHelper hoursAndMinutesFromDate:date];
-    }
-    
-    // TODO: Use Localization for Date formats.
-    
-    // Display the complete the date, if it is not the current year.
-    if ([givenComponents year] != [currentCompontents year]) {
-        [timeFormat setDateFormat:@"dd MMM YYYY, HH:mm"];
-        return [timeFormat stringFromDate:date];
-    }
-    
-    // The Date is within the current year but not today.
-    [timeFormat setDateFormat:@"dd MMM HH:mm"];
-    return [timeFormat stringFromDate:date];
-}
-
-+ (NSString *)hoursAndMinutesFromDate:(NSDate *)date{
-    NSDateFormatter *timeFormat = [[NSDateFormatter alloc] init];
-    [timeFormat setDateFormat:@"HH:mm"];
-    
-    return [timeFormat stringFromDate:date];
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:formatString];
+    return [dateFormatter stringFromDate:date];
 }
 
 /*
@@ -97,7 +76,7 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
         start = NSLocalizedString(@"Ongoing", @"Event has started");
     } else {
         if ([startDate timeIntervalSinceNow] > 0) {
-            start = [ETRReadabilityHelper formattedDate:startDate];
+            start = [ETRFormatter formattedDate:startDate];
         } else {
             start = NSLocalizedString(@"Ongoing", @"Event has started");
         }
@@ -107,7 +86,7 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
         return start;
     } else {
         NSString * until = NSLocalizedString(@"until", @"From ... until ...");
-        NSString * end = [ETRReadabilityHelper formattedDate:endDate];
+        NSString * end = [ETRFormatter formattedDate:endDate];
         return [NSString stringWithFormat:@"%@\n%@ %@", start, until, end];
     }
 }
@@ -150,9 +129,9 @@ static NSTimeInterval const maxIntervalToday = 12.0 * 60.0 * 60.0;
  */
 + (NSString *)formattedLength:(NSNumber *)meters {
     if (meters) {
-        return [ETRReadabilityHelper formattedIntLength:(int)[meters integerValue]];
+        return [ETRFormatter formattedIntLength:(int)[meters integerValue]];
     } else {
-        return [ETRReadabilityHelper formattedIntLength:0];
+        return [ETRFormatter formattedIntLength:0];
     }
 }
 

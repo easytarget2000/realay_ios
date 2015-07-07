@@ -12,7 +12,7 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRLocalUserManager.h"
 #import "ETRImageLoader.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRUser.h"
 
 @implementation ETRMediaViewController
@@ -30,7 +30,7 @@
         [[self senderLabel] setText:[[_message sender] name]];
     }
     
-    [[self dateLabel] setText:[ETRReadabilityHelper formattedDate:[_message sentDate]]];
+    [[self dateLabel] setText:[ETRFormatter formattedDate:[_message sentDate]]];
     [ETRImageLoader loadImageForObject:_message
                               intoView:[self imageView]
                       placeHolderImage:nil

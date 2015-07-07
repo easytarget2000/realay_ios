@@ -15,12 +15,10 @@
 @implementation ETRReceivedMediaCell
 
 - (void)prepareForReuse {
+    [[self userIconView] setImageName:nil];
+    [[self iconView] setImageName:nil];
     [[self nameLabel] setText:@""];
     [[self timeLabel] setText:@""];
-}
-
-- (IBAction)imageButtonPressed:(id)sender {
-    
 }
 
 @end

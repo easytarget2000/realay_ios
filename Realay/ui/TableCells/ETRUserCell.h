@@ -13,7 +13,7 @@
 
 @interface ETRUserCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet ETRImageView *iconView;
+@property (weak, nonatomic) IBOutlet ETRImageView * iconView;
 
 @property (weak, nonatomic) IBOutlet UILabel * nameLabel;
 

@@ -8,9 +8,6 @@
 
 #import "ETRMapViewController.h"
 
-//#import <GoogleMaps/GoogleMaps.h>
-
-#import "ETRAlertViewFactory.h"
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRRoom.h"
@@ -37,8 +34,6 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-//    [self setUpMap];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -58,10 +53,6 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     } else {
         [[self navigationItem] setRightBarButtonItem:[self joinButton]];
     }
-
-//    if (!_didSetUpMap) {
-//        [self setUpMap];
-//    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -169,18 +160,18 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     }
     
     NSString * URLString;
-//    NSURL * gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
+    NSURL * gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
     
-//    if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
-//        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
-//    } else {
-//        // No app was found that opens Google Maps URLs.
-//#ifdef DEBUG
-//        NSLog(@"INFO: Can not use comgooglemaps://.");
-//#endif
+    if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
+        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
+    } else {
+        // No app was found that opens Google Maps URLs.
+#ifdef DEBUG
+        NSLog(@"INFO: Can not use comgooglemaps://.");
+#endif
         URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%@", address];
-//    }
-    
+    }
+
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];
 }
 
@@ -189,31 +180,7 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
-    // Only perform a join action, if the user did not join yet.
-    if ([[ETRSessionManager sharedManager] didStartSession]) {
-        return;
-    }
-    
-    // Update the current location.
-    [[ETRLocationManager sharedManager] launch:nil];
-    
-#ifdef DEBUG_JOIN
-    [self performSegueWithIdentifier:ETRSegueMapToPassword sender:nil];
-#else
-    if (![ETRLocationManager didAuthorizeWhenInUse]) {
-        // The location access has not been authorized.
-
-        [[self alertHelper] showSettingsAlertBeforeJoin];
-        LastSettingsAlert = CFAbsoluteTimeGetCurrent();
-        
-    } else if ([ETRLocationManager isInSessionRegion]) {
-        // Show the password prompt, if the device location is inside the region.
-        [self performSegueWithIdentifier:ETRSegueMapToPassword sender:self];
-    } else {
-        // The user is outside of the radius.
-        [ETRAlertViewFactory showRoomDistanceAlert];
-    }
-#endif
+    [super joinButtonPressed:sender joinSegue:ETRSegueMapToPassword];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

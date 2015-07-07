@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ETRReadabilityHelper : NSObject
+@interface ETRFormatter : NSObject
 
 /**
  Takes any Date timestamp and turns it into a reasonably long text,

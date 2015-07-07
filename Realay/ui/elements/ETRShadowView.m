@@ -15,14 +15,15 @@ static UIColor * ShadowEndColor;
 
 @interface ETRShadowView ()
 
-@property (nonatomic) BOOL hasShadow;
+@property (nonatomic) CGFloat didDrawForWidth;
 
 @end
+
 
 @implementation ETRShadowView
 
 - (void)drawRect:(CGRect)rect {
-    if (_hasShadow) {
+    if (self.frame.size.width == _didDrawForWidth) {
         // Do not draw the gradient over and over.
         return;
     }
@@ -52,7 +53,8 @@ static UIColor * ShadowEndColor;
     [gradient setColors:colors];
     
     [[self layer] insertSublayer:gradient atIndex:0];
-    _hasShadow = YES;
+    
+    _didDrawForWidth = self.frame.size.width;
 }
 
 @end

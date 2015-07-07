@@ -19,7 +19,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRLoginViewController.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRRoomCell.h"
 #import "ETRServerAPIHelper.h"
@@ -62,6 +62,12 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     
     // Initialize Fetched Results Controller
     _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
+    [_fetchedResultsController setDelegate:self];
+    NSError * error = nil;
+    [_fetchedResultsController performFetch:&error];
+    if (error) {
+        NSLog(@"ERROR: performFetch: %@", error);
+    }
     
     // Do not go back.
     [[self navigationItem] setHidesBackButton:YES];
@@ -86,18 +92,25 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    // (Re-)enable the Fetched Results Controller.
+    // Reenable the Fetched Results Controller.
     [_fetchedResultsController setDelegate:self];
+    
     // Perform Fetch
-    NSError * error = nil;
-    [_fetchedResultsController performFetch:&error];
-    if (error) {
-        NSLog(@"ERROR: performFetch: %@", error);
-    }
+//    NSError * error = nil;
+//    [_fetchedResultsController performFetch:&error];
+//    if (error) {
+//        NSLog(@"ERROR: performFetch: %@", error);
+//    }
     
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:NO];
+    
+    // Send a notification when the device is rotated.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(orientationChanged:)
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -117,7 +130,19 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
             return;
         }
     }
+    
     [[self tableView] reloadData];
+    
+    // Load any remaining images after a while, if the table is calm.
+    dispatch_after(
+                   dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+                   dispatch_get_main_queue(),
+                   ^{
+                       if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
+                           [self loadImagesForOnScreenRows];
+                       }
+                   }
+                   );
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -132,6 +157,15 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     }
     // Disable the Fetched Results Controller.
     [_fetchedResultsController setDelegate:nil];
+    
+    // Remove the orientation obsever.
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIDeviceOrientationDidChangeNotification
+                                                  object:nil];
+}
+
+- (void)orientationChanged:(NSNotification *)notification {
+    [[self tableView] reloadData];
 }
 
 //- (void)didReceiveMemoryWarning {
@@ -237,9 +271,9 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     }
     
     int diameter = (int) [[record radius] integerValue] * 2;
-    NSString * size = [ETRReadabilityHelper formattedIntLength:diameter];
+    NSString * size = [ETRFormatter formattedIntLength:diameter];
     [[cell sizeLabel] setText:size];
-    NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[record startDate]
+    NSString * timeSpan = [ETRFormatter timeSpanForStartDate:[record startDate]
                                                              endDate:[record endDate]];
     [[cell hoursLabel] setText:timeSpan];
     
@@ -252,7 +286,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         [[cell placeIcon] setHidden:YES];
         [[cell distanceLabel] setHidden:NO];
         NSString * formattedDistance;
-        formattedDistance = [ETRReadabilityHelper formattedIntLength:distance];
+        formattedDistance = [ETRFormatter formattedIntLength:distance];
         [[cell distanceLabel] setText:formattedDistance];
     }
     
@@ -348,7 +382,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 }
 
 
-#pragma mark - UIScrollViewDelegate
+#pragma mark -
+#pragma mark UIScrollViewDelegate
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     [self loadImagesForOnScreenRows];

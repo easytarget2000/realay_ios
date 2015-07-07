@@ -12,9 +12,10 @@
 #import "ETRAnimator.h"
 #import "ETRConversation.h"
 #import "ETRConversationViewController.h"
+#import "ETRImageEditor.h"
 #import "ETRImageLoader.h"
 #import "ETRImageView.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRSessionTabBarController.h"
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
@@ -26,8 +27,6 @@
 @property (nonatomic) BOOL doShowInfoView;
 
 @property (weak, nonatomic) IBOutlet UITableView * tableView;
-
-@property (weak, nonatomic) IBOutlet UIView * infoView;
 
 @end
 
@@ -78,6 +77,17 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self tableView] reloadData];
+    
+    // Load any remaining images after a while, if the table is calm.
+    dispatch_after(
+                   dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+                   dispatch_get_main_queue(),
+                   ^{
+                       if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
+                           [self loadImagesForOnScreenRows];
+                       }
+                   }
+                   );
 }
 
 #pragma mark -
@@ -151,7 +161,7 @@
     if (_doShowInfoView) {
         // Wait for possible results before actually deciding to show the Info View.
         dispatch_after(
-                       400,
+                       dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
                        dispatch_get_main_queue(),
                        ^{
                            [ETRAnimator fadeView:[self infoView]
@@ -190,7 +200,7 @@
             [[cell infoLabel] setText:[lastMessage messageContent]];
         }
         
-        NSString * timeStamp = [ETRReadabilityHelper formattedDate:[lastMessage sentDate]];
+        NSString * timeStamp = [ETRFormatter formattedDate:[lastMessage sentDate]];
         [[cell timeLabel] setText:timeStamp];
         
         if ([[convo hasUnreadMessage] boolValue]) {
@@ -209,10 +219,21 @@
     }
     
     [[cell nameLabel] setText:[user name]];
-    [ETRImageLoader loadImageForObject:user
-                              intoView:[cell iconView]
-                      placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
-                           doLoadHiRes:NO];
+    
+    if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
+        [ETRImageLoader loadImageForObject:user
+                                  intoView:[cell iconView]
+                          placeHolderImage:nil
+                               doLoadHiRes:YES];
+    } else {
+        if ([user lowResImage]) {
+            [ETRImageEditor cropImage:[user lowResImage]
+                            imageName:[user imageFileName:NO]
+                          applyToView:[cell iconView]];
+        } else {
+            [[cell iconView] setImage:[UIImage imageNamed:ETRImageNameUserIcon]];
+        }
+    }
 }
 
 #pragma mark -
@@ -241,6 +262,38 @@
     [conversationViewController setPartner:selectedUser];
     [[self navigationController] pushViewController:conversationViewController
                                            animated:YES];
+}
+
+#pragma mark -
+#pragma mark UIScrollViewDelegate
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    [self loadImagesForOnScreenRows];
+}
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView
+                 willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        [self loadImagesForOnScreenRows];
+    }
+}
+
+- (void)loadImagesForOnScreenRows {
+    if ([[self tableView] numberOfRowsInSection:0] > 0) {
+        
+        
+        NSArray * visiblePaths = [self.tableView indexPathsForVisibleRows];
+        for (NSIndexPath * indexPath in visiblePaths) {
+            ETRUserCell * cell;
+            cell = (ETRUserCell *)[[self tableView] cellForRowAtIndexPath:indexPath];
+            
+            
+            [ETRImageLoader loadImageForObject:[_resultsController objectAtIndexPath:indexPath]
+                                      intoView:[cell iconView]
+                              placeHolderImage:nil
+                                   doLoadHiRes:YES];
+        }
+    }
 }
 
 @end

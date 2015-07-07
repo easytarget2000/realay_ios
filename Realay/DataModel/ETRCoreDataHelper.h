@@ -147,7 +147,13 @@ extern long const ETRActionPublicUserID;
 @interface NSDictionary (TypesafeJSON)
 
 - (NSString *)stringForKey:(id)key;
-- (long)longValueForKey:(id)key withFallbackValue:(long)fallbackValue;
-- (short)shortValueForKey:(id)key withFallbackValue:(short)fallbackValue;
+
+- (double)doubleValueForKey:(id)key fallbackValue:(double)fallbackValue;
+
+- (int)intValueForKey:(id)key fallbackValue:(int)fallbackValue;
+
+- (long)longValueForKey:(id)key fallbackValue:(long)fallbackValue;
+
+- (short)shortValueForKey:(id)key fallbackValue:(short)fallbackValue;
 
 @end

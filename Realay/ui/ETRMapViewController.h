@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michel Sievers. All rights reserved.
 //
 
-#import "ETRBaseViewController.h"
+#import "ETRPrepareSessionViewController.h"
 
 #import <MapKit/MapKit.h>
 
-@interface ETRMapViewController : ETRBaseViewController
+@interface ETRMapViewController : ETRPrepareSessionViewController
 
 @property (weak, nonatomic) IBOutlet MKMapView * mapView;
 

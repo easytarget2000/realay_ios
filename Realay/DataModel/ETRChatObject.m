@@ -25,8 +25,8 @@
 
 - (NSString *)imageFilePath:(BOOL)isHiRes {
     // Save image.
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *fileName;
+    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString * fileName;
     fileName = [NSString stringWithFormat:@"%@.jpg", [self imageFileName:isHiRes]];
     return [[paths objectAtIndex:0] stringByAppendingPathComponent:fileName];
 }

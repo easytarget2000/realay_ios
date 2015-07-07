@@ -9,7 +9,7 @@
 #import "ETRRoom.h"
 
 #import "ETRLocationManager.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRUser.h"
 
 @interface ETRRoom()
@@ -41,12 +41,17 @@
 @synthesize location = _location;
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: %@, %@ until %@, %@ users.",
+//    return [NSString stringWithFormat:@"%@: %@, %@ until %@, %@ users.",
+//            [self remoteID],
+//            [self title],
+//            [self startDate],
+//            [self endDate],
+//            [self queryUserCount]];
+    
+    return [NSString stringWithFormat:@"%@: %@, %@ m.",
             [self remoteID],
             [self title],
-            [self startDate],
-            [self endDate],
-            [self queryUserCount]];
+            [self distance]];
 }
 
 - (CLLocation *)location {
@@ -54,8 +59,8 @@
         return _location;
     }
     
-    CGFloat latitude = [[self latitude] floatValue];
-    CGFloat longitude = [[self longitude] floatValue];
+    CLLocationDegrees latitude = [[self latitude] doubleValue];
+    CLLocationDegrees longitude = [[self longitude] doubleValue];
     _location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
     return _location;
 }

@@ -28,6 +28,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [super setInfoView:(UIView *)[self usersInfoView]];
     [super setUpForConversationList:NO];
         
     // Configure manual refresher.

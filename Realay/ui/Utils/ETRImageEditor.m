@@ -35,8 +35,7 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     
     // Adjust the size if needed.
     UIImage * croppedImage;
-    croppedImage = [ETRImageEditor scaleCropImage:image
-                                           toSize:targetImageView.frame.size];
+    croppedImage = [ETRImageEditor scaleCropImage:image toSize:targetImageView.frame.size];
     
     dispatch_async(
                    dispatch_get_main_queue(),
@@ -49,9 +48,22 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
                            return;
                        }
 
-                       [targetImageView setImage:croppedImage];
+//                       [targetImageView setImage:croppedImage];
+//                       [targetImageView setImageName:imageName];
+
+                       [UIView transitionWithView:targetImageView
+                                         duration:0.2
+                                          options:UIViewAnimationOptionTransitionCrossDissolve
+                                       animations:^{
+                                           [targetImageView setImage:croppedImage];
+                                       }
+                                       completion:^(BOOL finished) {
+                                           if (finished) {
+                                               [targetImageView setImageName:imageName];
+                                           }
+                                       }];
+
                        
-                       [targetImageView setImageName:imageName];
                        //    [targetImageView setImage:image];
                    });
 }
@@ -72,13 +84,14 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         }
     }
     
-    NSData * data = UIImagePNGRepresentation(pickedImage);
-    
-    UIImage * tempImage = [UIImage imageWithData:data];
-    UIImage * fixedOrientationImage = [UIImage imageWithCGImage:[tempImage CGImage]
-                                                         scale:[pickedImage scale]
-                                                   orientation:[pickedImage imageOrientation]];
-    return fixedOrientationImage;
+//    NSData * data = UIImagePNGRepresentation(pickedImage);
+//    
+//    UIImage * tempImage = [UIImage imageWithData:data];
+//    UIImage * fixedOrientationImage = [UIImage imageWithCGImage:[tempImage CGImage]
+//                                                         scale:[pickedImage scale]
+//                                                   orientation:UIImageOrientationUp];
+//    return fixedOrientationImage;
+    return pickedImage;
 }
 
 + (NSData *)cropHiResImage:(UIImage *)image writeToFile:(NSString *)filePath {
@@ -95,11 +108,20 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     return loResData;
 }
 
-+ (UIImage *)scaleCropImage:(UIImage *)image toSize:(CGSize)targetSize {
++ (UIImage *)scaleCropImage:(UIImage *)image
+                     toSize:(CGSize)targetSize {
     
     CGSize imageSize = [image size];
     if (imageSize.width == targetSize.width && imageSize.height == targetSize.width) {
         return image;
+    }
+    
+//    NSLog(@"Image orientation 1: %d", [image imageOrientation]);
+    UIImageOrientation orientation;
+    if ([image imageOrientation] == UIImageOrientationDownMirrored) {
+        orientation = UIImageOrientationUp;
+    } else {
+        orientation = UIImageOrientationDownMirrored;
     }
     
     CGFloat shortestImageSide;
@@ -120,16 +142,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     scaleSize.width *= resizeFactor;
     scaleSize.height *= resizeFactor;
     
-    //    NSLog(@"Scaling Image %g x %g to %g x %g to fit %g x %g.", imageSize.width, imageSize.height, scaleSize.width, scaleSize.height, targetSize.width, targetSize.width);
-    
-    UIGraphicsBeginImageContext(scaleSize);
-    
-    CGContextRef scaleContext = UIGraphicsGetCurrentContext();
-    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, scaleSize.width, scaleSize.height), [image CGImage]);
-    UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    
     CGFloat cropX = 0.0f;
     CGFloat cropY = 0.0f;
     if (targetSize.width > targetSize.height) {
@@ -140,13 +152,29 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     
     CGRect cropRect = CGRectMake(cropX, cropY, targetSize.width, targetSize.height);
     
+    UIImage * scaledImage = [ETRImageEditor scaleImage:image toSize:scaleSize];
     CGImageRef imageRef = CGImageCreateWithImageInRect([scaledImage CGImage], cropRect);
+    
     UIImage * outputImage = [UIImage imageWithCGImage:imageRef
                                                 scale:[image scale]
-                                          orientation:UIImageOrientationDownMirrored];
+                                          orientation:orientation];
     CGImageRelease(imageRef);
     
+//    NSLog(@"Image orientation 3: %d", [outputImage imageOrientation]);
+    
     return outputImage;
+}
+
++ (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size {
+    UIGraphicsBeginImageContext(size);
+    
+    CGContextRef scaleContext = UIGraphicsGetCurrentContext();
+    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, size.width, size.height), [image CGImage]);
+    UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return scaledImage;
 }
 
 @end

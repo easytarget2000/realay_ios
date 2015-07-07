@@ -15,7 +15,7 @@
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRProfileEditorViewController.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
@@ -340,7 +340,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     
     NSString * distanceFormat;
     distanceFormat = NSLocalizedString(@"Current_distance", @"Current distance: %@");
-    NSString * distance = [ETRReadabilityHelper formattedLength:[sessionRoom distance]];
+    NSString * distance = [ETRFormatter formattedLength:[sessionRoom distance]];
     NSString *title = [NSString stringWithFormat:distanceFormat, distance];
     NSString *message = NSLocalizedString(@"Before_join", @"Before you can join, enter");
     [[[UIAlertView alloc] initWithTitle:title
@@ -424,7 +424,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             
             if ((buttonIndex == 1 && !isPhotoMessage)) {
                 [[UIPasteboard generalPasteboard] setString:[_selectedMessage shortDescription]];
-            } else if ((buttonIndex == 1 && isPhotoMessage) || buttonIndex == 2) {
+            } else if ((buttonIndex == 1 && isPhotoMessage) || (buttonIndex == 2 && !isPhotoMessage)) {
                 // Open the private conversation.
                 
                 ETRUser * user = [_selectedMessage sender];
@@ -445,7 +445,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                 } else {
                     [ETRAlertViewFactory showHasLeftViewForUser:user];
                 }
-            } else if ((buttonIndex == 2 && isPhotoMessage) || buttonIndex == 3) {
+            } else if ((buttonIndex == 2 && isPhotoMessage) || (buttonIndex == 3 && !isPhotoMessage)) {
                 // Show User profile.
                 
                 if (!_viewController || ![_selectedMessage sender]) {
@@ -460,7 +460,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                 [[_viewController navigationController] pushViewController:profileViewController
                                                                   animated:YES];
                 
-            } else if ((buttonIndex == 3 && isPhotoMessage) || buttonIndex == 4) {
+            } else if ((buttonIndex == 3 && isPhotoMessage) || (buttonIndex == 4 && !isPhotoMessage)) {
                 // Show Block Alert View.
                 [self showBlockConfirmViewForUser:[_selectedMessage sender] viewController:nil];
             }

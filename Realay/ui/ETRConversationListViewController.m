@@ -16,6 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [super setInfoView:[self conversationsInfoView]];
     [super setUpForConversationList:YES];
     
     /*

@@ -10,7 +10,7 @@
 
 #import "ETRDefaultsHelper.h"
 #import "ETRMapViewController.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
@@ -22,9 +22,8 @@ static NSTimeInterval const ETRTimeIntervalFiveMinutes = 5.0 * 60.0;
 
 static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 
-//static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
+static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 
-static CFTimeInterval const ETRTimeIntervalTimeout = 60.0;
 
 
 @interface ETRBouncer () <UIAlertViewDelegate>
@@ -66,20 +65,20 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 60.0;
 #pragma mark -
 #pragma mark Runtime Constants
 
-+ (NSArray *)locationWarningIntervals {
-    return [NSArray arrayWithObjects:
-            @(10.0),
-            @(10.0),
-            @(10.0),
-            @(10.0),
-            nil];
-    
++ (NSArray *)warningIntervals {
 //    return [NSArray arrayWithObjects:
-//            @(ETRTimeIntervalTenMinutes),
-//            @(ETRTimeIntervalTenMinutes),
-//            @(ETRTimeIntervalFiveMinutes),
-//            @(ETRTimeIntervalFiveMinutes),
+//            @(10.0),
+//            @(10.0),
+//            @(10.0),
+//            @(10.0),
 //            nil];
+    
+    return [NSArray arrayWithObjects:
+            @(ETRTimeIntervalTenMinutes),
+            @(ETRTimeIntervalTenMinutes),
+            @(ETRTimeIntervalFiveMinutes),
+            @(ETRTimeIntervalFiveMinutes),
+            nil];
 }
 
 #pragma mark -
@@ -147,7 +146,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 60.0;
         }
     }
     
-    NSArray * intervals = [ETRBouncer locationWarningIntervals];
+    NSArray * intervals = [ETRBouncer warningIntervals];
     
     _lastReason = reason;
     
@@ -317,12 +316,12 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 60.0;
  */
 - (NSString *)kickTime {
     CFTimeInterval warningIntervalSum = 0.0;
-    for (NSNumber * interval in [ETRBouncer locationWarningIntervals]) {
+    for (NSNumber * interval in [ETRBouncer warningIntervals]) {
         warningIntervalSum += [interval doubleValue];
     }
     
     CFAbsoluteTime kickTime = CFAbsoluteTimeGetCurrent() + warningIntervalSum;
-    return [ETRReadabilityHelper formattedDate:[NSDate dateWithTimeIntervalSinceReferenceDate:kickTime]];
+    return [ETRFormatter formattedDate:[NSDate dateWithTimeIntervalSinceReferenceDate:kickTime]];
 }
 
 /**
@@ -331,7 +330,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = 60.0;
 - (NSString *)sessionEnd {
     ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
     if ([sessionRoom endDate]) {
-        return [ETRReadabilityHelper formattedDate:[sessionRoom endDate]];
+        return [ETRFormatter formattedDate:[sessionRoom endDate]];
     } else {
         return @"-";
     }

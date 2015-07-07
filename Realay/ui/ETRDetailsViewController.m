@@ -8,15 +8,17 @@
 
 #import "ETRDetailsViewController.h"
 
+#import <AddressBook/AddressBook.h>
+
 #import "ETRAlertViewFactory.h"
 #import "ETRBlockedUsersViewController.h"
 #import "ETRHeaderCell.h"
 #import "ETRImageLoader.h"
 #import "ETRKeyValueCell.h"
 #import "ETRLocalUserManager.h"
-#import "ETRLocationManager.h"
+#import "ETRLoginViewController.h"
 #import "ETRProfileSocialCell.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
@@ -60,6 +62,16 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
+        NSArray * controllerStack = [[self navigationController] viewControllers];
+        
+        for (UIViewController * viewController in controllerStack) {
+            if([viewController isKindOfClass:[ETRLoginViewController class]]) {
+                [viewController removeFromParentViewController];
+            }
+        }
+    }
 
     [[self tableView] setRowHeight:UITableViewAutomaticDimension];
     [[self tableView] setEstimatedRowHeight:128.0f];
@@ -275,14 +287,14 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         case 2: {
             [[cell keyLabel] setText:NSLocalizedString(@"Size", @"Room Size")];
             int diameter = (int) [[_room radius] integerValue] * 2;
-            NSString * size = [ETRReadabilityHelper formattedIntLength:diameter];
+            NSString * size = [ETRFormatter formattedIntLength:diameter];
             [[cell valueLabel] setText:size];
         }
             break;
             
         case 3: {
             [[cell keyLabel] setText:NSLocalizedString(@"Hours", @"Opening hours")];
-            NSString * timeSpan = [ETRReadabilityHelper timeSpanForStartDate:[_room startDate]
+            NSString * timeSpan = [ETRFormatter timeSpanForStartDate:[_room startDate]
                                                                     endDate:[_room endDate]];
             [[cell valueLabel] setText:timeSpan];
         }
@@ -373,11 +385,78 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     }
 }
 
-#pragma mark - Navigation
+#pragma mark -
+#pragma mark Navigation
 
 - (IBAction)addUserButtonPressed:(id)sender {
-    // TODO: Handle unauthorization.
-    [_user addToAddressBook];
+    if (!_user) {
+        return;
+    }
+    
+    CFErrorRef error;
+    ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(nil, &error);
+    
+    if (error) {
+        NSLog(@"ERROR: addToAddressBook: %@", error);
+        [ETRAlertViewFactory showGeneralErrorAlert];
+        return;
+    }
+    
+    void (^createABEntry)(void) = ^{
+        CFErrorRef error;
+        
+        ABRecordRef newPerson = ABPersonCreate();
+        ABRecordSetValue(newPerson, kABPersonNicknameProperty, (__bridge CFTypeRef)([_user name]), &error);
+        if ([[_user mail] length]) {
+            ABRecordSetValue(newPerson, kABPersonEmailProperty, (__bridge CFTypeRef)([_user mail]), &error);
+        }
+        if ([[_user phone] length]) {
+            ABRecordSetValue(newPerson, kABPersonPhoneProperty, (__bridge CFTypeRef)([_user phone]), &error);
+        }
+        if ([[_user website] length]) {
+            ABRecordSetValue(newPerson, kABPersonURLProperty, (__bridge CFTypeRef)([_user website]), &error);
+        }
+        
+        ABAddressBookAddRecord(addressBookRef, newPerson, &error);
+        
+        ABAddressBookSave(addressBookRef, &error);
+        CFRelease(newPerson);
+        CFRelease(addressBookRef);
+        if (error) {
+            CFStringRef errorDesc = CFErrorCopyDescription(error);
+            NSLog(@"Contact not saved: %@", errorDesc);
+            CFRelease(errorDesc);
+            [ETRAlertViewFactory showGeneralErrorAlert];
+        } else {
+            NSString * titleFormat = NSLocalizedString(@"Added_User", @"Added %@");
+            NSString * title = [NSString stringWithFormat:titleFormat, [_user name]];
+            NSString * message = NSLocalizedString(@"In_contacts", @"Now in phonebook");
+            [[[UIAlertView alloc] initWithTitle:title
+                                       message:message
+                                      delegate:nil
+                             cancelButtonTitle:NSLocalizedString(@"OK", @"Affirmative")
+                             otherButtonTitles:nil] show];
+        }
+    };
+    
+    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusNotDetermined) {
+        ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+            if (granted) {
+                // First time access has been granted, add the contact.
+                createABEntry();
+            } else {
+                // User denied access
+                // Display an alert telling user the contact could not be added.
+            }
+        });
+    } else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
+        // The user has previously given access, add the contact.
+        createABEntry();
+    } else {
+        // The user has previously denied access
+        // Send an alert telling user to change privacy setting in settings app.
+        return;
+    }
 }
 
 - (IBAction)blockedUsersButtonPressed:(id)sender {
@@ -393,32 +472,11 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 }
 
 - (IBAction)joinButtonPressed:(id)sender {
-    
-    // Update the current location.
-    [[ETRLocationManager sharedManager] launch:nil];
-    
-    if (![[ETRSessionManager sharedManager] didStartSession]) {
-#ifdef DEBUG_JOIN
-        [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
-#else
-        if (![ETRLocationManager didAuthorizeWhenInUse]) {
-            // The location access has not been authorized.
-            [[self alertHelper] showSettingsAlertBeforeJoin];
-            LastSettingsAlert = CFAbsoluteTimeGetCurrent();
-            
-        } else if ([ETRLocationManager isInSessionRegion]) {
-            // Show the password prompt, if the device location is inside the region.
-            [self performSegueWithIdentifier:ETRSegueDetailsToPassword sender:nil];
-        } else {
-            // The user is outside of the radius.
-            [ETRAlertViewFactory showRoomDistanceAlert];
-        }
-#endif
-    }
+    [super joinButtonPressed:sender joinSegue:ETRSegueDetailsToPassword];
 }
 
 - (IBAction)shareButtonPressed:(id)sender {
-    
+   // TODO: Implement sharing.
 }
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation

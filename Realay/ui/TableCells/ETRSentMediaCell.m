@@ -14,7 +14,7 @@
 @implementation ETRSentMediaCell
 
 - (void)prepareForReuse {
-//    [[self iconView] setImageName:nil];
+    [[self iconView] setImageName:nil];
     [[self timeLabel] setText:@""];
 }
 

@@ -10,6 +10,8 @@
 
 "Add_Contact" = "Add Contact";
 
+"Added_User" = "Added %@";
+
 "Background_Updates" = "Background Updates";
 
 "Background_updates_disabled" = "Please allow Realay to update messages and locations in the background.\n\nFeel free to join again.";
@@ -52,13 +54,15 @@
 
 "Facebook_ID" = "Facebook ID";
 
-"File_in_photos" = "The picture is now available in your Photos app."
+"File_in_photos" = "The picture is now available in your Photos app.";
 
 "For_an_uninterrupted" = "For an uninterrupted experience, please allow Realay to always verify your location and request new messages in the background.";
 
 "has_left" = "%@ has left %@.";
 
 "Hours" = "Hours";
+
+"In_contacts" = "This user's shared details have been added to your iPhone contacts.";
 
 "Instagram_Name" = "Instagram Username";
 
@@ -75,6 +79,8 @@
 "No" = "No";
 
 "No_time_restriction" = "Without time restriction";
+
+"Not_Yet" = "Not Yet";
 
 "OK" = "OK";
 
@@ -121,6 +127,8 @@
 "Session_Terminated" = "Session Ended";
 
 "Settings" = "Settings";
+
+"Starts_at" = "%@ opens at %@.";
 
 "Stay_in_area" = "Please stay within the area of the Realay and make sure that your location can be verified every once in a while.";
 

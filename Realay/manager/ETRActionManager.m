@@ -139,12 +139,6 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 #endif
     }
     
-//    dispatch_queue_t q_background = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _queryInterval * NSEC_PER_SEC);
-//    dispatch_after(popTime, q_background, ^(void){
-//        [self fetchUpdates:nil];
-//    });
-    
     dispatch_async(
                    dispatch_get_main_queue(),
                    ^{

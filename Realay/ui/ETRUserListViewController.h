@@ -16,8 +16,10 @@
 
 @property (weak, nonatomic) IBOutlet UITableView * tableView;
 
-@property (weak, nonatomic) IBOutlet ETRImageView * infoView;
+//@property (weak, nonatomic) IBOutlet ETRImageView * infoView;
 
 @property (weak, nonatomic) IBOutlet UILabel * unreadCounterLabel;
+
+@property (weak, nonatomic) IBOutlet ETRImageView *usersInfoView;
 
 @end

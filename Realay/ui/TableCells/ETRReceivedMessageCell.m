@@ -13,7 +13,7 @@
 @implementation ETRReceivedMessageCell
 
 - (void)prepareForReuse {
-//    [[self userIconView] setImageName:nil];
+    [[self userIconView] setImageName:nil];
     [[self nameLabel] setText:@""];
     [[self messageLabel] setText:@""];
     [[self timeLabel] setText:@""];

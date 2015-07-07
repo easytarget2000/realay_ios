@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Easy Target. All rights reserved.
 //
 
-#import "ETRBaseViewController.h"
+#import "ETRPrepareSessionViewController.h"
 
 @class ETRRoom;
 @class ETRUser;
 
 
-@interface ETRDetailsViewController : ETRBaseViewController
+@interface ETRDetailsViewController : ETRPrepareSessionViewController
 
 @property (weak, nonatomic) IBOutlet UIView *topShadow;
 

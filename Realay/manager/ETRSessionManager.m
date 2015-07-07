@@ -16,7 +16,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRDefaultsHelper.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 
@@ -67,15 +67,6 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     }
     
     if ([self didReachEndDate]) {
-        NSString * messageFormat = NSLocalizedString(@"Closed_at", @"%@ closed at %@.");
-        NSString * endDate = [ETRReadabilityHelper formattedDate:[_room endDate]];
-        NSString * message = [NSString stringWithFormat:messageFormat, [_room title], endDate];
-        
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Too_Late", @"Cannot Join Anymore")
-                                    message:message
-                                   delegate:nil
-                          cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
-                          otherButtonTitles:nil] show];
         return NO;
     }
     

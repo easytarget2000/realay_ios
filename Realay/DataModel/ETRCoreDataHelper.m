@@ -14,6 +14,7 @@
 #import "ETRConversation.h"
 #import "ETRImageEditor.h"
 #import "ETRLocalUserManager.h"
+#import "ETRLocationManager.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
@@ -136,7 +137,7 @@ static NSString * UserEntityName;
 }
 
 + (ETRAction *)addActionFromJSONDictionary:(NSDictionary *)jsonDictionary {
-    long remoteID = [jsonDictionary longValueForKey:@"a" withFallbackValue:-102];
+    long remoteID = [jsonDictionary longValueForKey:@"a" fallbackValue:-102];
     if (remoteID < 10) {
         NSLog(@"WARNING: Ignoring incoming Action with Remote ID %ld." , remoteID);
         return nil;
@@ -148,7 +149,7 @@ static NSString * UserEntityName;
     // Sender and recipient IDs may be a valid User ID, i.e. positive long,
     // or -10, the pre-defined ID for public (as recipient ID) and admin (as sender ID) messages.
     
-    long senderID = [jsonDictionary longValueForKey:@"sn" withFallbackValue:-104];
+    long senderID = [jsonDictionary longValueForKey:@"sn" fallbackValue:-104];
     ETRUser * sender;
     if (senderID > 100L) {
         sender = [ETRCoreDataHelper userWithRemoteID:@(senderID)
@@ -161,7 +162,7 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    long recipientID = [jsonDictionary longValueForKey:@"rc" withFallbackValue:-105];
+    long recipientID = [jsonDictionary longValueForKey:@"rc" fallbackValue:-105];
     ETRUser * recipient;
     if (recipientID > 100L) {
         recipient = [ETRCoreDataHelper userWithRemoteID:@(recipientID)
@@ -171,7 +172,7 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    long roomID = [jsonDictionary longValueForKey:@"r" withFallbackValue:-103];
+    long roomID = [jsonDictionary longValueForKey:@"r" fallbackValue:-103];
     if (roomID < 10) {
         NSLog(@"ERROR: Received Action with invalid Room ID: %@", jsonDictionary);
         return nil;
@@ -179,7 +180,7 @@ static NSString * UserEntityName;
     ETRRoom * room = [ETRCoreDataHelper roomWithRemoteID:@(roomID)];
     
     // Actions that are not messages do not need to be added to the local database.
-    short code = [jsonDictionary shortValueForKey:@"cd" withFallbackValue:-1];
+    short code = [jsonDictionary shortValueForKey:@"cd" fallbackValue:-1];
     switch (code) {
         case ETRActionCodeKick:
             if (recipientID == [ETRLocalUserManager userID]) {
@@ -220,7 +221,7 @@ static NSString * UserEntityName;
     [receivedAction setRecipient:recipient];
     [receivedAction setRoom:room];
     
-    long timestamp = [jsonDictionary longValueForKey:@"t" withFallbackValue:1426439266];
+    long timestamp = [jsonDictionary longValueForKey:@"t" fallbackValue:1426439266];
     [receivedAction setSentDate:[NSDate dateWithTimeIntervalSince1970:timestamp]];
     
     [receivedAction setCode:@(code)];
@@ -753,16 +754,18 @@ static NSString * UserEntityName;
     }
     
     // We query the database with km values and only use metre integer precision.
-    NSString * distance = (NSString *)[JSONDict objectForKey:@"dst"];
-    [room setDistance:@([distance integerValue] * 1000)];
-    NSString * latitude = (NSString *)[JSONDict objectForKey:@"lat"];
-    [room setLatitude:@([latitude floatValue])];
-    NSString * longitude = (NSString *)[JSONDict objectForKey:@"lng"];
-    [room setLongitude:@([longitude floatValue])];
+//    double kmDistance = [JSONDict doubleValueForKey:@"dst" fallbackValue:7777.7];
+    [room setLatitude:@([JSONDict doubleValueForKey:@"lat" fallbackValue:0.0])];
+    [room setLongitude:@([JSONDict doubleValueForKey:@"lng" fallbackValue:0.0])];
+    
+    [room setDistance:@([[ETRLocationManager sharedManager] distanceToRoom:room])];
     
     [room setAddress:[JSONDict stringForKey:@"ad"]];
     
+#ifdef DEBUG
     NSLog(@"Inserting Room: %@", [room description]);
+#endif
+    
     [ETRCoreDataHelper saveContext];
 }
 
@@ -792,8 +795,7 @@ static NSString * UserEntityName;
     
     
     NSPredicate * predicate;
-    NSDate * nowDate = [NSDate date];
-    predicate = [NSPredicate predicateWithFormat:@"(startDate < %@) && (endDate > %@ || endDate == nil) && distance < 20000", nowDate, nowDate];
+    predicate = [NSPredicate predicateWithFormat:@"(endDate > %@ || endDate == nil) && distance < 20000", [NSDate date]];
     [request setPredicate:predicate];
     
     // Sort by distance.
@@ -883,7 +885,7 @@ static NSString * UserEntityName;
 
 + (ETRUser *)insertUserFromDictionary:(NSDictionary *)jsonDictionary {
     // Get the remote DB ID from the JSON data.
-    long remoteID = [jsonDictionary longValueForKey:@"u" withFallbackValue:-55];
+    long remoteID = [jsonDictionary longValueForKey:@"u" fallbackValue:-55];
     
     if (remoteID < 10) {
         NSLog(@"ERROR: Could not insert User because remote ID is invalid: %ld", remoteID);
@@ -893,7 +895,7 @@ static NSString * UserEntityName;
     // Get the existing Object or an empty one to fill.
     ETRUser * user = [ETRCoreDataHelper userWithRemoteID:@(remoteID) doLoadIfUnavailable:NO];
     
-    [user setImageID:@([jsonDictionary longValueForKey:@"i" withFallbackValue:-5L])];
+    [user setImageID:@([jsonDictionary longValueForKey:@"i" fallbackValue:-5L])];
     [user setName:[jsonDictionary stringForKey:@"n"]];
     [user setStatus:[jsonDictionary stringForKey:@"s"]];
     [user setMail:[jsonDictionary stringForKey:@"em"]];
@@ -973,11 +975,30 @@ static NSString * UserEntityName;
     if (object && [object isKindOfClass:[NSString class]]) {
         return (NSString *)object;
     } else {
+//        NSLog(@"ERROR: %@ not found in JSON Dictionary.", key);
         return nil;
     }
 }
 
-- (long)longValueForKey:(id)key withFallbackValue:(long)fallbackValue {
+- (double)doubleValueForKey:(id)key fallbackValue:(double)fallbackValue {
+    NSString * value = [self stringForKey:key];
+    if (value) {
+        return [value doubleValue];
+    } else {
+        return fallbackValue;
+    }
+}
+
+- (int)intValueForKey:(id)key fallbackValue:(int)fallbackValue {
+    NSString * value = [self stringForKey:key];
+    if (value) {
+        return (int) [value integerValue];
+    } else {
+        return fallbackValue;
+    }
+}
+
+- (long)longValueForKey:(id)key fallbackValue:(long)fallbackValue {
     NSString * value = [self stringForKey:key];
     if (value) {
         return (long) [value longLongValue];
@@ -986,7 +1007,7 @@ static NSString * UserEntityName;
     }
 }
 
-- (short)shortValueForKey:(id)key withFallbackValue:(short)fallbackValue {
+- (short)shortValueForKey:(id)key fallbackValue:(short)fallbackValue {
     NSString *value = [self stringForKey:key];
     if (value) {
         return [value integerValue];

@@ -12,6 +12,7 @@
 #import "ETRLocalUserManager.h"
 #import "ETRLocationManager.h"
 #import "ETRLoginViewController.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
 
@@ -69,11 +70,27 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
 - (void)verifyPasswordAndJoin {
     // Get the password values.
     NSString * typedPassword = [[self passwordTextField] text];
-    NSString * password = [[[ETRSessionManager sharedManager] room] password];
+    ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
+    NSString * password = [preparedRoom password];
     
 #ifdef DEBUG_JOIN
     typedPassword = password;
 #endif
+    
+    if ([[ETRSessionManager sharedManager] didReachEndDate]) {
+        NSString * messageFormat = NSLocalizedString(@"Closed_at", @"%@ closed at %@.");
+        NSString * endDate = [ETRFormatter formattedDate:[preparedRoom endDate]];
+        NSString * message = [NSString stringWithFormat:messageFormat, [preparedRoom title], endDate];
+        
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Too_Late", @"Cannot Join Anymore")
+                                    message:message
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
+                          otherButtonTitles:nil] show];
+        
+        [[self navigationController] popToRootViewControllerAnimated:YES];
+        return;
+    }
     
     if([typedPassword isEqualToString:password]) {
         // Hide the keyboard.

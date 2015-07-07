@@ -67,17 +67,17 @@
 
 + (ETRRoom *)sessionRoom;
 
-/*
+/**
  Become a member of a room and start a new session.
  */
 - (BOOL)startSession;
 
-/*
+/**
  Remove user from the room, reset attributes and return to the room list.
  */
 - (void)endSession;
 
-/*
+/**
  Attempts to restore the last Session Room from Defaults;
  Does not start the Session;
  Start the Join View Controller to continue, if returning YES.
@@ -85,6 +85,11 @@
  Return: YES, if the Room has been restored
  */
 - (BOOL)restoreSession;
+
+/**
+ 
+ */
+- (BOOL)didReachEndDate;
 
 /*
  Prepare the session manager so it can join a room later.

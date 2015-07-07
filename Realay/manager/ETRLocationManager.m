@@ -13,7 +13,7 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRBouncer.h"
 #import "ETRDefaultsHelper.h"
-#import "ETRReadabilityHelper.h"
+#import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
@@ -100,11 +100,7 @@ static ETRLocationManager * SharedInstance;
     for (ETRRoom * room in [ETRCoreDataHelper rooms]) {
         // Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
         // and the current device location.
-        int distanceToCenter = [_location distanceFromLocation:[room location]];
-        int newDistance = distanceToCenter - (int) [[room radius] integerValue];
-        if (newDistance < 5) {
-            newDistance = 0;
-        }
+        int newDistance = [self distanceToRoom:room];
         
         int difference = (int) [[room distance] integerValue] - newDistance;
         
@@ -121,6 +117,16 @@ static ETRLocationManager * SharedInstance;
     if ([[ETRSessionManager sharedManager] didStartSession]) {
         [self updateSessionRegionDistance];
         [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
+    }
+}
+
+- (int)distanceToRoom:(ETRRoom *)room {
+    int distanceToCenter = (int) [_location distanceFromLocation:[room location]];
+    int distance = distanceToCenter - (int) [[room radius] integerValue];
+    if (distance < 5) {
+      return 0;
+    } else {
+      return distance;
     }
 }
 
