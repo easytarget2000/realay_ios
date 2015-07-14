@@ -111,6 +111,10 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
 + (UIImage *)scaleCropImage:(UIImage *)image
                      toSize:(CGSize)targetSize {
     
+    if (targetSize.width < 0.1f || targetSize.height < 0.1f) {
+        return image;
+    }
+    
     CGSize imageSize = [image size];
     if (imageSize.width == targetSize.width && imageSize.height == targetSize.width) {
         return image;
@@ -166,15 +170,18 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
 }
 
 + (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size {
-    UIGraphicsBeginImageContext(size);
-    
-    CGContextRef scaleContext = UIGraphicsGetCurrentContext();
-    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, size.width, size.height), [image CGImage]);
-    UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    
-    return scaledImage;
+    if (size.width > 0.1f && size.height > 0.1f) {
+        UIGraphicsBeginImageContext(size);
+        
+        CGContextRef scaleContext = UIGraphicsGetCurrentContext();
+        CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, size.width, size.height), [image CGImage]);
+        UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+        
+        UIGraphicsEndImageContext();
+        return scaledImage;
+    } else {
+        return image;
+    }
 }
 
 @end

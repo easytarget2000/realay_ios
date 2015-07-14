@@ -161,10 +161,10 @@
     if (_doShowInfoView) {
         // Wait for possible results before actually deciding to show the Info View.
         dispatch_after(
-                       dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+                       dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
                        dispatch_get_main_queue(),
                        ^{
-                           [ETRAnimator fadeView:[self infoView]
+                           [ETRAnimator fadeView:_infoView
                                         doAppear:_doShowInfoView
                                       completion:nil];
                        });
@@ -223,7 +223,7 @@
     if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
         [ETRImageLoader loadImageForObject:user
                                   intoView:[cell iconView]
-                          placeHolderImage:nil
+                          placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
                                doLoadHiRes:YES];
     } else {
         if ([user lowResImage]) {
@@ -287,8 +287,17 @@
             ETRUserCell * cell;
             cell = (ETRUserCell *)[[self tableView] cellForRowAtIndexPath:indexPath];
             
+            NSManagedObject * object = [_resultsController objectAtIndexPath:indexPath];
+            ETRUser * user;
+            if ([object isKindOfClass:[ETRUser class]]) {
+                user = (ETRUser *)object;
+            } else if ([object isKindOfClass:[ETRConversation class]]) {
+                user = [(ETRConversation *) object partner];
+            } else {
+                return;
+            }
             
-            [ETRImageLoader loadImageForObject:[_resultsController objectAtIndexPath:indexPath]
+            [ETRImageLoader loadImageForObject:user
                                       intoView:[cell iconView]
                               placeHolderImage:nil
                                    doLoadHiRes:YES];

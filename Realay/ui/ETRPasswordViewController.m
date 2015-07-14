@@ -92,6 +92,11 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
         return;
     }
     
+    if (![ETRLocationManager isInSessionRegion]) {
+        [ETRAlertViewFactory showRoomDistanceAlert];
+        return;
+    }
+    
     if([typedPassword isEqualToString:password]) {
         // Hide the keyboard.
         [[self passwordTextField] resignFirstResponder];

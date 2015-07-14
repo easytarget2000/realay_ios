@@ -12,10 +12,11 @@
 
 #import "ETRAlertViewFactory.h"
 #import "ETRBlockedUsersViewController.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRHeaderCell.h"
-#import "ETRImageLoader.h"
 #import "ETRKeyValueCell.h"
 #import "ETRLocalUserManager.h"
+#import "ETRLocationCell.h"
 #import "ETRLoginViewController.h"
 #import "ETRProfileSocialCell.h"
 #import "ETRFormatter.h"
@@ -24,6 +25,7 @@
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
 
+static NSString *const ETRCellLocation = @"Location";
 
 static NSString *const ETRHeaderCellIdentifier = @"profileHeaderCell";
 
@@ -175,8 +177,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     
     if (_room) {
         // This instance displays Room Details.
-        // Rows: header, address, size, hours, number of people, description:
-        return 6;
+        // Rows: header, location status, address, size, hours, number of people, description:
+        return 7;
         
     } else if (_user) {
         // This instance displays User Details.
@@ -239,8 +241,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     
     if ([indexPath row] == 0) {     // Configure the header cell.
         ETRHeaderCell *headerCell;
-        headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderCellIdentifier
-                                                     forIndexPath:indexPath];
+        headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderCellIdentifier];
         
         if (_room) {
             [headerCell setUpWithRoom:_room];
@@ -251,7 +252,12 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     }
     
     if (_room) {
-        return [self roomCellInTableView:tableView forIndexPath:indexPath];
+        if ([indexPath row] == 1) {
+//            ETRLocationCell * locationCell;
+            return [tableView dequeueReusableCellWithIdentifier:ETRCellLocation];
+        } else {
+            return [self roomCellInTableView:tableView forIndexPath:indexPath];
+        }
     } else if (_user) {
         return [self userCellInTableView:tableView forIndexPath:indexPath];
     }
@@ -263,13 +269,13 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 - (ETRKeyValueCell *)roomCellInTableView:(UITableView *)tableView
                                 forIndexPath:indexPath {
-    
+
     ETRKeyValueCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:ETRValueCellIdentifier
                                            forIndexPath:indexPath];
     
     switch ([indexPath row]) {
-        case 1: {
+        case 2: {
             if ([[_room address] length]) {
                 [[cell keyLabel] setText:NSLocalizedString(@"Address", @"Physical address")];
                 [[cell valueLabel] setText:[_room address]];
@@ -284,7 +290,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
             break;
         }
             
-        case 2: {
+        case 3: {
             [[cell keyLabel] setText:NSLocalizedString(@"Size", @"Room Size")];
             int diameter = (int) [[_room radius] integerValue] * 2;
             NSString * size = [ETRFormatter formattedIntLength:diameter];
@@ -292,7 +298,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         }
             break;
             
-        case 3: {
+        case 4: {
             [[cell keyLabel] setText:NSLocalizedString(@"Hours", @"Opening hours")];
             NSString * timeSpan = [ETRFormatter timeSpanForStartDate:[_room startDate]
                                                                     endDate:[_room endDate]];
@@ -300,15 +306,23 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         }
             break;
             
-        case 4: {
+        case 5: {
             NSString *labelText;
             labelText = NSLocalizedString(@"Users_online", @"Number of Users");
             [[cell keyLabel] setText:labelText];
-            [[cell valueLabel] setText:[[_room queryUserCount] stringValue]];
+            
+            NSString * numberOfUsers;
+            if ([[ETRSessionManager sharedManager] didStartSession]) {
+                numberOfUsers = [NSString stringWithFormat:@"%d", [ETRCoreDataHelper numberOfUsersInSessionRoom]];
+            } else {
+                numberOfUsers = [[_room queryUserCount] stringValue];
+            }
+            [[cell valueLabel] setText:numberOfUsers];
+
         }
             break;
             
-        case 5: {
+        case 6: {
             [[cell keyLabel] setHidden:YES];
             [[cell valueLabel] setText:[_room summary]];
         }
@@ -377,16 +391,21 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 #pragma mark -
 #pragma mark UITableViewDelegate
 
-- (void)tableView:(nonnull UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
+// CONTINUE HERE: Blocking
+
+- (void)tableView:(nonnull UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     if ([indexPath row] == _blockButtonRow) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
         [[self alertHelper] showBlockConfirmViewForUser:_user viewController:self];
+    } else {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
 }
 
 #pragma mark -
 #pragma mark Navigation
+
+// TODO: Rewrite for iOS9.
 
 - (IBAction)addUserButtonPressed:(id)sender {
     if (!_user) {
@@ -397,7 +416,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(nil, &error);
     
     if (error) {
-        NSLog(@"ERROR: addToAddressBook: %@", error);
+        addressBookRef = nil;
+        NSLog(@"ERROR: addUserButtonPressed: %@", error);
         [ETRAlertViewFactory showGeneralErrorAlert];
         return;
     }

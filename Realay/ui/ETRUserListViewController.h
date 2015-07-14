@@ -20,6 +20,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel * unreadCounterLabel;
 
-@property (weak, nonatomic) IBOutlet ETRImageView *usersInfoView;
+@property (weak, nonatomic) IBOutlet UIView * usersInfoView;
 
 @end

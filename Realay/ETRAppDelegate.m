@@ -28,7 +28,7 @@
     
     // Initialise the Reachability and Location Managers, in order to avoid delayed Reachability states later.
     [ETRReachabilityManager sharedManager];
-    [ETRLocationManager sharedManager];
+//    [ETRLocationManager sharedManager];
     
     [ETRDefaultsHelper authID];
     

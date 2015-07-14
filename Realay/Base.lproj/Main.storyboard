@@ -315,6 +315,7 @@
                                         <connections>
                                             <outlet property="addressHeaderLabel" destination="ndX-Jh-TPl" id="njE-u2-LH4"/>
                                             <outlet property="addressLabel" destination="8qF-p3-KCY" id="2EC-17-rBI"/>
+                                            <outlet property="distanceBadge" destination="o9A-h3-Onr" id="qzS-A9-D0c"/>
                                             <outlet property="distanceLabel" destination="D0x-D7-jUW" id="gDV-xe-hnO"/>
                                             <outlet property="headerImageView" destination="paE-qN-Yqk" id="hmy-y4-2L7"/>
                                             <outlet property="hoursLabel" destination="gw1-hr-XXy" id="8fy-R4-LHZ"/>
@@ -509,20 +510,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Please enter the password of this Realay." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="ajl-Oz-7Ht">
-                                <rect key="frame" x="20" y="72" width="560" height="41"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please enter the password of this Realay." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="ajl-Oz-7Ht">
+                                <rect key="frame" x="24" y="72" width="552" height="41"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="PDY-cq-Qbk">
-                                <rect key="frame" x="20" y="159" width="560" height="82"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="PDY-cq-Qbk">
+                                <rect key="frame" x="24" y="159" width="552" height="82"/>
                                 <string key="text">The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6PE-HY-jiB">
-                                <rect key="frame" x="20" y="121" width="560" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6PE-HY-jiB">
+                                <rect key="frame" x="24" y="121" width="552" height="30"/>
                                 <color key="tintColor" red="0.47961589694023132" green="0.73019099235534668" blue="0.22740326821804047" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="join"/>
@@ -668,7 +669,7 @@
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OIE-nC-3l8" customClass="ETRImageView">
                                                     <rect key="frame" x="8" y="12" width="40" height="40"/>
-                                                    <color key="backgroundColor" red="0.89209157230000002" green="0.87428849939999997" blue="0.83057904240000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="GQ6-zE-j7i"/>
@@ -801,7 +802,7 @@
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="iMp-KU-kPP" customClass="ETRImageView">
                                                     <rect key="frame" x="8" y="8" width="40" height="40"/>
-                                                    <color key="backgroundColor" red="0.89209157230000002" green="0.87428849939999997" blue="0.83057904240000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="DVU-58-0ff"/>
@@ -829,7 +830,7 @@
                                                         </label>
                                                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Stq-Br-JEl" customClass="ETRImageView">
                                                             <rect key="frame" x="16" y="24" width="96" height="96"/>
-                                                            <color key="backgroundColor" red="0.89209157228469849" green="0.87428849935531616" blue="0.83057904243469238" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="96" id="2zH-yD-4G2"/>
@@ -1003,7 +1004,7 @@
                                                         </label>
                                                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FPJ-Si-whn" customClass="ETRImageView">
                                                             <rect key="frame" x="8" y="8" width="96" height="96"/>
-                                                            <color key="backgroundColor" red="0.89209157228469849" green="0.87428849935531616" blue="0.83057904243469238" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="96" id="2Fd-SG-j2Z"/>
@@ -1489,7 +1490,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="mMd-gT-W0i">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JUl-LP-9x9" userLabel="TopBarShadow" customClass="ETRShadowView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="vJz-lS-bBn"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="doDrawShadowDown" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="mMd-gT-W0i">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" red="0.83291178939999999" green="0.91883689170000005" blue="0.73761707539999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -1510,49 +1521,6 @@
                                                         <constraint firstAttribute="height" constant="256" id="UyE-qH-0Bc"/>
                                                     </constraints>
                                                 </imageView>
-                                                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UXN-Q9-oKu" userLabel="DistanceContainer">
-                                                    <rect key="frame" x="520" y="16" width="72" height="24"/>
-                                                    <subviews>
-                                                        <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1500m" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bjj-2T-zMc" userLabel="DistanceText">
-                                                            <rect key="frame" x="2" y="2" width="68" height="20"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PlaceWhite" translatesAutoresizingMaskIntoConstraints="NO" id="O0i-sd-46S">
-                                                            <rect key="frame" x="24" y="0.0" width="24" height="24"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="29" id="Tbe-ha-R0k"/>
-                                                                <constraint firstAttribute="width" secondItem="O0i-sd-46S" secondAttribute="height" multiplier="1:1" id="YcL-kp-nGy"/>
-                                                                <constraint firstAttribute="height" constant="29" id="zwS-VX-9oJ"/>
-                                                            </constraints>
-                                                            <variation key="default">
-                                                                <mask key="constraints">
-                                                                    <exclude reference="Tbe-ha-R0k"/>
-                                                                    <exclude reference="zwS-VX-9oJ"/>
-                                                                </mask>
-                                                            </variation>
-                                                        </imageView>
-                                                    </subviews>
-                                                    <color key="backgroundColor" red="0.46666666670000001" green="0.46666666670000001" blue="0.46666666670000001" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="24" id="Hlh-dg-2dS"/>
-                                                        <constraint firstAttribute="bottom" secondItem="bjj-2T-zMc" secondAttribute="bottom" constant="2" id="L8h-7i-zf0"/>
-                                                        <constraint firstAttribute="width" constant="72" id="Pq9-W0-6ip"/>
-                                                        <constraint firstAttribute="trailing" secondItem="bjj-2T-zMc" secondAttribute="trailing" constant="2" id="Z36-bT-WlX"/>
-                                                        <constraint firstItem="O0i-sd-46S" firstAttribute="height" secondItem="UXN-Q9-oKu" secondAttribute="height" id="ZAl-Oq-8ve"/>
-                                                        <constraint firstAttribute="centerY" secondItem="O0i-sd-46S" secondAttribute="centerY" id="bcS-eK-9al"/>
-                                                        <constraint firstItem="bjj-2T-zMc" firstAttribute="top" secondItem="UXN-Q9-oKu" secondAttribute="top" constant="2" id="kos-Mo-4Qs"/>
-                                                        <constraint firstAttribute="centerX" secondItem="O0i-sd-46S" secondAttribute="centerX" id="lDX-bJ-peB"/>
-                                                        <constraint firstItem="bjj-2T-zMc" firstAttribute="leading" secondItem="UXN-Q9-oKu" secondAttribute="leading" constant="2" id="zMR-rX-qOy"/>
-                                                    </constraints>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                            <integer key="value" value="4"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                    </userDefinedRuntimeAttributes>
-                                                </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3eo-pp-9vo" userLabel="NameShadow" customClass="ETRShadowView">
                                                     <rect key="frame" x="0.0" y="215" width="600" height="32"/>
                                                     <subviews>
@@ -1600,13 +1568,11 @@
                                                 <constraint firstItem="3eo-pp-9vo" firstAttribute="leading" secondItem="ViF-pI-HuN" secondAttribute="leadingMargin" constant="-16" id="9zt-SA-sWl"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="3eo-pp-9vo" secondAttribute="bottom" constant="-12" id="EJH-FB-yWq"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="3eo-pp-9vo" secondAttribute="bottom" constant="-16" id="F10-QT-mig"/>
-                                                <constraint firstItem="UXN-Q9-oKu" firstAttribute="trailing" secondItem="ViF-pI-HuN" secondAttribute="trailingMargin" id="PLT-BA-VPf"/>
                                                 <constraint firstItem="BD2-OP-j9w" firstAttribute="width" secondItem="ViF-pI-HuN" secondAttribute="width" id="WXg-eV-TbW"/>
                                                 <constraint firstItem="3eo-pp-9vo" firstAttribute="centerX" secondItem="BD2-OP-j9w" secondAttribute="centerX" id="YrW-hE-7kF"/>
                                                 <constraint firstItem="BD2-OP-j9w" firstAttribute="top" secondItem="ViF-pI-HuN" secondAttribute="topMargin" constant="-16" id="cjF-tP-wHe"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="3eo-pp-9vo" secondAttribute="bottom" id="fRW-st-hsJ"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="BD2-OP-j9w" secondAttribute="bottom" constant="-1" id="fsb-3C-YQU"/>
-                                                <constraint firstItem="UXN-Q9-oKu" firstAttribute="top" secondItem="ViF-pI-HuN" secondAttribute="topMargin" constant="8" id="gxI-N5-xnP"/>
                                                 <constraint firstItem="3eo-pp-9vo" firstAttribute="width" secondItem="BD2-OP-j9w" secondAttribute="width" id="ijh-DV-y4L"/>
                                             </constraints>
                                             <variation key="default">
@@ -1625,11 +1591,8 @@
                                             </variation>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="distanceContainer" destination="UXN-Q9-oKu" id="l2z-UF-rtR"/>
-                                            <outlet property="distanceView" destination="bjj-2T-zMc" id="JLg-3g-wj0"/>
                                             <outlet property="headerImageView" destination="BD2-OP-j9w" id="uuQ-cJ-v48"/>
                                             <outlet property="nameLabel" destination="8gn-IB-beX" id="a7l-mh-SIX"/>
-                                            <outlet property="placeIcon" destination="O0i-sd-46S" id="7wW-hT-SOz"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="profileValueCell" id="TKE-Fe-CUj" customClass="ETRKeyValueCell">
@@ -1765,12 +1728,12 @@
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BlockButton" rowHeight="66" id="LFI-z7-d3V" userLabel="ProfileBlockCell" customClass="ETRProfileSocialCell">
                                         <rect key="frame" x="0.0" y="388" width="600" height="66"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="LFI-z7-d3V" id="vEP-Ub-FPu">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" tableViewCell="LFI-z7-d3V" id="vEP-Ub-FPu">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="65"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Block User" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cTn-Fo-8Zr">
-                                                    <rect key="frame" x="258" y="22" width="85" height="21"/>
+                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Block User" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cTn-Fo-8Zr">
+                                                    <rect key="frame" x="259" y="22" width="83" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.99075698850000005" green="0.52262759209999998" blue="0.033161621539999998" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -1782,22 +1745,56 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="Location" selectionStyle="default" indentationWidth="10" reuseIdentifier="Location" rowHeight="66" id="ZbJ-yk-pA9" userLabel="LocationCell" customClass="ETRLocationCell">
+                                        <rect key="frame" x="0.0" y="454" width="600" height="66"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="ZbJ-yk-pA9" id="if0-54-e0x">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="65"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="---" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tBw-A5-zHm" userLabel="LocationLabel">
+                                                    <rect key="frame" x="8" y="18" width="21" height="30"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G5s-PK-O8s">
+                                                    <rect key="frame" x="37" y="18" width="555" height="30"/>
+                                                    <state key="normal" title="Share">
+                                                        <color key="titleColor" red="0.2491900622844696" green="0.63991189002990723" blue="0.24708741903305054" alpha="1" colorSpace="calibratedRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="shareButtonPressed:" destination="ZbJ-yk-pA9" eventType="touchUpInside" id="0mU-kn-Vze"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" relation="lessThanOrEqual" secondItem="tBw-A5-zHm" secondAttribute="trailing" id="0aQ-Hu-hAo"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="G5s-PK-O8s" secondAttribute="trailing" id="8xX-57-Hib"/>
+                                                <constraint firstItem="tBw-A5-zHm" firstAttribute="centerY" secondItem="if0-54-e0x" secondAttribute="centerY" id="LKf-5f-Nee"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="tBw-A5-zHm" secondAttribute="bottom" constant="9" id="MeF-DB-3DQ"/>
+                                                <constraint firstAttribute="leadingMargin" secondItem="tBw-A5-zHm" secondAttribute="leading" id="Rxn-Gy-dzk"/>
+                                                <constraint firstItem="G5s-PK-O8s" firstAttribute="leading" secondItem="tBw-A5-zHm" secondAttribute="trailing" constant="8" id="StF-Cg-nXF"/>
+                                                <constraint firstItem="tBw-A5-zHm" firstAttribute="top" secondItem="if0-54-e0x" secondAttribute="topMargin" constant="10" id="aKd-eQ-kEP"/>
+                                                <constraint firstItem="G5s-PK-O8s" firstAttribute="centerY" secondItem="if0-54-e0x" secondAttribute="centerY" id="bN7-iC-Rk1"/>
+                                            </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="0aQ-Hu-hAo"/>
+                                                    <exclude reference="LKf-5f-Nee"/>
+                                                </mask>
+                                            </variation>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="label" destination="tBw-A5-zHm" id="rgZ-Tv-6u3"/>
+                                            <outlet property="shareButton" destination="G5s-PK-O8s" id="lAg-gG-C4N"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="NCa-lz-I1w" id="xoY-wg-fGE"/>
                                     <outlet property="delegate" destination="NCa-lz-I1w" id="0l6-GK-0nt"/>
                                 </connections>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JUl-LP-9x9" userLabel="TopBarShadow" customClass="ETRShadowView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="80" id="vJz-lS-bBn"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="doDrawShadowDown" value="YES"/>
-                                </userDefinedRuntimeAttributes>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -2229,9 +2226,10 @@ use the Block button on their profile or tap and hold one of their messages an
                                                     <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mood_48pt" translatesAutoresizingMaskIntoConstraints="NO" id="87R-IY-EZZ" customClass="ETRImageView">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="87R-IY-EZZ" customClass="ETRImageView">
                                                     <rect key="frame" x="8" y="12" width="40" height="40"/>
-                                                    <color key="backgroundColor" red="0.89209157230000002" green="0.87428849939999997" blue="0.83057904240000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="Xey-O5-XQ9"/>
                                                         <constraint firstAttribute="height" constant="40" id="s2C-HH-fZb"/>
@@ -2295,16 +2293,16 @@ use the Block button on their profile or tap and hold one of their messages an
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="shV-Lb-9zA" userLabel="InfoView" customClass="ETRImageView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="487"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="There are currently no other people online in this place. Invite someone around you to join Realay." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jiX-qe-vbW">
-                                        <rect key="frame" x="8" y="248" width="584" height="41"/>
+                                        <rect key="frame" x="8" y="223" width="584" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.47961589694023132" green="0.73019099235534668" blue="0.22740326821804047" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="jiX-qe-vbW" secondAttribute="trailing" constant="8" id="0Ft-XF-A8j"/>
                                     <constraint firstItem="jiX-qe-vbW" firstAttribute="leading" secondItem="shV-Lb-9zA" secondAttribute="leading" constant="8" id="5tE-0G-2FS"/>
@@ -2314,7 +2312,9 @@ use the Block button on their profile or tap and hold one of their messages an
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Pf7-5i-fe1" firstAttribute="top" secondItem="shV-Lb-9zA" secondAttribute="bottom" id="4YI-jx-hLk"/>
                             <constraint firstItem="shV-Lb-9zA" firstAttribute="width" secondItem="xsv-Ux-7MR" secondAttribute="width" id="Drx-p9-gvR"/>
+                            <constraint firstItem="shV-Lb-9zA" firstAttribute="top" secondItem="3Kk-fz-Ubq" secondAttribute="bottom" id="Gui-zN-EIs"/>
                             <constraint firstItem="Pf7-5i-fe1" firstAttribute="top" secondItem="QRu-Jl-nEe" secondAttribute="bottom" id="QNR-W5-WtT"/>
                             <constraint firstItem="QRu-Jl-nEe" firstAttribute="centerX" secondItem="xsv-Ux-7MR" secondAttribute="centerX" id="Tbb-fN-9VF"/>
                             <constraint firstItem="ncW-HN-DlT" firstAttribute="trailing" secondItem="xsv-Ux-7MR" secondAttribute="trailingMargin" constant="12" id="WP9-Gx-eiU"/>
@@ -2325,6 +2325,12 @@ use the Block button on their profile or tap and hold one of their messages an
                             <constraint firstItem="shV-Lb-9zA" firstAttribute="centerY" secondItem="xsv-Ux-7MR" secondAttribute="centerY" id="u86-Y2-if6"/>
                             <constraint firstItem="Pf7-5i-fe1" firstAttribute="top" secondItem="ncW-HN-DlT" secondAttribute="bottom" constant="4" id="vKi-3C-epi"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="cOh-gU-mNL"/>
+                                <exclude reference="u86-Y2-if6"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Users" image="Users" id="C0U-OW-8GR"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
@@ -2362,9 +2368,10 @@ use the Block button on their profile or tap and hold one of their messages an
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mood_48pt" translatesAutoresizingMaskIntoConstraints="NO" id="2IK-a3-I5I" customClass="ETRImageView">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2IK-a3-I5I" customClass="ETRImageView">
                                                     <rect key="frame" x="8" y="12" width="40" height="40"/>
-                                                    <color key="backgroundColor" red="0.89209157230000002" green="0.87428849939999997" blue="0.83057904240000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="LZZ-9C-An0"/>
                                                         <constraint firstAttribute="height" constant="40" id="moD-vG-rzU"/>
@@ -2377,13 +2384,13 @@ use the Block button on their profile or tap and hold one of their messages an
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uzh-cF-iqT" userLabel="NameLabel">
-                                                    <rect key="frame" x="56" y="12" width="463" height="21"/>
+                                                    <rect key="frame" x="56" y="12" width="460" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YF8-c9-ham" userLabel="LastMsgLabel">
-                                                    <rect key="frame" x="56" y="38" width="466" height="18"/>
+                                                    <rect key="frame" x="56" y="38" width="463" height="18"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="T5R-g9-dVM"/>
                                                     </constraints>
@@ -2397,13 +2404,18 @@ use the Block button on their profile or tap and hold one of their messages an
                                                     </variation>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="--:--" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bjt-7M-8oW" userLabel="TimestampLabel">
-                                                    <rect key="frame" x="530" y="23" width="29" height="18"/>
+                                                    <rect key="frame" x="527" y="23" width="32" height="18"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="29" id="IQC-Hv-uyQ"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="IQC-Hv-uyQ"/>
+                                                        </mask>
+                                                    </variation>
                                                 </label>
                                             </subviews>
                                             <constraints>
@@ -2442,7 +2454,7 @@ use the Block button on their profile or tap and hold one of their messages an
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" red="0.4796158969" green="0.73019099239999996" blue="0.22740326820000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.47961589694023132" green="0.73019099235534668" blue="0.22740326821804047" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="eWb-9Z-rGz" secondAttribute="trailing" constant="8" id="RFy-jt-HPz"/>
                                     <constraint firstItem="eWb-9Z-rGz" firstAttribute="centerY" secondItem="Fzs-gg-dqa" secondAttribute="centerY" id="UjK-9H-cCe"/>
@@ -2497,7 +2509,7 @@ use the Block button on their profile or tap and hold one of their messages an
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" red="0.24919006229999999" green="0.63991189000000004" blue="0.247087419" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="tintColor" red="0.24919006229999999" green="0.63991189000000004" blue="0.247087419" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="barTintColor" red="0.24919006229999999" green="0.63991189000000004" blue="0.247087419" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="selectedImageTintColor" red="0.24919006229999999" green="0.63991189000000004" blue="0.247087419" alpha="1" colorSpace="calibratedRGB"/>
                     </tabBar>
@@ -2541,10 +2553,10 @@ use the Block button on their profile or tap and hold one of their messages an
         <image name="Users" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ZlB-x4-o6Z"/>
-        <segue reference="coN-Mg-Iqa"/>
-        <segue reference="d60-mx-yvB"/>
         <segue reference="E3L-A8-h8N"/>
         <segue reference="yZK-Uh-U9Y"/>
+        <segue reference="mDI-wh-fgl"/>
+        <segue reference="fKn-4Y-peD"/>
+        <segue reference="Sgd-vt-yoh"/>
     </inferredMetricsTieBreakers>
 </document>

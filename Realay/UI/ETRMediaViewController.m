@@ -71,6 +71,7 @@
 
 - (void)image:(UIImage *)image savedInPhotoAlbumWithError:(NSError *)error contextInfo:(void *)info {
     if (error) {
+        NSLog(@"ERROR: image:savedInPhotoAlbumWithError: %@", error);
         [ETRAlertViewFactory showGeneralErrorAlert];
     } else {
         NSString * title = NSLocalizedString(@"Saved_Image", @"Saved Picture");

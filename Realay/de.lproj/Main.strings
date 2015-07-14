@@ -14,8 +14,10 @@
 /* Class = "UILabel"; text = "-"; ObjectID = "8gn-IB-beX"; */
 "8gn-IB-beX.text" = "-";
 
-/* Class = "UILabel"; text = "- -"; ObjectID = "8qF-p3-KCY"; */
-"8qF-p3-KCY.text" = "- -";
+/* Class = "UILabel"; text = "-
+-"; ObjectID = "8qF-p3-KCY"; */
+"8qF-p3-KCY.text" = "-
+-";
 
 /* Class = "UILabel"; text = "If you have used Realay on this device before, you can use your old name to log back into your existing account."; ObjectID = "AfK-7E-FIC"; */
 "AfK-7E-FIC.text" = "If you have used Realay on this device before, you can use your old name to log back into your existing account.";
@@ -59,8 +61,10 @@
 /* Class = "UILabel"; text = "-"; ObjectID = "NTb-YM-Q3k"; */
 "NTb-YM-Q3k.text" = "-";
 
-/* Class = "UILabel"; text = "You have not blocked anyone.\n        If you want to keep someone from contacting you,\nuse the Block button on their profile or tap and hold one of their messages and choose 'Block User'.\n"; ObjectID = "OH4-hT-5Fj"; */
-"OH4-hT-5Fj.text" = "You have not blocked anyone.\n        If you want to keep someone from contacting you,\nuse the Block button on their profile or tap and hold one of their messages and choose 'Block User'.\n";
+/* Class = "UILabel"; text = "You have not blocked anyone.\n        If you want to keep someone from contacting you,\nuse the Block button on their profile
+or tap and hold one of their messages and choose 'Block User'.\n"; ObjectID = "OH4-hT-5Fj"; */
+"OH4-hT-5Fj.text" = "You have not blocked anyone.\n        If you want to keep someone from contacting you,\nuse the Block button on their profile
+or tap and hold one of their messages and choose 'Block User'.\n";
 
 /* Class = "UILabel"; text = "The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password."; ObjectID = "PDY-cq-Qbk"; */
 "PDY-cq-Qbk.text" = "The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password.";
@@ -116,8 +120,11 @@
 /* Class = "UILabel"; text = "Status"; ObjectID = "dHO-F9-yaY"; */
 "dHO-F9-yaY.text" = "Status";
 
-/* Class = "UILabel"; text = "There are currently no other people online in this place. Invite someone around you to join Realay."; ObjectID = "eWb-9Z-rGz"; */
-"eWb-9Z-rGz.text" = "There are currently no other people online in this place. Invite someone around you to join Realay.";
+/* Class = "UILabel"; text = "In this Realay, you currently do not have any private conversations.
+ \n\nChoose a person from the user list to start a 1-on-1 chat."; ObjectID = "eWb-9Z-rGz"; */
+"eWb-9Z-rGz.text" = "In diesem Realay hast du zurzeit keine privaten Unterhaltungen.
+
+Wähle eine Person in der Benutzerliste, um einen Chat zu starten.";
 
 /* Class = "UIBarButtonItem"; title = " "; ObjectID = "erA-j8-Kgo"; */
 "erA-j8-Kgo.title" = " ";
@@ -131,17 +138,26 @@
 /* Class = "UILabel"; text = "Name"; ObjectID = "gUb-kE-k9t"; */
 "gUb-kE-k9t.text" = "Name";
 
-/* Class = "UILabel"; text = "Could not find any Realays found in your vicinity.  Please make sure that your location can be estimated and try again later."; ObjectID = "gmG-rW-C8a"; */
-"gmG-rW-C8a.text" = "Could not find any Realays found in your vicinity.  Please make sure that your location can be estimated and try again later.";
+/* Class = "UILabel"; text = "Could not find any Realays found in your vicinity.
 
-/* Class = "UILabel"; text = "- -"; ObjectID = "gw1-hr-XXy"; */
-"gw1-hr-XXy.text" = "- -";
+Please make sure that your location can be estimated and try again later."; ObjectID = "gmG-rW-C8a"; */
+"gmG-rW-C8a.text" = "Could not find any Realays found in your vicinity.
+
+Please make sure that your location can be estimated and try again later.";
+
+/* Class = "UILabel"; text = "-
+-"; ObjectID = "gw1-hr-XXy"; */
+"gw1-hr-XXy.text" = "-
+-";
 
 /* Class = "UILabel"; text = "Hours"; ObjectID = "jH1-8M-Wxc"; */
 "jH1-8M-Wxc.text" = "Hours";
 
-/* Class = "UILabel"; text = "There are currently no other people online in this place. Invite someone around you to join Realay."; ObjectID = "jiX-qe-vbW"; */
-"jiX-qe-vbW.text" = "There are currently no other people online in this place. Invite someone around you to join Realay.";
+/* Class = "UILabel"; text = "There are currently no other people online in this place.
+Invite someone around you to join Realay."; ObjectID = "jiX-qe-vbW"; */
+"jiX-qe-vbW.text" = "Im Moment ist niemand in diesem Realay online außer Dir.
+
+Lade jemanden in Deiner Nähe ein.";
 
 /* Class = "UIBarButtonItem"; title = "Map"; ObjectID = "kjA-Ae-JCb"; */
 "kjA-Ae-JCb.title" = "Map";

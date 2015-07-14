@@ -23,23 +23,23 @@
 
 long const ETRActionPublicUserID = -10;
 
-static NSManagedObjectContext * ManagedObjectContext;
+//static NSManagedObjectContext * ManagedObjectContext;
 
 static NSEntityDescription * ActionEntity;
 
-static NSString * ActionEntityName;
+//static NSString * ActionEntityName;
 
 static NSEntityDescription * ConversationEntity;
 
-static NSString * ConversationEntityName;
+//static NSString * ConversationEntityName;
 
 static NSEntityDescription * RoomEntity;
 
-static NSString * RoomEntityName;
+//static NSString * RoomEntityName;
 
 static NSEntityDescription * UserEntity;
 
-static NSString * UserEntityName;
+//static NSString * UserEntityName;
 
 
 @implementation ETRCoreDataHelper
@@ -48,41 +48,32 @@ static NSString * UserEntityName;
 #pragma mark Accessories
 
 + (NSManagedObjectContext *)context {
-    if (!ManagedObjectContext) {
-        ETRAppDelegate *app = (ETRAppDelegate *) [[UIApplication sharedApplication] delegate];
-        ManagedObjectContext = [app managedObjectContext];
-    }
-    return ManagedObjectContext;
+//    if (!ManagedObjectContext) {
+//        ETRAppDelegate *app = (ETRAppDelegate *) [[UIApplication sharedApplication] delegate];
+//        ManagedObjectContext = [app managedObjectContext];
+//    }
+//    return ManagedObjectContext;
+    
+    ETRAppDelegate *app = (ETRAppDelegate *) [[UIApplication sharedApplication] delegate];
+    return [app managedObjectContext];
 }
 
 + (NSEntityDescription *)roomEntity {
     if (!RoomEntity) {
-        RoomEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper roomEntityName]
+        NSString * roomEntityName = NSStringFromClass([ETRRoom class]);
+        RoomEntity = [NSEntityDescription entityForName:roomEntityName
                                  inManagedObjectContext:[ETRCoreDataHelper context]];
     }
     return RoomEntity;
 }
 
-+ (NSString *)roomEntityName {
-    if (!RoomEntityName) {
-        RoomEntityName = NSStringFromClass([ETRRoom class]);
-    }
-    return RoomEntityName;
-}
-
 + (NSEntityDescription *)userEntity {
     if (!UserEntity) {
-        UserEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper userEntityName]
+        NSString * userEntityName = NSStringFromClass([ETRUser class]);
+        UserEntity = [NSEntityDescription entityForName:userEntityName
                                  inManagedObjectContext:[ETRCoreDataHelper context]];
     }
     return UserEntity;
-}
-
-+ (NSString *)userEntityName {
-    if (!UserEntityName) {
-        UserEntityName = NSStringFromClass([ETRUser class]);
-    }
-    return UserEntityName;
 }
 
 #pragma mark -
@@ -108,21 +99,16 @@ static NSString * UserEntityName;
 
 + (NSEntityDescription *)actionEntity {
     if (!ActionEntity) {
-        ActionEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper actionEntityName]
+        NSString * actionEntityName = NSStringFromClass([ETRAction class]);
+        ActionEntity = [NSEntityDescription entityForName:actionEntityName
                                    inManagedObjectContext:[ETRCoreDataHelper context]];
     }
     return ActionEntity;
 }
 
-+ (NSString *)actionEntityName {
-    if (!ActionEntityName) {
-        ActionEntityName = NSStringFromClass([ETRAction class]);
-    }
-    return ActionEntityName;
-}
-
 + (ETRAction *)actionWithRemoteID:(NSNumber *)remoteID {
-    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper actionEntityName]];
+    NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
+    [fetch setEntity:[ETRCoreDataHelper actionEntity]];
     [fetch setPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@", remoteID]];
     NSArray *storedActions = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
     
@@ -196,6 +182,10 @@ static NSString * UserEntityName;
             
         case ETRActionCodeUserJoin:
             [sender setInRoom:room];
+            return nil;
+            
+        case ETRActionCodeUserUpdate:
+            [ETRServerAPIHelper getUserWithID:[sender remoteID]];
             return nil;
             
         case ETRActionCodeUserQuit:
@@ -369,7 +359,7 @@ static NSString * UserEntityName;
     NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
                                                                    error:&error];
     if (error) {
-        NSLog(@"ERROR: %@", error);
+        NSLog(@"ERROR: retrySendingQueuedActions: %@", error);
     }
     
     for (NSManagedObject * object in actions) {
@@ -560,11 +550,11 @@ static NSString * UserEntityName;
     return resultsController;
 }
 
-// TODO: Kick after connection inactivity & fix profile updates.
+// TODO: Fix profile updates.
 
 + (void)cleanActions {
-    NSFetchRequest * request;
-    request = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper actionEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper actionEntity]];
     
     // Request all public messages and public media files
     // and anything in the queue that is not a User update.
@@ -581,7 +571,7 @@ static NSString * UserEntityName;
     NSArray * actions = [[ETRCoreDataHelper context] executeFetchRequest:request
                                                                    error:&error];
     if (error) {
-        NSLog(@"ERROR: While cleaning: %@", error);
+        NSLog(@"ERROR: cleanActions: %@", error);
     }
     
     for (NSManagedObject * action in actions) {
@@ -596,17 +586,11 @@ static NSString * UserEntityName;
 
 + (NSEntityDescription *)conversationEntity {
     if (!ConversationEntity) {
-        ConversationEntity = [NSEntityDescription entityForName:[ETRCoreDataHelper conversationEntityName]
+        NSString * conversationEntityName = NSStringFromClass([ETRConversation class]);
+        ConversationEntity = [NSEntityDescription entityForName:conversationEntityName
                                          inManagedObjectContext:[ETRCoreDataHelper context]];
     }
     return ConversationEntity;
-}
-
-+ (NSString *)conversationEntityName {
-    if (!ConversationEntityName) {
-        ConversationEntityName = NSStringFromClass([ETRConversation class]);
-    }
-    return ConversationEntityName;
 }
 
 + (ETRConversation *)conversationWithSender:(ETRUser *)sender recipient:(ETRUser *)recipient {
@@ -626,7 +610,8 @@ static NSString * UserEntityName;
 
 + (ETRConversation *)conversationWithPartner:(ETRUser *)partner {
     // Find the appropriate Conversation by using the partner User's remote ID.
-    NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper conversationEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper conversationEntity]];
     
     ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
     if (!sessionRoom) {
@@ -691,14 +676,14 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    NSFetchRequest *fetchRequest;
-    fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper conversationEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper conversationEntity]];
     
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"inRoom == %@", sessionRoom]];
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"lastMessage.sentDate" ascending:YES]]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"inRoom == %@", sessionRoom]];
+    [request setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"lastMessage.sentDate" ascending:YES]]];
     
     NSFetchedResultsController *resultsController;
-    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+    resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                             managedObjectContext:[ETRCoreDataHelper context]
                                                               sectionNameKeyPath:nil
                                                                        cacheName:nil];
@@ -717,7 +702,7 @@ static NSString * UserEntityName;
     NSError * error;
     NSArray * rooms = [[ETRCoreDataHelper context] executeFetchRequest:request error:&error];
     if (error) {
-        NSLog(@"ERROR: Fetching blocked Users: %@",error);
+        NSLog(@"ERROR: rooms: %@",error);
         return nil;
     } else {
         return rooms;
@@ -746,11 +731,15 @@ static NSString * UserEntityName;
     NSInteger unixStartDate = [(NSString *)[JSONDict objectForKey:@"st"] integerValue];
     if (unixStartDate > 1000) {
         [room setStartDate:[NSDate dateWithTimeIntervalSince1970:unixStartDate]];
+    } else {
+        [room setStartDate:nil];
     }
     
     NSInteger unixEndDate = [(NSString *)[JSONDict objectForKey:@"et"] integerValue];
     if (unixEndDate > 1000) {
         [room setEndDate:[NSDate dateWithTimeIntervalSince1970:unixEndDate]];
+    } else {
+        [room setEndDate:nil];
     }
     
     // We query the database with km values and only use metre integer precision.
@@ -775,7 +764,13 @@ static NSString * UserEntityName;
     NSFetchRequest * fetch = [[NSFetchRequest alloc] init];
     [fetch setEntity:[ETRCoreDataHelper roomEntity]];
     [fetch setPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@", remoteID]];
-    NSArray *existingRooms = [[ETRCoreDataHelper context] executeFetchRequest:fetch error:nil];
+    NSError * error;
+    NSArray *existingRooms = [[ETRCoreDataHelper context] executeFetchRequest:fetch
+                                                                        error:&error];
+    
+    if (error) {
+        NSLog(@"ERROR: roomWithRemoteID:%@: %@", remoteID, error);
+    }
     
     if (existingRooms && [existingRooms count]) {
         if ([existingRooms[0] isKindOfClass:[ETRRoom class]]) {
@@ -829,10 +824,33 @@ static NSString * UserEntityName;
     NSError * error;
     NSArray * blockedUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:&error];
     if (error) {
-        NSLog(@"ERROR: Fetching blocked Users: %@",error);
+        NSLog(@"ERROR: blockedUsers: %@",error);
         return nil;
     } else {
         return blockedUsers;
+    }
+}
+
++ (int)numberOfUsersInSessionRoom {
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
+    if (!sessionRoom) {
+        return 1;
+    }
+    
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper userEntity]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"inRoom == %@", sessionRoom]];
+    [request setIncludesPropertyValues:NO];
+    
+    NSError * error = nil;
+    NSUInteger count = [[ETRCoreDataHelper context] countForFetchRequest:request
+                                                                   error:&error];
+    
+    if (error) {
+        NSLog(@"ERROR: numberOfUsersInSessionRoom: %@", [error description]);
+        return 11;
+    } else {
+        return count + 1;
     }
 }
 
@@ -843,8 +861,8 @@ static NSString * UserEntityName;
         return nil;
     }
     
-    NSFetchRequest * request;
-    request = [[NSFetchRequest alloc] initWithEntityName:[ETRCoreDataHelper userEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper userEntity]];
     
     NSPredicate * predicate;
     predicate = [NSPredicate predicateWithFormat:@"inRoom == %@ AND isBlocked != 1", sessionRoom];
@@ -938,8 +956,8 @@ static NSString * UserEntityName;
     }
     
     // Check the context CoreData, if an object with this remote ID exists.
-    NSFetchRequest * request;
-    request = [NSFetchRequest fetchRequestWithEntityName:[ETRCoreDataHelper userEntityName]];
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper userEntity]];
     [request setPredicate:[NSPredicate predicateWithFormat:@"remoteID = %@", remoteID]];
     NSArray * existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
     

@@ -47,6 +47,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 @property (nonatomic) BOOL doHideInformationView;
 
+@property (nonatomic) BOOL doShowDistances;
+
 @end
 
 
@@ -66,7 +68,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     NSError * error = nil;
     [_fetchedResultsController performFetch:&error];
     if (error) {
-        NSLog(@"ERROR: performFetch: %@", error);
+        NSLog(@"ERROR: %@ viewDidLoad: %@", [[self class] description], error);
     }
     
     // Do not go back.
@@ -92,15 +94,10 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self updateDistanceVisiblity];
+    
     // Reenable the Fetched Results Controller.
     [_fetchedResultsController setDelegate:self];
-    
-    // Perform Fetch
-//    NSError * error = nil;
-//    [_fetchedResultsController performFetch:&error];
-//    if (error) {
-//        NSLog(@"ERROR: performFetch: %@", error);
-//    }
     
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
@@ -181,6 +178,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark NSFetchedResultsControllerDelegate
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [self updateDistanceVisiblity];
     [[self tableView] beginUpdates];
 }
 
@@ -196,16 +194,16 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
       newIndexPath:(NSIndexPath *)newIndexPath {
     
     switch (type) {
-        case NSFetchedResultsChangeInsert: {
+        case NSFetchedResultsChangeInsert:
             [[self tableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
                                     withRowAnimation:UITableViewRowAnimationFade];
             break;
-        }
-        case NSFetchedResultsChangeDelete: {
+            
+        case NSFetchedResultsChangeDelete:
             [[self tableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
                                     withRowAnimation:UITableViewRowAnimationFade];
             break;
-        }
+            
         case NSFetchedResultsChangeUpdate: {
             UITableViewCell * cell = [[self tableView] cellForRowAtIndexPath:indexPath];
             if (cell && [cell isKindOfClass:[ETRRoomCell class]]) {
@@ -213,12 +211,11 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
             }
             break;
         }
-        case NSFetchedResultsChangeMove: {
+        case NSFetchedResultsChangeMove:
             [[self tableView] deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
                                     withRowAnimation:UITableViewRowAnimationFade];
             [[self tableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
                                     withRowAnimation:UITableViewRowAnimationFade];
-        }
     }
 }
 
@@ -261,10 +258,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [[cell titleLabel] setText:[record title]];
     
     if ([[record address] length]) {
-//        [[cell keyLabel] setText:NSLocalizedString(@"Address", @"Physical address")];
         [[cell addressLabel] setText:[record address]];
     } else {
-//        [[cell keyLabel] setText:NSLocalizedString(@"Coordinates", @"GPS Coordinates")];
         NSString * coordinates;
         coordinates = [NSString stringWithFormat:@"%@, %@", [record longitude], [record latitude]];
         [[cell addressLabel] setText:coordinates];
@@ -274,20 +269,26 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     NSString * size = [ETRFormatter formattedIntLength:diameter];
     [[cell sizeLabel] setText:size];
     NSString * timeSpan = [ETRFormatter timeSpanForStartDate:[record startDate]
-                                                             endDate:[record endDate]];
+                                                     endDate:[record endDate]];
     [[cell hoursLabel] setText:timeSpan];
     
     // Display the distance to the closest region point.
-    int distance = (int) [[record distance] integerValue];
-    if (distance < 20) {
-        [[cell distanceLabel] setHidden:YES];
-        [[cell placeIcon] setHidden:NO];
+    if (_doShowDistances) {
+        [[cell distanceBadge] setHidden:NO];
+        
+        int distance = (int) [[record distance] integerValue];
+        if (distance < 20) {
+            [[cell distanceLabel] setHidden:YES];
+            [[cell placeIcon] setHidden:NO];
+        } else {
+            [[cell placeIcon] setHidden:YES];
+            [[cell distanceLabel] setHidden:NO];
+            NSString * formattedDistance;
+            formattedDistance = [ETRFormatter formattedIntLength:distance];
+            [[cell distanceLabel] setText:formattedDistance];
+        }
     } else {
-        [[cell placeIcon] setHidden:YES];
-        [[cell distanceLabel] setHidden:NO];
-        NSString * formattedDistance;
-        formattedDistance = [ETRFormatter formattedIntLength:distance];
-        [[cell distanceLabel] setText:formattedDistance];
+        [[cell distanceBadge] setHidden:YES];
     }
     
     if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
@@ -306,6 +307,14 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     }
 }
 
+- (void)updateDistanceVisiblity {
+    if ([ETRLocationManager location]) {
+        _doShowDistances = [ETRLocationManager didAuthorizeWhenInUse];
+    } else {
+        _doShowDistances = NO;
+    }
+}
+
 #pragma mark -
 #pragma mark UITableViewDelegate
 
@@ -316,7 +325,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
     [[ETRSessionManager sharedManager] prepareSessionInRoom:record navigationController:[self navigationController]];
     
-    NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
+//    NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
     
     [self performSegueWithIdentifier:ETRSegueRoomsToMap sender:record];
 }
@@ -327,6 +336,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 - (void)refreshRoomList {
     [[ETRLocationManager sharedManager] launch:nil];
     [ETRServerAPIHelper updateRoomListWithCompletionHandler:^(BOOL didReceive) {
+        
         // If no Rooms were received, end refreshing immediately.
         // Otherwise the Table update will end the refresh.
         [[self refreshIndicator] stopAnimating];

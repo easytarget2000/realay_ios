@@ -10,6 +10,7 @@
 
 #import "ETRDefaultsHelper.h"
 #import "ETRMapViewController.h"
+#import "ETRNotificationManager.h"
 #import "ETRFormatter.h"
 #import "ETRRoom.h"
 #import "ETRSessionManager.h"
@@ -17,6 +18,8 @@
 
 
 static ETRBouncer * sharedInstance = nil;
+
+static NSString * KickTime;
 
 static NSTimeInterval const ETRTimeIntervalFiveMinutes = 5.0 * 60.0;
 
@@ -110,8 +113,8 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 
 - (BOOL)showPendingAlertViewsInViewController:(UIViewController *)viewController {
     _viewController = viewController;
-    if (_hasPendingAlertView) {
-        [self showPendingAlert];
+    if (_hasPendingAlertView && _viewController) {
+        [self notifyUser];
         return YES;
     } else {
         return NO;
@@ -171,6 +174,10 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 }
 
 - (void)kickForReason:(short)reason calledBy:(NSString *)caller {
+    if (_hasPendingKick) {
+        return;
+    }
+    
 #ifdef DEBUG
     NSLog(@"Kicking. Reason: %d, Caller: %@", reason, caller);
 #endif
@@ -178,10 +185,10 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
     _hasPendingKick = YES;
     _lastReason = reason;
 
-    ETRRoom * lastRoom = [ETRSessionManager sessionRoom];
+//    ETRRoom * lastRoom = [ETRSessionManager sessionRoom];
     [[ETRSessionManager sharedManager] endSession];
-    [[ETRSessionManager sharedManager] prepareSessionInRoom:lastRoom
-                                       navigationController:[_viewController navigationController]];
+//    [[ETRSessionManager sharedManager] prepareSessionInRoom:lastRoom
+//                                       navigationController:[_viewController navigationController]];
     [self notifyUser];
 }
 
@@ -208,16 +215,16 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 #pragma mark -
 #pragma mark Notificiations & AlertViews
 
-- (void)notifyUser {    
-    if (_viewController) {
-        [self showPendingAlert];
-    } else {
-        _hasPendingAlertView = YES;
+//- (void)notifyUser {    
+//    if (_viewController) {
+//        [self showPendingAlert];
+//    } else {
+//        _hasPendingAlertView = YES;
 //        [self showNotification];
-    }
-}
+//    }
+//}
 
-- (void)showPendingAlert {
+- (void)notifyUser  {
     NSString * title;
     NSString * message;
     NSString * firstButton;
@@ -238,8 +245,8 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
                 messageFormat = NSLocalizedString(@"Return_until", @"Come back until %@");
                 message = [NSString stringWithFormat:messageFormat, [self kickTime]];
                 
-                secondButton = NSLocalizedString(@"Map", @"Session Map");
-                firstButton = NSLocalizedString(@"Location_Settings", @"Preferences");
+                firstButton = NSLocalizedString(@"Map", @"Session Map");
+                secondButton = NSLocalizedString(@"Location_Settings", @"Preferences");
             }
             break;
             
@@ -275,15 +282,38 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
             return;
     }
 
-    UIAlertView * alert;
-    alert = [[UIAlertView alloc] initWithTitle:title
-                                       message:message
-                                      delegate:self
-                             cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                             otherButtonTitles:firstButton, secondButton, nil];
-    [alert setTag:_lastReason];
-    [alert show];
-    _hasPendingAlertView = NO;
+    // Show the AlertView directly if a ViewController has been given,
+    // which means the app is in the foreground.
+    // Otherwise try to show a notification.
+    if (_viewController) {
+        UIAlertView * alert;
+        alert = [[UIAlertView alloc] initWithTitle:title
+                                           message:message
+                                          delegate:self
+                                 cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                 otherButtonTitles:firstButton, secondButton, nil];
+        [alert setTag:_lastReason];
+        [alert show];
+        
+        _hasPendingAlertView = NO;
+    } else {
+        [[ETRNotificationManager sharedManager] updateAllowedNotificationTypes];
+        
+        if ([[ETRNotificationManager sharedManager] didAllowAlerts]) {
+            UILocalNotification * notification = [[UILocalNotification alloc] init];
+            [notification setAlertTitle:title];
+            [notification setAlertBody:message];
+            
+            [[ETRNotificationManager sharedManager] addSoundToNotification:notification];
+            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
+        
+        _hasPendingAlertView = YES;
+    }
+}
+
+- (void)showNotification {
+
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -310,18 +340,29 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 #pragma mark -
 #pragma mark Date Helper
 
+- (NSString *)locationKickTime {
+    if (_lastReason == ETRKickReasonLocation) {
+        return [self kickTime];
+    } else {
+        return nil;
+    }
+}
+
 /**
  * Uses the warning intervals to calculate when the final warning will be displayed
  * and stores the value as a readable HH:MM string
  */
 - (NSString *)kickTime {
-    CFTimeInterval warningIntervalSum = 0.0;
-    for (NSNumber * interval in [ETRBouncer warningIntervals]) {
-        warningIntervalSum += [interval doubleValue];
+    if (!KickTime) {
+        CFTimeInterval warningIntervalSum = 0.0;
+        for (NSNumber * interval in [ETRBouncer warningIntervals]) {
+            warningIntervalSum += [interval doubleValue];
+        }
+        
+        CFAbsoluteTime kickTime = CFAbsoluteTimeGetCurrent() + warningIntervalSum;
+        KickTime = [ETRFormatter formattedDate:[NSDate dateWithTimeIntervalSinceReferenceDate:kickTime]];
     }
-    
-    CFAbsoluteTime kickTime = CFAbsoluteTimeGetCurrent() + warningIntervalSum;
-    return [ETRFormatter formattedDate:[NSDate dateWithTimeIntervalSinceReferenceDate:kickTime]];
+    return KickTime;
 }
 
 /**

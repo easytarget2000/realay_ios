@@ -77,6 +77,7 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     [[ETRBouncer sharedManager] resetSession];
     
     [self startDeepUpdateTimer];
+    [[ETRLocationManager sharedManager] launch:nil];
     return YES;
 }
 

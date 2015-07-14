@@ -31,7 +31,7 @@ static NSString *const ETRSegueSessionTabsToSettings = @"SessionTabsToSettings";
     
     // The title is the current Room
     // and the back-button TO this View Controller is supposed to be empty.
-    [self setTitle:[[ETRSessionManager sessionRoom] title]];
+//    [self setTitle:[[ETRSessionManager sessionRoom] title]];
 
     NSString * backButtonTitle = NSLocalizedString(@"Users", @"List of Users");
     [[[self navigationItem] backBarButtonItem] setTitle:backButtonTitle];

@@ -137,6 +137,9 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
                          animateFromTop:NO
                              completion:^{
                                  if (_isCanceled) {
+#ifdef DEBUG
+                                     NSLog(@"Login animation completed while login was canceled."); 
+#endif
                                      [[self navigationController] popToRootViewControllerAnimated:YES];
                                  } else {
                                      [super pushToPublicConversationViewController];

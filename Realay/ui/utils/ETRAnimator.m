@@ -95,16 +95,14 @@ NSTimeInterval const ETRTimeIntervalAnimationDefault = 0.4;
                          }
                      }
                      completion:^(BOOL finished) {
-                         if (finished) {
-                             if(!doAppear) {
-                                 [view setHidden:YES];
-                             }
-                             
-                             [view setCenter:originalCenter];
-                             
-                             if (completion) {
-                                 completion();
-                             }
+                         if(!doAppear) {
+                             [view setHidden:YES];
+                         }
+                         
+                         [view setCenter:originalCenter];
+                         
+                         if (completion) {
+                             completion();
                          }
                      }];
 }
@@ -114,14 +112,17 @@ NSTimeInterval const ETRTimeIntervalAnimationDefault = 0.4;
       completion:(void(^)(void))completion {
 
     if (doAppear) {
-        if (![view isHidden] && [view alpha] > 0.9f) {
-            if (completion) {
-                completion();
-            }
-            return;
-        }
+//        if (![view isHidden] && [view alpha] > 0.9f) {
+//            if (completion) {
+//                completion();
+//            }
+//            return;
+//        }
         
-        [view setHidden:NO];
+        if ([view isHidden]) {
+            [view setAlpha:0.0f];
+            [view setHidden:NO];
+        }
         
         [UIView animateWithDuration:ETRTimeIntervalAnimationDefault
                               delay:0.0
@@ -136,6 +137,9 @@ NSTimeInterval const ETRTimeIntervalAnimationDefault = 0.4;
                          }];
     } else {
         if ([view isHidden]) {
+            if (completion) {
+                completion();
+            }
             return;
         }
         

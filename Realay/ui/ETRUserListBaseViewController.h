@@ -14,7 +14,7 @@
 @interface ETRUserListBaseViewController : ETRBaseViewController
 <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
 
-@property (weak, nonatomic) IBOutlet UIView * infoView;
+@property (weak, nonatomic) UIView * infoView;
 
 @property (nonatomic) BOOL doShowConversations;
 

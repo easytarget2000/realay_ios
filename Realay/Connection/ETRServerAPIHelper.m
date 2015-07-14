@@ -404,7 +404,7 @@ static NSMutableArray *connections;
     NSData * bodyData = [bodyString dataUsingEncoding:NSASCIIStringEncoding];
     
 #ifdef DEBUG
-    NSLog(@"API: %@", URLString);
+    NSLog(@"API: %@?%@", URLString, bodyString);
 #endif
 
     [request setHTTPBody:[NSMutableData dataWithData:bodyData]];
@@ -794,7 +794,7 @@ static NSMutableArray *connections;
                          
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {
                              [sessionRoom setUsers:[NSSet set]];
-                             [ETRCoreDataHelper saveContext];
+                             //                             [ETRCoreDataHelper saveContext];
                              
                              NSArray *jsonUsers = (NSArray *) receivedObject;
                              for (NSObject * jsonUser in jsonUsers) {
@@ -806,7 +806,7 @@ static NSMutableArray *connections;
                                      }
                                  }
                              }
-                                                          
+                             
                              if (handler) {
                                  handler(YES);
                              }
@@ -894,6 +894,7 @@ static NSMutableArray *connections;
     }
     
     if ([ETRServerAPIHelper didStartConnection:connectionID]) {
+        handler(@(NO));
         return;
     }
     

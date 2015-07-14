@@ -41,14 +41,7 @@
 @synthesize location = _location;
 
 - (NSString *)description {
-//    return [NSString stringWithFormat:@"%@: %@, %@ until %@, %@ users.",
-//            [self remoteID],
-//            [self title],
-//            [self startDate],
-//            [self endDate],
-//            [self queryUserCount]];
-    
-    return [NSString stringWithFormat:@"%@: %@, %@ m.",
+    return [NSString stringWithFormat:@"%@: %@, %@m",
             [self remoteID],
             [self title],
             [self distance]];

@@ -286,6 +286,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
         return;
     }
     
+    
     NSNumber * numberOfNotifs = [_notificationCounters objectForKey:counterKey];
     if (!numberOfNotifs) {
         numberOfNotifs = @(1);
@@ -308,10 +309,6 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     // Update the App Badge and in turn the Notification settings
     // before showing the desired and appropriate information.
     [self updateBadgeNumber];
-    
-    if (![[ETRNotificationManager sharedManager] didAllowAlerts]) {
-        return;
-    }
     
     UILocalNotification * notification = [[UILocalNotification alloc] init];
     
@@ -344,17 +341,14 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 //                // if private message notifications have been disabled in the Settings.
 //                return;
 //            }
-        
+        [[ETRNotificationManager sharedManager] addSoundToNotification:notification];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     }
-    
-    [[ETRNotificationManager sharedManager] playSoundForNotification:notification];
-    
-    [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
 }
 
 - (void)updateBadgeNumber {
     [[ETRNotificationManager sharedManager] updateAllowedNotificationTypes];
-    if (![[ETRNotificationManager sharedManager] didAllowBadges]) {
+    if ([[ETRNotificationManager sharedManager] didAllowBadges]) {
         NSInteger number = [self numberOfPrivateNotifs] + [self numberOfOtherNotifs];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:number];
     }

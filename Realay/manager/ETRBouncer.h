@@ -47,4 +47,6 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
 
 - (void)cancelLocationWarnings;
 
+- (NSString *)locationKickTime;
+
 @end

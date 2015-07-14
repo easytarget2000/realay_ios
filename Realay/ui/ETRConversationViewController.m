@@ -304,13 +304,19 @@ UITextFieldDelegate
 
 - (BOOL)updateConversationStatus {
     if (_partner) {
-        if (![[ETRSessionManager sessionRoom] isEqual:[_partner inRoom]]) {
-            [[self inputCover] setHidden:NO];
+        ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
+        if (![sessionRoom isEqual:[_partner inRoom]]) {
+            NSString * hasLeftFormat = NSLocalizedString(@"has_left", "%@ has left %@.");
+            NSString * hasLeftText;
+            hasLeftText = [NSString stringWithFormat:hasLeftFormat, [_partner name], [sessionRoom title]];
+            [[self inputCover] setText:hasLeftText];
+            [ETRAnimator fadeView:[self inputCover] doAppear:YES completion:nil];
             return NO;
         }
     }
     
-    [[self inputCover] setHidden:YES];
+    [ETRAnimator fadeView:[self inputCover] doAppear:NO completion:nil];
+//    [[self inputCover] setHidden:YES];
     return YES;
 }
 

@@ -28,25 +28,25 @@
     {
       "size" : "57x57",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_white.png",
+      "filename" : "realay_appicon_v3_57pt.png",
       "scale" : "1x"
     },
     {
       "size" : "57x57",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_white@2x-1.png",
+      "filename" : "realay_appicon_v3_57pt@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_white_02_120px.png",
+      "filename" : "realay_appicon_v3_120pt.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_white_02_180px.png",
+      "filename" : "realay_appicon_v3_180pt.png",
       "scale" : "3x"
     }
   ],

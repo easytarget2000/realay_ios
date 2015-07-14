@@ -137,6 +137,8 @@ extern long const ETRActionPublicUserID;
 
 + (NSArray *)blockedUsers;
 
++ (int)numberOfUsersInSessionRoom;
+
 + (NSFetchedResultsController *)userListResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;
 
 + (NSFetchedResultsController *)blockedUserListControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate;

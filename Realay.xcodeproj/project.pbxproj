@@ -14,6 +14,7 @@
 		D09D36591B2F43BC00930E02 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D09D36581B2F43BC00930E02 /* Settings.bundle */; };
 		D0A3494E1B361E3C0031FCEC /* ETRNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */; };
 		D0BA69701B2F79FA001262FF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0BA696F1B2F79FA001262FF /* MapKit.framework */; };
+		D0C12A051B54525100634A20 /* ETRLocationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C12A041B54525100634A20 /* ETRLocationCell.m */; };
 		D0CBFDD21B334B1700E98E49 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */; };
 		D0D54B3D1B2F1F9100F8875B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3C1B2F1F9100F8875B /* main.m */; };
 		D0D54B401B2F1F9100F8875B /* ETRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3F1B2F1F9100F8875B /* ETRAppDelegate.m */; };
@@ -87,6 +88,8 @@
 		D0A3494C1B361E3C0031FCEC /* ETRNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRNotificationManager.h; sourceTree = "<group>"; };
 		D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRNotificationManager.m; sourceTree = "<group>"; };
 		D0BA696F1B2F79FA001262FF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		D0C12A031B54525100634A20 /* ETRLocationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationCell.h; sourceTree = "<group>"; };
+		D0C12A041B54525100634A20 /* ETRLocationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationCell.m; sourceTree = "<group>"; };
 		D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		D0D54B381B2F1F9100F8875B /* Realay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Realay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0D54B3C1B2F1F9100F8875B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -334,6 +337,8 @@
 				D0D54B7E1B2F218300F8875B /* ETRHeaderCell.m */,
 				D0D54B811B2F218300F8875B /* ETRInformationCell.h */,
 				D0D54B821B2F218300F8875B /* ETRInformationCell.m */,
+				D0C12A031B54525100634A20 /* ETRLocationCell.h */,
+				D0C12A041B54525100634A20 /* ETRLocationCell.m */,
 				D0D54B831B2F218300F8875B /* ETRKeyValueCell.h */,
 				D0D54B841B2F218300F8875B /* ETRKeyValueCell.m */,
 				D0D54B851B2F218300F8875B /* ETRKeyValueEditorCell.h */,
@@ -513,6 +518,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C12A051B54525100634A20 /* ETRLocationCell.m in Sources */,
 				D0D54BBE1B2F218300F8875B /* ETRReceivedMediaCell.m in Sources */,
 				D0D54BB31B2F218300F8875B /* ETRUIConstants.m in Sources */,
 				D0D54BED1B2F219500F8875B /* ETRCoreDataHelper.m in Sources */,

@@ -12,6 +12,8 @@
 
 "Added_User" = "Added %@";
 
+"Ask_someone" = "Ask someone around you for the password to join.";
+
 "Background_Updates" = "Background Updates";
 
 "Background_updates_disabled" = "Please allow Realay to update messages and locations in the background.\n\nFeel free to join again.";
@@ -43,6 +45,8 @@
 "Copy_Message" = "Copy Message";
 
 "Current_distance" = "You are currently %@ away.";
+
+"Currently_here" = "You are here.";
 
 "Delete_Conversation" = "Delete Conversation";
 

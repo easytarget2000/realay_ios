@@ -25,9 +25,9 @@ static ETRLocationManager * SharedInstance;
 
 @interface ETRLocationManager()
 
-@property (nonatomic) BOOL doUpdateFast;
+@property (nonatomic) BOOL isUpdatingLocation;
 
-@property (nonatomic) BOOL isInSessionRegion;
+@property (nonatomic) BOOL isMonitoringSignificantLocationChanges;
 
 @end
 
@@ -37,21 +37,21 @@ static ETRLocationManager * SharedInstance;
 @synthesize location = _location;
 
 + (void)initialize {
-    static BOOL initialized = NO;
-    if (!initialized) {
-        initialized = YES;
+//    static BOOL initialized = NO;
+    if (!SharedInstance) {
+//        initialized = YES;
         SharedInstance = [[ETRLocationManager alloc] init];
         [SharedInstance setDelegate:SharedInstance];
-        [SharedInstance launch:nil];
         
         dispatch_async(
                        dispatch_get_main_queue(),
                        ^{
+                           [SharedInstance launch:nil];
                            [NSTimer scheduledTimerWithTimeInterval:ETRScheduleInterval
                                                             target:SharedInstance
                                                           selector:@selector(launch:)
                                                           userInfo:nil
-                                                           repeats:NO];
+                                                           repeats:YES];
                        });
     }
 }
@@ -92,9 +92,6 @@ static ETRLocationManager * SharedInstance;
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     }
     
-    [self stopUpdatingLocation];
-    [self startMonitoringSignificantLocationChanges];
-    
     // Update the distance to the known Rooms.
     BOOL didChangeDistance = NO;
     for (ETRRoom * room in [ETRCoreDataHelper rooms]) {
@@ -117,6 +114,22 @@ static ETRLocationManager * SharedInstance;
     if ([[ETRSessionManager sharedManager] didStartSession]) {
         [self updateSessionRegionDistance];
         [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
+        
+        if (!_isUpdatingLocation) {
+            [self startUpdatingLocation];
+            _isUpdatingLocation = YES;
+            _isMonitoringSignificantLocationChanges = NO;
+        }
+    } else {
+        if (_isUpdatingLocation) {
+            [self stopUpdatingLocation];
+            _isUpdatingLocation = NO;
+        }
+        
+        if (!_isMonitoringSignificantLocationChanges) {
+            [self startMonitoringSignificantLocationChanges];
+            _isMonitoringSignificantLocationChanges = YES;
+        }
     }
 }
 
@@ -135,31 +148,30 @@ static ETRLocationManager * SharedInstance;
 }
 
 - (BOOL)updateSessionRegionDistance {
-    BOOL wasInSessionRegion = _isInSessionRegion;
+    //    BOOL wasInSessionRegion = _isInSessionRegion;
+    BOOL isInSessionRegion;
     
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     
     if (sessionRoom && [ETRLocationManager didAuthorizeWhenInUse]) {
         int roomDistance = (int) [[sessionRoom distance] integerValue];
-        _isInSessionRegion = roomDistance < 10;
-        if (roomDistance > 4500) {
+        if (roomDistance > 2000) {
             [[ETRBouncer sharedManager] kickForReason:ETRKickReasonLocation calledBy:@"farAway"];
             return NO;
         }
+        isInSessionRegion = roomDistance < 10;
     } else {
-        _isInSessionRegion = NO;
-    }
-        
-    if (wasInSessionRegion != _isInSessionRegion) {
-        if (_isInSessionRegion) {
-            [[ETRBouncer sharedManager] cancelLocationWarnings];
-        } else {
-            [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation
-                                       allowDuplicate:NO];
-        }
+        isInSessionRegion = NO;
     }
     
-    return _isInSessionRegion;
+    if (isInSessionRegion) {
+        [[ETRBouncer sharedManager] cancelLocationWarnings];
+    } else {
+        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation
+                                   allowDuplicate:NO];
+    }
+    
+    return isInSessionRegion;
 }
 
 + (BOOL)didAuthorizeAlways {
@@ -195,7 +207,8 @@ static ETRLocationManager * SharedInstance;
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     }
     
-    [super startUpdatingLocation];
+    _isUpdatingLocation = YES;
+    [self startUpdatingLocation];
 }
 
 #pragma mark -
@@ -215,7 +228,21 @@ static ETRLocationManager * SharedInstance;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+#ifdef DEBUG
     NSLog(@"ERROR: LocationManager failed: %@", [error description]);
+#endif
+}
+
+- (void)locationManagerDidPauseLocationUpdates:(nonnull CLLocationManager *)manager {
+#ifdef DEBUG
+    NSLog(@"locationManagerDidPauseLocationUpdates:");
+#endif
+}
+
+- (void)locationManagerDidResumeLocationUpdates:(nonnull CLLocationManager *)manager {
+#ifdef DEBUG
+    NSLog(@"locationManagerDidResumeLocationUpdates:");
+#endif
 }
 
 ///**

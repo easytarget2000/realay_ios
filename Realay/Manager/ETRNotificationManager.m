@@ -57,7 +57,7 @@ static ETRNotificationManager * sharedInstance = nil;
 /**
  
  */
-- (void)playSoundForNotification:(UILocalNotification *)notification {
+- (void)addSoundToNotification:(UILocalNotification *)notification {
     if (_didAllowSounds) {
         [notification setSoundName:UILocalNotificationDefaultSoundName];
     }

@@ -65,7 +65,7 @@ static NSTimeInterval const ETRTimeIntervalYear = 180.0 * 20.0 * 60.0 * 60.0;
     return [dateFormatter stringFromDate:date];
 }
 
-/*
+/**
  Creates a stylised text which describes a time span
  between two, optional Date objects;
  Either Date may be nil
