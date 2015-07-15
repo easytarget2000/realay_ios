@@ -372,9 +372,7 @@ UITextFieldDelegate
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [[self messagesTableView] endUpdates];
-    
-//    [self scrollDownTableViewAnimated];
-    _didFirstScrolldown = YES;
+    [self scrollDownTableViewAnimated];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller
@@ -398,7 +396,6 @@ UITextFieldDelegate
         }
         case NSFetchedResultsChangeUpdate: {
             [[self messagesTableView] cellForRowAtIndexPath:indexPath];
-//            NSLog(@"Updated message record: %ld, %ld, %@", [indexPath row], [newIndexPath row], anObject);
             break;
         }
         case NSFetchedResultsChangeMove: {
@@ -408,8 +405,6 @@ UITextFieldDelegate
                                             withRowAnimation:UITableViewRowAnimationFade];
         }
     }
-//    [[self messagesTableView] reloadData];
-//    [self scrollDownTableViewAnimated];
 }
 
 #pragma mark -
@@ -583,12 +578,6 @@ UITextFieldDelegate
                dispatch_get_main_queue(),
                scrollBlock
                );
-    
-//    dispatch_after(
-//                   1200,
-//                   dispatch_get_main_queue(),
-//                   scrollBlock
-//                   );
 }
 
 #pragma mark -
@@ -789,6 +778,7 @@ UITextFieldDelegate
         UIImagePickerController * picker = [[UIImagePickerController alloc] init];
         [picker setDelegate:self];
         [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
+        [picker setAllowsEditing:YES];
         
         [self presentViewController:picker animated:YES completion:nil];
     }];
@@ -852,9 +842,9 @@ UITextFieldDelegate
     [UIView commitAnimations];
 }
 
-- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    [self scrollDownTableViewAnimated];
-}
+//- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
+//    [self scrollDownTableViewAnimated];
+//}
 
 #pragma mark - UITextFieldDelegate
 

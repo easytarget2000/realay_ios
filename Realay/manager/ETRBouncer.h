@@ -32,13 +32,6 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
 - (void)acknowledgeFailedConnection;
 
 #pragma mark -
-#pragma mark App Foreground/Background
-
-- (void)didEnterBackground;
-
-- (BOOL)showPendingAlertViewsInViewController:(UIViewController *)viewController;
-
-#pragma mark -
 #pragma mark Warnings & Kicks
 
 - (void)kickForReason:(short)reason calledBy:(NSString *)caller;
@@ -46,6 +39,8 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
 - (void)warnForReason:(short)reason allowDuplicate:(BOOL)doAllowDuplicate;
 
 - (void)cancelLocationWarnings;
+
+- (BOOL)showPendingAlertViewInViewController:(UIViewController *)viewController;
 
 - (NSString *)locationKickTime;
 

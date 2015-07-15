@@ -69,19 +69,19 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 #pragma mark Runtime Constants
 
 + (NSArray *)warningIntervals {
-//    return [NSArray arrayWithObjects:
-//            @(10.0),
-//            @(10.0),
-//            @(10.0),
-//            @(10.0),
-//            nil];
-    
     return [NSArray arrayWithObjects:
-            @(ETRTimeIntervalTenMinutes),
-            @(ETRTimeIntervalTenMinutes),
-            @(ETRTimeIntervalFiveMinutes),
-            @(ETRTimeIntervalFiveMinutes),
+            @(30.0),
+            @(30.0),
+            @(30.0),
+            @(30.0),
             nil];
+    
+//    return [NSArray arrayWithObjects:
+//            @(ETRTimeIntervalTenMinutes),
+//            @(ETRTimeIntervalTenMinutes),
+//            @(ETRTimeIntervalFiveMinutes),
+//            @(ETRTimeIntervalFiveMinutes),
+//            nil];
 }
 
 #pragma mark -
@@ -92,6 +92,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
     _numberOfWarnings = 0;
     _hasPendingKick = NO;
     _lastConnectionTime = CFAbsoluteTimeGetCurrent();
+    KickTime = nil;
 }
 
 - (void)acknowledgeConnection {
@@ -107,13 +108,8 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 #pragma mark -
 #pragma mark App Foreground/Background
 
-- (void)didEnterBackground {
-    _viewController = nil;
-}
-
-- (BOOL)showPendingAlertViewsInViewController:(UIViewController *)viewController {
-    _viewController = viewController;
-    if (_hasPendingAlertView && _viewController) {
+- (BOOL)showPendingAlertViewInViewController:(UIViewController *)viewController {
+    if (_hasPendingAlertView) {
         [self notifyUser];
         return YES;
     } else {
@@ -215,16 +211,18 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 #pragma mark -
 #pragma mark Notificiations & AlertViews
 
-//- (void)notifyUser {    
-//    if (_viewController) {
-//        [self showPendingAlert];
-//    } else {
-//        _hasPendingAlertView = YES;
-//        [self showNotification];
-//    }
-//}
-
 - (void)notifyUser  {
+    _hasPendingAlertView = YES;
+    
+    UIApplicationState state = [UIApplication sharedApplication].applicationState;
+    BOOL isInForeground = (state == UIApplicationStateActive);
+    
+    if (!isInForeground && _numberOfWarnings > 0 && !_hasPendingKick) {
+        // If the app is not in the foreground,
+        // only show one warning notification.
+        return;
+    }
+    
     NSString * title;
     NSString * message;
     NSString * firstButton;
@@ -285,7 +283,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
     // Show the AlertView directly if a ViewController has been given,
     // which means the app is in the foreground.
     // Otherwise try to show a notification.
-    if (_viewController) {
+    if (isInForeground) {
         UIAlertView * alert;
         alert = [[UIAlertView alloc] initWithTitle:title
                                            message:message
@@ -307,13 +305,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
             [[ETRNotificationManager sharedManager] addSoundToNotification:notification];
             [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
         }
-        
-        _hasPendingAlertView = YES;
     }
-}
-
-- (void)showNotification {
-
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {

@@ -56,7 +56,7 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 5.0 * 60.0;
     // Let the LocationManager check its Authorization to handle possible changes.
     [ETRLocationManager isInSessionRegion];
     
-    if ([[ETRBouncer sharedManager] showPendingAlertViewsInViewController:self]) {
+    if ([[ETRBouncer sharedManager] showPendingAlertViewInViewController:self]) {
         LastSettingsAlert = CFAbsoluteTimeGetCurrent();
         return;
     }

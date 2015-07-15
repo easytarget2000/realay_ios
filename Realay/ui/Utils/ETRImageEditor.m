@@ -12,15 +12,12 @@
 #import "ETRImageLoader.h"
 #import "ETRImageView.h"
 
-static CGSize const ETRHiResImageSize = {
-    .width = 1080.0f,
-    .height = 1080.0f
-};
 
-static CGSize const ETRLoResImageSize = {
-    .width = 128.0f,
-    .height = 128.0f
-};
+static CGFloat const ETRSideLengthImageMax = 1440.0f;
+
+static CGFloat const ETRSideLengthImageLo = 128.0f;
+
+static CGFloat const ETRSideLengthImageHi = 1080.0f;
 
 static CGFloat const ETRHiResImageQuality = 0.9f;
 
@@ -84,25 +81,27 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         }
     }
     
-//    NSData * data = UIImagePNGRepresentation(pickedImage);
-//    
-//    UIImage * tempImage = [UIImage imageWithData:data];
-//    UIImage * fixedOrientationImage = [UIImage imageWithCGImage:[tempImage CGImage]
-//                                                         scale:[pickedImage scale]
-//                                                   orientation:UIImageOrientationUp];
-//    return fixedOrientationImage;
     return pickedImage;
 }
 
 + (NSData *)cropHiResImage:(UIImage *)image writeToFile:(NSString *)filePath {
-    UIImage * hiResImage = [ETRImageEditor scaleCropImage:image toSize:ETRHiResImageSize];
+//    UIImage * hiResImage = [ETRImageEditor scaleCropImage:image toSize:ETRHiResImageSize];
+    
+    UIImage * hiResImage;
+    if (image.size.width > ETRSideLengthImageMax || image.size.height > ETRSideLengthImageMax) {
+        hiResImage = [ETRImageEditor scaleImage:image toMaxSideLength:ETRSideLengthImageMax];
+    } else {
+        hiResImage = image;
+    }
+    
     NSData * hiResData = UIImageJPEGRepresentation(hiResImage, ETRHiResImageQuality);
     [hiResData writeToFile:filePath atomically:YES];
     return hiResData;
 }
 
 + (NSData *)cropLoResImage:(UIImage *)image writeToFile:(NSString *)filePath {
-    UIImage * loResImage = [ETRImageEditor scaleCropImage:image toSize:ETRLoResImageSize];
+    UIImage * loResImage = [ETRImageEditor scaleImage:image toMaxSideLength:ETRSideLengthImageLo];
+    
     NSData * loResData = UIImageJPEGRepresentation(loResImage, ETRLoResImageQuality);
     [loResData writeToFile:filePath atomically:YES];
     return loResData;
@@ -135,13 +134,14 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
         shortestImageSide = imageSize.width;
     }
     
-    CGFloat resizeFactor;
+    CGFloat longerSideLength;
     if (targetSize.width > targetSize.height) {
-        resizeFactor = targetSize.width / shortestImageSide;
+        longerSideLength = targetSize.width;
     } else {
-        resizeFactor = targetSize.height / shortestImageSide;
+        longerSideLength = targetSize.height;
     }
-    
+    CGFloat resizeFactor = longerSideLength / shortestImageSide;
+
     CGSize scaleSize = imageSize;
     scaleSize.width *= resizeFactor;
     scaleSize.height *= resizeFactor;
@@ -156,12 +156,16 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     
     CGRect cropRect = CGRectMake(cropX, cropY, targetSize.width, targetSize.height);
     
-    UIImage * scaledImage = [ETRImageEditor scaleImage:image toSize:scaleSize];
+    UIImage * scaledImage = [ETRImageEditor scaleImage:image toMaxSideLength:longerSideLength];
+//    UIImage * scaledImage = [UIImage imageWithCGImage:[image CGImage]
+//                                                scale:1.0f/resizeFactor
+//                                          orientation:[image imageOrientation]];
+
     CGImageRef imageRef = CGImageCreateWithImageInRect([scaledImage CGImage], cropRect);
     
     UIImage * outputImage = [UIImage imageWithCGImage:imageRef
                                                 scale:[image scale]
-                                          orientation:orientation];
+                                          orientation:[image imageOrientation]];
     CGImageRelease(imageRef);
     
 //    NSLog(@"Image orientation 3: %d", [outputImage imageOrientation]);
@@ -169,19 +173,34 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     return outputImage;
 }
 
-+ (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size {
-    if (size.width > 0.1f && size.height > 0.1f) {
-        UIGraphicsBeginImageContext(size);
-        
-        CGContextRef scaleContext = UIGraphicsGetCurrentContext();
-        CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, size.width, size.height), [image CGImage]);
-        UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-        
-        UIGraphicsEndImageContext();
-        return scaledImage;
-    } else {
-        return image;
++ (UIImage *)scaleImage:(UIImage *)image toMaxSideLength:(CGFloat)maxSideLength {
+    if (maxSideLength < 4.0f ) {
+        maxSideLength = 4.0f;
     }
+    
+    CGSize size;
+    if (image.size.width > image.size.height) {
+        size.width = maxSideLength;
+        size.height = image.size.height / image.size.width * maxSideLength;
+    } else {
+        size.height = maxSideLength;
+        size.width = image.size.width / image.size.height * maxSideLength;
+    }
+    
+    UIGraphicsBeginImageContext(size);
+    
+    CGContextRef scaleContext = UIGraphicsGetCurrentContext();
+//    CGContextDrawImage(scaleContext, CGRectMake(0.0f, 0.0f, size.width, size.height), [image CGImage]);
+    [image drawInRect:CGRectMake(0.0f, 0.0f, size.width, size.height)];
+    UIImage * scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return [UIImage imageWithCGImage:[scaledImage CGImage]
+                               scale:[scaledImage scale]
+                         orientation:UIImageOrientationDownMirrored];
+    
+//    return scaledImage;
 }
 
 @end

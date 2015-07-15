@@ -76,13 +76,10 @@
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
+- (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-
     
-    [[ETRBouncer sharedManager] didEnterBackground];
     [[ETRActionManager sharedManager] didEnterBackground];
 }
 
@@ -101,15 +98,16 @@
     
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    // Saves changes in the application's managed object context before the application terminates.
+- (void)applicationWillTerminate:(UIApplication *)application {
+    // Notify the server that the user is leaving.
+    [ETRServerAPIHelper endSession];
     
+    // Remove unsent messages.
     [ETRDefaultsHelper removePublicMessageInputTexts];
 }
 
-#pragma mark - Fetch
+#pragma mark -
+#pragma mark Fetch
 
 - (void)application:(UIApplication *)application
 performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
