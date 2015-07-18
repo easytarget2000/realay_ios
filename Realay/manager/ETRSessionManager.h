@@ -18,11 +18,11 @@
 
 @interface ETRSessionManager : NSObject
 
-/*
- Chat that does not need notifications.
- To be modified by view controllers on appear/disappear.
- */
-@property (nonatomic) NSInteger activeChatID;
+///*
+// Chat that does not need notifications.
+// To be modified by view controllers on appear/disappear.
+// */
+//@property (nonatomic) NSInteger activeChatID;
 
 /*
  Stores if the user has joined a room.

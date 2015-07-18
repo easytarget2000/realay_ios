@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/Manager/ETRSessionManager.m"
-            timestampString = "458590438.870213"
+            timestampString = "458761574.777592"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
             landmarkName = "@implementation ETRSessionManager"
             landmarkType = "3">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/UI/ETRConversationViewController.m"
-            timestampString = "458680488.180654"
+            timestampString = "458754898.224239"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "587"
-            endingLineNumber = "587"
+            startingLineNumber = "588"
+            endingLineNumber = "588"
             landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -94,38 +94,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Realay/Manager/ETRActionManager.m"
-            timestampString = "458589593.665692"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "324"
-            endingLineNumber = "324"
-            landmarkName = "-dispatchNotificationForAction:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Realay/Manager/ETRActionManager.m"
-            timestampString = "458500684.655829"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
-            landmarkName = "-dispatchNotificationForAction:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Realay/UI/TableCells/ETRLocationCell.m"
             timestampString = "458515690.470022"
             startingColumnNumber = "9223372036854775807"
@@ -133,22 +101,6 @@
             startingLineNumber = "49"
             endingLineNumber = "49"
             landmarkName = "-shareButtonPressed:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Realay/UI/ETRDetailsViewController.m"
-            timestampString = "458517263.953016"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "399"
-            endingLineNumber = "399"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -175,11 +127,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Realay/Manager/ETRBouncer.m"
-            timestampString = "458679777.895295"
+            timestampString = "458761574.777592"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "258"
+            endingLineNumber = "258"
             landmarkName = "-triggerNextWarning:"
             landmarkType = "5">
          </BreakpointContent>
@@ -190,13 +142,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Realay/UI/Utils/ETRImageEditor.m"
-            timestampString = "458685375.713026"
+            filePath = "Realay/UI/ETRDetailsViewController.m"
+            timestampString = "458763235.64176"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
-            landmarkName = "+cropLoResImage:writeToFile:"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
+            landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -206,13 +158,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Realay/UI/Utils/ETRImageEditor.m"
-            timestampString = "458691590.718359"
+            filePath = "Realay/UI/ETRConversationViewController.m"
+            timestampString = "458942187.297962"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
-            landmarkName = "+scaleImage:toMaxSideLength:"
+            startingLineNumber = "248"
+            endingLineNumber = "248"
+            landmarkName = "-viewWillDisappear:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

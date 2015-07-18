@@ -83,7 +83,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
         } else if ([timerID isEqualToValue:@(2)]) {
             // The process timed out.
             [[ETRSessionManager sharedManager] endSession];
-            [ETRAlertViewFactory showGeneralErrorAlert];
+            [ETRAlertViewFactory showReachabilityAlert];
             [[self navigationController] popToRootViewControllerAnimated:YES];
         }
     }
@@ -146,7 +146,8 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
                                  }
                              }];
     } else {
-        [ETRAlertViewFactory showGeneralErrorAlert];
+        NSLog(@"ERROR: handleJoinCompletion:NO");
+        [ETRAlertViewFactory showReachabilityAlert];
         [[self navigationController] popToRootViewControllerAnimated:YES];
     }
 }

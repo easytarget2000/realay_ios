@@ -27,6 +27,16 @@ static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 
 static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 
+/**
+ Number of last Public Messages that will be stored for spam checks.
+ See: - (void)isSpam:(NSString *)
+ */
+static NSInteger const ETRSpamWatchStorageSize = 10;
+
+/**
+ See: - (void)isSpam:(NSString *)
+ */
+static short const ETRSpamWatchLimit = 5;
 
 
 @interface ETRBouncer () <UIAlertViewDelegate>
@@ -46,6 +56,19 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 @property (strong, nonatomic) NSString * sessionEnd;
 
 @property (nonatomic) CFAbsoluteTime lastConnectionTime;
+
+/**
+ Couple of last outgoing messages. Used for crude spam check in Public Conversations.
+ See: - (void)isSpam:(NSString *)
+ */
+@property (strong, nonatomic) NSMutableArray * sentPublicMessages;
+
+/**
+ Current positing in _sentPublicMessages Array.
+ See: - (void)isSpam:(NSString *)
+ */
+@property (nonatomic) short sentPublicMessagesPos;
+
 
 @end
 
@@ -69,19 +92,19 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 #pragma mark Runtime Constants
 
 + (NSArray *)warningIntervals {
-    return [NSArray arrayWithObjects:
-            @(30.0),
-            @(30.0),
-            @(30.0),
-            @(30.0),
-            nil];
-    
 //    return [NSArray arrayWithObjects:
-//            @(ETRTimeIntervalTenMinutes),
-//            @(ETRTimeIntervalTenMinutes),
-//            @(ETRTimeIntervalFiveMinutes),
-//            @(ETRTimeIntervalFiveMinutes),
+//            @(30.0),
+//            @(30.0),
+//            @(30.0),
+//            @(30.0),
 //            nil];
+    
+    return [NSArray arrayWithObjects:
+            @(ETRTimeIntervalTenMinutes),
+            @(ETRTimeIntervalTenMinutes),
+            @(ETRTimeIntervalFiveMinutes),
+            @(ETRTimeIntervalFiveMinutes),
+            nil];
 }
 
 #pragma mark -
@@ -92,6 +115,7 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
     _numberOfWarnings = 0;
     _hasPendingKick = NO;
     _lastConnectionTime = CFAbsoluteTimeGetCurrent();
+    _sentPublicMessages = nil;
     KickTime = nil;
 }
 
@@ -102,6 +126,39 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
 - (void)acknowledgeFailedConnection {
     if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
         [self kickForReason:ETRTimeIntervalTimeout calledBy:@"NoConnection"];
+    }
+}
+
+- (BOOL)isSpam:(NSString *)outgoingMessage {
+    if (!_sentPublicMessages) {
+        _sentPublicMessages = [NSMutableArray arrayWithCapacity:ETRSpamWatchStorageSize];
+        _sentPublicMessagesPos = -1;
+    }
+ 
+    // Look for matching Strings.
+    short spamCount = 0;
+    for (NSString * message in _sentPublicMessages) {
+        if ([message containsString:outgoingMessage]) {
+            spamCount++;
+        } else if ([outgoingMessage containsString:message]) {
+            spamCount++;
+        }
+    }
+    
+    // Place the given message at the next position in the short array,
+    // going back to index 0 if the top has been reached.
+    _sentPublicMessagesPos++;
+    if (_sentPublicMessagesPos > ETRSpamWatchStorageSize) {
+        _sentPublicMessagesPos = 0;
+    }
+    
+    [_sentPublicMessages setObject:outgoingMessage atIndexedSubscript:_sentPublicMessagesPos];
+    
+    if (spamCount >= ETRSpamWatchLimit) {
+        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonSpam allowDuplicate:YES];
+        return YES;
+    } else {
+        return NO;
     }
 }
 
@@ -156,13 +213,16 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
         
         [self notifyUser];
         
-        NSTimeInterval interval;
-        interval = [[intervals objectAtIndex:_numberOfWarnings] doubleValue];
-        _warnTimer = [NSTimer scheduledTimerWithTimeInterval:interval
-                                         target:self
-                                       selector:@selector(triggerNextWarning:)
-                                       userInfo:nil
-                                        repeats:NO];
+        if (reason == ETRKickReasonLocation || reason == ETRKickReasonClosed) {
+            // Set a timer for certain warnings to repeat until getting kicked.
+            NSTimeInterval interval;
+            interval = [[intervals objectAtIndex:_numberOfWarnings] doubleValue];
+            _warnTimer = [NSTimer scheduledTimerWithTimeInterval:interval
+                                                          target:self
+                                                        selector:@selector(triggerNextWarning:)
+                                                        userInfo:nil
+                                                         repeats:NO];
+        }
     } else {
         [self kickForReason:reason calledBy:@"Warning Limit reached."];
     }
@@ -256,6 +316,13 @@ static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
                 messageFormat = NSLocalizedString(@"Part_of_event", @"Event ended at %@. Stay until %@");
                 message = [NSString stringWithFormat:messageFormat, [self sessionEnd], [self kickTime]];
             }
+            break;
+            
+        case ETRKickReasonSpam:
+            if (!_hasPendingKick) {
+                title = NSLocalizedString(@"Advise", @"Serious Note");
+            }
+            message = NSLocalizedString(@"No_spam", @"Please don't spam.");
             break;
             
         case ETRKickReasonTimeout:

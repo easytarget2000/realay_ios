@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
 @implementation ETRAlertViewFactory
 
 #pragma mark -
-#pragma mark Settings/Authorization
+#pragma mark Settings
 
 /**
  
@@ -350,12 +350,23 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                       otherButtonTitles:nil] show];
 }
 
-/*
+/**
  Displays an alert view that says the entered room password is wrong.
  */
 + (void)showWrongPasswordAlertView {
     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Wrong_Password", "Incorrect password")
                                 message:NSLocalizedString(@"Try_again", @"Please try again.")
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
+                      otherButtonTitles:nil] show];
+}
+
+/**
+ Shows an Alert View that notifies of insufficient internet reachability.
+ */
++ (void)showReachabilityAlert {
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No_Connection", @"No Internet")
+                                message:NSLocalizedString(@"Internet_connected", @"Ensure reachability.")
                                delegate:nil
                       cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
                       otherButtonTitles:nil] show];
@@ -375,6 +386,8 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
             if (!_selectedUser) {
                 NSLog(@"ERROR: Cannot perform next blocking step. User reference lost.");
             } else {
+                // TODO: Implement reporting.
+                
                 [_selectedUser setIsBlocked:@(YES)];
                 ETRConversation * conversation = [ETRCoreDataHelper conversationWithPartner:_selectedUser];
                 [ETRCoreDataHelper deleteConversation:conversation];

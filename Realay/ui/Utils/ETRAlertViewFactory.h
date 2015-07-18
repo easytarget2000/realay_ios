@@ -25,6 +25,9 @@
  */
 @property (strong, nonatomic, readonly) UIAlertView * existingSettingsAlert;
 
+#pragma mark -
+#pragma mark Settings
+
 /**
  
  */
@@ -43,18 +46,18 @@
 #pragma mark -
 #pragma mark Session Exit
 
-/*
+/**
  Displays a dialog in an alert view if the user wants to leave the room.
  The delegate will handle the OK button click.
  */
 - (void)showLeaveConfirmView;
 
-/*
+/**
  Displays an alert view that gives the reason why the user was kicked from the room.
  */
 + (void)showKickWithMessage:(NSString *)message;
 
-/*
+/**
  Displays a warning in an alert view saying that the device location cannot be found
  and how many minutes are left.
  */
@@ -95,21 +98,25 @@
 #pragma mark -
 #pragma mark General
 
-/*
- 
+/**
+ Shows a general error message without any details.
  */
 + (void)showGeneralErrorAlert;
 
-/*
+/**
  Displays an alert view that says the user cannot join the room
  until stepping inside the region.
  */
 + (void)showRoomDistanceAlert;
 
-/*
+/**
  Displays an alert view that says the entered room password is wrong.
  */
 + (void)showWrongPasswordAlertView;
 
+/**
+ Shows an Alert View that notifies of insufficient internet reachability.
+ */
++ (void)showReachabilityAlert;
 
 @end

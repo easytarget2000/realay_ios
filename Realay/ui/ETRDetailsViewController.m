@@ -54,6 +54,11 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 @property (nonatomic) NSInteger blockButtonRow;
 
+/**
+ To be used with viewDidAppear:, in order to store if this View Controller appeared once.
+ */
+@property (nonatomic) BOOL doReloadTableOnAppear;
+
 @end
 
 
@@ -64,6 +69,8 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _doReloadTableOnAppear = NO;
     
     if ([[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
         NSArray * controllerStack = [[self navigationController] viewControllers];
@@ -139,7 +146,12 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [[self tableView] reloadData];
+    
+    // Refresh the content if returning to this View Controller.
+    if (_doReloadTableOnAppear) {
+        [[self tableView] reloadData];
+    }
+    _doReloadTableOnAppear = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -340,14 +352,12 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
     if (row == _socialMediaRow) {
         // The cell for this row displays the social network buttons.
-        ETRProfileSocialCell *socialMediaCell;
-        socialMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSocialMediaCellIdentifier
-                                                          forIndexPath:indexPath];
+        ETRProfileSocialCell * socialMediaCell;
+        socialMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSocialMediaCellIdentifier];
         [socialMediaCell setUpForUser:_user];
         return socialMediaCell;
     } else if (row == _blockButtonRow) {
-        return [tableView dequeueReusableCellWithIdentifier:ETRCellBlockButton
-                                               forIndexPath:indexPath];
+        return [tableView dequeueReusableCellWithIdentifier:ETRCellBlockButton];
     }
     
     // The cell for this row displays one specific attribute.
@@ -391,15 +401,12 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 #pragma mark -
 #pragma mark UITableViewDelegate
 
-// CONTINUE HERE: Blocking
-
 - (void)tableView:(nonnull UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     if ([indexPath row] == _blockButtonRow) {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
         [[self alertHelper] showBlockConfirmViewForUser:_user viewController:self];
-    } else {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark -

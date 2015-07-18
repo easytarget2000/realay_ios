@@ -70,6 +70,8 @@
 
 "Instagram_Name" = "Instagram Username";
 
+"Internet_connected" = "Please make sure your phone is connected to the internet and try again.";
+
 "Join" = "Join";
 
 "Leave" = "Leave";
@@ -81,6 +83,10 @@
 "Near_You" = "Near You";
 
 "No" = "No";
+
+"No_Connection" = "No Connection";
+
+"No_spam" = "Please do not spam.";
 
 "No_time_restriction" = "Without time restriction";
 
@@ -100,6 +106,8 @@
 
 "Private_Message" = "Private Message";
 
+"private_messages" = "%d new private messages.";
+
 "Private_Chat_with" = "Private Chat with %@";
 
 "Private_Chats" = "Private Chats";
@@ -107,6 +115,8 @@
 "Private_Message" = "Private Message";
 
 "Public_Message" = "Public Message";
+
+"public_messages" = "%d new public messages.";
 
 "Pull_down_load_older" = "Pull down to load older messages.";
 

@@ -12,6 +12,7 @@
 #import "ETRActionManager.h"
 #import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRBouncer.h"
 #import "ETRConversation.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRDefaultsHelper.h"
@@ -244,7 +245,7 @@ UITextFieldDelegate
     [[self messageInputView] setDelegate:nil];
     
     // Show all notifications because no chat is visible.
-    [[ETRSessionManager sharedManager] setActiveChatID:-1];
+    [[ETRActionManager sharedManager] setForegroundPartnerID:@(-100L)];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillShowNotification
@@ -574,10 +575,15 @@ UITextFieldDelegate
     };
     
     dispatch_after(
-               dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
+               dispatch_time(DISPATCH_TIME_NOW, 0.8 * NSEC_PER_SEC),
                dispatch_get_main_queue(),
                scrollBlock
                );
+    dispatch_after(
+                   dispatch_time(DISPATCH_TIME_NOW, 1.6 * NSEC_PER_SEC),
+                   dispatch_get_main_queue(),
+                   scrollBlock
+                   );
 }
 
 #pragma mark -
@@ -670,6 +676,8 @@ UITextFieldDelegate
 #pragma mark -
 #pragma mark Input
 
+// TODO: Return button behaviour.
+
 - (IBAction)sendButtonPressed:(id)sender {
     [self dismissKeyboard];
     
@@ -684,7 +692,11 @@ UITextFieldDelegate
     
     if ([typedString length] > 0) {
         if (_isPublic) {
-            [ETRCoreDataHelper dispatchPublicMessage:typedString];
+            if (![[ETRBouncer sharedManager] isSpam:typedString]) {
+                [ETRCoreDataHelper dispatchPublicMessage:typedString];
+            } else {
+                [[self messageInputView] setText:@""];
+            }
         } else {
             [ETRCoreDataHelper dispatchMessage:typedString toRecipient:_partner];
         }
@@ -842,9 +854,9 @@ UITextFieldDelegate
     [UIView commitAnimations];
 }
 
-//- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-//    [self scrollDownTableViewAnimated];
-//}
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
+    [self scrollDownTableViewAnimated];
+}
 
 #pragma mark - UITextFieldDelegate
 

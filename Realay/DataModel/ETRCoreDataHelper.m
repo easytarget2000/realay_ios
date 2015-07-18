@@ -11,6 +11,7 @@
 #import "ETRAction.h"
 #import "ETRActionManager.h"
 #import "ETRAppDelegate.h"
+#import "ETRBouncer.h"
 #import "ETRConversation.h"
 #import "ETRImageEditor.h"
 #import "ETRLocalUserManager.h"
@@ -170,26 +171,33 @@ static NSEntityDescription * UserEntity;
     switch (code) {
         case ETRActionCodeKick:
             if (recipientID == [ETRLocalUserManager userID]) {
-                
+                [[ETRBouncer sharedManager] kickForReason:ETRKickReasonKick calledBy:@"kickAction"];
             }
             return nil;
             
         case ETRActionCodeBan:
             if (recipientID == [ETRLocalUserManager userID]) {
-                
+                [[ETRBouncer sharedManager] kickForReason:ETRKickReasonKick calledBy:@"banAction"];
+                [ETRCoreDataHelper deleteObject:room];
             }
             return nil;
             
         case ETRActionCodeUserJoin:
-            [sender setInRoom:room];
+            if (senderID != [ETRLocalUserManager userID]) {
+                [sender setInRoom:room];
+            }
             return nil;
             
         case ETRActionCodeUserUpdate:
-            [ETRServerAPIHelper getUserWithID:[sender remoteID]];
+            if (senderID != [ETRLocalUserManager userID]) {
+                [ETRServerAPIHelper getUserWithID:[sender remoteID]];
+            }
             return nil;
             
         case ETRActionCodeUserQuit:
-            [sender setInRoom:nil];
+            if (senderID != [ETRLocalUserManager userID]) {
+                [sender setInRoom:nil];
+            }
             return nil;
     }
     
@@ -198,6 +206,9 @@ static NSEntityDescription * UserEntity;
     // Actions should not change, so they will not be updated.
     ETRAction * existingAction = [ETRCoreDataHelper actionWithRemoteID:@(remoteID)];
     if (existingAction) {
+#ifdef DEBUG
+        NSLog(@"Action already exists: %@", existingAction);
+#endif
         return nil;
     }
     
@@ -225,6 +236,10 @@ static NSEntityDescription * UserEntity;
         convo = [ETRCoreDataHelper conversationWithSender:sender recipient:recipient];
         [convo updateLastMessage:receivedAction];
         [convo setHasUnreadMessage:@(YES)];
+        
+#ifdef DEBUG
+        NSLog(@"Action has recipient: %@", receivedAction);
+#endif
     }
     
     //    NSLog(@"Inserting Action into CoreData: %@ %@", [[receivedAction sender] remoteID], [receivedAction messageContent]);
@@ -242,6 +257,7 @@ static NSEntityDescription * UserEntity;
         return;
     }
     
+    // Prepare the Message Action for sending.
     [message setCode:@(ETRActionCodePublicMessage)];
     [message setMessageContent:messageContent];
     
@@ -318,11 +334,11 @@ static NSEntityDescription * UserEntity;
     
     [mediaAction setImageID:@(newImageID)];
     
-    NSData * loResData = [ETRImageEditor cropLoResImage:image
-                                            writeToFile:[mediaAction imageFilePath:NO]];
+    NSData * loResData = [ETRImageEditor scalePreviewImage:image
+                                               writeToFile:[mediaAction imageFilePath:NO]];
     
-    NSData * hiResData = [ETRImageEditor cropHiResImage:image
-                                            writeToFile:[mediaAction imageFilePath:YES]];
+    NSData * hiResData = [ETRImageEditor scaleLimitMessageImage:image
+                                                    writeToFile:[mediaAction imageFilePath:YES]];
     
     [ETRServerAPIHelper putImageWithHiResData:hiResData
                                     loResData:loResData
@@ -843,7 +859,7 @@ static NSEntityDescription * UserEntity;
     [request setIncludesPropertyValues:NO];
     
     NSError * error = nil;
-    NSUInteger count = [[ETRCoreDataHelper context] countForFetchRequest:request
+    int count = (int) [[ETRCoreDataHelper context] countForFetchRequest:request
                                                                    error:&error];
     
     if (error) {

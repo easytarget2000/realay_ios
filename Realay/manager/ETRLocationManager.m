@@ -73,6 +73,11 @@ static ETRLocationManager * SharedInstance;
 }
 
 - (void)setLocation:(CLLocation *)location {
+    BOOL didStartSession = [[ETRSessionManager sharedManager] didStartSession];
+    if (didStartSession) {
+        [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
+    }
+    
     _location = location;
     
 #ifdef DEBUG
@@ -111,9 +116,8 @@ static ETRLocationManager * SharedInstance;
     }
     
     // If a Session has been started, monitor entering and exiting the Room radius.
-    if ([[ETRSessionManager sharedManager] didStartSession]) {
+    if (didStartSession) {
         [self updateSessionRegionDistance];
-        [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
         
         if (!_isUpdatingLocation) {
             [self startUpdatingLocation];

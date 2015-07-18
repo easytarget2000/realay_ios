@@ -136,7 +136,7 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
             [self performSegueWithIdentifier:ETRSegueLoginToProfile sender:nil];
         }
     } else {
-        [ETRAlertViewFactory showGeneralErrorAlert];
+        [ETRAlertViewFactory showReachabilityAlert];
     }
 }
 

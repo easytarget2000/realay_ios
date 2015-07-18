@@ -30,13 +30,13 @@
 #pragma mark NSObject
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: %@ to %@ at %@: %@, %@",
+    
+    return [NSString stringWithFormat:@"%@: %@ to %@ at %@: %@",
             [self remoteID],
             [[self sender] name],
             [[self recipient] name],
             [self sentDate],
-            [self code],
-            [self messageContent]];
+            [self code]];
 }
 
 #pragma mark -
@@ -51,16 +51,23 @@
 }
 
 - (BOOL)isPublicAction {
-    short code = [[self code] shortValue];
-    if (code == ETRActionCodePublicMessage || code == ETRActionCodePublicMedia) {
+    if ([self isPublicMessage]) {
         return YES;
-    } else if (code == ETRActionCodeUserJoin || code == ETRActionCodeUserQuit) {
+    }
+    
+    short code = [[self code] shortValue];
+    if (code == ETRActionCodeUserJoin || code == ETRActionCodeUserQuit) {
         return YES;
     } else if (code == ETRActionCodeUserUpdate) {
         return YES;
     } else {
         return NO;
     }
+}
+
+- (BOOL)isPublicMessage {
+    short code = [[self code] shortValue];
+    return code == ETRActionCodePublicMessage || code == ETRActionCodePublicMedia;
 }
 
 - (BOOL)isPrivateMessage {

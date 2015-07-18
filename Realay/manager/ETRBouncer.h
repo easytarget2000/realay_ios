@@ -18,6 +18,7 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
     ETRKickReasonTimeout = 5577
 };
 
+extern short ETRKickLimitSpam;
 
 @interface ETRBouncer : NSObject
 
@@ -30,6 +31,8 @@ typedef NS_ENUM(NSInteger, ETRKickReason) {
 - (void)acknowledgeConnection;
 
 - (void)acknowledgeFailedConnection;
+
+- (BOOL)isSpam:(NSString *)outgoingMessage;
 
 #pragma mark -
 #pragma mark Warnings & Kicks

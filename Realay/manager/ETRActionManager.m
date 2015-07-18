@@ -12,6 +12,7 @@
 #import "ETRCoreDataHelper.h"
 #import "ETRDefaultsHelper.h"
 #import "ETRNotificationManager.h"
+#import "ETRRoom.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
@@ -33,11 +34,13 @@ static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 static CFTimeInterval const ETRPingInterval = 20.0;
 
 
+
+
 @interface ETRActionManager ()
 
 @property (strong, nonatomic) NSTimer * timer;
 
-/*
+/**
  Last ID of received actions
  */
 @property (nonatomic) long lastActionID;
@@ -68,6 +71,13 @@ static CFTimeInterval const ETRPingInterval = 20.0;
  */
 @property (strong, nonatomic) NSMutableDictionary * notificationCounters;
 
+@property (strong, nonatomic) NSMutableArray * privateMessageNotificationQuery;
+
+@property (strong, nonatomic) NSMutableArray * publicMessageNotificationQuery;
+
+@property (strong, nonatomic) UILocalNotification * lastPrivateMessageNotification;
+
+@property (strong, nonatomic) UILocalNotification * lastPublicMessageNotification;
 
 @end
 
@@ -151,9 +161,22 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 }
 
 - (void)fetchUpdates:(NSTimer *)timer {
-    if ([[ETRSessionManager sharedManager] didStartSession]) {
-        [self fetchUpdatesWithCompletionHandler:nil];
+    UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
+    if (applicationState != UIApplicationStateActive) {
+        // Ignore the timer if the app is not active.
+        // Background Fetches will load new data.
+#ifdef DEBUG
+        NSLog(@"fetchUpdates: ignored because the app is not active.");
+#endif
+        return;
+    } else if (![[ETRSessionManager sharedManager] didStartSession]) {
+#ifdef DEBUG
+        NSLog(@"fetchUpdates: called outside of Session.");
+#endif
+        return;
     }
+    
+    [self fetchUpdatesWithCompletionHandler:nil];
 }
 
 /**
@@ -167,26 +190,32 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                completion:^(id<NSObject> receivedObject) {
                                    BOOL didReceiveNewData = NO;
                                    
-//                                   int new = -1;
+                                   int new = -1;
                                    
                                    if ([receivedObject isKindOfClass:[NSArray class]]) {
                                        NSArray * jsonActions = (NSArray *) receivedObject;
-//                                       new++;
+                                       new++;
                                        for (NSObject *jsonAction in jsonActions) {
-                                           
                                            if ([jsonAction isKindOfClass:[NSDictionary class]]) {
-//                                               new++;
+                                               new++;
                                                ETRAction * action;
                                                action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
                                                if (action && !isInitial) {
-                                                   [self dispatchNotificationForAction:action];
+                                                   [self queryNotificationForAction:action];
                                                }
                                                didReceiveNewData = YES;
                                            }
                                        }
+                                       
+                                       if (!isInitial && new > 0) {
+                                           // All Actions have been processed. Show those bundled Notifications.
+                                           [self presentQueuedNotifications];
+                                       }
                                    }
                                    
-//                                   NSLog(@"New: %d", new);
+#ifdef DEBUG
+                                   NSLog(@"New: %d", new);
+#endif
                                    
                                    [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
                                    
@@ -195,9 +224,6 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                    }
                                    
                                    if (completionHandler) {
-                                       //            UIBackgroundFetchResult result;
-                                       //            result = didReceiveNewData ? UIBackgroundFetchResultNewData : UIBackgroundFetchResultNoData;
-                                       //            completionHandler(result);
                                        completionHandler(UIBackgroundFetchResultNewData);
                                    }
                                }];
@@ -227,16 +253,16 @@ static CFTimeInterval const ETRPingInterval = 20.0;
             dispatch_async(
                            dispatch_get_main_queue(),
                            ^{
-                               [_internalNotificationHandler setPrivateMessagesBadgeNumber:[self numberOfPrivateNotifs]];
+                               [_internalNotificationHandler setPrivateMessagesBadgeNumber:[_privateMessageNotificationQuery count]];
                            });
         }
-        [self updateBadgeNumber];
+        [self updateBadges];
     } else if (idValue == ETRActionPublicUserID) {
         // The Public Conversation has been opened.
         // Cancel all other Notifications.
         
         [_notificationCounters removeObjectForKey:@(ETRActionPublicUserID)];
-        [self updateBadgeNumber];
+        [self updateBadges];
     }
 }
 
@@ -245,16 +271,17 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 
 - (void)setInternalNotificationHandler:(id<ETRInternalNotificationHandler>)internalNotificationHandler {
     _internalNotificationHandler = internalNotificationHandler;
-    if (_internalNotificationHandler) {
-        dispatch_async(
-                       dispatch_get_main_queue(),
-                       ^{
-                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:[self numberOfPrivateNotifs]];
-                       });
-    }
+    [self updateBadges];
+//    if (_internalNotificationHandler) {
+//        dispatch_async(
+//                       dispatch_get_main_queue(),
+//                       ^{
+//                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:[self numberOfPrivateNotifs]];
+//                       });
+//    }
 }
 
-- (void)dispatchNotificationForAction:(ETRAction *)action {
+- (void)queryNotificationForAction:(ETRAction *)action {
     if (!action) {
         return;
     }
@@ -274,126 +301,131 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     
     BOOL isPublicAction = [action isPublicAction];
     
-    NSNumber * counterKey;
+    NSNumber * conversationID;
     if (isPublicAction) {
-        counterKey = @(ETRActionPublicUserID);
+        conversationID = @(ETRActionPublicUserID);
     } else {
-        counterKey = [[action sender] remoteID];
+        conversationID = [[action sender] remoteID];
     }
     
-    if ([_foregroundPartnerID isEqualToNumber:counterKey]) {
-        // Do not create Notifications if the Conversation is in the foreground.
-        return;
-    }
-    
-    
-    NSNumber * numberOfNotifs = [_notificationCounters objectForKey:counterKey];
-    if (!numberOfNotifs) {
-        numberOfNotifs = @(1);
-    } else {
-        NSInteger oldNumberOfNotifs = [numberOfNotifs integerValue];
-        numberOfNotifs = @(++oldNumberOfNotifs);
-    }
-    
-    [_notificationCounters setObject:numberOfNotifs forKey:counterKey];
-    
-    
-    if (!isPublicAction && _internalNotificationHandler) {
-        dispatch_async(
-                       dispatch_get_main_queue(),
-                       ^{
-                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:[self numberOfPrivateNotifs]];
-                       });
-    }
-    
-    // Update the App Badge and in turn the Notification settings
-    // before showing the desired and appropriate information.
-    [self updateBadgeNumber];
-    
-    UILocalNotification * notification = [[UILocalNotification alloc] init];
-    
-    if ([[ETRNotificationManager sharedManager] didAllowAlerts]) {
-        
-        // TODO: Implement admin/other mesage notifications.
-        
-        NSString * title;
-        if ([action isPublicAction]) {
-            if (![ETRDefaultsHelper doShowPublicNotifs]) {
-                // Do not prepare this type of Notification any further,
-                // if public message notifications have been disabled in the Settings.
-                return;
-            }
-            title = NSLocalizedString(@"Public_Message", @"Public Message");
-        } else {
-            title = NSLocalizedString(@"Private_Message", @"Private Message");
+    UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
+    if (applicationState == UIApplicationStateActive) {
+        if ([_foregroundPartnerID isEqualToNumber:conversationID]) {
+            // Do not create Notifications if the Conversation is in the foreground.
+            return;
         }
-        [notification setAlertTitle:title];
-
-        NSString * body = [NSString stringWithFormat:@"%@:\n%@", [[action sender] name], [action readableMessageContent]];
-        [notification setAlertBody:body];
-//        else if ([action isPrivateMessage]){
-//            alertBody = NSLocalizedString(@"Private_Message", @"Private Message");
-//
-//            if ([ETRDefaultsHelper doShowPrivateNotifs]) {
-//                alertSuffix = NSLocalizedString(@"Private_Message", @"Private Message");
-//            } else {
-//                // Do not prepare this type of Notification any further,
-//                // if private message notifications have been disabled in the Settings.
-//                return;
-//            }
-        [[ETRNotificationManager sharedManager] addSoundToNotification:notification];
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+    
+    // Place the Action in the appropriate Queue Array.
+    if ([action isPrivateMessage]) {
+        if (!_privateMessageNotificationQuery) {
+            _privateMessageNotificationQuery = [NSMutableArray array];
+        }
+        [_privateMessageNotificationQuery addObject:action];
+    } else if ([action isPublicMessage]) {
+        // Only queue up Public Messages if the Settings say so.
+        if (!_publicMessageNotificationQuery) {
+            _publicMessageNotificationQuery = [NSMutableArray array];
+        }
+        [_publicMessageNotificationQuery addObject:action];
     }
 }
 
-- (void)updateBadgeNumber {
+- (void)presentQueuedNotifications {
+    // Update the App Badge and in turn the Notification settings
+    // before showing the desired and appropriate information.
+    [self updateBadges];
+    if (![[ETRNotificationManager sharedManager] didAllowAlerts]) {
+        return;
+    }
+    
+    // Private Messages Notification:
+    
+    NSInteger privateMessageCount = [_privateMessageNotificationQuery count];
+    if (privateMessageCount) {
+        if (_lastPrivateMessageNotification) {
+            [[UIApplication sharedApplication] cancelLocalNotification:_lastPrivateMessageNotification];
+        }
+        
+        UILocalNotification * privateMsgNotification = [[UILocalNotification alloc] init];
+        NSString * title;
+        NSString * body;
+        if (privateMessageCount > 1) {
+            title = [[[ETRSessionManager sharedManager] room] title];
+            NSString * privateMessagesFormat = NSLocalizedString(@"private_messages", @"%d private msgs");
+            body = [NSString stringWithFormat:privateMessagesFormat, privateMessageCount];
+            
+        } else {
+            title = NSLocalizedString(@"Private_Message", @"Private Message");
+            ETRAction * action = [_privateMessageNotificationQuery objectAtIndex:0];
+            body = [NSString stringWithFormat:@"%@:\n%@", [[action sender] name], [action readableMessageContent]];
+        }
+        
+        [privateMsgNotification setAlertTitle:title];
+        [privateMsgNotification setAlertBody:body];
+
+        [[ETRNotificationManager sharedManager] addSoundToNotification:privateMsgNotification];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:privateMsgNotification];
+        _lastPrivateMessageNotification = privateMsgNotification;
+    }
+    
+    // Public Messages Notification:
+    if (![ETRDefaultsHelper doShowPublicNotifs]) {
+        _publicMessageNotificationQuery = nil;
+        return;
+    }
+    
+    NSInteger publicMessageCount = [_publicMessageNotificationQuery count];
+    if (publicMessageCount) {
+        if (_lastPublicMessageNotification) {
+            [[UIApplication sharedApplication] cancelLocalNotification:_lastPublicMessageNotification];
+        }
+        
+        UILocalNotification * publicMsgNotification = [[UILocalNotification alloc] init];
+        NSString * title;
+        NSString * body;
+        if (publicMessageCount > 1) {
+            title = [[[ETRSessionManager sharedManager] room] title];
+            NSString * publicMessagesFormat = NSLocalizedString(@"public_messages", @"%d public msgs");
+            body = [NSString stringWithFormat:publicMessagesFormat, publicMessageCount];
+        } else {
+            title = NSLocalizedString(@"Public_Message", @"Public Message");
+            ETRAction * action = [_publicMessageNotificationQuery objectAtIndex:0];
+            body = [NSString stringWithFormat:@"%@:\n%@", [[action sender] name], [action readableMessageContent]];
+        }
+        
+        [publicMsgNotification setAlertTitle:title];
+        [publicMsgNotification setAlertBody:body];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:publicMsgNotification];
+        _lastPublicMessageNotification = publicMsgNotification;
+    }
+
+}
+
+- (void)updateBadges {
+    if (_internalNotificationHandler) {
+        dispatch_async(
+                       dispatch_get_main_queue(),
+                       ^{
+                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:[_privateMessageNotificationQuery count]];
+                       });
+    }
+    
     [[ETRNotificationManager sharedManager] updateAllowedNotificationTypes];
     if ([[ETRNotificationManager sharedManager] didAllowBadges]) {
-        NSInteger number = [self numberOfPrivateNotifs] + [self numberOfOtherNotifs];
+        NSInteger number = [_privateMessageNotificationQuery count] + [self numberOfOtherNotifs];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:number];
     }
 }
 
-- (NSInteger)numberOfPrivateNotifs {
-    if (!_notificationCounters) {
-        return 0;
-    }
-    
-    NSArray * counterKeys = [_notificationCounters allKeys];
-    if (!counterKeys || ![counterKeys count]) {
-        return 0;
-    } else {
-        NSInteger numberOfPrivateNotifs = 0;
-        
-        // Count all objects in the counter dictionary
-        // that have a key of class User.
-        // Public messages are stored with a NSNumber key: @(-10).
-        for (id counterKey in counterKeys) {
-            //            if ([counterKey isKindOfClass:[ETRUser class]]) {
-            NSNumber * count = [_notificationCounters objectForKey:counterKey];
-            numberOfPrivateNotifs += [count integerValue];
-            //            }
-        }
-        
-        return numberOfPrivateNotifs;
-    }
-}
-
 - (NSInteger)numberOfOtherNotifs {
-    if (!_notificationCounters) {
-        return 0;
-    }
-    
-    id numberOfOtherNotifs = [_notificationCounters objectForKey:@(ETRActionPublicUserID)];
-    if (numberOfOtherNotifs && [numberOfOtherNotifs isKindOfClass:[NSNumber class]]) {
-        return [((NSNumber *)numberOfOtherNotifs) integerValue];
-    } else {
-        return 0;
-    }
+    // TODO: Implement "other" Actions.
+    return 0;
 }
 
 - (void)cancelAllNotifications {
-    _notificationCounters = nil;
+    _privateMessageNotificationQuery = nil;
+    _publicMessageNotificationQuery = nil;
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
 }
 

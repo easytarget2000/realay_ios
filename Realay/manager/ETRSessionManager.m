@@ -93,6 +93,10 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     [ETRCoreDataHelper cleanActions];
     [[ETRActionManager sharedManager] endSession];
     [ETRDefaultsHelper removePublicMessageInputTexts];
+    
+    [[ETRLocationManager sharedManager] stopUpdatingLocation];
+    [[ETRLocationManager sharedManager] startMonitoringSignificantLocationChanges];
+    
     [_navigationController popToRootViewControllerAnimated:YES];
 }
 

@@ -9,6 +9,7 @@
 #import "ETRProfileSocialCell.h"
 
 #import "ETRUser.h"
+#import "ETRAnimator.h"
 
 
 @interface ETRProfileSocialCell ()
@@ -39,10 +40,8 @@
     }
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = [touches anyObject];
-    
-    if ([[touch view] isEqual:[self facebookButton]]) {
+- (IBAction)facebookButtonPressed:(id)sender {
+    [ETRAnimator flashFadeView:sender completion:^{
         if (!_user || ![_user facebook]) {
             return;
         }
@@ -56,7 +55,11 @@
             fallbackURL = [NSString stringWithFormat:@"https://facebook.com/%@", [_user facebook]];
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:fallbackURL]];
         }
-    } else if ([[touch view] isEqual:[self instagramButton]]) {
+    }];
+}
+
+- (IBAction)instagramButtonPressed:(id)sender {
+    [ETRAnimator flashFadeView:sender completion:^{
         if (!_user || ![_user instagram]) {
             return;
         }
@@ -64,7 +67,11 @@
         NSString * fallbackURL;
         fallbackURL = [NSString stringWithFormat:@"http://instagram.com/_u/%@", [_user instagram]];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:fallbackURL]];
-    } else if ([[touch view] isEqual:[self twitterButton]]) {
+    }];
+}
+
+- (IBAction)twitterButtonPressed:(id)sender {
+    [ETRAnimator flashFadeView:sender completion:^{
         if (!_user || ![_user twitter]) {
             return;
         }
@@ -78,7 +85,7 @@
             fallbackURL = [NSString stringWithFormat:@"https://twitter.com/%@", [_user twitter]];
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:fallbackURL]];
         }
-    }
+    }];
 }
 
 - (void)prepareForReuse {

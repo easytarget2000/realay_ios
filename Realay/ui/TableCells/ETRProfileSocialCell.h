@@ -12,12 +12,19 @@
 
 @interface ETRProfileSocialCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView * facebookButton;
+@property (weak, nonatomic) IBOutlet UIButton * facebookButton;
 
-@property (weak, nonatomic) IBOutlet UIImageView * instagramButton;
+@property (weak, nonatomic) IBOutlet UIButton * instagramButton;
 
-@property (weak, nonatomic) IBOutlet UIImageView * twitterButton;
+@property (weak, nonatomic) IBOutlet UIButton *twitterButton;
 
 - (void)setUpForUser:(ETRUser *)user;
+
+- (IBAction)facebookButtonPressed:(id)sender;
+
+- (IBAction)instagramButtonPressed:(id)sender;
+
+- (IBAction)twitterButtonPressed:(id)sender;
+
 
 @end

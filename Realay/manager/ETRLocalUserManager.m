@@ -100,11 +100,11 @@ static ETRLocalUserManager * sharedInstance = nil;
     
     [_user setImageID:newImageID];
     
-    NSData * loResData = [ETRImageEditor cropLoResImage:newUserImage
-                                            writeToFile:[_user imageFilePath:NO]];
+    NSData * loResData = [ETRImageEditor scalePreviewImage:newUserImage
+                                               writeToFile:[_user imageFilePath:NO]];
     
-    NSData * hiResData = [ETRImageEditor cropHiResImage:newUserImage
-                                            writeToFile:[_user imageFilePath:YES]];
+    NSData * hiResData = [ETRImageEditor scaleProfileImage:newUserImage
+                                               writeToFile:[_user imageFilePath:YES]];
     
     [ETRServerAPIHelper putImageWithHiResData:hiResData
                                     loResData:loResData
