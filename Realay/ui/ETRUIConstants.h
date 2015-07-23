@@ -47,7 +47,7 @@ extern CGFloat const ETRRowHeightUser;
 
 + (UIColor *)primaryTransparentColor;
 
-+ (UIColor *)darkPrimaryColor;
+//+ (UIColor *)darkPrimaryColor;
 
 + (UIColor *)accentColor;
 

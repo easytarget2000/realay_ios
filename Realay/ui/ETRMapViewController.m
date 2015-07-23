@@ -8,6 +8,7 @@
 
 #import "ETRMapViewController.h"
 
+#import "ETRAnimator.h"
 #import "ETRDetailsViewController.h"
 #import "ETRLocationManager.h"
 #import "ETRRoom.h"
@@ -15,9 +16,11 @@
 #import "ETRUIConstants.h"
 
 
+static NSString *const ETRSegueMapToDetails = @"MapToDetails";
+
 static NSString *const ETRSegueMapToPassword = @"MapToPassword";
 
-static NSString *const ETRSegueMapToDetails = @"MapToDetails";
+static NSString *const ETRSegueMapToShare = @"MapToShare";
 
 
 @interface ETRMapViewController () <MKMapViewDelegate>
@@ -48,7 +51,12 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     
     // Hide the join button if the user is already in this room.
     if ([[ETRSessionManager sharedManager] didStartSession]) {
-        [[self navigationItem] setRightBarButtonItem:nil];
+        UIBarButtonItem * barButton;
+        barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Share location")
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(shareButtonPressed:)];
+        [[self navigationItem] setRightBarButtonItem:barButton];
         [self setDirectionsButton:nil];
     } else {
         [[self navigationItem] setRightBarButtonItem:[self joinButton]];
@@ -127,7 +135,7 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
 }
 
 #pragma mark -
-#pragma mark MKMapViewDelegate
+#pragma mark MKMapView
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay {
     MKCircleView * circleView = [[MKCircleView alloc] initWithOverlay:overlay];
@@ -137,8 +145,6 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     return circleView;
 }
 
-#pragma mark - Toolbar Buttons
-
 - (IBAction)mapTypeSegmentChanged:(id)sender {
     if ([[self mapTypeSegmentedControl] selectedSegmentIndex] == 0) {
         [_mapView setMapType:MKMapTypeStandard];
@@ -147,7 +153,8 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     }
 }
 
-#pragma mark - Navigation
+#pragma mark -
+#pragma mark Navigation
 
 - (IBAction)navigateButtonPressed:(id)sender {
     
@@ -179,8 +186,16 @@ static NSString *const ETRSegueMapToDetails = @"MapToDetails";
     [self performSegueWithIdentifier:ETRSegueMapToDetails sender:self];
 }
 
+- (IBAction)cancelShareButtonPressed:(id)sender {
+    [ETRAnimator toggleBounceInView:[self sharePanel] animateFromTop:YES completion:nil];
+}
+
 - (IBAction)joinButtonPressed:(id)sender {
     [super joinButtonPressed:sender joinSegue:ETRSegueMapToPassword];
+}
+
+- (IBAction)shareButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:ETRSegueMapToShare sender:nil];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

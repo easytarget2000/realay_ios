@@ -32,24 +32,6 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 5.0 * 60.0;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self updateAlertViews];
-}
-
-//- (UIStatusBarStyle) preferredStatusBarStyle {
-//    return UIStatusBarStyleLightContent;
-//}
-
-#pragma mark -
-#pragma mark Alerts
-
-- (ETRAlertViewFactory *)alertHelper {
-    if (!_alertHelper) {
-        _alertHelper = [[ETRAlertViewFactory alloc] init];
-    }
-    return _alertHelper;
-}
-
-- (void)updateAlertViews {
     // Check Bouncer for AlertViews first.
     // Other dialogs will not be displayed if a kick or warning is to be shown.
     
@@ -91,6 +73,16 @@ static CFTimeInterval ETRIntervalSettingsWarnings = 5.0 * 60.0;
     } else {
         [ETRDefaultsHelper acknowledgeAuthorizationDialogs];
     }
+}
+
+#pragma mark -
+#pragma mark Alerts
+
+- (ETRAlertViewFactory *)alertHelper {
+    if (!_alertHelper) {
+        _alertHelper = [[ETRAlertViewFactory alloc] init];
+    }
+    return _alertHelper;
 }
 
 - (void)pushToPublicConversationViewController {

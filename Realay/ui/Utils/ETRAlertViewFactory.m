@@ -21,13 +21,14 @@
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
 
-typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
+typedef NS_ENUM(NSInteger, ETRAlertView) {
     ETRAlertViewTagBlock = 70,
     ETRAlertViewTagConversationMenu = 78,
     ETRAlertViewTagLeave = 66,
     ETRAlertViewTagMessageMenu = 68,
     ETRAlertViewTagPictureSource = 76,
     ETRAlertViewTagSettings = 72,
+    ETRAlertViewShare = 80,
     ETRAlertViewTagUnblock = 74
 };
 
@@ -120,7 +121,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     
     UIAlertView * alertView;
     alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:titleFormat, roomTitle]
-                                           message:nil
+                                           message:NSLocalizedString(@"No_longer_receive", @"Session ends, no messages")
                                           delegate:self
                                  cancelButtonTitle:NSLocalizedString(@"No", "Negative")
                                  otherButtonTitles:NSLocalizedString(@"Yes", "Positive"), nil];
@@ -316,24 +317,12 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
                       otherButtonTitles:nil] show];
 }
 
-///**
-// Displays a warning in an alert view saying that the device location cannot be found.
-// */
-//+ (void)showNoLocationAlertViewWithMinutes:(NSInteger)minutes {
-//    NSString *msg;
-//    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Unknown_location", @"Unknown device location")
-//                                message:msg
-//                               delegate:nil
-//                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
-//                      otherButtonTitles:nil] show];
-//}
-
 /**
  Displays an alert view that says the user cannot join the room
  until stepping inside the region.
  */
 + (void)showRoomDistanceAlert {
-    ETRRoom *sessionRoom = [[ETRSessionManager sharedManager] room];
+    ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     if (!sessionRoom) {
         return;
     }
@@ -368,7 +357,7 @@ typedef NS_ENUM(NSInteger, ETRAlertViewTag) {
     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No_Connection", @"No Internet")
                                 message:NSLocalizedString(@"Internet_connected", @"Ensure reachability.")
                                delegate:nil
-                      cancelButtonTitle:NSLocalizedString(@"OK", @"Understood")
+                      cancelButtonTitle:NSLocalizedString(@"Cancel", "Negative")
                       otherButtonTitles:nil] show];
 }
 

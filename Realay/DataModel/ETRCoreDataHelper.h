@@ -33,10 +33,15 @@ extern long const ETRActionPublicUserID;
 #pragma mark Actions
 
 /**
+ Takes a JSON server response in a Dictionary,
+ translates it into an Action Object
+ and handles the intent of the Action
+ or adds Messages to the CoreData.
  
+ Does NOT save the Context.
  */
-+ (ETRAction *)addActionFromJSONDictionary:(NSDictionary *)jsonDictionary;
-
++ (ETRAction *)addActionFromJSONDictionary:(NSDictionary *)jsonDictionary
+                            isInitialQuery:(BOOL)isInitial;
 /**
  
  */

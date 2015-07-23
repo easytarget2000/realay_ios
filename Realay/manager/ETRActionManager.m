@@ -34,10 +34,12 @@ static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 static CFTimeInterval const ETRPingInterval = 20.0;
 
 
-
-
 @interface ETRActionManager ()
 
+/**
+ Action Update Timer;
+ Stored for invalidation
+ */
 @property (strong, nonatomic) NSTimer * timer;
 
 /**
@@ -45,39 +47,60 @@ static CFTimeInterval const ETRPingInterval = 20.0;
  */
 @property (nonatomic) long lastActionID;
 
-/*
- 
+/**
+ Dynamic interval at which to query the server for new Actions;
+ Slows down if no Actions are received, i.e. no traffic in the Room
  */
 @property (nonatomic) CFTimeInterval queryInterval;
 
-/*
- 
- */
-@property (strong, nonatomic) UINavigationController * navCon;               // Navigation Controller for quit-pops
-
-/*
- 
+/**
+ Last timestamp at which a new Action was received from the server.
  */
 @property (nonatomic) CFAbsoluteTime lastActionTime;
 
-/*
- 
+/**
+ Last timestamp at which a Ping was sent to the server successfully;
+ See ETRPingInterval
  */
 @property (nonatomic) CFAbsoluteTime lastPingTime;
 
 
-/*
- 
+/**
+ The amount of unread Messages per Private Conversation
  */
 @property (strong, nonatomic) NSMutableDictionary * notificationCounters;
 
+/**
+ Unread Messages (ETRAction Objects)
+ that are combined into a short overview for the Notification
+ */
 @property (strong, nonatomic) NSMutableArray * privateMessageNotificationQuery;
 
+/**
+ Unread Messages (ETRAction Objects)
+ that are combined into a short overview for the Notification
+ */
 @property (strong, nonatomic) NSMutableArray * publicMessageNotificationQuery;
 
+/**
+ Stored for cancellation/overwrite
+ */
 @property (strong, nonatomic) UILocalNotification * lastPrivateMessageNotification;
 
+/**
+ Stored for cancellation/overwrite
+ */
 @property (strong, nonatomic) UILocalNotification * lastPublicMessageNotification;
+
+/**
+ YES, if new Public Messages have been added to the queue since the last Notification
+ */
+@property (nonatomic) BOOL doShowPublicNotification;
+
+/**
+ YES, if new Private Messages have been added to the queue since the last Notification
+ */
+@property (nonatomic) BOOL doShowPrivateNotification;
 
 @end
 
@@ -105,7 +128,6 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 - (void)startSession {
     // Consider the join successful and start the query timer.
     _lastActionTime = CFAbsoluteTimeGetCurrent();
-//    _queryInterval = ETRQueryIntervalFastest;
     [self cancelAllNotifications];
 
     [self dispatchQueryTimerWithResetInterval:YES];
@@ -152,6 +174,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     dispatch_async(
                    dispatch_get_main_queue(),
                    ^{
+                       [_timer invalidate];
                        _timer = [NSTimer scheduledTimerWithTimeInterval:_queryInterval
                                                         target:self
                                                       selector:@selector(fetchUpdates:)
@@ -199,12 +222,17 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                            if ([jsonAction isKindOfClass:[NSDictionary class]]) {
                                                new++;
                                                ETRAction * action;
-                                               action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction];
+                                               action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction
+                                                                                        isInitialQuery:isInitial];
                                                if (action && !isInitial) {
                                                    [self queryNotificationForAction:action];
                                                }
                                                didReceiveNewData = YES;
                                            }
+                                       }
+                                       
+                                       if (didReceiveNewData) {
+                                           [ETRCoreDataHelper saveContext];
                                        }
                                        
                                        if (!isInitial && new > 0) {
@@ -214,7 +242,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                    }
                                    
 #ifdef DEBUG
-                                   NSLog(@"New: %d", new);
+//                                   NSLog(@"New: %d", new);
 #endif
                                    
                                    [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
@@ -249,13 +277,6 @@ static CFTimeInterval const ETRPingInterval = 20.0;
         // Cancel its Notifications and reset its unread message count.
         
         [_notificationCounters removeObjectForKey:foregroundPartnerID];
-        if (_internalNotificationHandler) {
-            dispatch_async(
-                           dispatch_get_main_queue(),
-                           ^{
-                               [_internalNotificationHandler setPrivateMessagesBadgeNumber:[_privateMessageNotificationQuery count]];
-                           });
-        }
         [self updateBadges];
     } else if (idValue == ETRActionPublicUserID) {
         // The Public Conversation has been opened.
@@ -272,13 +293,6 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 - (void)setInternalNotificationHandler:(id<ETRInternalNotificationHandler>)internalNotificationHandler {
     _internalNotificationHandler = internalNotificationHandler;
     [self updateBadges];
-//    if (_internalNotificationHandler) {
-//        dispatch_async(
-//                       dispatch_get_main_queue(),
-//                       ^{
-//                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:[self numberOfPrivateNotifs]];
-//                       });
-//    }
 }
 
 - (void)queryNotificationForAction:(ETRAction *)action {
@@ -303,9 +317,25 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     
     NSNumber * conversationID;
     if (isPublicAction) {
-        conversationID = @(ETRActionPublicUserID);
+        if ([ETRDefaultsHelper doShowPublicNotifs]) {
+            conversationID = @(ETRActionPublicUserID);
+            _doShowPublicNotification = YES;
+        } else {
+            _doShowPrivateNotification = NO;
+            return;
+        }
     } else {
         conversationID = [[action sender] remoteID];
+        NSNumber * numberOfNotifs = [_notificationCounters objectForKey:conversationID];
+        if (!numberOfNotifs) {
+            numberOfNotifs = @(1);
+        } else {
+            NSInteger oldNumberOfNotifs = [numberOfNotifs integerValue];
+            numberOfNotifs = @(++oldNumberOfNotifs);
+        }
+        
+        [_notificationCounters setObject:numberOfNotifs forKey:conversationID];
+        _doShowPrivateNotification = YES;
     }
     
     UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
@@ -342,9 +372,10 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     // Private Messages Notification:
     
     NSInteger privateMessageCount = [_privateMessageNotificationQuery count];
-    if (privateMessageCount) {
+    if (privateMessageCount && _doShowPrivateNotification) {
         if (_lastPrivateMessageNotification) {
             [[UIApplication sharedApplication] cancelLocalNotification:_lastPrivateMessageNotification];
+            _lastPrivateMessageNotification = nil;
         }
         
         UILocalNotification * privateMsgNotification = [[UILocalNotification alloc] init];
@@ -353,7 +384,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
         if (privateMessageCount > 1) {
             title = [[[ETRSessionManager sharedManager] room] title];
             NSString * privateMessagesFormat = NSLocalizedString(@"private_messages", @"%d private msgs");
-            body = [NSString stringWithFormat:privateMessagesFormat, privateMessageCount];
+            body = [NSString stringWithFormat:privateMessagesFormat, [self numberOfPrivateNotifs]];
             
         } else {
             title = NSLocalizedString(@"Private_Message", @"Private Message");
@@ -367,6 +398,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
         [[ETRNotificationManager sharedManager] addSoundToNotification:privateMsgNotification];
         [[UIApplication sharedApplication] presentLocalNotificationNow:privateMsgNotification];
         _lastPrivateMessageNotification = privateMsgNotification;
+        _doShowPrivateNotification = NO;
     }
     
     // Public Messages Notification:
@@ -376,9 +408,10 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     }
     
     NSInteger publicMessageCount = [_publicMessageNotificationQuery count];
-    if (publicMessageCount) {
+    if (publicMessageCount && _doShowPublicNotification) {
         if (_lastPublicMessageNotification) {
             [[UIApplication sharedApplication] cancelLocalNotification:_lastPublicMessageNotification];
+            _lastPublicMessageNotification = nil;
         }
         
         UILocalNotification * publicMsgNotification = [[UILocalNotification alloc] init];
@@ -398,23 +431,58 @@ static CFTimeInterval const ETRPingInterval = 20.0;
         [publicMsgNotification setAlertBody:body];
         [[UIApplication sharedApplication] presentLocalNotificationNow:publicMsgNotification];
         _lastPublicMessageNotification = publicMsgNotification;
+        _doShowPublicNotification = NO;
     }
 
 }
 
+/**
+ Updates in-app badges that show unread messages,
+ as well as the system App Badge if authorized
+ */
 - (void)updateBadges {
+    NSInteger numberOfPrivateNotifs = [self numberOfPrivateNotifs];
     if (_internalNotificationHandler) {
         dispatch_async(
                        dispatch_get_main_queue(),
                        ^{
-                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:[_privateMessageNotificationQuery count]];
+                           [_internalNotificationHandler setPrivateMessagesBadgeNumber:numberOfPrivateNotifs];
                        });
     }
     
     [[ETRNotificationManager sharedManager] updateAllowedNotificationTypes];
     if ([[ETRNotificationManager sharedManager] didAllowBadges]) {
-        NSInteger number = [_privateMessageNotificationQuery count] + [self numberOfOtherNotifs];
+        NSInteger number = numberOfPrivateNotifs + [self numberOfOtherNotifs];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:number];
+    }
+}
+
+/**
+ Steps through the number of unread Messages per Conversation
+ and returns the sum
+ */
+- (NSInteger)numberOfPrivateNotifs {
+    if (!_notificationCounters) {
+        _privateMessageNotificationQuery = nil;
+        return 0;
+    }
+    
+    NSArray * counterKeys = [_notificationCounters allKeys];
+    if (!counterKeys || ![counterKeys count]) {
+        _privateMessageNotificationQuery = nil;
+        return 0;
+    } else {
+        NSInteger numberOfPrivateNotifs = 0;
+        
+        // Count all objects in the counter dictionary
+        // that have a key of class User.
+        // Public messages are stored with a NSNumber key: @(-10).
+        for (id counterKey in counterKeys) {
+            NSNumber * count = [_notificationCounters objectForKey:counterKey];
+            numberOfPrivateNotifs += [count integerValue];
+        }
+        
+        return numberOfPrivateNotifs;
     }
 }
 
@@ -424,9 +492,13 @@ static CFTimeInterval const ETRPingInterval = 20.0;
 }
 
 - (void)cancelAllNotifications {
+    _notificationCounters = nil;
     _privateMessageNotificationQuery = nil;
     _publicMessageNotificationQuery = nil;
+    _doShowPrivateNotification = NO;
+    _doShowPublicNotification = NO;
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    [self updateBadges];
 }
 
 @end

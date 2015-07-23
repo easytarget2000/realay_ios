@@ -59,8 +59,6 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
 #pragma mark Session Lifecycle
 
 - (BOOL)startSession {
-//    NSLog(@"Starting Session. Called by %@.", caller);
-    
     if (![self room]) {
         NSLog(@"ERROR: No room object given before starting a session.");
         return NO;

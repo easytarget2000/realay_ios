@@ -8,6 +8,7 @@
 
 #import "ETRConversationListViewController.h"
 
+#import "ETRActionManager.h"
 #import "ETRAlertViewFactory.h"
 #import "ETRConversation.h"
 

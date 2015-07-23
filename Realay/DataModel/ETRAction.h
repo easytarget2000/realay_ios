@@ -38,13 +38,13 @@ typedef NS_ENUM(short, ETRActionCode) {
 
 @property (nonatomic, retain) NSDate * sentDate;
 
-@property (nonatomic, retain) ETRUser *recipient;
+@property (nonatomic, retain) ETRUser * recipient;
 
-@property (nonatomic, retain) ETRRoom *room;
+@property (nonatomic, retain) ETRRoom * room;
 
-@property (nonatomic, retain) ETRUser *sender;
+@property (nonatomic, retain) ETRUser * sender;
 
-@property (nonatomic, retain) ETRConversation *conversation;
+@property (nonatomic, retain) ETRConversation * conversation;
 
 - (NSString *)shortDescription;
 
@@ -61,5 +61,7 @@ typedef NS_ENUM(short, ETRActionCode) {
 - (BOOL)isSentAction;
 
 - (NSString *)readableMessageContent;
+
+- (NSString *)formattedDate;
 
 @end

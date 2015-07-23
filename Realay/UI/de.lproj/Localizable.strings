@@ -1,0 +1,211 @@
+/* 
+  Localizable.strings
+  Realay
+
+  Created by Michel on 12/03/15.
+  Copyright (c) 2015 Easy Target. All rights reserved.
+*/
+
+"Address" = "Adresse";
+
+"Add_Contact" = "Kontakt Speichern";
+
+"Added_User" = "%@ Gespeichert";
+
+"Ask_someone" = "Frage jemanden nach dem Passwort, um diesem Realay beizutreten.";
+
+"Background_Updates" = "Hintergrund-Updates";
+
+"Background_updates_disabled" = "Bitte erlaube Realay im Hintergrund neue Nachrichten abzurufen und deinen Standort zu verifizieren.\n\nDu kannst das letzte Realay jederzeit wieder betreten.";
+
+"Before_join" = "Bevor es los geht, geh bitte in den Bereich, den Dir der Kreis auf der Karte zeigt.";
+
+"Before_join_allow" = "Bevor es los geht, erlaube Realay deine Position zu bestätigen. So stellen wir sicher, dass du nur mit Leuten chattest, die wirklich in deiner Nähe sind.";
+
+"Block" = "Blockieren";
+
+"Block_Report" = "Blockieren & Melden";
+
+"Block_User" = "Person Blockieren";
+
+"Blocking_hides" = "Du wirst diesen Benutzer und ihre Nachrichten nicht mehr sehen.";
+
+"Camera" = "Kamera";
+
+"Cancel" = "Abbrechen";
+
+"Chat" = "Chat";
+
+"Closed_at" = "%@ endete um %@.";
+
+"Connecting_seems_longer" = "Die Verbidung braucht länger als gewöhnlich...";
+
+"Coordinates" = "Koordinaten";
+
+"Copy_Message" = "Nachricht Kopieren";
+
+"Current_distance" = "Du befindest dich %@ entfernt.";
+
+"Currently_here" = "Du befindest dich hier.";
+
+"Delete_Conversation" = "Unterhaltung Entfernen";
+
+"Do_not_leave" = "Bitte verlasse den Bereich eines Realays nicht dauerhaft.";
+
+"Email_Address" = "Mailaddresse";
+
+"Event_ended" = "Das Realay, indem du warst, endete vor einer Weile.";
+
+"Facebook_ID" = "Facebook-ID";
+
+"File_in_photos" = "Das Bild ist jetzt in deiner Fotos-App verfügbar.";
+
+"For_an_uninterrupted" = "Bitte erlaube Realay stets deinen Standort zu bestätigen und im Hintergrund neue Nachrichten zu laden, damit deine Chat-Sitzungen ungestört ablaufen können.";
+
+"has_left" = "%@ hat %@ verlassen.";
+
+"Hours" = "Öffnungszeiten";
+
+"In_contacts" = "Die Informationen dieses Benutzers wurden in deinem Telefonbuch gespeichert.";
+
+"Instagram_Name" = "Instagram-Benutzername";
+
+"Internet_connected" = "Bitte überprüfe deine Internetverbindung und versuche es erneut.";
+
+"Join" = "Start";
+
+"Leave" = "Verlassen";
+
+"Location_Settings" = "Standort";
+
+"Map" = "Karte";
+
+"Near_You" = "In Deiner Nähe";
+
+"No" = "Nein";
+
+"No_Connection" = "Keine Verbindung";
+
+"No_spam" = "Bitte nicht spammen.";
+
+"No_time_restriction" = "Ohne Zeiteinschränkung";
+
+"Not_Yet" = "Noch Nicht";
+
+"OK" = "OK";
+
+"Ongoing" = "Hat begonnen";
+
+"Part_of_event" = "Dieses Realay gehört zu einer Veranstaltung, die um %@ endete.\n\nDu kannst noch bis %@ eingeloggt bleiben.";
+
+"Phone_Number" = "Telefonnummer";
+
+"Photos" = "Fotos";
+
+"Picture" = "Bild";
+
+"Private_Message" = "Private Nachricht";
+
+"private_messages" = "%d neue private Nachrichten.";
+
+"Private_Chat_with" = "Private Unterhaltung mit %@";
+
+"Private_Chats" = "Private Gespräche";
+
+"Private_Message" = "Private Nachricht";
+
+"Public_Chat" = "Öffentlicher Chat";
+
+"Public_Message" = "Öffentliche Nachricht";
+
+"public_messages" = "%d neue öffentliche Nachrichten.";
+
+"Pull_down_load_older" = "Zum Laden älterer Nachrichten herunterziehen.";
+
+"Profile" = "Profil";
+
+"Recommended_Settings" = "Empfohlene Einstellungen";
+
+"Return_to_area" = "Komm bis %@ zurück und erlaube Realay, deinen Standort zu bestätigen.";
+
+"Return_until" = "Bitte komm bis %@ zurück.";
+
+"Requested_to_leave" = "Du wurdest aufgefordert zu gehen.";
+
+"Saved_Image" = "Bild Abgespeichert";
+
+"Select_or_camera" = "Möchtest du ein Bild aus der Fotos-Gallerie auswählen oder ein neues Bild aufnehmen?";
+
+"Session_Terminated" = "Sitzung Beendet";
+
+"Settings" = "Einstellungen";
+
+"Starts_at" = "%@ öffnet um %@.";
+
+"Stay_in_area" = "Bitte bleibe im Bereich des Realays und ermögliche, dass ab und an dein Standort bestätigt werden kann.";
+
+"Share" = "Teilen";
+
+"Show_Profile" = "Profil Anzeigen";
+
+"Size" = "Größe";
+
+"Something_wrong" = "Ein Fehler ist aufgetreten.";
+
+"Sorry" = "Bitte entschuldige.";
+
+"Status" = "Status";
+
+"Timeout_occurred" = "Es konnte seit einer Weile keine Internetverbindung hergestellt werden.";
+
+"Today" = "Heute";
+
+"Too_Late" = "Zu Spät";
+
+"Try_again" = "Bitte versuche es erneut.";
+
+"Twitter_Name" = "Twitter-Benutzername";
+
+"Unknown_User" = "Unbekannter Benutzer";
+
+"until" = "bis";
+
+"Until_person_returns" = "Du kannst dieser Person im Moment keine Nachrichten schicken.";
+
+"Users_Around_You" = "Personen In Deiner Nähe";
+
+"Users_online" = "Personen online";
+
+"Want_block" = "Möchtest du %@ blockieren?";
+
+"Want_leave" = "Möchtest du %@ verlassen?";
+
+"No_longer_receive" = "Du kannst immer nur in einem Realay angemeldet sein.\n\nWenn du gehst, wirst du keine Nachrichten mehr erhalten.";
+
+"Want_unblock" = "Möchtest du die Blockierung von %@ aufheben?";
+
+"Where_Are_You" = "Wo Bist Du?";
+
+"Website" = "Webseite";
+
+"Wrong_Password" = "Falsches Passwort";
+
+"Yes" = "Ja";
+
+"You" = "Du";
+
+"Your_Profile" = "Dein Profil";
+
+"Your_Profile_Picture" = "Dein Profilbild";
+
+/*
+ Unit symbols
+ */
+
+"unit_metre" = "m";
+
+"unit_kilometre" = "km";
+
+"unit_yard" = "yd";
+
+"unit_mile" = "mi";

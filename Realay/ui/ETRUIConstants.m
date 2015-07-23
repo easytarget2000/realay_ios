@@ -38,12 +38,17 @@ CGFloat const ETRFontSizeSmall = 15.0f;
 
 CGFloat const ETRRowHeightUser = 64.0f;
 
+/**
+ Corner radius that is used for Icon ImageViews to give them a circle shape;
+ Has to be half the side length of the View
+ */
+CGFloat const ETRIconViewCornerRadius = 20.0f;
 
 static UIColor * PrimaryColor;
 
 static UIColor * PrimaryTransparentColor;
 
-static UIColor * DarkPrimaryColor;
+//static UIColor * DarkPrimaryColor;
 
 static UIColor * AccentColor;
 
@@ -51,12 +56,6 @@ static UIColor * SecondaryBackgroundColor;
 
 
 @implementation ETRUIConstants
-
-/*
- Corner radius that is used for Icon ImageViews to give them a circle shape;
- Has to be half the side length of the View
- */
-CGFloat const ETRIconViewCornerRadius = 20.0f;
 
 + (UIColor *)primaryColor {
     if (!PrimaryColor) {
@@ -78,9 +77,9 @@ CGFloat const ETRIconViewCornerRadius = 20.0f;
     return PrimaryTransparentColor;
 }
 
-+ (UIColor *)darkPrimaryColor {
-    return [UIColor redColor];
-}
+//+ (UIColor *)darkPrimaryColor {
+//    return [UIColor redColor];
+//}
 
 + (UIColor *)accentColor {
     if (!AccentColor) {

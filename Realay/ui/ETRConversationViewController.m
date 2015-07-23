@@ -33,7 +33,7 @@
 #import "ETRUser.h"
 
 
-static CGFloat const ETREstimatedMessageRowHeight = 150.0f;
+static CGFloat const ETREstimatedMessageRowHeight = 90.0f;
 
 static NSString *const ETRConversationToUserListSegue = @"PublicChatToSessionTabs";
 
@@ -58,7 +58,7 @@ UIImagePickerControllerDelegate,
 UINavigationControllerDelegate,
 UITableViewDataSource,
 UITableViewDelegate,
-UITextFieldDelegate
+UITextViewDelegate
 >
 
 /*
@@ -215,6 +215,9 @@ UITextFieldDelegate
         settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         
+        // Let the user know that everything posted here can be seen by everyone.
+        [[self navigationItem] setPrompt:NSLocalizedString(@"Public_Chat", @"Public Group Conversation")];
+        
         // Public Conversations have a Badge
         // that shows the number of unread private messages.
         [[ETRActionManager sharedManager] setInternalNotificationHandler:self];
@@ -240,6 +243,7 @@ UITextFieldDelegate
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self dismissKeyboard];
+    [[self navigationItem] setPrompt:nil];
     
     // Disable delegates.
     [[self messageInputView] setDelegate:nil];
@@ -381,9 +385,7 @@ UITextFieldDelegate
        atIndexPath:(NSIndexPath *)indexPath
      forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath {
-    
-//    NSLog(@"didChangeObject atIndexPath:%@ forChangeType:%lu newIndexPath:%@", indexPath, (unsigned long)type, newIndexPath);
-    
+        
     switch (type) {
         case NSFetchedResultsChangeInsert: {
             [[self messagesTableView] insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
@@ -439,11 +441,7 @@ UITextFieldDelegate
             ETRSentMediaCell * sentMediaCell;
             sentMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSentMediaCellIdentifier];
             
-            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
-            [[sentMediaCell timeLabel] setText:timestamp];
-            if (_partner) {
-                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
-            }
+            [[sentMediaCell timeLabel] setText:[action formattedDate]];
             
             cell = sentMediaCell;
             mediaView = [sentMediaCell iconView];
@@ -454,11 +452,8 @@ UITextFieldDelegate
                                                    forIndexPath:indexPath];
             
             [[sentMessageCell messageLabel] setText:[action messageContent]];
-            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
-            [[sentMessageCell timeLabel] setText:timestamp];
-            if (_partner) {
-                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
-            }
+            [[sentMessageCell timeLabel] setText:[action formattedDate]];
+            
             return sentMessageCell;
         }
     } else {
@@ -479,14 +474,10 @@ UITextFieldDelegate
             if (_isPublic) {
                 [[receivedMediaCell nameLabel] setText:senderName];
             } else {
-                [[receivedMediaCell nameLabel] setHidden:YES];
+                [[receivedMediaCell nameLabel] removeFromSuperview];
             }
             
-            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
-            [[receivedMediaCell timeLabel] setText:timestamp];
-            if (_partner) {
-                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
-            }
+            [[receivedMediaCell timeLabel] setText:[action formattedDate]];
             
             cell = receivedMediaCell;
             userIconView = [receivedMediaCell userIconView];
@@ -504,13 +495,8 @@ UITextFieldDelegate
             }
             
             [[receivedMsgCell nameLabel] setText:senderName];
-            
             [[receivedMsgCell messageLabel] setText:[action messageContent]];
-            NSString * timestamp = [ETRFormatter formattedDate:[action sentDate]];
-            [[receivedMsgCell timeLabel] setText:timestamp];
-            if (_partner) {
-                [cell setBackgroundColor:[ETRUIConstants secondaryBackgroundColor]];
-            }
+            [[receivedMsgCell timeLabel] setText:[action formattedDate]];
             
             cell = receivedMsgCell;
             userIconView = [receivedMsgCell userIconView];
@@ -594,6 +580,8 @@ UITextFieldDelegate
     [self hideMediaMenuWithCompletion:nil];
 }
 
+// TODO: Background color in private Convs.
+
 #pragma mark -
 #pragma mark UIScrollViewDelegate
 
@@ -674,9 +662,7 @@ UITextFieldDelegate
 }
 
 #pragma mark -
-#pragma mark Input
-
-// TODO: Return button behaviour.
+#pragma mark Buttons
 
 - (IBAction)sendButtonPressed:(id)sender {
     [self dismissKeyboard];
@@ -688,7 +674,7 @@ UITextFieldDelegate
     // Get the message from the text field.
     NSString * typedString = [[[self messageInputView] text]
                              stringByTrimmingCharactersInSet:
-                             [NSCharacterSet whitespaceCharacterSet]];
+                             [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if ([typedString length] > 0) {
         if (_isPublic) {
@@ -858,14 +844,25 @@ UITextFieldDelegate
     [self scrollDownTableViewAnimated];
 }
 
-#pragma mark - UITextFieldDelegate
+#pragma mark -
+#pragma mark UITextViewDelegate
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [self sendButtonPressed:nil];
-    return YES;
+- (BOOL)textView:(nonnull UITextView *)textView
+shouldChangeTextInRange:(NSRange)range
+ replacementText:(nonnull NSString *)text {
+    
+    NSString * newText = [[textView text] stringByReplacingCharactersInRange:range withString:text];
+    
+    if([newText length] <= 4000){
+        return YES;
+    } else {
+        [textView setText:[newText substringToIndex:4000]];
+        return NO;
+    }
 }
 
-#pragma mark - Navigation
+#pragma mark -
+#pragma mark Navigation
 
 - (IBAction)moreButtonPressed:(id)sender {
     // The More button is a Profile button in private chats.

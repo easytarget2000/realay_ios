@@ -19,13 +19,13 @@
 
 static ETRBouncer * sharedInstance = nil;
 
-static NSString * KickTime;
+static CFAbsoluteTime KickTime;
 
 static NSTimeInterval const ETRTimeIntervalFiveMinutes = 5.0 * 60.0;
 
 static NSTimeInterval const ETRTimeIntervalTenMinutes = 10.0 * 60.0;
 
-static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes;
+static CFTimeInterval const ETRTimeIntervalTimeout = ETRTimeIntervalTenMinutes * 3.0;
 
 /**
  Number of last Public Messages that will be stored for spam checks.
@@ -69,6 +69,12 @@ static short const ETRSpamWatchLimit = 5;
  */
 @property (nonatomic) short sentPublicMessagesPos;
 
+/**
+ Last Bouncer-related Notification that has been sent.
+ Stored for cancelation/replacement.
+ No more than one warning or kick Notification should appear in the Notification Center at once.
+ */
+@property (strong, nonatomic) UILocalNotification * lastNotification;
 
 @end
 
@@ -116,7 +122,7 @@ static short const ETRSpamWatchLimit = 5;
     _hasPendingKick = NO;
     _lastConnectionTime = CFAbsoluteTimeGetCurrent();
     _sentPublicMessages = nil;
-    KickTime = nil;
+    KickTime = 0.0;
 }
 
 - (void)acknowledgeConnection {
@@ -167,7 +173,8 @@ static short const ETRSpamWatchLimit = 5;
 
 - (BOOL)showPendingAlertViewInViewController:(UIViewController *)viewController {
     if (_hasPendingAlertView) {
-        [self notifyUser];
+        [self notifyUserAndForceAlertView:YES];
+        _hasPendingAlertView = NO;
         return YES;
     } else {
         return NO;
@@ -202,16 +209,17 @@ static short const ETRSpamWatchLimit = 5;
         }
     }
     
+    
     NSArray * intervals = [ETRBouncer warningIntervals];
     
     _lastReason = reason;
     
-    if (_numberOfWarnings < [intervals count]) {
+    if (_numberOfWarnings < [intervals count] && [self absoluteKickTime] > CFAbsoluteTimeGetCurrent()) {
 #ifdef DEBUG
         NSLog(@"Bouncer warning: %d/3 - %d.", _numberOfWarnings, reason);
 #endif
         
-        [self notifyUser];
+        [self notifyUserAndForceAlertView:NO];
         
         if (reason == ETRKickReasonLocation || reason == ETRKickReasonClosed) {
             // Set a timer for certain warnings to repeat until getting kicked.
@@ -241,16 +249,16 @@ static short const ETRSpamWatchLimit = 5;
     _hasPendingKick = YES;
     _lastReason = reason;
 
-//    ETRRoom * lastRoom = [ETRSessionManager sessionRoom];
     [[ETRSessionManager sharedManager] endSession];
-//    [[ETRSessionManager sharedManager] prepareSessionInRoom:lastRoom
-//                                       navigationController:[_viewController navigationController]];
-    [self notifyUser];
+    [self notifyUserAndForceAlertView:NO];
 }
 
 - (void)cancelLocationWarnings {
     if (_lastReason == ETRKickReasonLocation) {
         [self resetSession];
+        if (_lastNotification) {
+            [[UIApplication sharedApplication] cancelLocalNotification:_lastNotification];
+        }
     }
 }
 
@@ -258,30 +266,17 @@ static short const ETRSpamWatchLimit = 5;
     [self warnForReason:_lastReason allowDuplicate:YES];
 }
 
-//- (void)acknowledgeFailedConnection {
-//    if (_hasPendingKick) {
-//        return;
-//    }
-//    
-//    if (CFAbsoluteTimeGetCurrent() -  _lastConnectionTime > ETRTimeIntervalTimeout) {
-//        [self kickForReason:ETRKickReasonTimeout calledBy:@"acknowledgeFailedConnection"];
-//    }
-//}
-
 #pragma mark -
 #pragma mark Notificiations & AlertViews
 
-- (void)notifyUser  {
-    _hasPendingAlertView = YES;
+- (void)notifyUserAndForceAlertView:(BOOL)doForceAlertView  {
     
-    UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    BOOL isInForeground = (state == UIApplicationStateActive);
-    
-    if (!isInForeground && _numberOfWarnings > 0 && !_hasPendingKick) {
-        // If the app is not in the foreground,
-        // only show one warning notification.
-        return;
+    if (_lastNotification) {
+        [[UIApplication sharedApplication] cancelLocalNotification:_lastNotification];
+        _lastNotification = nil;
     }
+    
+    _hasPendingAlertView = YES;
     
     NSString * title;
     NSString * message;
@@ -301,7 +296,7 @@ static short const ETRSpamWatchLimit = 5;
 
                 NSString * messageFormat;
                 messageFormat = NSLocalizedString(@"Return_until", @"Come back until %@");
-                message = [NSString stringWithFormat:messageFormat, [self kickTime]];
+                message = [NSString stringWithFormat:messageFormat, [self formattedKickTime]];
                 
                 firstButton = NSLocalizedString(@"Map", @"Session Map");
                 secondButton = NSLocalizedString(@"Location_Settings", @"Preferences");
@@ -314,7 +309,9 @@ static short const ETRSpamWatchLimit = 5;
             } else {
                 NSString * messageFormat;
                 messageFormat = NSLocalizedString(@"Part_of_event", @"Event ended at %@. Stay until %@");
-                message = [NSString stringWithFormat:messageFormat, [self sessionEnd], [self kickTime]];
+                message = [NSString stringWithFormat:messageFormat,
+                           [self sessionEnd],
+                           [self formattedKickTime]];
             }
             break;
             
@@ -346,11 +343,15 @@ static short const ETRSpamWatchLimit = 5;
         default:
             return;
     }
+    
+
+    
 
     // Show the AlertView directly if a ViewController has been given,
     // which means the app is in the foreground.
     // Otherwise try to show a notification.
-    if (isInForeground) {
+    UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
+    if (appState == UIApplicationStateActive || doForceAlertView) {
         UIAlertView * alert;
         alert = [[UIAlertView alloc] initWithTitle:title
                                            message:message
@@ -359,18 +360,17 @@ static short const ETRSpamWatchLimit = 5;
                                  otherButtonTitles:firstButton, secondButton, nil];
         [alert setTag:_lastReason];
         [alert show];
-        
         _hasPendingAlertView = NO;
     } else {
         [[ETRNotificationManager sharedManager] updateAllowedNotificationTypes];
         
         if ([[ETRNotificationManager sharedManager] didAllowAlerts]) {
-            UILocalNotification * notification = [[UILocalNotification alloc] init];
-            [notification setAlertTitle:title];
-            [notification setAlertBody:message];
+            _lastNotification = [[UILocalNotification alloc] init];
+            [_lastNotification setAlertTitle:title];
+            [_lastNotification setAlertBody:message];
             
-            [[ETRNotificationManager sharedManager] addSoundToNotification:notification];
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+            [[ETRNotificationManager sharedManager] addSoundToNotification:_lastNotification];
+            [[UIApplication sharedApplication] presentLocalNotificationNow:_lastNotification];
         }
     }
 }
@@ -401,7 +401,7 @@ static short const ETRSpamWatchLimit = 5;
 
 - (NSString *)locationKickTime {
     if (_lastReason == ETRKickReasonLocation) {
-        return [self kickTime];
+        return [self formattedKickTime];
     } else {
         return nil;
     }
@@ -409,19 +409,22 @@ static short const ETRSpamWatchLimit = 5;
 
 /**
  * Uses the warning intervals to calculate when the final warning will be displayed
- * and stores the value as a readable HH:MM string
  */
-- (NSString *)kickTime {
-    if (!KickTime) {
+- (CFAbsoluteTime)absoluteKickTime {
+    if (KickTime < 1000.0) {
         CFTimeInterval warningIntervalSum = 0.0;
         for (NSNumber * interval in [ETRBouncer warningIntervals]) {
             warningIntervalSum += [interval doubleValue];
         }
         
-        CFAbsoluteTime kickTime = CFAbsoluteTimeGetCurrent() + warningIntervalSum;
-        KickTime = [ETRFormatter formattedDate:[NSDate dateWithTimeIntervalSinceReferenceDate:kickTime]];
+        KickTime = CFAbsoluteTimeGetCurrent() + warningIntervalSum;
     }
     return KickTime;
+}
+
+- (NSString *)formattedKickTime {
+    NSDate * kickDate = [NSDate dateWithTimeIntervalSinceReferenceDate:[self absoluteKickTime]];
+                         return [ETRFormatter formattedDate:kickDate];
 }
 
 /**

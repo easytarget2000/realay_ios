@@ -36,25 +36,8 @@ static NSString *const ETRSegueSettingsToProfile = @"SettingsToProfile";
     [[self navigationController] setToolbarHidden:YES animated:YES];
 }
 
-//- (void)viewDidAppear:(BOOL)animated {
-//    [super viewDidAppear:animated];
-//    
-//    UITableViewCell * locationSettings;
-//    locationSettings = [[self tableView] cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]];
-//    if (locationSettings) {
-//        if (![[ETRLocationManager sharedManager] didAuthorize]) {
-//            [locationSettings setBackgroundColor:[ETRUIConstants accentColor]];
-//            [locationSettings setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-//        } else {
-//            [locationSettings setBackgroundColor:[UIColor whiteColor]];
-//            [locationSettings setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-//        }
-//    }
-//    
-//    
-//}
-
-#pragma mark - UITableViewDelegate
+#pragma mark -
+#pragma mark UITableViewDelegate
 
 - (void)tableView:(nonnull UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

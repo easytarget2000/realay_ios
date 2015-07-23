@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D02C3A931B5FCF3B0087A496 /* ETRShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */; };
 		D05649161B41E53C00BDC1E5 /* ETRMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */; };
 		D0870BEF1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0870BEE1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m */; };
 		D09D364D1B2F42A000930E02 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D364F1B2F42A000930E02 /* InfoPlist.strings */; };
@@ -76,12 +77,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D02C3A911B5FCF3B0087A496 /* ETRShareViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRShareViewController.h; sourceTree = "<group>"; };
+		D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRShareViewController.m; sourceTree = "<group>"; };
+		D02C3A941B603F4F0087A496 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D02C3A961B60547A0087A496 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
 		D05649141B41E53C00BDC1E5 /* ETRMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMediaViewController.h; sourceTree = "<group>"; };
 		D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMediaViewController.m; sourceTree = "<group>"; };
 		D0870BED1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRPrepareSessionViewController.h; sourceTree = "<group>"; };
 		D0870BEE1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRPrepareSessionViewController.m; sourceTree = "<group>"; };
 		D09D364E1B2F42A000930E02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		D09D36501B2F42BD00930E02 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
 		D09D36511B2F42BD00930E02 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D09D36531B2F42D000930E02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D09D36581B2F43BC00930E02 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -308,6 +312,8 @@
 				D0D54B721B2F218300F8875B /* ETRSessionTabBarController.m */,
 				D0D54B731B2F218300F8875B /* ETRSettingsTableViewController.h */,
 				D0D54B741B2F218300F8875B /* ETRSettingsTableViewController.m */,
+				D02C3A911B5FCF3B0087A496 /* ETRShareViewController.h */,
+				D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */,
 				D0D54B751B2F218300F8875B /* ETRUIConstants.h */,
 				D0D54B761B2F218300F8875B /* ETRUIConstants.m */,
 				D0D54B771B2F218300F8875B /* ETRUserListBaseViewController.h */,
@@ -465,7 +471,7 @@
 				TargetAttributes = {
 					D0D54B371B2F1F9100F8875B = {
 						CreatedOnToolsVersion = 7.0;
-						DevelopmentTeam = X59SC9WX5X;
+						DevelopmentTeam = 4942X8FYB7;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -554,6 +560,7 @@
 				D0D54BC01B2F218300F8875B /* ETRRoomCell.m in Sources */,
 				D0D54BC31B2F218300F8875B /* ETRSettingCell.m in Sources */,
 				D0D54BAF1B2F218300F8875B /* ETRProfileEditorViewController.m in Sources */,
+				D02C3A931B5FCF3B0087A496 /* ETRShareViewController.m in Sources */,
 				D05649161B41E53C00BDC1E5 /* ETRMediaViewController.m in Sources */,
 				D0D54BA91B2F218300F8875B /* ETRConversationViewController.m in Sources */,
 				D0D54BEC1B2F219500F8875B /* ETRConversation.m in Sources */,
@@ -595,6 +602,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				D09D36531B2F42D000930E02 /* Base */,
+				D02C3A941B603F4F0087A496 /* de */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -603,7 +611,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				D0D54B451B2F1F9100F8875B /* Base */,
-				D09D36501B2F42BD00930E02 /* de */,
+				D02C3A961B60547A0087A496 /* de */,
 			);
 			name = Main.storyboard;
 			path = ..;

@@ -20,7 +20,7 @@ static NSString *const ETRSegueLoginToJoin = @"LoginToJoin";
 static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
 
 
-@interface ETRLoginViewController()
+@interface ETRLoginViewController () <UITextFieldDelegate>
 
 @property (nonatomic) BOOL doShowProfileOnFinish;
 
@@ -41,7 +41,9 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
     
     // Directly pop the controller if there is already a valid local user stored.
     if ([[ETRLocalUserManager sharedManager] user]) {
+#ifdef DEBUG
         NSLog(@"WARNING: Skipping Create Profile. Local user has been set up.");
+#endif
         [[self navigationController] popToRootViewControllerAnimated:YES];
     }
 }
@@ -55,21 +57,31 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
     [_activityIndicator startAnimating];
 }
 
-#pragma mark - UITextFieldDelegate
+#pragma mark -
+#pragma mark UITextFieldDelegate
 
 - (BOOL)textFieldShouldReturn:(nonnull UITextField *)textField {
     [self saveButtonPressed:nil];
     return YES;
 }
 
-//- (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
-//    if(theTextField == [self nameTextField]) {
-//        [theTextField resignFirstResponder];
-//    }
-//    return YES;
-//}
+- (BOOL)textField:(nonnull UITextField *)textField
+shouldChangeCharactersInRange:(NSRange)range
+replacementString:(nonnull NSString *)string {
+    
+    NSString * newText;
+    newText = [[textField text] stringByReplacingCharactersInRange:range
+                                                        withString:string];
+    if([newText length] <= 24) {
+        return YES;
+    } else {
+        [textField setText:[newText substringToIndex:24]];
+        return NO;
+    }
+}
 
-#pragma mark - Navigation
+#pragma mark -
+#pragma mark Navigation
 
 - (void)showProfileOnLogin {
     _doShowProfileOnFinish = YES;

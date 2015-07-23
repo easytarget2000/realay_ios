@@ -99,11 +99,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         UIBarButtonItem * barButton;
         
         if ([[ETRSessionManager sharedManager] didStartSession]) {
-//            barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Share", @"Share location")
-//                                                         style:UIBarButtonItemStylePlain
-//                                                        target:self
-//                                                        action:@selector(shareButtonPressed:)];
-        } else {
             barButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Join", @"Join")
                                                          style:UIBarButtonItemStylePlain
                                                         target:self
@@ -500,10 +495,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 - (IBAction)joinButtonPressed:(id)sender {
     [super joinButtonPressed:sender joinSegue:ETRSegueDetailsToPassword];
-}
-
-- (IBAction)shareButtonPressed:(id)sender {
-   // TODO: Implement sharing.
 }
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation

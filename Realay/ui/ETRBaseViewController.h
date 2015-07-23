@@ -19,8 +19,6 @@ static CFAbsoluteTime LastSettingsAlert = 0.0;
 
 @property (strong, nonatomic) ETRAlertViewFactory * alertHelper;
 
-- (void)updateAlertViews;
-
 - (void)pushToPublicConversationViewController;
 
 - (void)pushToJoinViewController;

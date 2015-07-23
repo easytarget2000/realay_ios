@@ -45,6 +45,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 @property (strong, nonatomic) NSMutableDictionary * imageDownloadsInProgress;
 
+@property (nonatomic) BOOL didAppear;
+
 @property (nonatomic) BOOL doHideInformationView;
 
 @property (nonatomic) BOOL doShowDistances;
@@ -61,6 +63,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _didAppear = NO;
     
     // Initialize Fetched Results Controller
     _fetchedResultsController = [ETRCoreDataHelper roomListResultsController];
@@ -85,8 +89,6 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [refreshControl setTintColor:[ETRUIConstants accentColor]];
     [[self tableView] addSubview:refreshControl];
     [self setRefreshControl:refreshControl];
-    
-    [[self infoContainer] setHidden:![ETRDefaultsHelper didRunOnce]];
     
     [self setImageDownloadsInProgress:[NSMutableDictionary dictionary]];
 }
@@ -128,11 +130,16 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         }
     }
     
+    if ([ETRDefaultsHelper didRunOnce] && ![[self infoContainer] isHidden]) {
+        // The app has been started once before and we are not going directly into a Session.
+        [ETRAnimator fadeView:[self infoContainer] doAppear:NO completion:nil];
+    }
+    
     [[self tableView] reloadData];
     
     // Load any remaining images after a while, if the table is calm.
     dispatch_after(
-                   dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+                   dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC),
                    dispatch_get_main_queue(),
                    ^{
                        if (![[self tableView] isDragging] && ![[self tableView] isDecelerating]) {
@@ -140,6 +147,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
                        }
                    }
                    );
+    _didAppear = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -147,7 +155,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     
     [[self refreshIndicator] stopAnimating];
     [[self refreshIndicator] setHidden:YES];
-    [[self refreshButton] setHidden:_doHideInformationView];
+    [[self refreshButton] setHidden:YES];
     
     if ([[self refreshControl] isRefreshing]) {
         [[self refreshControl] endRefreshing];
@@ -164,15 +172,6 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 - (void)orientationChanged:(NSNotification *)notification {
     [[self tableView] reloadData];
 }
-
-//- (void)didReceiveMemoryWarning {
-//    [super didReceiveMemoryWarning];
-//    [self terminateAllDownloads];
-//}
-//
-//- (void)dealloc {
-//    [self terminateAllDownloads];
-//}
 
 #pragma mark -
 #pragma mark NSFetchedResultsControllerDelegate
@@ -324,9 +323,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     
     ETRRoom *record = [_fetchedResultsController objectAtIndexPath:indexPath];
     [[ETRSessionManager sharedManager] prepareSessionInRoom:record navigationController:[self navigationController]];
-    
-//    NSLog(@"Did select Room: %ld", [[record remoteID] longValue]);
-    
+        
     [self performSegueWithIdentifier:ETRSegueRoomsToMap sender:record];
 }
 
@@ -348,7 +345,6 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         if (!didReceive) {
             [[self refreshControl] endRefreshing];
         }
-        // TODO: End refreshing after a while.
     }];
 }
 
@@ -357,12 +353,11 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark Information View
 
 - (void)setInformationViewHidden:(BOOL)isHidden {
-    //    BOOL wasHidden = _doHideInformationView;
+    if (!_didAppear) {
+        return;
+    }
+    
     _doHideInformationView = isHidden;
-    //
-    //    if (wasHidden == _doHideInformationView) {
-    //        return;
-    //    }
     
     [[self infoLabel] setHidden:_doHideInformationView];
     [[self refreshButton] setHidden:_doHideInformationView];
@@ -374,8 +369,9 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         [self setTitle:@""];
     }
     
-    [ETRAnimator fadeView:[self infoContainer] doAppear:!_doHideInformationView completion:nil];
-    //    [ETRAnimator toggleBounceInView:[self infoContainer] animateFromTop:YES completion:nil];
+    [ETRAnimator fadeView:[self infoContainer]
+                 doAppear:!_doHideInformationView
+               completion:nil];
 }
 
 /*

@@ -92,12 +92,6 @@
  * Called by Reachability whenever status changes.
  */
 - (void)reachabilityDidChange:(NSNotification *)note {
-//    Reachability * curReach = [note object];
-//    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
-#ifdef DEBUG
-    NSLog(@"Reachability did change.");
-#endif
-    
     if ([ETRReachabilityManager isReachable]) {
         [ETRCoreDataHelper retrySendingQueuedActions];
         

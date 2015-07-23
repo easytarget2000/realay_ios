@@ -36,8 +36,6 @@
 
 - (CLLocation *)location;
 
-// TODO: Use CoreData user count for in-session count.
-
 @end
 
 @interface ETRRoom (CoreDataGeneratedAccessors)

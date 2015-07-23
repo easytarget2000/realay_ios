@@ -184,21 +184,6 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
                                         animated:YES];
         
         [[nextCell valueField] becomeFirstResponder];
-        
-//        // If you are scrolling to the top of the cell (in my case it means that if the user taps "enter" in the last row, therefore the next one will be the first one)
-//        // then setup a delay of 0.6 seconds
-//        double delayInSeconds = 0;
-//        if (nextIndexPath.section == 0 && nextIndexPath.row == 0) {
-//            delayInSeconds = 0.6;
-//        }
-//        
-//        // Retrieve the cell after the afore-defined delay
-//        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-//        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//            UITableViewCell *nextCell = [self.tableView cellForRowAtIndexPath:nextIndexPath];
-//            YourCustomCell *advancedCell = (YourCustomCell *) nextCell;
-//            [advancedCell.editField becomeFirstResponder];
-//        });
     }
     
     return YES;
@@ -220,10 +205,6 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    if (_lastTouchedTextFieldTag == [textField tag]) {
-        _lastTouchedTextFieldTag = -1;
-    }
-    
     [self readChangesFromTextField:textField];
 }
 
@@ -355,10 +336,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
 - (void)saveButtonPressed:(id)sender {
     NSInteger lastTouchedRow = _lastTouchedTextFieldTag - ETRCellTagOffset;
-    if (lastTouchedRow < 0) {
-        [[self navigationController] popViewControllerAnimated:YES];
-        return;
-    }
+//    if (lastTouchedRow < 0) {
+//        [[self navigationController] popViewControllerAnimated:YES];
+//        return;
+//    }
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:lastTouchedRow inSection:0];
     id<NSObject> lastTouchedCell = [[self tableView] cellForRowAtIndexPath:indexPath];
@@ -379,12 +360,12 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     BOOL doSendUpdate = NO;
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
-    if (![[_localUserCopy imageID] isEqualToNumber:[localUser imageID]]) {
-        // Do not send an update API call for image changes.
-        // The image upload already does this.
-        [localUser setImageID:[_localUserCopy imageID]];
-        [localUser setLowResImage:[_localUserCopy lowResImage]];
-    }
+//    if (![[_localUserCopy imageID] isEqualToNumber:[localUser imageID]]) {
+//        // Do not send an update API call for image changes.
+//        // The image upload already does this.
+//        [localUser setImageID:[_localUserCopy imageID]];
+//        [localUser setLowResImage:[_localUserCopy lowResImage]];
+//    }
     
     if ([_localUserCopy name]) {
         if (![[_localUserCopy name] isEqualToString:[localUser name]]) {
@@ -431,6 +412,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     }
     
     if (doSendUpdate && [ETRCoreDataHelper saveContext]) {
+#ifdef DEBUG
+        NSLog(@"Profile changed by user. Dispatching update to server.");
+        NSLog(@"%@", [localUser description]);
+#endif
         // This will fetch the local User object, upload it to the server
         // and queue a retry if a connection problem occurred.
         [ETRServerAPIHelper dispatchUserUpdate];

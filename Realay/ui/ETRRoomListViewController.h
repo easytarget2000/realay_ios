@@ -17,9 +17,9 @@
 
 @property (weak, nonatomic) IBOutlet UILabel * infoLabel;
 
-@property (weak, nonatomic) IBOutlet UIButton *refreshButton;
+@property (weak, nonatomic) IBOutlet UIButton * refreshButton;
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *refreshIndicator;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView * refreshIndicator;
 
 - (IBAction)refreshButtonPressed:(id)sender;
 

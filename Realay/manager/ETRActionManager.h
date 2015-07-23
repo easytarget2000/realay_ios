@@ -50,4 +50,9 @@
 
 - (void)setForegroundPartnerID:(NSNumber *)foregroundPartnerID;
 
+#pragma mark -
+#pragma mark Notifications
+
+- (void)cancelAllNotifications;
+
 @end

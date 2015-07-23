@@ -11,12 +11,13 @@
 #import "ETRAlertViewFactory.h"
 #import "ETRAnimator.h"
 #import "ETRConversationViewController.h"
+#import "ETRCoreDataHelper.h"
 #import "ETRRoom.h"
 #import "ETRUIConstants.h"
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 
-static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
+static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
 
 
 @interface ETRJoinViewController ()
@@ -36,7 +37,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+        
     ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
     if (!preparedRoom) {
         [[self navigationController] popToRootViewControllerAnimated:YES];
@@ -49,13 +50,12 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
     
     _isCanceled = NO;
     
-    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
-    [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
-                            completionHandler:^(BOOL didSucceed) {
-                                [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
-                                                         toTarget:self
-                                                       withObject:@(didSucceed)];
-                            }];
+    [ETRServerAPIHelper joinRoomAndShowProgressInLabel:_statusLabel
+                                     completionHandler:^(BOOL didSucceed) {
+                                         [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+                                                                  toTarget:self
+                                                                withObject:@(didSucceed)];
+                                     }];
     
     _delayTimer = [NSTimer scheduledTimerWithTimeInterval:ETRIntervalJoinDelayed
                                                    target:self
@@ -109,17 +109,17 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 10.0;
     }
 }
 
-- (void)startJoinThreadforRoom:(ETRRoom *)room {
-    _isCanceled = NO;
-    
-    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
-    [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
-                            completionHandler:^(BOOL didSucceed) {
-                                [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
-                                                         toTarget:self
-                                                       withObject:@(didSucceed)];
-                            }];
-}
+//- (void)startJoinThreadforRoom:(ETRRoom *)room {
+//    _isCanceled = NO;
+//    
+//    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
+//    [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
+//                            completionHandler:^(BOOL didSucceed) {
+//                                [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+//                                                         toTarget:self
+//                                                       withObject:@(didSucceed)];
+//                            }];
+//}
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {
     [_delayTimer invalidate];

@@ -27,9 +27,6 @@
     
     BOOL didStartSession = [[ETRSessionManager sharedManager] didStartSession];
     
-//    [[self shareButton] setHidden:!didStartSession];
-    [[self shareButton] setHidden:YES];
-    
     NSString * secondLine;
     if (didStartSession) {
         // The Location Kick Time may be nil if there haven't been any warnings.

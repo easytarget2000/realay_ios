@@ -10,7 +10,20 @@
 
 #import "ETRUser.h"
 
+
+
+@interface ETRKeyValueEditorCell () <UITextFieldDelegate>
+
+@property (nonatomic) short characterLimit;
+
+@end
+
+
 @implementation ETRKeyValueEditorCell
+
+- (void)prepareForReuse {
+    [[self valueField] setText:@""];
+}
 
 - (void)setUpStatusEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user {
     if (!user) {
@@ -30,6 +43,7 @@
     } else {
         [[self valueField] setText:@"..."];
     }
+    _characterLimit = 140;
 }
 
 - (void)setUpPhoneNumberEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user{
@@ -47,6 +61,7 @@
     } else {
         [[self valueField] setText:@""];
     }
+    _characterLimit = 18;
 }
 
 
@@ -65,6 +80,7 @@
     } else {
         [[self valueField] setText:@""];
     }
+    _characterLimit = 50;
 }
 
 - (void)setUpWebsiteURLEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user {
@@ -82,7 +98,7 @@
     } else {
         [[self valueField] setText:@""];
     }
-    
+    _characterLimit = 240;
 }
 
 - (void)setUpFacebookNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user {
@@ -100,6 +116,7 @@
     } else {
         [[self valueField] setText:@""];
     }
+    _characterLimit = 60;
 }
 
 - (void)setUpInstagramNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user; {
@@ -117,6 +134,7 @@
     } else {
         [[self valueField] setText:@""];
     }
+    _characterLimit = 60;
 }
 
 - (void)setUpTwitterNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user; {
@@ -134,11 +152,33 @@
     } else {
         [[self valueField] setText:@""];
     }
+    _characterLimit = 60;
 }
 
 - (NSString *)validatedFieldValue {
-    NSString *enteredText = [[self valueField] text];
+    NSString * enteredText = [[self valueField] text];
     return [enteredText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
+
+#pragma mark -
+#pragma mark UITextFieldDelegate
+
+- (BOOL)textField:(nonnull UITextField *)textField
+shouldChangeCharactersInRange:(NSRange)range
+replacementString:(nonnull NSString *)string {
+    
+    if (_characterLimit < 2) {
+        return YES;
+    }
+    
+    NSString * newText = [[textField text] stringByReplacingCharactersInRange:range withString:string];
+    
+    if([newText length] <= _characterLimit){
+        return YES;
+    } else {
+        [textField setText:[newText substringToIndex:_characterLimit]];
+        return NO;
+    }
 }
 
 @end

@@ -14,6 +14,14 @@
 #import "ETRSessionManager.h"
 #import "ETRUser.h"
 
+
+@interface ETRAction ()
+
+@property (strong, nonatomic) NSString * formattedDate;
+
+@end
+
+
 @implementation ETRAction
 
 @dynamic code;
@@ -25,6 +33,7 @@
 @dynamic room;
 @dynamic sender;
 @dynamic conversation;
+@synthesize formattedDate = _formattedDate;
 
 #pragma mark -
 #pragma mark NSObject
@@ -47,7 +56,7 @@
 - (NSString *)shortDescription {
     NSString * sender = [[self sender] name];
     NSString * time = [ETRFormatter formattedDate:[self sentDate]];
-    return [NSString stringWithFormat:@"%@, %@, %@", sender, time, [self messageContent]];
+    return [NSString stringWithFormat:@"%@, %@: %@", sender, time, [self messageContent]];
 }
 
 - (BOOL)isPublicAction {
@@ -114,6 +123,13 @@
     } else {
         return [self messageContent];
     }
+}
+
+- (NSString *)formattedDate {
+    if (!_formattedDate) {
+        _formattedDate = [ETRFormatter formattedDate:[self sentDate]];
+    }
+    return _formattedDate;
 }
 
 @end

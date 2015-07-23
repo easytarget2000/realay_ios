@@ -114,6 +114,8 @@
 
 "Private_Message" = "Private Message";
 
+"Public_Chat" = "Public Chat";
+
 "Public_Message" = "Public Message";
 
 "public_messages" = "%d new public messages.";
@@ -128,15 +130,11 @@
 
 "Return_until" = "Please return to the area of the current Realay until %@.";
 
-"Regular_location_updates" = "Please make sure that your device regularly updates your location.";
-
 "Requested_to_leave" = "You have been requested to leave.";
 
 "Saved_Image" = "Image Saved";
 
 "Select_or_camera" = "Would you like to select an image from the Photos gallery or take a new picture?";
-
-"send_me_realhey" = "Send me a RealHey!";
 
 "Session_Terminated" = "Session Ended";
 
@@ -158,7 +156,7 @@
 
 "Status" = "Status";
 
-"Timeout_occurred" = "A timeout occurred.\n\nCould not connect to the internet to receive new messages for several minutes.";
+"Timeout_occurred" = "Could not connect to the internet to receive new messages for a while.";
 
 "Today" = "Today";
 
@@ -167,8 +165,6 @@
 "Try_again" = "Please try again.";
 
 "Twitter_Name" = "Twitter Username";
-
-"Unknown_location" = "Your location is unknown.";
 
 "Unknown_User" = "Unknown User";
 
@@ -182,7 +178,9 @@
 
 "Want_block" = "Do you want to block %@?";
 
-"Want_leave" = "Do you want to leave %@?\n\nYou will no longer receive any messages.";
+"Want_leave" = "Do you want to leave %@?";
+
+"No_longer_receive" = "You can only be in one Realay at a time.\n\nIf you leave, you will no longer receive any messages.";
 
 "Want_unblock" = "Do you want to unblock %@?";
 

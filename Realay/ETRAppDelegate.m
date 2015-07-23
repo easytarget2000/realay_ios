@@ -23,12 +23,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//     Google Maps API Key:
-//    [GMSServices provideAPIKey:@"AIzaSyDiLvq1foJVgVyXaHgYQqFk0Ig9rb4XUSM"];
+
     
     // Initialise the Reachability and Location Managers, in order to avoid delayed Reachability states later.
     [ETRReachabilityManager sharedManager];
-//    [ETRLocationManager sharedManager];
     
     [ETRDefaultsHelper authID];
     
@@ -51,21 +49,6 @@
     
     // Prepare the random number generator seeed.
     srand48(time(0));
-    
-    //    UIStoryboard * storyboard = [[[self window] rootViewController] storyboard];
-    //    ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
-    //
-    //    if ([sessionMan didBeginSession] && [sessionMan room]) {
-    //        ETRConversationViewController * conversationViewController;
-    //        conversationViewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDConversation];
-    //        [conversationViewController setIsPublic:YES];
-    //        [[self window] setRootViewController:conversationViewController];
-    //        [[self window] makeKeyAndVisible];
-    //    } else if ([sessionMan restoreSession]) {
-    //        UIViewController * joinViewController = [storyboard instantiateViewControllerWithIdentifier:ETRViewControllerIDJoin];
-    //        [[self window] setRootViewController:joinViewController];
-    //        [[self window] makeKeyAndVisible];
-    //    }
     
     return YES;
 }
@@ -172,9 +155,8 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
         dict[NSUnderlyingErrorKey] = error;
         error = [NSError errorWithDomain:@"org.eztarget.Realay" code:9999 userInfo:dict];
         // TODO: Replace this with code to handle the error appropriately.
-        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
+        NSLog(@"ERROR: persistentStoreCoordinator : %@, %@", error, [error userInfo]);
+//        abort();
     }
     
     return _persistentStoreCoordinator;
@@ -182,7 +164,7 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
 
 - (NSManagedObjectContext *)managedObjectContext {
     // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.)
-    if (_managedObjectContext != nil) {
+    if (_managedObjectContext) {
         return _managedObjectContext;
     }
     
@@ -195,7 +177,8 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
     return _managedObjectContext;
 }
 
-#pragma mark - Core Data Saving support
+#pragma mark -
+#pragma mark Core Data Saving support
 
 - (void)saveContext {
     NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
@@ -204,8 +187,8 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
             // Replace this implementation with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
+            NSLog(@"ERROR: saveContext : %@, %@", error, [error userInfo]);
+//            abort();
         }
     }
 }

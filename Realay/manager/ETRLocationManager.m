@@ -232,9 +232,15 @@ static ETRLocationManager * SharedInstance;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    if (![ETRLocationManager didAuthorizeWhenInUse]) {
 #ifdef DEBUG
-    NSLog(@"ERROR: LocationManager failed: %@", [error description]);
+        NSLog(@"Location Manager failed because Authorization was revoked.");
 #endif
+        // Authorization "When In Use" is required for endless sessions.
+        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation allowDuplicate:NO];
+    } else {
+        NSLog(@"ERROR: Location Manager failed: %@", [error description]);
+    }
 }
 
 - (void)locationManagerDidPauseLocationUpdates:(nonnull CLLocationManager *)manager {

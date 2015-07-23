@@ -14,7 +14,7 @@
 #import "ETRUIConstants.h"
 #import "ETRUser.h"
 
-@interface ETRProfileHeaderEditorCell ()
+@interface ETRProfileHeaderEditorCell () <UITextFieldDelegate>
 
 @property (weak, nonatomic) ETRProfileEditorViewController * viewController;
 
@@ -36,7 +36,7 @@
                               intoView:[self iconImageView]
                       placeHolderImage:[UIImage imageNamed:ETRImageNameUserIcon]
                            doLoadHiRes:NO];
-    
+    [[self nameField] setDelegate:self];
     [[self nameField] setTag:tag];
     [[self nameField] setText:[user name]];
 }
@@ -46,6 +46,21 @@
     
     if ([[touch view] isEqual:[self iconImageView]] && _viewController) {
         [_viewController imagePickerButtonPressed:nil];
+    }
+}
+
+- (BOOL)textField:(nonnull UITextField *)textField
+shouldChangeCharactersInRange:(NSRange)range
+replacementString:(nonnull NSString *)string {
+    
+    NSString * newText;
+    newText = [[textField text] stringByReplacingCharactersInRange:range
+                                                        withString:string];
+    if([newText length] <= 24) {
+        return YES;
+    } else {
+        [textField setText:[newText substringToIndex:24]];
+        return NO;
     }
 }
 

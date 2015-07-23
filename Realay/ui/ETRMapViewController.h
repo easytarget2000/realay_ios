@@ -16,9 +16,11 @@
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl * mapTypeSegmentedControl;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem    * joinButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem * joinButton;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem    * directionsButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem * directionsButton;
+
+@property (weak, nonatomic) IBOutlet UIView *sharePanel;
 
 - (IBAction)joinButtonPressed:(id)sender;
 
@@ -27,5 +29,7 @@
 - (IBAction)navigateButtonPressed:(id)sender;
 
 - (IBAction)detailsButtonPressed:(id)sender;
+
+- (IBAction)cancelShareButtonPressed:(id)sender;
 
 @end

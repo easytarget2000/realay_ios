@@ -22,7 +22,7 @@ extern NSString * ETRAPIBaseURL;
 #pragma mark -
 #pragma mark Actions
 
-- (void)joinRoomAndShowProgressInLabel:(UILabel *)label
++ (void)joinRoomAndShowProgressInLabel:(UILabel *)label
                      completionHandler:(void(^)(BOOL didSucceed))completionHandler;
 
 + (void)getActionsAndPing:(BOOL)doSendPing completion:(void (^)(id<NSObject>))completionHandler;

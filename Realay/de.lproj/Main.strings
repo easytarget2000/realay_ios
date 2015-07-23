@@ -1,6 +1,9 @@
 
+/* Class = "UINavigationItem"; title = "Your Profile"; ObjectID = "1F5-To-a9e"; */
+"1F5-To-a9e.title" = "Dein Profil";
+
 /* Class = "UIViewController"; title = "Blocked Users"; ObjectID = "2JK-4Z-rTv"; */
-"2JK-4Z-rTv.title" = "Blocked Users";
+"2JK-4Z-rTv.title" = "Blockierte Benutzer";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "2vu-35-UIx"; */
 "2vu-35-UIx.text" = "-";
@@ -8,28 +11,36 @@
 /* Class = "UILabel"; text = "--:--"; ObjectID = "5bB-Mh-y7B"; */
 "5bB-Mh-y7B.text" = "--:--";
 
-/* Class = "UIButton"; normalTitle = " Take a picture"; ObjectID = "5t2-vm-6eu"; */
-"5t2-vm-6eu.normalTitle" = " Take a picture";
+/* Class = "UIBarButtonItem"; title = "Save"; ObjectID = "6DR-ht-nai"; */
+"6DR-ht-nai.title" = "Speichern";
+
+/* Class = "UIBarButtonItem"; title = "Users"; ObjectID = "6nA-9H-fiM"; */
+"6nA-9H-fiM.title" = "Benutzer";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "8gn-IB-beX"; */
 "8gn-IB-beX.text" = "-";
 
 /* Class = "UILabel"; text = "-
 -"; ObjectID = "8qF-p3-KCY"; */
-"8qF-p3-KCY.text" = "-
--";
+"8qF-p3-KCY.text" = "--";
+
+/* Class = "UITableViewSection"; headerTitle = "Message Language"; ObjectID = "Ade-3f-Yjp"; */
+"Ade-3f-Yjp.headerTitle" = "Sprache Der Nachricht";
 
 /* Class = "UILabel"; text = "If you have used Realay on this device before, you can use your old name to log back into your existing account."; ObjectID = "AfK-7E-FIC"; */
-"AfK-7E-FIC.text" = "If you have used Realay on this device before, you can use your old name to log back into your existing account.";
+"AfK-7E-FIC.text" = "Falls du Realay auf diesem Gerät zuvor bereits genutzt hast, kannst du Deinen alten Benutzernamen eingeben, um Dich in Dein bestehendes Profil einzuloggen.";
 
 /* Class = "UILabel"; text = "Size"; ObjectID = "Ba0-ip-I9N"; */
-"Ba0-ip-I9N.text" = "Size";
+"Ba0-ip-I9N.text" = "Größe";
+
+/* Class = "UILabel"; text = "--:--"; ObjectID = "Bjt-7M-8oW"; */
+"Bjt-7M-8oW.text" = "--:--";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "Br5-EE-8B0"; */
 "Br5-EE-8B0.text" = "-";
 
 /* Class = "UITabBarItem"; title = "Users"; ObjectID = "C0U-OW-8GR"; */
-"C0U-OW-8GR.title" = "Users";
+"C0U-OW-8GR.title" = "Benutzer";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "C7p-Pf-Gw0"; */
 "C7p-Pf-Gw0.text" = "-";
@@ -38,22 +49,28 @@
 "D0x-D7-jUW.text" = "1500m";
 
 /* Class = "UIBarButtonItem"; title = "Join"; ObjectID = "DAQ-5h-07h"; */
-"DAQ-5h-07h.title" = "Join";
+"DAQ-5h-07h.title" = "Start";
 
-/* Class = "UIBarButtonItem"; title = "Settings"; ObjectID = "HbE-Vw-SMA"; */
-"HbE-Vw-SMA.title" = "Settings";
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "Drp-A6-RW5"; */
+"Drp-A6-RW5.title" = "Abbrechen";
+
+/* Class = "UINavigationItem"; title = "Sharing"; ObjectID = "FqG-QL-cDQ"; */
+"FqG-QL-cDQ.title" = "Teilen";
+
+/* Class = "UILabel"; text = "User has left the Room."; ObjectID = "GKd-rn-MZo"; */
+"GKd-rn-MZo.text" = "Die Person hat das Realay verlassen.";
+
+/* Class = "UIBarButtonItem"; title = "Save"; ObjectID = "HwJ-vA-1kM"; */
+"HwJ-vA-1kM.title" = "Speichern";
 
 /* Class = "UILabel"; text = "--:--"; ObjectID = "IlG-he-l4W"; */
 "IlG-he-l4W.text" = "--:--";
 
-/* Class = "UILabel"; text = "key"; ObjectID = "KNd-lr-jR9"; */
-"KNd-lr-jR9.text" = "key";
-
-/* Class = "UITextField"; placeholder = "Username"; ObjectID = "Ku3-U3-zRL"; */
-"Ku3-U3-zRL.placeholder" = "Username";
+/* Class = "UIBarButtonItem"; title = "Image"; ObjectID = "JHY-OW-OQH"; */
+"JHY-OW-OQH.title" = "Bild";
 
 /* Class = "UILabel"; text = "Blocked Users"; ObjectID = "LMq-8M-s8V"; */
-"LMq-8M-s8V.text" = "Blocked Users";
+"LMq-8M-s8V.text" = "Blockierte Benutzer";
 
 /* Class = "UITabBarItem"; title = "Private Chats"; ObjectID = "NAG-51-KwE"; */
 "NAG-51-KwE.title" = "Private Chats";
@@ -61,70 +78,75 @@
 /* Class = "UILabel"; text = "-"; ObjectID = "NTb-YM-Q3k"; */
 "NTb-YM-Q3k.text" = "-";
 
-/* Class = "UILabel"; text = "You have not blocked anyone.\n        If you want to keep someone from contacting you,\nuse the Block button on their profile
-or tap and hold one of their messages and choose 'Block User'.\n"; ObjectID = "OH4-hT-5Fj"; */
-"OH4-hT-5Fj.text" = "You have not blocked anyone.\n        If you want to keep someone from contacting you,\nuse the Block button on their profile
-or tap and hold one of their messages and choose 'Block User'.\n";
+/* Class = "UILabel"; text = "Take a Picture"; ObjectID = "NgS-1A-CTN"; */
+"NgS-1A-CTN.text" = "Ein Bild Aufnehmen";
+
+/* Class = "UILabel"; text = "You have not blocked anyone.\n\nIf you want to keep someone from contacting you,\nuse the Block button on their profile
+or tap and hold one of their messages and choose 'Block User'."; ObjectID = "OH4-hT-5Fj"; */
+"OH4-hT-5Fj.text" = "Du hast niemanden blockiert.\n\nFalls du nicht möchtest, dass Dich eine Person kontaktiert, berühre und halte eine ihrer Nachrichten im öffentlichen Chat oder öffne das Profil und wähle \'Benutzer Blockieren\'.";
 
 /* Class = "UILabel"; text = "The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password."; ObjectID = "PDY-cq-Qbk"; */
-"PDY-cq-Qbk.text" = "The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password.";
+"PDY-cq-Qbk.text" = "Üblicherweise findest du das Passwort am Eingang des Realays oder an einer besonderen, z.Bsp. zentralen Stelle. Vielleicht kennt jemand in Deiner Nähe das Passwort.";
+
+/* Class = "UILabel"; text = "Welcome!
+
+There are no public messages yet.
+Be the first to say something."; ObjectID = "Q36-2S-mYu"; */
+"Q36-2S-mYu.text" = "Willkommen!\n\nEs gibt noch keine öffentlichen Nachrichten hier.\n\nSchreib die erste Nachricht.";
 
 /* Class = "UITableViewController"; title = "Settings"; ObjectID = "R30-7k-D48"; */
-"R30-7k-D48.title" = "Settings";
+"R30-7k-D48.title" = "Einstellungen";
 
 /* Class = "UIBarButtonItem"; title = "Login"; ObjectID = "SCS-jW-Rgp"; */
-"SCS-jW-Rgp.title" = "Login";
+"SCS-jW-Rgp.title" = "Start";
 
 /* Class = "UIBarButtonItem"; title = "More"; ObjectID = "SsP-OI-llR"; */
-"SsP-OI-llR.title" = "More";
+"SsP-OI-llR.title" = "Mehr";
 
 /* Class = "UILabel"; text = "Name"; ObjectID = "Uzh-cF-iqT"; */
 "Uzh-cF-iqT.text" = "Name";
 
-/* Class = "UIButton"; normalTitle = " Select image from gallery"; ObjectID = "W9r-T3-WLS"; */
-"W9r-T3-WLS.normalTitle" = " Select image from gallery";
+/* Class = "UILabel"; text = "German"; ObjectID = "W62-FR-eQC"; */
+"W62-FR-eQC.text" = "Deutsch";
 
 /* Class = "UILabel"; text = "Entering..."; ObjectID = "WW5-FM-bqp"; */
-"WW5-FM-bqp.text" = "Entering...";
+"WW5-FM-bqp.text" = "Lädt...";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "XHV-JN-OuN"; */
 "XHV-JN-OuN.text" = "-";
 
 /* Class = "UISegmentedControl"; XQ4-Sq-9Os.segmentTitles[0] = "Road Map"; ObjectID = "XQ4-Sq-9Os"; */
-"XQ4-Sq-9Os.segmentTitles[0]" = "Road Map";
+"XQ4-Sq-9Os.segmentTitles[0]" = "Straßen";
 
 /* Class = "UISegmentedControl"; XQ4-Sq-9Os.segmentTitles[1] = "Satellite"; ObjectID = "XQ4-Sq-9Os"; */
-"XQ4-Sq-9Os.segmentTitles[1]" = "Satellite";
+"XQ4-Sq-9Os.segmentTitles[1]" = "Satellit";
 
 /* Class = "UILabel"; text = "Message"; ObjectID = "YF8-c9-ham"; */
-"YF8-c9-ham.text" = "Message";
+"YF8-c9-ham.text" = "Nachricht";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "YYX-Wg-btX"; */
 "YYX-Wg-btX.text" = "-";
 
 /* Class = "UILabel"; text = "Please enter the password of this Realay."; ObjectID = "ajl-Oz-7Ht"; */
-"ajl-Oz-7Ht.text" = "Please enter the password of this Realay.";
+"ajl-Oz-7Ht.text" = "Bitte gib das Passwort für dieses Realay ein.";
 
-/* Class = "UILabel"; text = "Please enter a username:"; ObjectID = "b56-rH-Fbr"; */
-"b56-rH-Fbr.text" = "Please enter a username:";
-
-/* Class = "UILabel"; text = "1500m"; ObjectID = "bjj-2T-zMc"; */
-"bjj-2T-zMc.text" = "1500m";
+/* Class = "UILabel"; text = "Select from Gallery"; ObjectID = "beK-e7-hwM"; */
+"beK-e7-hwM.text" = "Aus Gallerie wählen";
 
 /* Class = "UILabel"; text = "0"; ObjectID = "cBS-mz-QBG"; */
 "cBS-mz-QBG.text" = "0";
 
+/* Class = "UILabel"; text = "Block User"; ObjectID = "cTn-Fo-8Zr"; */
+"cTn-Fo-8Zr.text" = "Person Blockieren";
+
 /* Class = "UIViewController"; title = "Map"; ObjectID = "caV-mp-rD8"; */
-"caV-mp-rD8.title" = "Map";
+"caV-mp-rD8.title" = "Karte";
 
 /* Class = "UILabel"; text = "Status"; ObjectID = "dHO-F9-yaY"; */
 "dHO-F9-yaY.text" = "Status";
 
-/* Class = "UILabel"; text = "In this Realay, you currently do not have any private conversations.
- \n\nChoose a person from the user list to start a 1-on-1 chat."; ObjectID = "eWb-9Z-rGz"; */
-"eWb-9Z-rGz.text" = "In diesem Realay hast du zurzeit keine privaten Unterhaltungen.
-
-Wähle eine Person in der Benutzerliste, um einen Chat zu starten.";
+/* Class = "UILabel"; text = "You do not have any private messages here. Chose a person from the user list to start a 1-on-1 chat."; ObjectID = "eWb-9Z-rGz"; */
+"eWb-9Z-rGz.text" = "In diesem Realay hast du zurzeit keine privaten Unterhaltungen.\n\nWähle eine Person in der Benutzerliste, um einen Chat zu starten.";
 
 /* Class = "UIBarButtonItem"; title = " "; ObjectID = "erA-j8-Kgo"; */
 "erA-j8-Kgo.title" = " ";
@@ -133,17 +155,15 @@ Wähle eine Person in der Benutzerliste, um einen Chat zu starten.";
 "fDl-WF-yzM.text" = "--:--";
 
 /* Class = "UINavigationItem"; title = "Blocked Users"; ObjectID = "fGq-SD-Cay"; */
-"fGq-SD-Cay.title" = "Blocked Users";
+"fGq-SD-Cay.title" = "Blockierte Benutzer";
 
 /* Class = "UILabel"; text = "Name"; ObjectID = "gUb-kE-k9t"; */
 "gUb-kE-k9t.text" = "Name";
 
-/* Class = "UILabel"; text = "Could not find any Realays found in your vicinity.
+/* Class = "UILabel"; text = "Could not find any Realays in your vicinity.
 
 Please make sure that your location can be estimated and try again later."; ObjectID = "gmG-rW-C8a"; */
-"gmG-rW-C8a.text" = "Could not find any Realays found in your vicinity.
-
-Please make sure that your location can be estimated and try again later.";
+"gmG-rW-C8a.text" = "In Deiner Nähe konnten keine Realays gefunden werden.\n\nBitte überprüfe Deine Standorteinstellungen und versuche es später erneut.";
 
 /* Class = "UILabel"; text = "-
 -"; ObjectID = "gw1-hr-XXy"; */
@@ -151,58 +171,83 @@ Please make sure that your location can be estimated and try again later.";
 -";
 
 /* Class = "UILabel"; text = "Hours"; ObjectID = "jH1-8M-Wxc"; */
-"jH1-8M-Wxc.text" = "Hours";
+"jH1-8M-Wxc.text" = "Öffnungszeiten";
+
+/* Class = "UIBarButtonItem"; title = "Blocking"; ObjectID = "jHl-uB-gL8"; */
+"jHl-uB-gL8.title" = "Blockieren";
 
 /* Class = "UILabel"; text = "There are currently no other people online in this place.
 Invite someone around you to join Realay."; ObjectID = "jiX-qe-vbW"; */
-"jiX-qe-vbW.text" = "Im Moment ist niemand in diesem Realay online außer Dir.
+"jiX-qe-vbW.text" = "Im Moment ist niemand in diesem Realay online außer Dir. Lade jemanden in Deiner Nähe ein.";
 
-Lade jemanden in Deiner Nähe ein.";
+/* Class = "UILabel"; text = "English"; ObjectID = "kKf-37-fgA"; */
+"kKf-37-fgA.text" = "Englisch";
 
 /* Class = "UIBarButtonItem"; title = "Map"; ObjectID = "kjA-Ae-JCb"; */
-"kjA-Ae-JCb.title" = "Map";
+"kjA-Ae-JCb.title" = "Karte";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "ldD-HN-bVH"; */
 "ldD-HN-bVH.text" = "-";
 
 /* Class = "UILabel"; text = "Your Profile"; ObjectID = "mvt-Ud-DBq"; */
-"mvt-Ud-DBq.text" = "Your Profile";
+"mvt-Ud-DBq.text" = "Dein Profil";
+
+/* Class = "UITextField"; placeholder = "Username"; ObjectID = "nJf-wb-sME"; */
+"nJf-wb-sME.placeholder" = "Benutzername";
 
 /* Class = "UILabel"; text = "0"; ObjectID = "ncW-HN-DlT"; */
 "ncW-HN-DlT.text" = "0";
 
-/* Class = "UILabel"; text = "Location"; ObjectID = "ndX-Jh-TPl"; */
-"ndX-Jh-TPl.text" = "Location";
+/* Class = "UILabel"; text = "Address"; ObjectID = "ndX-Jh-TPl"; */
+"ndX-Jh-TPl.text" = "Adresse";
+
+/* Class = "UILabel"; text = "Please enter a username."; ObjectID = "ns4-Oh-Q6Y"; */
+"ns4-Oh-Q6Y.text" = "Bitte wähle einen Benutzernamen.";
+
+/* Class = "UILabel"; text = "-"; ObjectID = "p06-F6-Aeu"; */
+"p06-F6-Aeu.text" = "-";
 
 /* Class = "UIBarButtonItem"; title = "Join"; ObjectID = "qAf-EP-mcF"; */
-"qAf-EP-mcF.title" = "Join";
+"qAf-EP-mcF.title" = "Start";
+
+/* Class = "UIBarButtonItem"; title = "Details"; ObjectID = "rSu-GA-KiH"; */
+"rSu-GA-KiH.title" = "Details";
 
 /* Class = "UILabel"; text = "--:--"; ObjectID = "rwe-5f-BVG"; */
 "rwe-5f-BVG.text" = "--:--";
 
 /* Class = "UILabel"; text = "Location Updates & Notifications"; ObjectID = "sjj-S2-sFq"; */
-"sjj-S2-sFq.text" = "Location Updates & Notifications";
+"sjj-S2-sFq.text" = "Standort & Benachrichtigungen";
+
+/* Class = "UINavigationItem"; title = "User List"; ObjectID = "t4S-dW-Y0A"; */
+"t4S-dW-Y0A.title" = "Benutzer";
+
+/* Class = "UILabel"; text = "---"; ObjectID = "tBw-A5-zHm"; */
+"tBw-A5-zHm.text" = "---";
 
 /* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "tEM-8Q-vOY"; */
-"tEM-8Q-vOY.title" = "Cancel";
-
-/* Class = "UIBarButtonItem"; title = "Save"; ObjectID = "tH5-WA-mvb"; */
-"tH5-WA-mvb.title" = "Save";
+"tEM-8Q-vOY.title" = "Abbrechen";
 
 /* Class = "UINavigationItem"; title = "Map"; ObjectID = "u9b-NB-fUr"; */
-"u9b-NB-fUr.title" = "Map";
+"u9b-NB-fUr.title" = "Karte";
 
 /* Class = "UIViewController"; title = "Conversation"; ObjectID = "vo2-NH-bgJ"; */
-"vo2-NH-bgJ.title" = "Conversation";
+"vo2-NH-bgJ.title" = "Chat";
 
 /* Class = "UILabel"; text = "-"; ObjectID = "w8M-dl-Mjm"; */
 "w8M-dl-Mjm.text" = "-";
 
 /* Class = "UIBarButtonItem"; title = "List"; ObjectID = "wSg-XL-XgH"; */
-"wSg-XL-XgH.title" = "List";
+"wSg-XL-XgH.title" = "Liste";
+
+/* Class = "UILabel"; text = "key"; ObjectID = "wmy-Oi-Kiy"; */
+"wmy-Oi-Kiy.text" = "key";
+
+/* Class = "UILabel"; text = "-"; ObjectID = "wvT-TI-z7z"; */
+"wvT-TI-z7z.text" = "-";
 
 /* Class = "UILabel"; text = "Name"; ObjectID = "yG7-1x-rCX"; */
 "yG7-1x-rCX.text" = "Name";
 
 /* Class = "UIBarButtonItem"; title = "Leave"; ObjectID = "zbs-JI-UUg"; */
-"zbs-JI-UUg.title" = "Leave";
+"zbs-JI-UUg.title" = "Verlassen";

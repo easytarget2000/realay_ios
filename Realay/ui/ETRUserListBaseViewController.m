@@ -204,9 +204,11 @@
         [[cell timeLabel] setText:timeStamp];
         
         if ([[convo hasUnreadMessage] boolValue]) {
+            [[cell badge] setHidden:NO];
             [[cell infoLabel] setTextColor:[ETRUIConstants accentColor]];
             [[cell infoLabel] setFont:[UIFont boldSystemFontOfSize:ETRFontSizeSmall]];
         } else {
+            [[cell badge] setHidden:YES];
             [[cell infoLabel] setTextColor:[ETRUIConstants primaryColor]];
             [[cell infoLabel] setFont:[UIFont systemFontOfSize:ETRFontSizeSmall]];
         }

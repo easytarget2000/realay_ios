@@ -13,8 +13,4 @@
 
 @property (weak, nonatomic) IBOutlet UILabel * label;
 
-@property (weak, nonatomic) IBOutlet UIButton * shareButton;
-
-- (IBAction)shareButtonPressed:(id)sender;
-
 @end
