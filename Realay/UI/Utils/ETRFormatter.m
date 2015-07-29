@@ -10,6 +10,7 @@
 
 #import "ETRDefaultsHelper.h"
 
+
 static CGFloat const kYardInMetre = 1.09361f;
 
 static CGFloat const kMileInMetre = 0.000621371f;
@@ -22,11 +23,14 @@ static int const kMaxShowYard = 500;
 
 static NSTimeInterval const ETRTimeIntervalToday = 12.0 * 60.0 * 60.0;
 
+static NSTimeInterval const ETRTimeIntervalWeek = 24.0 * 60.0 * 60.0 * 5.0;
+
 static NSTimeInterval const ETRTimeIntervalYear = 180.0 * 20.0 * 60.0 * 60.0;
+
 
 @implementation ETRFormatter
 
-/*
+/**
  Takes any Date timestamp and turns it into a reasonably long text,
  read: as short as possible;
  Today's timestamps only show the hours and minutes;
@@ -47,7 +51,11 @@ static NSTimeInterval const ETRTimeIntervalYear = 180.0 * 20.0 * 60.0 * 60.0;
         formatString = [NSDateFormatter dateFormatFromTemplate:@"jmm"
                                                                  options:0
                                                                   locale:[NSLocale currentLocale]];
-    } else if (interval < ETRTimeIntervalYear && interval > -ETRTimeIntervalYear){
+    } else if (interval < ETRTimeIntervalWeek && interval > -ETRTimeIntervalWeek) {
+        formatString = [NSDateFormatter dateFormatFromTemplate:@"EEEEjmm"
+                                                       options:0
+                                                        locale:[NSLocale currentLocale]];
+    } else if (interval < ETRTimeIntervalYear && interval > -ETRTimeIntervalYear) {
         // The Date is within the current year but not today.
         formatString = [NSDateFormatter dateFormatFromTemplate:@"ddMMMjmm"
                                                        options:0

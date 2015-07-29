@@ -16,37 +16,39 @@
       "scale" : "3x"
     },
     {
-      "idiom" : "iphone",
       "size" : "40x40",
+      "idiom" : "iphone",
+      "filename" : "realay_appicon_v4_80pt.png",
       "scale" : "2x"
     },
     {
-      "idiom" : "iphone",
       "size" : "40x40",
+      "idiom" : "iphone",
+      "filename" : "realay_appicon_v4_120pt-1.png",
       "scale" : "3x"
     },
     {
       "size" : "57x57",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_v3_57pt.png",
+      "filename" : "realay_appicon_v4_57pt.png",
       "scale" : "1x"
     },
     {
       "size" : "57x57",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_v3_57pt@2x.png",
+      "filename" : "realay_appicon_v4_114pt.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_v3_120pt.png",
+      "filename" : "realay_appicon_v4_120pt.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "realay_appicon_v3_180pt.png",
+      "filename" : "realay_appicon_v4_180pt.png",
       "scale" : "3x"
     }
   ],

@@ -847,7 +847,9 @@ static NSMutableArray *connections;
                          }
                      }];
 }
-
+/**
+ Does NOT save Managed Object Context.
+ */
 + (void)getUserWithID:(NSNumber *)remoteID {
     if (!remoteID || [remoteID longValue] < 100L) {
         return;
@@ -870,7 +872,7 @@ static NSMutableArray *connections;
                              NSDictionary * jsonDictionary;
                              jsonDictionary = (NSDictionary *) receivedObject;
                              [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
-                             [ETRCoreDataHelper saveContext];
+//                             [ETRCoreDataHelper saveContext];
                          } else {
 #ifdef DEBUG
                              NSLog(@"ERROR: Could not find User %@ on the Server.", remoteID);

@@ -952,7 +952,7 @@
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f24-IV-xyM" userLabel="Container">
                                                     <rect key="frame" x="516" y="12" width="80" height="26"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="-" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C7p-Pf-Gw0">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="-" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C7p-Pf-Gw0">
                                                             <rect key="frame" x="8" y="4" width="7" height="18"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -2579,9 +2579,9 @@ use the Block button on their profile or tap and hold one of their messages an
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="coN-Mg-Iqa"/>
-        <segue reference="d60-mx-yvB"/>
         <segue reference="ZlB-x4-o6Z"/>
-        <segue reference="SwM-fv-LXV"/>
+        <segue reference="d60-mx-yvB"/>
         <segue reference="E3L-A8-h8N"/>
+        <segue reference="yZK-Uh-U9Y"/>
     </inferredMetricsTieBreakers>
 </document>

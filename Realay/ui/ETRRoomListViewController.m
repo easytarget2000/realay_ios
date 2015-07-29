@@ -353,7 +353,12 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 #pragma mark Information View
 
 - (void)setInformationViewHidden:(BOOL)isHidden {
+    NSString * nearYouTitle = NSLocalizedString(@"Near_You", @"Rooms Nearby");
+    
     if (!_didAppear) {
+        if (isHidden) {
+            [self setTitle:nearYouTitle];
+        }
         return;
     }
     
@@ -364,7 +369,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [[self refreshIndicator] setHidden:YES];
     
     if (_doHideInformationView) {
-        [self setTitle:NSLocalizedString(@"Near_You", @"Rooms Nearby")];
+        [self setTitle:nearYouTitle];
     } else {
         [self setTitle:@""];
     }

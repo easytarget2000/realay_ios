@@ -269,7 +269,7 @@ UITextViewDelegate
         ETRConversation * conversation;
         conversation = [ETRCoreDataHelper conversationWithPartner:_partner];
         [conversation setHasUnreadMessage:@(NO)];
-        [ETRCoreDataHelper saveContext];
+//        [ETRCoreDataHelper saveContext];
     }
     [ETRDefaultsHelper storeMessageInputText:[[self messageInputView] text]
                            forConversationID:conversationID];

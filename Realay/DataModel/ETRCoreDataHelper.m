@@ -255,7 +255,7 @@ static NSEntityDescription * UserEntity;
 }
 
 /**
- 
+ Saves Managed Object Context.
  */
 + (void)dispatchPublicMessage:(NSString *)messageContent {
     ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
@@ -274,7 +274,7 @@ static NSEntityDescription * UserEntity;
 }
 
 /**
- 
+ Saves Managed Object Context.
  */
 + (void)dispatchMessage:(NSString *)messageContent toRecipient:(ETRUser *)recipient {
     ETRAction * message = [ETRCoreDataHelper blankOutgoingAction];
@@ -352,7 +352,7 @@ static NSEntityDescription * UserEntity;
 }
 
 /**
- 
+ Saves Managed Object Context.
  */
 + (void)queueUserUpdate {
     ETRAction * action = [ETRCoreDataHelper blankOutgoingAction];
@@ -432,6 +432,9 @@ static NSEntityDescription * UserEntity;
     return message;
 }
 
+/**
+ Saves Managed Object Context.
+ */
 + (void)addActionToQueue:(ETRAction *)unsentAction {
     if (!unsentAction || [[unsentAction code] isEqualToNumber:@(ETRActionCodeUserQuit)]) {
         return;
@@ -447,6 +450,9 @@ static NSEntityDescription * UserEntity;
     }
 }
 
+/**
+ Saves Managed Object Context.
+ */
 + (void)removeActionFromQueue:(ETRAction *)sentAction {
     if (!sentAction) {
         return;
@@ -456,6 +462,9 @@ static NSEntityDescription * UserEntity;
     [ETRCoreDataHelper saveContext];
 }
 
+/**
+ Does NOT save Managed Object Context.
+ */
 + (void)removeUserUpdateActionsFromQueue {
     NSFetchRequest * request = [[NSFetchRequest alloc] init];
     [request setEntity:[ETRCoreDataHelper actionEntity]];
@@ -469,8 +478,6 @@ static NSEntityDescription * UserEntity;
     for (NSManagedObject * action in actions) {
         [[ETRCoreDataHelper context] deleteObject:action];
     }
-    
-    [ETRCoreDataHelper saveContext];
 }
 
 + (NSFetchedResultsController *)publicMessagesResultsControllerWithDelegate:(id<NSFetchedResultsControllerDelegate>)delegate
@@ -662,6 +669,9 @@ static NSEntityDescription * UserEntity;
     return convo;
 }
 
+/**
+ Saves Managed Object Context.
+ */
 + (void)deleteConversation:(ETRConversation *)conversation {
     if (!conversation) {
         return;

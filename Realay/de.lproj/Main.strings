@@ -83,7 +83,7 @@
 
 /* Class = "UILabel"; text = "You have not blocked anyone.\n\nIf you want to keep someone from contacting you,\nuse the Block button on their profile
 or tap and hold one of their messages and choose 'Block User'."; ObjectID = "OH4-hT-5Fj"; */
-"OH4-hT-5Fj.text" = "Du hast niemanden blockiert.\n\nFalls du nicht möchtest, dass Dich eine Person kontaktiert, berühre und halte eine ihrer Nachrichten im öffentlichen Chat oder öffne das Profil und wähle \'Benutzer Blockieren\'.";
+"OH4-hT-5Fj.text" = "Du hast niemanden blockiert.\n\nFalls du nicht möchtest, dass dich eine Person kontaktiert, berühre und halte eine ihrer Nachrichten im öffentlichen Chat oder öffne das Profil und wähle \'Benutzer Blockieren\'.";
 
 /* Class = "UILabel"; text = "The password can usually be found at the entrance of a Realay or at its centre. You could also ask someone to give you the password."; ObjectID = "PDY-cq-Qbk"; */
 "PDY-cq-Qbk.text" = "Üblicherweise findest du das Passwort am Eingang des Realays oder an einer besonderen, z.Bsp. zentralen Stelle. Vielleicht kennt jemand in Deiner Nähe das Passwort.";

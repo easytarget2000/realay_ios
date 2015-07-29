@@ -159,7 +159,7 @@ static ETRLocationManager * SharedInstance;
     
     if (sessionRoom && [ETRLocationManager didAuthorizeWhenInUse]) {
         int roomDistance = (int) [[sessionRoom distance] integerValue];
-        if (roomDistance > 2000) {
+        if (roomDistance > 2000 && [[ETRSessionManager sharedManager] didStartSession]) {
             [[ETRBouncer sharedManager] kickForReason:ETRKickReasonLocation calledBy:@"farAway"];
             return NO;
         }
