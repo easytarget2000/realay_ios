@@ -154,7 +154,7 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
         dict[NSLocalizedFailureReasonErrorKey] = failureReason;
         dict[NSUnderlyingErrorKey] = error;
         error = [NSError errorWithDomain:@"org.eztarget.Realay" code:9999 userInfo:dict];
-        // TODO: Replace this with code to handle the error appropriately.
+
         NSLog(@"ERROR: persistentStoreCoordinator : %@, %@", error, [error userInfo]);
 //        abort();
     }

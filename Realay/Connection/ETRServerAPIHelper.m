@@ -195,7 +195,8 @@ static NSMutableArray *connections;
         } else {
             // Update the UI to show the upcoming step.
             [ETRServerAPIHelper setText:@"Loading messages..." inProgressLabel:label];
-            [ETRServerAPIHelper getActionsAndPing:NO completion:getMessagesCompletionHandler];
+            [ETRServerAPIHelper getActionsAndPing:NO
+                                       completion:getMessagesCompletionHandler];
         }
     };
     
@@ -249,6 +250,10 @@ static NSMutableArray *connections;
 
 }
 
+/**
+ Retrieves the highest Action ID currently known _remotely_ within a Session.
+ The received value is asynchronously given to the Completion Handler Block.
+ */
 + (void)getLastActionIDAndPerform:(void (^)(long))completionHandler {
     NSDictionary * authDict = [ETRServerAPIHelper sessionAuthDictionary];
     if (!authDict) {
@@ -271,6 +276,12 @@ static NSMutableArray *connections;
                      }];
 }
 
+/**
+ Retrieves new Actions within a Session.
+ Reads the highest known Action ID from the Action Manager.
+ Does NOT place the received Actions into Core Data.
+ Received data will be given to the Completion Handler Block.
+*/
 + (void)getActionsAndPing:(BOOL)doSendPing completion:(void (^)(id<NSObject>))completionHandler {
     
     NSDictionary * authDict = [ETRServerAPIHelper sessionAuthDictionary];
@@ -799,7 +810,11 @@ static NSMutableArray *connections;
 }
 
 
-
+/**
+ Retrieves all Users that are in the current Session.
+ Calls the given Completion Handler Block with YES, if successful.
+ Does NOT save the Context.
+ */
 + (void)getSessionUsersWithCompletionHandler:(void (^)(BOOL)) handler {
     ETRRoom * sessionRoom = [ETRSessionManager sessionRoom];
     if (!sessionRoom) {
@@ -834,7 +849,6 @@ static NSMutableArray *connections;
                                      }
                                  }
                              }
-                             [ETRCoreDataHelper saveContext];
                              
                              if (handler) {
                                  handler(YES);
