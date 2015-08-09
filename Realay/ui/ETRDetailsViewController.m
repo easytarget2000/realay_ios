@@ -50,7 +50,11 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 
 @property (nonatomic) NSInteger websiteRow;
 
-@property (nonatomic) NSInteger socialMediaRow;
+@property (nonatomic) NSInteger facebookRow;
+
+@property (nonatomic) NSInteger instagramRow;
+
+@property (nonatomic) NSInteger twitterRow;
 
 @property (nonatomic) NSInteger blockButtonRow;
 
@@ -193,29 +197,40 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         // (phone number, email address, website URL, Facebook ID, Instagram name, Twitter name)
         
         NSInteger numberOfRows = 2;
-        if ([_user phone] && [[_user phone] length]) {
+        if ([[_user phone] length]) {
             _phoneRow = numberOfRows++;
         } else {
             _phoneRow = -1;
         }
         
-        if ([_user mail] && [[_user mail] length]) {
+        if ([[_user mail] length]) {
             _mailRow = numberOfRows++;
         } else {
             _mailRow = -1;
         }
         
-        if ([_user website] && [[_user website] length]) {
+        if ([[_user website] length]) {
             _websiteRow = numberOfRows++;
         } else {
             _websiteRow = -1;
         }
         
-        if ([self doShowSocialMediaRow]) {
-            numberOfRows++;
-            _socialMediaRow = numberOfRows - 1;
+        if ([[_user facebook] length]) {
+            _facebookRow = numberOfRows++;
         } else {
-            _socialMediaRow = -1;
+            _facebookRow = -1;
+        }
+        
+        if ([[_user instagram] length]) {
+            _instagramRow = numberOfRows++;
+        } else {
+            _instagramRow = -1;
+        }
+        
+        if ([[_user twitter] length]) {
+            _twitterRow = numberOfRows++;
+        } else {
+            _twitterRow = -1;
         }
         
         if (![[ETRLocalUserManager sharedManager] isLocalUser:_user]) {
@@ -228,19 +243,6 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     }
     
     return 0;
-}
-
-- (BOOL)doShowSocialMediaRow {
-    if ([_user facebook] && [[_user facebook] length]) {
-        return YES;
-    }
-    if ([_user instagram] && [[_user instagram] length]) {
-        return YES;
-    }
-    if ([_user twitter] && [[_user twitter] length]) {
-        return YES;
-    }
-    return NO;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -345,13 +347,22 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
     
     NSInteger row = [indexPath row];
 
-    if (row == _socialMediaRow) {
-        // The cell for this row displays the social network buttons.
+    if (row == _facebookRow) {
         ETRProfileSocialCell * socialMediaCell;
         socialMediaCell = [tableView dequeueReusableCellWithIdentifier:ETRSocialMediaCellIdentifier];
-        [socialMediaCell setUpForUser:_user];
+        [socialMediaCell setUpForUser:_user network:ETRSocialNetworkFacebook];
         return socialMediaCell;
-    } else if (row == _blockButtonRow) {
+    } else if (row == _instagramRow) {
+        ETRProfileSocialCell * instagramCell;
+        instagramCell = [tableView dequeueReusableCellWithIdentifier:ETRSocialMediaCellIdentifier];
+        [instagramCell setUpForUser:_user network:ETRSocialNetworkInstagram];
+        return instagramCell;
+    } else if (row == _twitterRow) {
+        ETRProfileSocialCell * twitterCell;
+        twitterCell = [tableView dequeueReusableCellWithIdentifier:ETRSocialMediaCellIdentifier];
+        [twitterCell setUpForUser:_user network:ETRSocialNetworkTwitter];
+        return twitterCell;
+    }else if (row == _blockButtonRow) {
         return [tableView dequeueReusableCellWithIdentifier:ETRCellBlockButton];
     }
     
@@ -397,8 +408,14 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(nonnull UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    if ([indexPath row] == _blockButtonRow) {
+    NSInteger row = [indexPath row];
+    if (row == _blockButtonRow) {
         [[self alertHelper] showBlockConfirmViewForUser:_user viewController:self];
+    } else if (row == _facebookRow || row == _instagramRow || row == _twitterRow) {
+        UITableViewCell * socialCell = [_tableView cellForRowAtIndexPath:indexPath];
+        if ([socialCell isKindOfClass:[ETRProfileSocialCell class]]) {
+            [((ETRProfileSocialCell *)socialCell) openProfile];
+        }
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

@@ -667,7 +667,7 @@ static NSMutableArray *connections;
 + (void)updateRoomListWithCompletionHandler:(void(^)(BOOL didReceive))completionHandler {
 
     CLLocation *location = [ETRLocationManager location];
-    if (!location) {
+    if (!location || ![ETRLocationManager didAuthorizeWhenInUse]) {
 #ifdef DEBUG
         NSLog(@"WARNING: Not updating Room list because Location is unknown.");
 #endif

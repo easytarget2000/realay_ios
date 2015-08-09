@@ -54,6 +54,8 @@
 
 "Email_Address" = "Email Address";
 
+"Enable_location" = "Please enable location access to see a list of Realays in your town.";
+
 "Event_ended" = "The Realay you were in ended a while ago.";
 
 "Facebook_ID" = "Facebook ID";
@@ -85,6 +87,8 @@
 "No" = "No";
 
 "No_Connection" = "No Connection";
+
+"No_Realays_found" = "Could not find any Realays in your town.\nPlease try again later.";
 
 "No_spam" = "Please do not spam.";
 

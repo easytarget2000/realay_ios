@@ -58,6 +58,7 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
 
 @synthesize fetchedResultsController = _fetchedResultsController;
 
+
 #pragma mark - 
 #pragma mark UIViewController
 
@@ -130,12 +131,21 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         }
     }
     
-    if ([ETRDefaultsHelper didRunOnce] && ![[self infoContainer] isHidden]) {
+    [[self tableView] reloadData];
+    [[self refreshIndicator] startAnimating];
+    
+
+
+    if ([[_fetchedResultsController fetchedObjects] count] > 0) {
+        //            if ([ETRDefaultsHelper didRunOnce] && ![[self infoContainer] isHidden]) {
         // The app has been started once before and we are not going directly into a Session.
         [ETRAnimator fadeView:[self infoContainer] doAppear:NO completion:nil];
+        //             }
+    } else {
+        [self setInformationViewHidden:NO];
+        [self refreshButtonPressed:nil];
     }
     
-    [[self tableView] reloadData];
     
     // Load any remaining images after a while, if the table is calm.
     dispatch_after(
@@ -162,6 +172,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     }
     // Disable the Fetched Results Controller.
     [_fetchedResultsController setDelegate:nil];
+    
+    [[self refreshIndicator] stopAnimating];
     
     // Remove the orientation obsever.
     [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -345,6 +357,8 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
         if (!didReceive) {
             [[self refreshControl] endRefreshing];
         }
+        
+        [self setInformationViewHidden:didReceive];
     }];
 }
 
@@ -371,6 +385,13 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     if (_doHideInformationView) {
         [self setTitle:nearYouTitle];
     } else {
+        NSString * infoText;
+        if ([ETRLocationManager didAuthorizeWhenInUse]) {
+            infoText = NSLocalizedString(@"No_Realays_found", @"No Rooms nearby");
+        } else {
+            infoText = NSLocalizedString(@"Enable_location", @"Authorize to see list");
+        }
+        [[self infoLabel] setText:infoText];
         [self setTitle:@""];
     }
     

@@ -72,7 +72,10 @@
     if ([ETRDefaultsHelper doUpdateRoomListAtLocation:[ETRLocationManager location]]) {
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     }
-    [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
+    
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
+        [[ETRActionManager sharedManager] fetchUpdatesWithCompletionHandler:nil];
+    }
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

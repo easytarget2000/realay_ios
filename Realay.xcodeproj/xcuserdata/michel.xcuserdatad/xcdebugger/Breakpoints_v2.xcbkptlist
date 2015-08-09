@@ -96,16 +96,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Realay/UI/ETRDetailsViewController.m"
-            timestampString = "459023727.663536"
+            filePath = "Realay/UI/TableCells/ETRProfileSocialCell.m"
+            timestampString = "460844294.965172"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "402"
-            endingLineNumber = "402"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "-openProfile"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

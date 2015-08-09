@@ -160,11 +160,6 @@ Be the first to say something."; ObjectID = "Q36-2S-mYu"; */
 /* Class = "UILabel"; text = "Name"; ObjectID = "gUb-kE-k9t"; */
 "gUb-kE-k9t.text" = "Name";
 
-/* Class = "UILabel"; text = "Could not find any Realays in your vicinity.
-
-Please make sure that your location can be estimated and try again later."; ObjectID = "gmG-rW-C8a"; */
-"gmG-rW-C8a.text" = "In Deiner Nähe konnten keine Realays gefunden werden.\n\nBitte überprüfe Deine Standorteinstellungen und versuche es später erneut.";
-
 /* Class = "UILabel"; text = "-
 -"; ObjectID = "gw1-hr-XXy"; */
 "gw1-hr-XXy.text" = "-

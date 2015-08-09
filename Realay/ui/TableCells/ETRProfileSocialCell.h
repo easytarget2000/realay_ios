@@ -8,23 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+
+typedef NS_ENUM(short, ETRSocialNetwork) {
+    ETRSocialNetworkFacebook = 1,
+    ETRSocialNetworkInstagram = 2,
+    ETRSocialNetworkTwitter = 3
+};
+
 @class ETRUser;
 
 @interface ETRProfileSocialCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIButton * facebookButton;
+@property (weak, nonatomic) IBOutlet UIImageView *iconView;
 
-@property (weak, nonatomic) IBOutlet UIButton * instagramButton;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 
-@property (weak, nonatomic) IBOutlet UIButton *twitterButton;
+- (void)setUpForUser:(ETRUser *)user network:(ETRSocialNetwork)network;
 
-- (void)setUpForUser:(ETRUser *)user;
-
-- (IBAction)facebookButtonPressed:(id)sender;
-
-- (IBAction)instagramButtonPressed:(id)sender;
-
-- (IBAction)twitterButtonPressed:(id)sender;
-
+- (void)openProfile;
 
 @end

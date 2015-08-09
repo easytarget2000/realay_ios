@@ -54,6 +54,8 @@
 
 "Email_Address" = "Mailaddresse";
 
+"Enable_location" = "Bitte ermögliche den Standortzugriff, damit nach Realays in deiner Stadt gesucht werden kann.";
+
 "Event_ended" = "Das Realay, indem du warst, endete vor einer Weile.";
 
 "Facebook_ID" = "Facebook-ID";
@@ -85,6 +87,8 @@
 "No" = "Nein";
 
 "No_Connection" = "Keine Verbindung";
+
+"No_Realays_found" = "In deiner Stadt konnten keine Realays gefunden werden.\nBitte versuche es später noch mal.";
 
 "No_spam" = "Bitte nicht spammen.";
 
