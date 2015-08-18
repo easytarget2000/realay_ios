@@ -291,7 +291,7 @@ UITextViewDelegate
 - (BOOL)verifySession {
     if (!_isPublic && !_partner) {
         NSLog(@"ERROR: No Conversation found.");
-        [[ETRSessionManager sharedManager] endSession];
+        [[ETRSessionManager sharedManager] endSessionWithNotificaton:NO];
         [[self navigationController] popToRootViewControllerAnimated:YES];
         return NO;
     }
@@ -299,7 +299,7 @@ UITextViewDelegate
     // Make sure the room manager meets the requirements for this view controller.
     if (![ETRSessionManager sessionRoom] || ![[ETRSessionManager sharedManager] didStartSession]) {
         NSLog(@"ERROR: No Room object in manager or user did not join.");
-        [[ETRSessionManager sharedManager] endSession];
+        [[ETRSessionManager sharedManager] endSessionWithNotificaton:NO];
         [[self navigationController] popToRootViewControllerAnimated:YES];
         return NO;
     }

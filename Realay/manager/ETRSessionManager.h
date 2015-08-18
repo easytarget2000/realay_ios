@@ -75,7 +75,7 @@
 /**
  Remove user from the room, reset attributes and return to the room list.
  */
-- (void)endSession;
+- (void)endSessionWithNotificaton:(BOOL)doSendNotificationAction;
 
 /**
  Attempts to restore the last Session Room from Defaults;

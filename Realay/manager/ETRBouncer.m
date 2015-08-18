@@ -249,7 +249,7 @@ static short const ETRSpamWatchLimit = 5;
     _hasPendingKick = YES;
     _lastReason = reason;
 
-    [[ETRSessionManager sharedManager] endSession];
+    [[ETRSessionManager sharedManager] endSessionWithNotificaton:NO];
     [self notifyUserAndForceAlertView:NO];
 }
 

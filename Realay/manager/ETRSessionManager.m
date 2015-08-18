@@ -79,8 +79,10 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     return YES;
 }
 
-- (void)endSession; {
-    [ETRServerAPIHelper endSession];
+- (void)endSessionWithNotificaton:(BOOL)doSendNotificationAction {
+    if (doSendNotificationAction) {
+        [ETRServerAPIHelper endSession];
+    }
     
     _room = nil;
     [ETRDefaultsHelper removeSession];
@@ -120,7 +122,7 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
     [self setNavigationController:navigationController];
     
     if ([self didStartSession]) {
-        [self endSession];
+        [self endSessionWithNotificaton:NO];
         NSLog(@"ERROR: Room set during running session.");
         return;
     }

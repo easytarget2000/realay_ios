@@ -82,7 +82,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
             
         } else if ([timerID isEqualToValue:@(2)]) {
             // The process timed out.
-            [[ETRSessionManager sharedManager] endSession];
+            [[ETRSessionManager sharedManager] endSessionWithNotificaton:NO];
             [ETRAlertViewFactory showReachabilityAlert];
             [[self navigationController] popToRootViewControllerAnimated:YES];
         }
@@ -125,7 +125,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
     [_delayTimer invalidate];
     
     if (_isCanceled) {
-        [[ETRSessionManager sharedManager] endSession];
+        [[ETRSessionManager sharedManager] endSessionWithNotificaton:YES];
         return;
     }
     

@@ -120,6 +120,9 @@ static CLLocation * LastUpdateLocation;
 #pragma mark Settings
 
 + (BOOL)doUseMetricSystem {
+    return YES;
+
+    
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     return [defaults boolForKey:ETRDefaultsUsesMetricSystem];
 }
@@ -195,6 +198,9 @@ static CLLocation * LastUpdateLocation;
         if (accuracy == 0.0) {
             return nil;
         }
+        
+        // TODO: Use Location backup and Update Location backup.
+        // TODO: Store timestamp.
         
         LastUpdateLocation = [[CLLocation alloc] initWithCoordinate:coordinate
                                                            altitude:altitude

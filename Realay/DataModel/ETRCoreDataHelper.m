@@ -203,6 +203,9 @@ static NSEntityDescription * UserEntity;
                 [sender setInRoom:nil];
             }
             return nil;
+        
+        case ETRActionCodeReport:
+            return nil;
     }
     
     // Skip this Action, if an Object with this remote ID has already been stored locally

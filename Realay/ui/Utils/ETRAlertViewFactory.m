@@ -412,7 +412,7 @@ typedef NS_ENUM(NSInteger, ETRAlertView) {
             break;
             
         case ETRAlertViewTagLeave:
-            [[ETRSessionManager sharedManager] endSession];
+            [[ETRSessionManager sharedManager] endSessionWithNotificaton:YES];
             break;
             
         case ETRAlertViewTagMessageMenu:

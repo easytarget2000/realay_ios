@@ -690,7 +690,6 @@ static NSMutableArray *connections;
                          successStatus:ETRGetRoomsSuccessStatus
                              objectTag:@"rs"
                      completionHandler:^(NSObject *receivedObject) {
-//                         [ETRServerAPIHelper didFinishConnection:connectionId];
                          
                          // Check if an array of rooms was returned by this API call.
                          if (receivedObject && [receivedObject isKindOfClass:[NSArray class]]) {

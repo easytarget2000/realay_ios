@@ -22,7 +22,8 @@ typedef NS_ENUM(short, ETRActionCode) {
     ETRActionCodeRoomUpdate     = 30,
     ETRActionCodePublicMedia    = 40,
     ETRActionCodePrivateMedia   = 41,
-    ETRActionCodeUserQuit       = 66
+    ETRActionCodeUserQuit       = 66,
+    ETRActionCodeReport         = 71
 };
 
 

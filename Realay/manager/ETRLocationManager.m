@@ -61,6 +61,15 @@ static ETRLocationManager * SharedInstance;
 }
 
 + (CLLocation *)location {
+//    CLLocationCoordinate2D coordinate;
+//    coordinate.latitude = 52.561404;
+//    coordinate.longitude = 13.214341;
+//    return [[CLLocation alloc] initWithCoordinate:coordinate
+//                                         altitude:50.0
+//                               horizontalAccuracy:50.0
+//                                 verticalAccuracy:50.0
+//                                        timestamp:[NSDate date]];
+    
     ETRLocationManager * managerInstance;
     managerInstance = [ETRLocationManager sharedManager];
     
