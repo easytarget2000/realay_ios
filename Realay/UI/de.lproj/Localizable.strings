@@ -12,6 +12,8 @@
 
 "Added_User" = "%@ Gespeichert";
 
+"Add_Link_Facebook" = "Mit Deinem Facebook-Profil Verbinden";
+
 "Ask_someone" = "Frage jemanden nach dem Passwort, um diesem Realay beizutreten.";
 
 "Background_Updates" = "Hintergrund-Updates";
@@ -171,6 +173,8 @@
 "Twitter_Name" = "Twitter-Benutzername";
 
 "Unknown_User" = "Unbekannter Benutzer";
+
+"Unlink_Facebook" = "Verbindung mit Facebook aufheben";
 
 "until" = "bis";
 

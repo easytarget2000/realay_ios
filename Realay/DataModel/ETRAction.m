@@ -36,6 +36,19 @@
 @synthesize formattedDate = _formattedDate;
 
 #pragma mark -
+#pragma mark Nil Safe Getter
+
+- (NSAttributedString *)messageStringWithAttributes:(NSDictionary *)attrs {
+    NSAttributedString *attributedString;
+    attributedString = [NSAttributedString alloc];
+    if ([[self messageContent] length]) {
+        return [attributedString initWithString:[self messageContent] attributes:attrs];
+    } else {
+        return [attributedString initWithString:@""];
+    }
+}
+
+#pragma mark -
 #pragma mark NSObject
 
 - (NSString *)description {

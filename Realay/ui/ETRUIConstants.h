@@ -12,6 +12,8 @@
 
 extern CGFloat const ETRIconViewCornerRadius;
 
+extern NSString *const ETRCellButton;
+
 extern NSString *const ETRCellIdentifierUser;
 
 extern NSString *const ETRViewControllerIDBlockedUsers;

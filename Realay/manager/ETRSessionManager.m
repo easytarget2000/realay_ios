@@ -170,11 +170,7 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
 #ifdef DEBUG
     NSLog(@"Deep Update.");
 #endif
-    [ETRServerAPIHelper getSessionUsersWithCompletionHandler:^(BOOL didSucceed) {
-        if (didSucceed) {
-            [ETRCoreDataHelper saveContext];
-        }
-    }];
+    [ETRServerAPIHelper getSessionUsersWithCompletionHandler:nil];
     
     if ([self didReachEndDate]) {
         [[ETRBouncer sharedManager] warnForReason:ETRKickReasonClosed allowDuplicate:NO];

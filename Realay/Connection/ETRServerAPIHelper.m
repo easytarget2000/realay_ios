@@ -534,7 +534,6 @@ static NSMutableArray *connections;
                                     // Delete the old files, then set the new ID.
                                     [action deleteImageFiles];
                                     [action setImageID:imageID];
-                                    [ETRCoreDataHelper saveContext];
                                     
                                     // Store the data in the new files.
                                     [loResData writeToFile:[action imageFilePath:NO]
@@ -740,11 +739,11 @@ static NSMutableArray *connections;
                              jsonDictionary = (NSDictionary *) receivedObject;
                              ETRUser * localUser;
                              localUser = [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
-                             [ETRCoreDataHelper saveContext];
                              
                              if (localUser) {
                                  [[ETRLocalUserManager sharedManager] setUser:localUser];
                                  [[ETRLocalUserManager sharedManager] storeUserDefaults];
+                                 [ETRCoreDataHelper saveContext];
                                  onSuccessBlock(YES);
                                  return;
                              }
@@ -779,7 +778,7 @@ static NSMutableArray *connections;
         [paramDict setObject:[localUser website] forKey:@"website"];
     }
     if ([localUser facebook]) {
-        [paramDict setObject:[localUser facebook] forKey:@"website"];
+        [paramDict setObject:[localUser facebook] forKey:@"fb"];
     }
     if ([localUser instagram]) {
         [paramDict setObject:[localUser instagram] forKey:@"ig"];
@@ -885,7 +884,6 @@ static NSMutableArray *connections;
                              NSDictionary * jsonDictionary;
                              jsonDictionary = (NSDictionary *) receivedObject;
                              [ETRCoreDataHelper insertUserFromDictionary:jsonDictionary];
-//                             [ETRCoreDataHelper saveContext];
                          } else {
 #ifdef DEBUG
                              NSLog(@"ERROR: Could not find User %@ on the Server.", remoteID);

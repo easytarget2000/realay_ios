@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D02C3A931B5FCF3B0087A496 /* ETRShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */; };
+		D02FC4141B8E28B60056E61F /* TSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = D02FC4131B8E28B60056E61F /* TSLabel.m */; };
+		D02FC4161B8E407F0056E61F /* LBClock.m in Sources */ = {isa = PBXBuildFile; fileRef = D02FC4151B8E407F0056E61F /* LBClock.m */; };
 		D05649161B41E53C00BDC1E5 /* ETRMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */; };
 		D0870BEF1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0870BEE1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m */; };
 		D09D364D1B2F42A000930E02 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D09D364F1B2F42A000930E02 /* InfoPlist.strings */; };
@@ -15,6 +17,9 @@
 		D09D36591B2F43BC00930E02 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D09D36581B2F43BC00930E02 /* Settings.bundle */; };
 		D0A3494E1B361E3C0031FCEC /* ETRNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */; };
 		D0BA69701B2F79FA001262FF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0BA696F1B2F79FA001262FF /* MapKit.framework */; };
+		D0BA883E1B8D06D30076A179 /* ETRButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0BA883D1B8D06D30076A179 /* ETRButtonCell.m */; };
+		D0BA88401B8D0D1A0076A179 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0BA883F1B8D0D1A0076A179 /* FBSDKCoreKit.framework */; };
+		D0BA88421B8D0F720076A179 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0BA88411B8D0F720076A179 /* FBSDKLoginKit.framework */; };
 		D0C12A051B54525100634A20 /* ETRLocationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C12A041B54525100634A20 /* ETRLocationCell.m */; };
 		D0CBFDD21B334B1700E98E49 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */; };
 		D0D54B3D1B2F1F9100F8875B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D54B3C1B2F1F9100F8875B /* main.m */; };
@@ -81,6 +86,10 @@
 		D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRShareViewController.m; sourceTree = "<group>"; };
 		D02C3A941B603F4F0087A496 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D02C3A961B60547A0087A496 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
+		D02FC4121B8E28B60056E61F /* TSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLabel.h; sourceTree = "<group>"; };
+		D02FC4131B8E28B60056E61F /* TSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLabel.m; sourceTree = "<group>"; };
+		D02FC4151B8E407F0056E61F /* LBClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LBClock.m; sourceTree = "<group>"; };
+		D02FC4171B8E40C10056E61F /* LBClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LBClock.h; sourceTree = "<group>"; };
 		D05649141B41E53C00BDC1E5 /* ETRMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMediaViewController.h; sourceTree = "<group>"; };
 		D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRMediaViewController.m; sourceTree = "<group>"; };
 		D0870BED1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRPrepareSessionViewController.h; sourceTree = "<group>"; };
@@ -92,6 +101,11 @@
 		D0A3494C1B361E3C0031FCEC /* ETRNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRNotificationManager.h; sourceTree = "<group>"; };
 		D0A3494D1B361E3C0031FCEC /* ETRNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRNotificationManager.m; sourceTree = "<group>"; };
 		D0BA696F1B2F79FA001262FF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		D0BA88371B8D024C0076A179 /* Realay-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Realay-Bridging-Header.h"; path = "UI/TableCells/Realay-Bridging-Header.h"; sourceTree = "<group>"; };
+		D0BA883C1B8D06D30076A179 /* ETRButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRButtonCell.h; sourceTree = "<group>"; };
+		D0BA883D1B8D06D30076A179 /* ETRButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRButtonCell.m; sourceTree = "<group>"; };
+		D0BA883F1B8D0D1A0076A179 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		D0BA88411B8D0F720076A179 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		D0C12A031B54525100634A20 /* ETRLocationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRLocationCell.h; sourceTree = "<group>"; };
 		D0C12A041B54525100634A20 /* ETRLocationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRLocationCell.m; sourceTree = "<group>"; };
 		D0CBFDD11B334B1700E98E49 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
@@ -214,6 +228,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0BA69701B2F79FA001262FF /* MapKit.framework in Frameworks */,
+				D0BA88401B8D0D1A0076A179 /* FBSDKCoreKit.framework in Frameworks */,
+				D0BA88421B8D0F720076A179 /* FBSDKLoginKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +239,8 @@
 		C821A2B652D2881DA26A831A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D0BA88411B8D0F720076A179 /* FBSDKLoginKit.framework */,
+				D0BA883F1B8D0D1A0076A179 /* FBSDKCoreKit.framework */,
 				D0BA696F1B2F79FA001262FF /* MapKit.framework */,
 			);
 			name = Frameworks;
@@ -254,6 +272,7 @@
 				D0D54B3F1B2F1F9100F8875B /* ETRAppDelegate.m */,
 				D0D54BFC1B2F21B500F8875B /* ETRDefaultsHelper.h */,
 				D0D54BFD1B2F21B500F8875B /* ETRDefaultsHelper.m */,
+				D0BA88371B8D024C0076A179 /* Realay-Bridging-Header.h */,
 				D09D36581B2F43BC00930E02 /* Settings.bundle */,
 				D0D54BF01B2F21A400F8875B /* Connection */,
 				D0D54BDD1B2F219500F8875B /* DataModel */,
@@ -269,6 +288,8 @@
 			isa = PBXGroup;
 			children = (
 				D0D54B3C1B2F1F9100F8875B /* main.m */,
+				D02FC4171B8E40C10056E61F /* LBClock.h */,
+				D02FC4151B8E407F0056E61F /* LBClock.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -328,6 +349,8 @@
 		D0D54B561B2F218300F8875B /* Elements */ = {
 			isa = PBXGroup;
 			children = (
+				D02FC4121B8E28B60056E61F /* TSLabel.h */,
+				D02FC4131B8E28B60056E61F /* TSLabel.m */,
 				D0D54B571B2F218300F8875B /* ETRImageView.h */,
 				D0D54B581B2F218300F8875B /* ETRImageView.m */,
 				D0D54B591B2F218300F8875B /* ETRShadowView.h */,
@@ -339,6 +362,8 @@
 		D0D54B7C1B2F218300F8875B /* TableCells */ = {
 			isa = PBXGroup;
 			children = (
+				D0BA883C1B8D06D30076A179 /* ETRButtonCell.h */,
+				D0BA883D1B8D06D30076A179 /* ETRButtonCell.m */,
 				D0D54B7D1B2F218300F8875B /* ETRHeaderCell.h */,
 				D0D54B7E1B2F218300F8875B /* ETRHeaderCell.m */,
 				D0D54B811B2F218300F8875B /* ETRInformationCell.h */,
@@ -530,6 +555,7 @@
 				D0D54BED1B2F219500F8875B /* ETRCoreDataHelper.m in Sources */,
 				D0D54BC21B2F218300F8875B /* ETRSentMessageCell.m in Sources */,
 				D0D54BD81B2F218F00F8875B /* ETRBouncer.m in Sources */,
+				D02FC4161B8E407F0056E61F /* LBClock.m in Sources */,
 				D0D54BA81B2F218300F8875B /* ETRConversationListViewController.m in Sources */,
 				D0D54BD71B2F218F00F8875B /* ETRActionManager.m in Sources */,
 				D0A3494E1B361E3C0031FCEC /* ETRNotificationManager.m in Sources */,
@@ -545,6 +571,7 @@
 				D0D54BC51B2F218300F8875B /* ETRAlertViewFactory.m in Sources */,
 				D0D54BB21B2F218300F8875B /* ETRSettingsTableViewController.m in Sources */,
 				D0D54BB91B2F218300F8875B /* ETRInformationCell.m in Sources */,
+				D0BA883E1B8D06D30076A179 /* ETRButtonCell.m in Sources */,
 				D0D54BDC1B2F218F00F8875B /* ETRSessionManager.m in Sources */,
 				D0D54BEF1B2F219500F8875B /* ETRUser.m in Sources */,
 				D0D54BDB1B2F218F00F8875B /* ETRReachabilityManager.m in Sources */,
@@ -575,6 +602,7 @@
 				D0D54BBA1B2F218300F8875B /* ETRKeyValueCell.m in Sources */,
 				D0D54BBB1B2F218300F8875B /* ETRKeyValueEditorCell.m in Sources */,
 				D0D54BB51B2F218300F8875B /* ETRUserListViewController.m in Sources */,
+				D02FC4141B8E28B60056E61F /* TSLabel.m in Sources */,
 				D0D54B3D1B2F1F9100F8875B /* main.m in Sources */,
 				D0D54BEB1B2F219500F8875B /* ETRChatObject.m in Sources */,
 				D0D54BAC1B2F218300F8875B /* ETRLoginViewController.m in Sources */,
@@ -704,9 +732,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				INFOPLIST_FILE = Realay/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
@@ -714,6 +749,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.eztarget.R;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Realay/UI/TableCells/Realay-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -721,9 +758,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEFINES_MODULE = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_USE_STANDARD_INCLUDE_SEARCHING = YES;
 				INFOPLIST_FILE = Realay/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
@@ -731,6 +775,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.eztarget.R;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Realay/UI/TableCells/Realay-Bridging-Header.h";
 			};
 			name = Release;
 		};

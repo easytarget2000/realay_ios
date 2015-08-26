@@ -35,8 +35,6 @@ static NSString *const ETRSocialMediaCellIdentifier = @"profileSocialCell";
 
 static NSString *const ETRButtonCellIDentifier = @"profileButtonCell";
 
-static NSString *const ETRCellBlockButton = @"BlockButton";
-
 static NSString *const ETRSegueProfileToEditor = @"ProfileToEditor";
 
 static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
@@ -363,7 +361,7 @@ static NSString *const ETRSegueDetailsToPassword = @"DetailsToPassword";
         [twitterCell setUpForUser:_user network:ETRSocialNetworkTwitter];
         return twitterCell;
     }else if (row == _blockButtonRow) {
-        return [tableView dequeueReusableCellWithIdentifier:ETRCellBlockButton];
+        return [tableView dequeueReusableCellWithIdentifier:ETRCellButton];
     }
     
     // The cell for this row displays one specific attribute.

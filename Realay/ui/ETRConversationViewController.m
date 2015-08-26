@@ -81,6 +81,11 @@ UITextViewDelegate
  */
 @property (nonatomic) NSUInteger messagesLimit;
 
+/*
+ 
+ */
+@property (strong, nonatomic) NSDictionary * messageAttributes;
+
 @end
 
 
@@ -94,6 +99,9 @@ UITextViewDelegate
      
     // Enable automatic scrolling.
     [self setAutomaticallyAdjustsScrollViewInsets:NO];
+    
+    _messageAttributes = @{NSFontAttributeName : [UIFont fontWithName:@"Helvetica Neue" size:15],
+                           NSForegroundColorAttributeName : [UIColor whiteColor] };
     
     // Tapping anywhere but the keyboard, hides it.
     UITapGestureRecognizer * tap;
@@ -269,7 +277,6 @@ UITextViewDelegate
         ETRConversation * conversation;
         conversation = [ETRCoreDataHelper conversationWithPartner:_partner];
         [conversation setHasUnreadMessage:@(NO)];
-//        [ETRCoreDataHelper saveContext];
     }
     [ETRDefaultsHelper storeMessageInputText:[[self messageInputView] text]
                            forConversationID:conversationID];
@@ -450,8 +457,10 @@ UITextViewDelegate
             ETRSentMessageCell * sentMessageCell;
             sentMessageCell = [tableView dequeueReusableCellWithIdentifier:ETRSentMessageCellIdentifier
                                                    forIndexPath:indexPath];
+            NSAttributedString * messageText;
+            messageText = [action messageStringWithAttributes:_messageAttributes];
+            [[sentMessageCell messageView] setAttributedText:messageText];
             
-            [[sentMessageCell messageLabel] setText:[action messageContent]];
             [[sentMessageCell timeLabel] setText:[action formattedDate]];
             
             return sentMessageCell;
@@ -495,7 +504,11 @@ UITextViewDelegate
             }
             
             [[receivedMsgCell nameLabel] setText:senderName];
-            [[receivedMsgCell messageLabel] setText:[action messageContent]];
+            
+            NSAttributedString * messageText;
+            messageText = [action messageStringWithAttributes:_messageAttributes];
+            [[receivedMsgCell messageView] setAttributedText:messageText];
+            
             [[receivedMsgCell timeLabel] setText:[action formattedDate]];
             
             cell = receivedMsgCell;

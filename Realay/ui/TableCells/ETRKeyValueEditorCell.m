@@ -101,24 +101,6 @@
     _characterLimit = 240;
 }
 
-- (void)setUpFacebookNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user {
-    if (!user) {
-        return;
-    }
-    
-    [[self valueField] setTag:tag];
-    [[self valueField] setKeyboardType:UIKeyboardTypeNamePhonePad];
-    [[self keyLabel] setText:NSLocalizedString(@"Facebook_ID", @"Facebook ID")];
-    
-    NSString *facebookName = [user facebook];
-    if (facebookName) {
-        [[self valueField] setText:facebookName];
-    } else {
-        [[self valueField] setText:@""];
-    }
-    _characterLimit = 60;
-}
-
 - (void)setUpInstagramNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user; {
     if (!user) {
         return;

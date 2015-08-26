@@ -8,14 +8,19 @@
 
 #import "ETRProfileEditorViewController.h"
 
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+
 #import "ETRAnimator.h"
 #import "ETRAlertViewFactory.h"
+#import "ETRButtonCell.h"
 #import "ETRCoreDataHelper.h"
 #import "ETRImageEditor.h"
 #import "ETRLocalUserManager.h"
 #import "ETRProfileHeaderEditorCell.h"
 #import "ETRKeyValueEditorCell.h"
 #import "ETRServerAPIHelper.h"
+#import "ETRUIConstants.h"
 #import "ETRUser.h"
 
 static CGFloat const ETRHeaderCellHeight = 80.0f;
@@ -27,6 +32,8 @@ static short const ETRCellTagOffset = 40;
 static NSString *const ETRHeaderEditorCellIdentifier = @"headerEditorCell";
 
 static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
+
+static NSInteger const ETREditRowFacebook = 5;
 
 
 @interface ETRProfileEditorViewController () <UITextFieldDelegate>
@@ -73,7 +80,13 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     [[[self navigationController] navigationBar] setTranslucent:NO];
 }
 
-#pragma mark - Table view data source
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[[FBSDKLoginManager alloc] init] logOut];
+}
+
+#pragma mark -
+#pragma mark UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -91,31 +104,37 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     }
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    
-    if ([indexPath row] > 0) {
-        ETRKeyValueEditorCell * valueCell;
-        valueCell = (ETRKeyValueEditorCell *) [tableView cellForRowAtIndexPath:indexPath];
-        
-        if (valueCell) {
-            [[valueCell valueField] becomeFirstResponder];
-        }
-    }
-}
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger row = [indexPath row];
     if (row == 0) {
-        ETRProfileHeaderEditorCell *headerCell;
+        ETRProfileHeaderEditorCell * headerCell;
         headerCell = [tableView dequeueReusableCellWithIdentifier:ETRHeaderEditorCellIdentifier
                                                      forIndexPath:indexPath];
         [headerCell setUpWithTag:ETRCellTagOffset + 0
                          forUser:_localUserCopy
                 inViewController:self];
         return headerCell;
+    } else if (row == ETREditRowFacebook) {
+        ETRButtonCell * cell = [tableView dequeueReusableCellWithIdentifier:ETRCellButton];
+        
+        NSString * buttonText;
+        UIColor * textColor;
+        if ([[[[ETRLocalUserManager sharedManager] user] facebook] length]) {
+            buttonText = NSLocalizedString(@"Unlink_Facebook", @"Remove Facebook Link");
+            textColor = [ETRUIConstants accentColor];
+        } else {
+            buttonText = NSLocalizedString(@"Add_Link_Facebook", @"Connect to Facebook");
+            textColor = [UIColor colorWithRed:(0x44/255.0f)
+                                        green:(0x8A/255.0f)
+                                         blue:(0xFF/255.0f)
+                                        alpha:1.0f];
+        }
+        
+        [[cell label] setText:buttonText];
+        [[cell label] setTextColor:textColor];
+        return cell;
     }
+        
     
     ETRKeyValueEditorCell * valueCell;
     valueCell = [tableView dequeueReusableCellWithIdentifier:ETRValueEditorCellIdentifier
@@ -141,11 +160,6 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
                                                 forUser:_localUserCopy];
             break;
         
-        case 5:
-            [valueCell setUpFacebookNameEditorCellWithTag:ETRCellTagOffset + 5
-                                                  forUser:_localUserCopy];
-            break;
-        
         case 6:
             [valueCell setUpInstagramNameEditorCellWithTag:ETRCellTagOffset + 6
                                                    forUser:_localUserCopy];
@@ -161,6 +175,71 @@ static NSString *const ETRValueEditorCellIdentifier = @"valueEditorCell";
     
     return valueCell;
 }
+
+#pragma mark -
+#pragma mark UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    
+    if ([indexPath row] == ETREditRowFacebook) {
+        ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
+        if ([[localUser facebook] length]) {
+            // The User already has a Facebook ID set.
+            // Clicking on this Cell removes the ID, stores and syncs the change.
+            [localUser setFacebook:nil];
+            [self saveSyncLocalUser];
+            [[self tableView] reloadData];
+        } else {
+            // The User does not have an associated Facebook ID.
+            // Log into Facebook to retrieve it, store it and sync with the Server.
+            
+            FBSDKLoginManager * loginMan = [[FBSDKLoginManager alloc] init];
+            
+            void (^loginHandler) (FBSDKLoginManagerLoginResult *, NSError *);
+            loginHandler = ^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+                if (error) {
+                    NSLog(@"Facebook Login error: %@", [error description]);
+                    return;
+                } else if ([result isCancelled]) {
+#ifdef DEBUG
+                    NSLog(@"Facebook Login cancelled");
+#endif
+                    return;
+                }
+                // TODO: Show progress circle here.
+                
+                FBSDKGraphRequest *request;
+                request = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil];
+                [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                    if (!error && [result isKindOfClass:[NSDictionary class]]) {
+#ifdef DEBUG
+                        NSLog(@"fetched user:%@", result);
+#endif
+                        NSDictionary *values = (NSDictionary *)result;
+                        [localUser setFacebook:[values objectForKey:@"id"]];
+                        [self saveSyncLocalUser];
+                        [loginMan logOut];
+                        [[self tableView] reloadData];
+                    }
+                }];
+            };
+            
+            [loginMan logInWithReadPermissions:@[@"public_profile"] handler:loginHandler];
+        }
+        
+    } else if ([indexPath row] > 0) {
+        ETRKeyValueEditorCell * valueCell;
+        valueCell = (ETRKeyValueEditorCell *) [tableView cellForRowAtIndexPath:indexPath];
+        
+        if (valueCell) {
+            [[valueCell valueField] becomeFirstResponder];
+        }
+    }
+}
+
+#pragma mark -
+#pragma mark UITextFieldDelegate
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
@@ -360,13 +439,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     BOOL doSendUpdate = NO;
     ETRUser * localUser = [[ETRLocalUserManager sharedManager] user];
     
-//    if (![[_localUserCopy imageID] isEqualToNumber:[localUser imageID]]) {
-//        // Do not send an update API call for image changes.
-//        // The image upload already does this.
-//        [localUser setImageID:[_localUserCopy imageID]];
-//        [localUser setLowResImage:[_localUserCopy lowResImage]];
-//    }
-    
     if ([_localUserCopy name]) {
         if (![[_localUserCopy name] isEqualToString:[localUser name]]) {
             doSendUpdate = YES;
@@ -396,11 +468,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         [localUser setWebsite:[_localUserCopy website]];
     }
     
-    if (![[_localUserCopy facebook] isEqualToString:[localUser facebook]]) {
-        doSendUpdate = YES;
-        [localUser setFacebook:[_localUserCopy facebook]];
-    }
-    
     if (![[_localUserCopy instagram] isEqualToString:[localUser instagram]]) {
         doSendUpdate = YES;
         [localUser setInstagram:[_localUserCopy instagram]];
@@ -411,17 +478,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         [localUser setTwitter:[_localUserCopy twitter]];
     }
     
-    if (doSendUpdate && [ETRCoreDataHelper saveContext]) {
+    if (doSendUpdate) {
+        [self saveSyncLocalUser];
+        [[self navigationController] popViewControllerAnimated:YES];
+    }
+}
+
+- (void)saveSyncLocalUser {
+    if ([ETRCoreDataHelper saveContext]) {
 #ifdef DEBUG
         NSLog(@"Profile changed by user. Dispatching update to server.");
-        NSLog(@"%@", [localUser description]);
 #endif
         // This will fetch the local User object, upload it to the server
         // and queue a retry if a connection problem occurred.
         [ETRServerAPIHelper dispatchUserUpdate];
     }
-    
-    [[self navigationController] popViewControllerAnimated:YES];
 }
 
 #pragma mark -

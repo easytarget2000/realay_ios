@@ -104,24 +104,24 @@ static ETRLocationManager * SharedInstance;
         NSLog(@"Updating Rooms, new Location.");
 #endif
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
-    }
-    
-    // Update the distance to the known Rooms.
-    BOOL didChangeDistance = NO;
-    for (ETRRoom * room in [ETRCoreDataHelper rooms]) {
-        // Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
-        // and the current device location.
-        int newDistance = [self distanceToRoom:room];
-        
-        int difference = (int) [[room distance] integerValue] - newDistance;
-        
-        if (difference > 10 || difference < -10) {
-            [room setDistance:@(newDistance)];
-            didChangeDistance = YES;
+    } else {
+        // Update the distance to the known Rooms.
+        BOOL didChangeDistance = NO;
+        for (ETRRoom * room in [ETRCoreDataHelper rooms]) {
+            // Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
+            // and the current device location.
+            int newDistance = [self distanceToRoom:room];
+            
+            int difference = (int) [[room distance] integerValue] - newDistance;
+            
+            if (difference > 10 || difference < -10) {
+                [room setDistance:@(newDistance)];
+                didChangeDistance = YES;
+            }
         }
-    }
-    if (didChangeDistance) {
-        [ETRCoreDataHelper saveContext];
+        if (didChangeDistance) {
+            [ETRCoreDataHelper saveContext];
+        }
     }
     
     // If a Session has been started, monitor entering and exiting the Room radius.
@@ -195,6 +195,8 @@ static ETRLocationManager * SharedInstance;
     } else {
         return NO;
     }
+    
+//    return [ETRLocationManager didAuthorizeWhenInUse];
 }
 
 + (BOOL)didAuthorizeWhenInUse {
@@ -263,36 +265,5 @@ static ETRLocationManager * SharedInstance;
     NSLog(@"locationManagerDidResumeLocationUpdates:");
 #endif
 }
-
-///**
-// Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
-// and the current device location;
-// Uses the server API / query distance value, if the device location is unknown;
-// Values below 10 are handled as 0 to avoid unnecessary precision
-// */
-//- (int)distanceToRoom:(ETRRoom *)room {
-//    if (!room) {
-//        return 7715;
-//    }
-//    
-//    int distanceToCenter;
-//    if (![self location]) {
-//        distanceToCenter = (int) [[room distance] integerValue];
-//    } else {
-//        distanceToCenter = (int) [[self location] distanceFromLocation:[room location]];
-//    }
-//    
-//    int distanceToRadius = distanceToCenter - (int) [[room radius] integerValue];
-//    if (distanceToRadius < 10) {
-//        return 0;
-//    } else {
-//        return distanceToRadius;
-//    }
-//    
-////    NSInteger value = [[self location] distanceFromLocation:[room location]];
-////    value -= [[room radius] integerValue];
-////    if (value < 10) return 0;
-////    else return value;
-//}
 
 @end

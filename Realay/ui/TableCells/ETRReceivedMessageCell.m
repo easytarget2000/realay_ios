@@ -14,9 +14,13 @@
 
 - (void)prepareForReuse {
     [[self userIconView] setImageName:nil];
-    [[self nameLabel] setText:@""];
-    [[self messageLabel] setText:@""];
-    [[self timeLabel] setText:@""];
+    [[self nameLabel] setText:nil];
+//    [[self messageView] setDataDetectorTypes:UIDataDetectorTypeNone];
+    
+    [[self messageView] setAttributedText:nil];
+//    [[self messageView] setEditable:NO];
+//    [[self messageView] setEditable:YES];
+    [[self timeLabel] setText:nil];
 }
 
 @end

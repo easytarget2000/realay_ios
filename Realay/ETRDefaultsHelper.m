@@ -120,9 +120,6 @@ static CLLocation * LastUpdateLocation;
 #pragma mark Settings
 
 + (BOOL)doUseMetricSystem {
-    return YES;
-
-    
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     return [defaults boolForKey:ETRDefaultsUsesMetricSystem];
 }

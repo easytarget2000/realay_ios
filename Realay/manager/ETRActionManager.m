@@ -231,7 +231,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                            }
                                        }
                                        
-                                       if (didReceiveNewData) {
+                                       if (didReceiveNewData && !isInitial) {
                                            [ETRCoreDataHelper saveContext];
                                        }
                                        

@@ -8,6 +8,8 @@
 
 #import "ETRUIConstants.h"
 
+NSString *const ETRCellButton = @"Button";
+
 NSString *const ETRCellIdentifierUser = @"userCell";
 
 NSString *const ETRImageNameArrowRight = @"ArrowRight";

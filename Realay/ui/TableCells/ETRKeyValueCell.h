@@ -11,6 +11,7 @@
 @interface ETRKeyValueCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *keyLabel;
-@property (weak, nonatomic) IBOutlet UILabel *valueLabel;
+//@property (weak, nonatomic) IBOutlet UILabel *valueLabel;
+@property (weak, nonatomic) IBOutlet UITextView *valueLabel;
 
 @end

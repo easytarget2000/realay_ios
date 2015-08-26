@@ -23,7 +23,6 @@
 - (void)updateLastMessage:(ETRAction *)message {
     if (![self lastMessage]) {
         [self setLastMessage:message];
-//        [ETRCoreDataHelper saveContext];
         return;
     }
     

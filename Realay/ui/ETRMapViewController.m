@@ -159,24 +159,20 @@ static NSString *const ETRSegueMapToShare = @"MapToShare";
 - (IBAction)navigateButtonPressed:(id)sender {
     
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
-    NSString * address;
-    if ([[sessionRoom address] length] > 4) {
-        address = [sessionRoom address];
-    } else {
-        address = [NSString stringWithFormat:@"%@,%@", [sessionRoom longitude], [sessionRoom latitude]];
-    }
+    NSString * coordinates;
+    coordinates = [NSString stringWithFormat:@"%@,%@", [sessionRoom latitude], [sessionRoom longitude]];
     
     NSString * URLString;
     NSURL * gmapsURL = [NSURL URLWithString:@"comgooglemaps://"];
     
     if ([[UIApplication sharedApplication] canOpenURL:gmapsURL]) {
-        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", address];
+        URLString = [NSString stringWithFormat:@"comgooglemaps://?daddr=%@", coordinates];
     } else {
         // No app was found that opens Google Maps URLs.
 #ifdef DEBUG
         NSLog(@"INFO: Can not use comgooglemaps://.");
 #endif
-        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%@", address];
+        URLString = [NSString stringWithFormat:@"http://maps.apple.com/?daddr=%@", coordinates];
     }
 
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URLString]];

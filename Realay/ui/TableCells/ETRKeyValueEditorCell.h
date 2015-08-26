@@ -24,12 +24,8 @@
 
 - (void)setUpWebsiteURLEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user;
 
-- (void)setUpFacebookNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user;
-
 - (void)setUpInstagramNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user;
 
 - (void)setUpTwitterNameEditorCellWithTag:(NSInteger)tag forUser:(ETRUser *)user;
-
-//- (NSString *)validatedFieldValueWithTag:(NSInteger)tag forUser:(ETRUser *)user;
 
 @end

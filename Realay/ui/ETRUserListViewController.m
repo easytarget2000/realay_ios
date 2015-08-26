@@ -67,7 +67,7 @@
 }
 
 - (void)updateUserList {
-    [ETRServerAPIHelper updateRoomListWithCompletionHandler:^(BOOL didReceive) {
+    [ETRServerAPIHelper getSessionUsersWithCompletionHandler:^(BOOL didReceive) {
         [[self refreshControl] endRefreshing];
     }];
 }

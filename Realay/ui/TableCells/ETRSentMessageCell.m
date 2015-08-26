@@ -10,4 +10,10 @@
 
 @implementation ETRSentMessageCell
 
+- (void)prepareForReuse {
+    
+    [[self messageView] setText:nil];
+    [[self timeLabel] setText:nil];
+}
+
 @end

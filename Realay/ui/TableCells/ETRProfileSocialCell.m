@@ -37,7 +37,7 @@ static NSString *const ETRImageTwitter = @"Twitter";
     
     if (_network == ETRSocialNetworkFacebook && [[_user facebook] length]) {
         [[self iconView] setImage:[UIImage imageNamed:ETRImageFacebook]];
-        [[self nameLabel] setText:[_user facebook]];
+        [[self nameLabel] setText:@""];
     } else if (_network == ETRSocialNetworkInstagram && [[_user instagram] length]) {
         [[self iconView] setImage:[UIImage imageNamed:ETRImageInstagram]];
         NSString * instagramName;
@@ -66,15 +66,26 @@ static NSString *const ETRImageTwitter = @"Twitter";
 - (void)openProfile {
     switch (_network) {
         case ETRSocialNetworkFacebook: {
-            NSString * fbSearchURL;
-            fbSearchURL = [NSString stringWithFormat:@"https://facebook.com/search/results/?q=%@", [_user facebook]];
-            fbSearchURL = [fbSearchURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:fbSearchURL]];
+            
+            NSString *nativeUrlString;
+            nativeUrlString = [NSString stringWithFormat:@"fb://profile?app_scoped_user_id=%@", [_user facebook]];
+            nativeUrlString = [nativeUrlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            
+            NSURL *nativeUrl = [NSURL URLWithString:nativeUrlString];
+            [[UIApplication sharedApplication] openURL:nativeUrl];
+            if ([[UIApplication sharedApplication] canOpenURL:nativeUrl]){
+                [[UIApplication sharedApplication] openURL:nativeUrl];
+            } else {
+                NSString *webUrlString;
+                webUrlString = [NSString stringWithFormat:@"https://facebook.com/%@", [_user facebook]];
+                webUrlString = [webUrlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webUrlString]];
+            }
             return;
         }
             
         case ETRSocialNetworkInstagram: {
-            NSString * instagramName;
+            NSString *instagramName;
             NSInteger startIndex;
             for (startIndex = 0; startIndex < [[_user instagram] length]; startIndex++) {
                 if ([[_user instagram] characterAtIndex:startIndex] != '@') {
@@ -82,14 +93,23 @@ static NSString *const ETRImageTwitter = @"Twitter";
                 }
             }
             instagramName = [[_user instagram] substringFromIndex:startIndex];
-            NSString * fallbackURL;
+            
+            NSString *nativeUrlString;
+            nativeUrlString = [NSString stringWithFormat:@"instagram://user?username=%@", instagramName];
+            
+            NSURL *instagramURL = [NSURL URLWithString:nativeUrlString];
+            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+                [[UIApplication sharedApplication] openURL:instagramURL];
+            }
+            
+            NSString *fallbackURL;
             fallbackURL = [NSString stringWithFormat:@"http://instagram.com/_u/%@", instagramName];
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:fallbackURL]];
             return;
         }
             
         case ETRSocialNetworkTwitter: {
-            NSString * twitterName;
+            NSString *twitterName;
             NSInteger startIndex;
             for (startIndex = 0; startIndex < [[_user twitter] length]; startIndex++) {
                 if ([[_user twitter] characterAtIndex:startIndex] != '@') {
@@ -98,12 +118,12 @@ static NSString *const ETRImageTwitter = @"Twitter";
             }
             twitterName = [[_user twitter] substringFromIndex:startIndex];
             
-            NSString * profileURL = [NSString stringWithFormat:@"twitter:///user?%@", twitterName];
-            NSURL * twitterURL = [NSURL URLWithString:profileURL];
+            NSString *profileURL = [NSString stringWithFormat:@"twitter:///user?%@", twitterName];
+            NSURL *twitterURL = [NSURL URLWithString:profileURL];
             if ([[UIApplication sharedApplication] canOpenURL:twitterURL]) {
                 [[UIApplication sharedApplication] openURL:twitterURL];
             } else {
-                NSString * fallbackURL;
+                NSString *fallbackURL;
                 fallbackURL = [NSString stringWithFormat:@"https://twitter.com/%@", [_user twitter]];
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:fallbackURL]];
             }

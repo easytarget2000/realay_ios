@@ -8,6 +8,8 @@
 
 #import "ETRAppDelegate.h"
 
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+
 #import "ETRActionManager.h"
 #import "ETRBouncer.h"
 #import "ETRConversationViewController.h"
@@ -18,7 +20,6 @@
 #import "ETRSessionManager.h"
 #import "ETRUIConstants.h"
 
-
 @implementation ETRAppDelegate
 
 
@@ -28,6 +29,7 @@
     // Initialise the Reachability and Location Managers, in order to avoid delayed Reachability states later.
     [ETRReachabilityManager sharedManager];
     
+    [ETRDefaultsHelper didRunOnce];
     [ETRDefaultsHelper authID];
     
     // Additional GUI setup:
@@ -50,7 +52,19 @@
     // Prepare the random number generator seeed.
     srand48(time(0));
     
-    return YES;
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                    didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                          openURL:url
+                                                sourceApplication:sourceApplication
+                                                       annotation:annotation];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

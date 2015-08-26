@@ -47,6 +47,8 @@ typedef NS_ENUM(short, ETRActionCode) {
 
 @property (nonatomic, retain) ETRConversation * conversation;
 
+- (NSAttributedString *)messageStringWithAttributes:(NSDictionary *)attrs;
+
 - (NSString *)shortDescription;
 
 - (BOOL)isPublicAction;

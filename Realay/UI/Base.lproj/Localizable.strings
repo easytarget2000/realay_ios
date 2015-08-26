@@ -12,6 +12,8 @@
 
 "Added_User" = "Added %@";
 
+"Add_Link_Facebook" = "Add Link to Your Facebook Profile";
+
 "Ask_someone" = "Ask someone around you for the password to join.";
 
 "Background_Updates" = "Background Updates";
@@ -171,6 +173,8 @@
 "Twitter_Name" = "Twitter Username";
 
 "Unknown_User" = "Unknown User";
+
+"Unlink_Facebook" = "Unlink Facebook Profile";
 
 "until" = "Until";
 
