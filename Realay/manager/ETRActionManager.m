@@ -25,9 +25,9 @@ static CFTimeInterval const ETRQueryIntervalFastest = 1.5;
 
 static CFTimeInterval const ETRQueryIntervalMaxJitter = 1.2;
 
-static CFTimeInterval const ETRQueryIntervalSlowest = 8.0;
+static CFTimeInterval const ETRQueryIntervalSlowest = 7.0;
 
-static CFTimeInterval const ETRQueryIntervalIdle = 45.0;
+static CFTimeInterval const ETRQueryIntervalIdle = 30.0;
 
 static CFTimeInterval const ETRWaitIntervalToIdleQueries = 4.0 * 60.0;
 
@@ -211,13 +211,13 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     
     [ETRServerAPIHelper getActionsAndPing:doSendPing
                                completion:^(id<NSObject> receivedObject) {
-                                   BOOL didReceiveNewData = NO;
                                    
-                                   int new = -1;
-                                   
+                                   int new = 0;
                                    if ([receivedObject isKindOfClass:[NSArray class]]) {
+                                       
+                                       BOOL didGetMessage = NO;
+                                       
                                        NSArray * jsonActions = (NSArray *) receivedObject;
-                                       new++;
                                        for (NSObject *jsonAction in jsonActions) {
                                            if ([jsonAction isKindOfClass:[NSDictionary class]]) {
                                                new++;
@@ -225,28 +225,25 @@ static CFTimeInterval const ETRPingInterval = 20.0;
                                                action = [ETRCoreDataHelper addActionFromJSONDictionary:(NSDictionary *)jsonAction
                                                                                         isInitialQuery:isInitial];
                                                if (action && !isInitial) {
-                                                   [self queryNotificationForAction:action];
+                                                   didGetMessage = [self queryNotificationForAction:action];
                                                }
-                                               didReceiveNewData = YES;
                                            }
                                        }
                                        
-                                       if (didReceiveNewData && !isInitial) {
-                                           [ETRCoreDataHelper saveContext];
-                                       }
-                                       
-                                       if (!isInitial && new > 0) {
-                                           // All Actions have been processed. Show those bundled Notifications.
+#ifdef DEBUG
+                                       NSLog(@"New: %d, %d ", new, didGetMessage);
+#endif
+                                       if (!isInitial && didGetMessage) {
+                                           // All Actions have been processed,
+                                           // and at least one Action has been received,
+                                           // that creates a Notification and has to be stored.
                                            [self presentQueuedNotifications];
+                                           [ETRCoreDataHelper saveContext];
                                        }
                                    }
                                    
-#ifdef DEBUG
-//                                   NSLog(@"New: %d", new);
-#endif
-                                   
-                                   [self dispatchQueryTimerWithResetInterval:didReceiveNewData];
-                                   
+                                   [self dispatchQueryTimerWithResetInterval:(new > 0)];
+
                                    if (doSendPing) {
                                        _lastPingTime = CFAbsoluteTimeGetCurrent();
                                    }
@@ -295,14 +292,14 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     [self updateBadges];
 }
 
-- (void)queryNotificationForAction:(ETRAction *)action {
+- (BOOL)queryNotificationForAction:(ETRAction *)action {
     if (!action) {
-        return;
+        return false;
     }
     
     BOOL isMessage = [action isValidMessage] || [action isPhotoMessage];
     if ([action isSentAction] || !isMessage) {
-        return;
+        return false;
     }
     
     // Count the number of unread messages.
@@ -322,7 +319,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
             _doShowPublicNotification = YES;
         } else {
             _doShowPrivateNotification = NO;
-            return;
+            return true;
         }
     } else {
         conversationID = [[action sender] remoteID];
@@ -342,7 +339,7 @@ static CFTimeInterval const ETRPingInterval = 20.0;
     if (applicationState == UIApplicationStateActive) {
         if ([_foregroundPartnerID isEqualToNumber:conversationID]) {
             // Do not create Notifications if the Conversation is in the foreground.
-            return;
+            return true;
         }
     }
     
@@ -359,6 +356,8 @@ static CFTimeInterval const ETRPingInterval = 20.0;
         }
         [_publicMessageNotificationQuery addObject:action];
     }
+    
+    return true;
 }
 
 - (void)presentQueuedNotifications {

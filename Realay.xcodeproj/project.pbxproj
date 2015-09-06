@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D02C3A931B5FCF3B0087A496 /* ETRShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */; };
-		D02FC4141B8E28B60056E61F /* TSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = D02FC4131B8E28B60056E61F /* TSLabel.m */; };
 		D02FC4161B8E407F0056E61F /* LBClock.m in Sources */ = {isa = PBXBuildFile; fileRef = D02FC4151B8E407F0056E61F /* LBClock.m */; };
 		D05649161B41E53C00BDC1E5 /* ETRMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649151B41E53C00BDC1E5 /* ETRMediaViewController.m */; };
 		D0870BEF1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0870BEE1B4C6B8B0049BD6C /* ETRPrepareSessionViewController.m */; };
@@ -86,8 +85,6 @@
 		D02C3A921B5FCF3B0087A496 /* ETRShareViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETRShareViewController.m; sourceTree = "<group>"; };
 		D02C3A941B603F4F0087A496 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D02C3A961B60547A0087A496 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
-		D02FC4121B8E28B60056E61F /* TSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLabel.h; sourceTree = "<group>"; };
-		D02FC4131B8E28B60056E61F /* TSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSLabel.m; sourceTree = "<group>"; };
 		D02FC4151B8E407F0056E61F /* LBClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LBClock.m; sourceTree = "<group>"; };
 		D02FC4171B8E40C10056E61F /* LBClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LBClock.h; sourceTree = "<group>"; };
 		D05649141B41E53C00BDC1E5 /* ETRMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETRMediaViewController.h; sourceTree = "<group>"; };
@@ -349,8 +346,6 @@
 		D0D54B561B2F218300F8875B /* Elements */ = {
 			isa = PBXGroup;
 			children = (
-				D02FC4121B8E28B60056E61F /* TSLabel.h */,
-				D02FC4131B8E28B60056E61F /* TSLabel.m */,
 				D0D54B571B2F218300F8875B /* ETRImageView.h */,
 				D0D54B581B2F218300F8875B /* ETRImageView.m */,
 				D0D54B591B2F218300F8875B /* ETRShadowView.h */,
@@ -602,7 +597,6 @@
 				D0D54BBA1B2F218300F8875B /* ETRKeyValueCell.m in Sources */,
 				D0D54BBB1B2F218300F8875B /* ETRKeyValueEditorCell.m in Sources */,
 				D0D54BB51B2F218300F8875B /* ETRUserListViewController.m in Sources */,
-				D02FC4141B8E28B60056E61F /* TSLabel.m in Sources */,
 				D0D54B3D1B2F1F9100F8875B /* main.m in Sources */,
 				D0D54BEB1B2F219500F8875B /* ETRChatObject.m in Sources */,
 				D0D54BAC1B2F218300F8875B /* ETRLoginViewController.m in Sources */,

@@ -48,9 +48,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
                            return;
                        }
 
-//                       [targetImageView setImage:croppedImage];
-//                       [targetImageView setImageName:imageName];
-
                        [UIView transitionWithView:targetImageView
                                          duration:0.2
                                           options:UIViewAnimationOptionTransitionCrossDissolve
@@ -62,9 +59,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
                                                [targetImageView setImageName:imageName];
                                            }
                                        }];
-
-                       
-                       //    [targetImageView setImage:image];
                    });
 }
 
@@ -79,13 +73,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     if (imageSize.width == targetSize.width && imageSize.height == targetSize.width) {
         return image;
     }
-    
-//    UIImageOrientation orientation;
-//    if ([image imageOrientation] == UIImageOrientationDownMirrored) {
-//        orientation = UIImageOrientationUp;
-//    } else {
-//        orientation = UIImageOrientationDownMirrored;
-//    }
     
     CGFloat shortestImageSide;
     if (imageSize.width > imageSize.height) {
@@ -117,9 +104,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
     CGRect cropRect = CGRectMake(cropX, cropY, targetSize.width, targetSize.height);
     
     UIImage * scaledImage = [ETRImageEditor scaleImage:image toMaxSideLength:longerSideLength];
-    //    UIImage * scaledImage = [UIImage imageWithCGImage:[image CGImage]
-    //                                                scale:1.0f/resizeFactor
-    //                                          orientation:[image imageOrientation]];
     
     CGImageRef imageRef = CGImageCreateWithImageInRect([scaledImage CGImage], cropRect);
     
@@ -127,8 +111,6 @@ static CGFloat const ETRLoResImageQuality = 0.6f;
                                                 scale:[image scale]
                                           orientation:[image imageOrientation]];
     CGImageRelease(imageRef);
-    
-    //    NSLog(@"Image orientation 3: %d", [outputImage imageOrientation]);
     
     return outputImage;
 }

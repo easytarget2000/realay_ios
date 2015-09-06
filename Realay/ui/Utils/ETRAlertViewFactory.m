@@ -377,6 +377,11 @@ typedef NS_ENUM(NSInteger, ETRAlertView) {
             } else {
                 // TODO: Implement reporting.
                 
+                if (buttonIndex == 1) {
+                    // Besides blocking the User locally, a Report Action is dispatched.
+                    [ETRCoreDataHelper dispatchReportAboutUser:_selectedUser];
+                }
+                
                 [_selectedUser setIsBlocked:@(YES)];
                 ETRConversation * conversation = [ETRCoreDataHelper conversationWithPartner:_selectedUser];
                 [ETRCoreDataHelper deleteConversation:conversation];

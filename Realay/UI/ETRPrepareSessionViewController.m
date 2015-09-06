@@ -51,7 +51,7 @@
         [[self alertHelper] showSettingsAlertBeforeJoin];
         LastSettingsAlert = CFAbsoluteTimeGetCurrent();
         
-    } else if ([ETRLocationManager isInSessionRegion]) {
+    } else if ([ETRLocationManager isInSessionRegionWithIntervalCheck:NO]) {
         // Show the password prompt, if the device location is inside the region.
         [self performSegueWithIdentifier:joinSegue sender:self];
     } else {

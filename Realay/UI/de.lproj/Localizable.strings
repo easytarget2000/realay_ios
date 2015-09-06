@@ -40,6 +40,8 @@
 
 "Closed_at" = "%@ endete um %@.";
 
+"Come_back" = "Bitte komm bald zurück.";
+
 "Connecting_seems_longer" = "Die Verbidung braucht länger als gewöhnlich...";
 
 "Coordinates" = "Koordinaten";

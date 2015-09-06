@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0201508261</string>
+	<string>0201508271</string>
 	<key>FacebookAppID</key>
 	<string>971606422880418</string>
 	<key>FacebookDisplayName</key>
@@ -67,7 +67,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>

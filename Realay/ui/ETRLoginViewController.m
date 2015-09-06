@@ -26,6 +26,8 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
 
 @property (nonatomic) BOOL doStartSessionOnFinish;
 
+@property (nonatomic) BOOL isFinished;
+
 @end
 
 
@@ -34,6 +36,11 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
 @synthesize activityIndicator = _activityIndicator;
 
 #pragma mark - UIViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    _isFinished = NO;
+}
 
 - (void)viewWillAppear:(BOOL)animated {
     [[self nameTextField] setText:@""];
@@ -51,6 +58,15 @@ static NSString *const ETRSegueLoginToProfile = @"LoginToProfile";
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [[self nameTextField] becomeFirstResponder];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    if (_doStartSessionOnFinish && !_isFinished) {
+        // The Cancel button has been pressed.
+        [[self navigationController] popToRootViewControllerAnimated:YES];
+    }
 }
 
 - (void)threadStartAnimating:(id)data {
@@ -92,8 +108,6 @@ replacementString:(nonnull NSString *)string {
     _doStartSessionOnFinish = YES;
     _doShowProfileOnFinish = NO;
 }
-
-
 
 - (IBAction)saveButtonPressed:(id)sender {
     NSString * typedName;
@@ -142,6 +156,8 @@ replacementString:(nonnull NSString *)string {
 
 - (void)handleLoginCompletion:(NSNumber *)didSucceed {
     if ([didSucceed boolValue]) {
+        _isFinished = YES;
+        
         if (_doStartSessionOnFinish) {
             [super pushToJoinViewController];
         } else {

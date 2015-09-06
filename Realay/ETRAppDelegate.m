@@ -94,8 +94,6 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    
-    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -104,6 +102,12 @@
     
     // Remove unsent messages.
     [ETRDefaultsHelper removePublicMessageInputTexts];
+    
+    NSError *error;
+    [[self managedObjectContext] save:&error];
+    if (error) {
+        NSLog(@"Application Terminate Save: %@", error);
+    }
 }
 
 #pragma mark -
@@ -116,8 +120,10 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
     NSLog(@"Background fetch.");
 #endif
     
+    [[ETRLocationManager sharedManager] launch:nil];
+    
     if ([[ETRSessionManager sharedManager] didStartSession]) {
-        [ETRLocationManager isInSessionRegion];
+        [ETRLocationManager isInSessionRegionWithIntervalCheck:YES];
         
         if ([ETRDefaultsHelper doUpdateRoomListAtLocation:[ETRLocationManager location]]) {
             [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];

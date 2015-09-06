@@ -18,9 +18,23 @@
 #import "ETRServerAPIHelper.h"
 #import "ETRSessionManager.h"
 
+
+/*
+ Singleton Instance of this Class
+ */
+static ETRLocationManager * SharedInstance;
+
+/*
+ Interval in seconds which determines how often the Location should be updated
+ */
 static CFTimeInterval const ETRScheduleInterval = 10.0 * 60.0;
 
-static ETRLocationManager * SharedInstance;
+/*
+ Interval in seconds after which the app goes into Location Warning mode;
+ To be used by Background Fetches to determine
+ if the last time the location has been validated is within an expected interval
+ */
+static CFTimeInterval const ETRIntervalRegionAck = 30.0 * 60.0;
 
 
 @interface ETRLocationManager()
@@ -28,6 +42,8 @@ static ETRLocationManager * SharedInstance;
 @property (nonatomic) BOOL isUpdatingLocation;
 
 @property (nonatomic) BOOL isMonitoringSignificantLocationChanges;
+
+@property (nonatomic) NSTimeInterval regionAckTime;
 
 @end
 
@@ -106,7 +122,6 @@ static ETRLocationManager * SharedInstance;
         [ETRServerAPIHelper updateRoomListWithCompletionHandler:nil];
     } else {
         // Update the distance to the known Rooms.
-        BOOL didChangeDistance = NO;
         for (ETRRoom * room in [ETRCoreDataHelper rooms]) {
             // Distance in _metres_ between the outer _radius_ of a given Room, not the central point,
             // and the current device location.
@@ -116,12 +131,8 @@ static ETRLocationManager * SharedInstance;
             
             if (difference > 10 || difference < -10) {
                 [room setDistance:@(newDistance)];
-                didChangeDistance = YES;
             }
-        }
-        if (didChangeDistance) {
-            [ETRCoreDataHelper saveContext];
-        }
+        }   
     }
     
     // If a Session has been started, monitor entering and exiting the Room radius.
@@ -156,19 +167,33 @@ static ETRLocationManager * SharedInstance;
     }
 }
 
-+ (BOOL)isInSessionRegion {
-    return [[ETRLocationManager sharedManager] updateSessionRegionDistance];
++ (BOOL)isInSessionRegionWithIntervalCheck:(BOOL)doCheckInterval {
+    ETRLocationManager *manager = [ETRLocationManager sharedManager];
+    
+    if (doCheckInterval) {
+        CFTimeInterval intervalLastAck = CFAbsoluteTimeGetCurrent() - [manager regionAckTime];
+        if (intervalLastAck > ETRIntervalRegionAck) {
+#ifdef DEBUG
+            NSDate *ackDate = [NSDate dateWithTimeIntervalSinceReferenceDate:[manager regionAckTime]];
+            NSLog(@"Last position within Session Region was long ago: %@", ackDate);
+#endif
+            [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation
+                                       allowDuplicate:NO];
+            return NO;
+        }
+    }
+    
+    return [manager updateSessionRegionDistance];
 }
 
 - (BOOL)updateSessionRegionDistance {
-    //    BOOL wasInSessionRegion = _isInSessionRegion;
     BOOL isInSessionRegion;
     
     ETRRoom * sessionRoom = [[ETRSessionManager sharedManager] room];
     
     if (sessionRoom && [ETRLocationManager didAuthorizeWhenInUse]) {
         int roomDistance = (int) [[sessionRoom distance] integerValue];
-        if (roomDistance > 2000 && [[ETRSessionManager sharedManager] didStartSession]) {
+        if (roomDistance > 1000 && [[ETRSessionManager sharedManager] didStartSession]) {
             [[ETRBouncer sharedManager] kickForReason:ETRKickReasonLocation calledBy:@"farAway"];
             return NO;
         }
@@ -179,6 +204,10 @@ static ETRLocationManager * SharedInstance;
     
     if (isInSessionRegion) {
         [[ETRBouncer sharedManager] cancelLocationWarnings];
+        _regionAckTime = CFAbsoluteTimeGetCurrent();
+//#ifdef DEBUG
+//        NSLog(@"Acknowledged that Location is in Session Region.");
+//#endif
     } else {
         [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation
                                    allowDuplicate:NO];
@@ -188,15 +217,15 @@ static ETRLocationManager * SharedInstance;
 }
 
 + (BOOL)didAuthorizeAlways {
-    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+//    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+//    
+//    if (status == kCLAuthorizationStatusAuthorizedAlways) {
+//        return YES;
+//    } else {
+//        return NO;
+//    }
     
-    if (status == kCLAuthorizationStatusAuthorizedAlways) {
-        return YES;
-    } else {
-        return NO;
-    }
-    
-//    return [ETRLocationManager didAuthorizeWhenInUse];
+    return [ETRLocationManager didAuthorizeWhenInUse];
 }
 
 + (BOOL)didAuthorizeWhenInUse {
@@ -204,7 +233,15 @@ static ETRLocationManager * SharedInstance;
     return status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusAuthorizedAlways;
 }
 
+- (void)performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    
+}
+
 - (void)launch:(NSTimer *)timer {
+#ifdef DEBUG
+    NSLog(@"Updating Rooms, LocationManager relaunch.");
+#endif
+    
     if (![ETRLocationManager didAuthorizeAlways]) {
         if ([self respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
             [self requestWhenInUseAuthorization];
@@ -248,7 +285,8 @@ static ETRLocationManager * SharedInstance;
         NSLog(@"Location Manager failed because Authorization was revoked.");
 #endif
         // Authorization "When In Use" is required for endless sessions.
-        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation allowDuplicate:NO];
+        [[ETRBouncer sharedManager] warnForReason:ETRKickReasonLocation
+                                   allowDuplicate:NO];
     } else {
         NSLog(@"ERROR: Location Manager failed: %@", [error description]);
     }

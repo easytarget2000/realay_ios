@@ -50,7 +50,7 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
     // Only perform a join action, if the user did not join yet.
     if (![[ETRSessionManager sharedManager] didStartSession]) {
         // Show the password prompt, if the device location is inside the region.
-        if ([ETRLocationManager isInSessionRegion]) {
+        if ([ETRLocationManager isInSessionRegionWithIntervalCheck:NO]) {
            [self verifyPasswordAndJoin];
         } else {
           [ETRAlertViewFactory showRoomDistanceAlert];
@@ -59,7 +59,8 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
 #endif
 }
 
-#pragma mark - UITextFieldDelegate
+#pragma mark -
+#pragma mark UITextFieldDelegate
 
 // Press the OK button of the password prompt, when the return key is hit.
 - (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
@@ -92,7 +93,7 @@ static NSString *const ETRSeguePasswordToLogin = @"PasswordToLogin";
         return;
     }
     
-    if (![ETRLocationManager isInSessionRegion]) {
+    if (![ETRLocationManager isInSessionRegionWithIntervalCheck:NO]) {
         [ETRAlertViewFactory showRoomDistanceAlert];
         return;
     }

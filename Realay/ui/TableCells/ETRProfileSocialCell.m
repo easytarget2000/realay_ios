@@ -118,7 +118,7 @@ static NSString *const ETRImageTwitter = @"Twitter";
             }
             twitterName = [[_user twitter] substringFromIndex:startIndex];
             
-            NSString *profileURL = [NSString stringWithFormat:@"twitter:///user?%@", twitterName];
+            NSString *profileURL = [NSString stringWithFormat:@"twitter://user?screen_name=%@", twitterName];
             NSURL *twitterURL = [NSURL URLWithString:profileURL];
             if ([[UIApplication sharedApplication] canOpenURL:twitterURL]) {
                 [[UIApplication sharedApplication] openURL:twitterURL];

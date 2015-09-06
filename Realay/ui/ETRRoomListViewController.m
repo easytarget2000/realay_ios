@@ -117,18 +117,25 @@ static NSString *const ETRSegueRoomsToSettings = @"RoomsToSettings";
     [super viewDidAppear:animated];
     
     ETRSessionManager * sessionMan = [ETRSessionManager sharedManager];
-    if ([sessionMan restoreSession] && [ETRLocationManager isInSessionRegion]) {
-        // isInSessionRegion implies that a Session Room has been set.
-        // Check if the Session has already been started.
-        if ([sessionMan didStartSession] && [sessionMan room]) {
-            [super pushToPublicConversationViewController];
-            return;
-        } else {
-            // Usually a reconnect is neccessary,
-            // because the app has been restarted at this point.
-            [super pushToJoinViewController];
-            return;
+    if ([sessionMan restoreSession]) {
+        if ([ETRLocationManager isInSessionRegionWithIntervalCheck:NO]) {
+            // isInSessionRegion implies that a Session Room has been set.
+            // Check if the Session has already been started.
+            if ([sessionMan didStartSession] && [sessionMan room]) {
+                [super pushToPublicConversationViewController];
+                return;
+            } else {
+                // Usually a reconnect is neccessary,
+                // because the app has been restarted at this point.
+                [super pushToJoinViewController];
+                return;
+            }
         }
+#ifdef DEBUG
+        else {
+            NSLog(@"Stored Session will not be restored due to distance.");
+        }
+#endif
     }
     
     [[self tableView] reloadData];

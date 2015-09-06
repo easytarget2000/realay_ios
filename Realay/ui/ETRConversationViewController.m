@@ -427,8 +427,8 @@ UITextViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger numberOfRows = [[_fetchedResultsController fetchedObjects] count];
     
-    if (numberOfRows < 1) {
-        [[self infoLabel] setHidden:NO];
+    if (!_partner && numberOfRows < 1 && [[self infoLabel] isHidden]) {
+        [ETRAnimator fadeView:[self infoLabel] doAppear:YES completion:nil];
     } else if (![[self infoLabel] isHidden]){
         [ETRAnimator fadeView:[self infoLabel] doAppear:NO completion:nil];
     }

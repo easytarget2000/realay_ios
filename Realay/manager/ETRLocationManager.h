@@ -20,7 +20,7 @@
 
 + (CLLocation *)location;
 
-+ (BOOL)isInSessionRegion;
++ (BOOL)isInSessionRegionWithIntervalCheck:(BOOL)doCheckInterval;
 
 - (int)distanceToRoom:(ETRRoom *)room;
 

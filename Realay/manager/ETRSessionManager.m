@@ -80,13 +80,13 @@ static CFTimeInterval const ETRTimeIntervalDeepUpdate = 10.0 * 60.0;
 }
 
 - (void)endSessionWithNotificaton:(BOOL)doSendNotificationAction {
+    [ETRDefaultsHelper removeSession];
+
     if (doSendNotificationAction) {
         [ETRServerAPIHelper endSession];
     }
     
     _room = nil;
-    [ETRDefaultsHelper removeSession];
-    
     _didStartSession = NO;
     
     // Remove all public and queued Actions from the local DB.

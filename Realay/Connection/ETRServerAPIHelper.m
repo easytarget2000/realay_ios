@@ -172,11 +172,6 @@ static NSMutableArray *connections;
                                    });
                 }
             }
-            dispatch_async(
-                           dispatch_get_main_queue(),
-                           ^{
-                               [ETRCoreDataHelper saveContext];
-                           });
         }
         
         [ETRServerAPIHelper getLastActionIDAndPerform:getlastActionIDCompletionHandler];

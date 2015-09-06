@@ -139,8 +139,7 @@ static NSEntityDescription * UserEntity;
         sender = [ETRCoreDataHelper userWithRemoteID:@(senderID)
                                  doLoadIfUnavailable:YES];
     } else if (senderID == ETRActionPublicUserID) {
-        // TODO: Handle Server messages.
-        return nil;
+        sender = [ETRCoreDataHelper adminUser];
     } else {
 #ifdef DEBUG
         NSLog(@"WARNING: Received Action with invalid sender ID: %@", jsonDictionary);
@@ -208,6 +207,15 @@ static NSEntityDescription * UserEntity;
             return nil;
     }
     
+    if (!sender) {
+#ifdef DEBUG
+        NSLog(@"ERROR: Cannot process Action without Sender: %@", jsonDictionary);
+#else
+        NSLog(@"ERROR: Cannot process Action without Sender.");
+#endif
+        return nil;
+    }
+    
     // Skip this Action, if an Object with this remote ID has already been stored locally
     // or if the Action has been sent by the local User.
     // Actions should not change, so they will not be updated.
@@ -231,9 +239,7 @@ static NSEntityDescription * UserEntity;
     
     long timestamp = [jsonDictionary longValueForKey:@"t" fallbackValue:1426439266];
     [receivedAction setSentDate:[NSDate dateWithTimeIntervalSince1970:timestamp]];
-    
     [receivedAction setCode:@(code)];
-    
     [receivedAction setMessageContent:[jsonDictionary stringForKey:@"m"]];
     
     if (recipient) {
@@ -245,7 +251,7 @@ static NSEntityDescription * UserEntity;
         [convo setHasUnreadMessage:@(YES)];
         
 #ifdef DEBUG
-        NSLog(@"Action has recipient: %@", receivedAction);
+        NSLog(@"Action added to Conversation: %@", convo);
 #endif
     }
     
@@ -270,8 +276,7 @@ static NSEntityDescription * UserEntity;
     [message setCode:@(ETRActionCodePublicMessage)];
     [message setMessageContent:messageContent];
     
-    // Immediately store them in the Context, so that they appear in the Conversation.
-    [ETRCoreDataHelper saveContext];
+//    [ETRCoreDataHelper saveContext];
     
     [ETRServerAPIHelper putAction:message];
 }
@@ -320,6 +325,20 @@ static NSEntityDescription * UserEntity;
     [message setRecipient:recipient];
     [message setCode:@(ETRActionCodePrivateMedia)];
     [ETRCoreDataHelper dispatchImage:image inAction:message];
+}
+
+/**
+ 
+ */
++(void)dispatchReportAboutUser:(ETRUser *)user {
+    ETRAction * report = [ETRCoreDataHelper blankOutgoingAction];
+    if (!report) {
+        return;
+    }
+    
+    [report setCode:@(ETRActionCodeReport)];
+    [report setRecipient:user];
+    [ETRServerAPIHelper putAction:report];
 }
 
 /**
@@ -584,8 +603,6 @@ static NSEntityDescription * UserEntity;
     return resultsController;
 }
 
-// TODO: Fix profile updates.
-
 + (void)cleanActions {
     NSFetchRequest * request = [[NSFetchRequest alloc] init];
     [request setEntity:[ETRCoreDataHelper actionEntity]];
@@ -611,8 +628,6 @@ static NSEntityDescription * UserEntity;
     for (NSManagedObject * action in actions) {
         [[ETRCoreDataHelper context] deleteObject:action];
     }
-
-//    [ETRCoreDataHelper saveContext];
 }
 
 #pragma mark -
@@ -1020,6 +1035,31 @@ static NSEntityDescription * UserEntity;
                         insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
     [newUser setRemoteID:remoteID];
     [newUser setName:NSLocalizedString(@"Unknown_User", @"Name placeholder")];
+    [newUser setStatus:@"..."];
+    
+    return newUser;
+}
+
+/**
+ Placeholder Object;
+ To be used by Server Actions with Sender ID -10
+ */
++ (ETRUser *)adminUser {
+    NSFetchRequest * request = [[NSFetchRequest alloc] init];
+    [request setEntity:[ETRCoreDataHelper userEntity]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"remoteID = %@", @(ETRActionPublicUserID)]];
+    NSArray * existingUsers = [[ETRCoreDataHelper context] executeFetchRequest:request error:nil];
+    
+    if (existingUsers && [existingUsers count]) {
+        if ([existingUsers[0] isKindOfClass:[ETRUser class]]) {
+            return (ETRUser *)existingUsers[0];
+        }
+    }
+    
+    ETRUser * newUser = [[ETRUser alloc] initWithEntity:[ETRCoreDataHelper userEntity]
+                         insertIntoManagedObjectContext:[ETRCoreDataHelper context]];
+    [newUser setRemoteID:@(ETRActionPublicUserID)];
+    [newUser setName:@"Admin"];
     [newUser setStatus:@"..."];
     
     return newUser;

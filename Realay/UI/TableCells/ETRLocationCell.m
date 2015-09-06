@@ -17,7 +17,7 @@
 
 - (void)awakeFromNib {
     NSString * firstLine;
-    if ([ETRLocationManager isInSessionRegion]) {
+    if ([ETRLocationManager isInSessionRegionWithIntervalCheck:NO]) {
         firstLine = NSLocalizedString(@"Currently_here", @"Correct location");
     } else {
         NSString * distanceFormat = NSLocalizedString(@"Current_distance", @"%d m away");

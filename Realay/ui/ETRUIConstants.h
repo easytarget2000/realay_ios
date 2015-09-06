@@ -55,4 +55,6 @@ extern CGFloat const ETRRowHeightUser;
 
 + (UIColor *)secondaryBackgroundColor;
 
++ (CAGradientLayer *)primaryColorGradient;
+
 @end

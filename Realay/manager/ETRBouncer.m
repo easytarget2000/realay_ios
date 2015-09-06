@@ -106,8 +106,8 @@ static short const ETRSpamWatchLimit = 5;
 //            nil];
     
     return [NSArray arrayWithObjects:
-            @(ETRTimeIntervalTenMinutes),
-            @(ETRTimeIntervalTenMinutes),
+            @(ETRTimeIntervalFiveMinutes),
+            @(ETRTimeIntervalFiveMinutes),
             @(ETRTimeIntervalFiveMinutes),
             @(ETRTimeIntervalFiveMinutes),
             nil];
@@ -221,7 +221,7 @@ static short const ETRSpamWatchLimit = 5;
         
         [self notifyUserAndForceAlertView:NO];
         
-        if (reason == ETRKickReasonLocation || reason == ETRKickReasonClosed) {
+        if (_lastReason == ETRKickReasonLocation || _lastReason == ETRKickReasonClosed) {
             // Set a timer for certain warnings to repeat until getting kicked.
             NSTimeInterval interval;
             interval = [[intervals objectAtIndex:_numberOfWarnings] doubleValue];

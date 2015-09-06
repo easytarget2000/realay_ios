@@ -65,6 +65,11 @@ extern long const ETRActionPublicUserID;
 /**
  
  */
++(void)dispatchReportAboutUser:(ETRUser *)user;
+
+/**
+ 
+ */
 + (void)queueUserUpdate;
 
 /**

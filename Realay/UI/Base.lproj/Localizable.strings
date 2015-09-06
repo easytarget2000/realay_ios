@@ -40,6 +40,8 @@
 
 "Closed_at" = "%@ closed at %@.";
 
+"Come_back" = "Please come back soon.";
+
 "Connecting_seems_longer" = "Connecting seems to take longer than usual.";
 
 "Coordinates" = "Coordinates";

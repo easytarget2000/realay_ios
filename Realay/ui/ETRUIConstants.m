@@ -89,9 +89,9 @@ static UIColor * SecondaryBackgroundColor;
 //                                      green:(0x98/255.0f)
 //                                       blue:(0x00/255.0f)
 //                                      alpha:1.0f];
-        AccentColor = [UIColor colorWithRed:(0xFF/255.0f)
-                                      green:(0x98/255.0f)
-                                       blue:(0x00/255.0f)
+        AccentColor = [UIColor colorWithRed:(0x7C/255.0f)
+                                      green:(0x4D/255.0f)
+                                       blue:(0xFF/255.0f)
                                       alpha:1.0f];
     }
     return AccentColor;
@@ -105,6 +105,20 @@ static UIColor * SecondaryBackgroundColor;
                                                    alpha:1.0f];
     }
     return SecondaryBackgroundColor;
+}
+
++ (CAGradientLayer *)primaryColorGradient {
+    UIColor *bottomColor = [UIColor colorWithRed:0.18 green:0.18 blue:0.18 alpha:1];
+    
+    NSArray *gradientColors = [NSArray arrayWithObjects:(id)PrimaryColor.CGColor, (id)bottomColor.CGColor, nil];
+    NSArray *gradientLocations;
+    gradientLocations = [NSArray arrayWithObjects:[NSNumber numberWithInt:0.0],[NSNumber numberWithInt:1.0], nil];
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = gradientColors;
+    gradientLayer.locations = gradientLocations;
+    
+    return gradientLayer;
 }
 
 @end

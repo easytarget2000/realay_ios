@@ -20,6 +20,14 @@
 @dynamic partner;
 @dynamic inRoom;
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ at %@, last: %@, %@",
+            [[self partner] name],
+            [[self inRoom] title],
+            [[self lastMessage] messageContent],
+            [self hasUnreadMessage]];
+}
+
 - (void)updateLastMessage:(ETRAction *)message {
     if (![self lastMessage]) {
         [self setLastMessage:message];
@@ -30,7 +38,7 @@
     dateComparison = [[[self lastMessage] sentDate] compare:[message sentDate]];
     if (dateComparison == NSOrderedAscending) {
         [self setLastMessage:message];
-        [ETRCoreDataHelper saveContext];
+//        [ETRCoreDataHelper saveContext];
     }
 }
 

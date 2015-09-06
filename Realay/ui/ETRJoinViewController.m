@@ -24,9 +24,9 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
 
 //@property (strong, nonatomic) NSThread * joinThread;
 
-@property (nonatomic) BOOL didFinish;
+@property (atomic) BOOL didFinish;
 
-@property (nonatomic) BOOL isCanceled;
+@property (atomic) BOOL isCanceled;
 
 @property (nonatomic) NSTimer * delayTimer;
 
@@ -37,7 +37,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-        
+    
     ETRRoom * preparedRoom = [[ETRSessionManager sharedManager] room];
     if (!preparedRoom) {
         [[self navigationController] popToRootViewControllerAnimated:YES];
@@ -52,9 +52,11 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
     
     [ETRServerAPIHelper joinRoomAndShowProgressInLabel:_statusLabel
                                      completionHandler:^(BOOL didSucceed) {
-                                         [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
-                                                                  toTarget:self
-                                                                withObject:@(didSucceed)];
+                                         if (!_isCanceled) {
+                                             [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
+                                                                      toTarget:self
+                                                                    withObject:@(didSucceed)];
+                                         }
                                      }];
     
     _delayTimer = [NSTimer scheduledTimerWithTimeInterval:ETRIntervalJoinDelayed
@@ -97,29 +99,22 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
     // Reset Bar elements that might have been changed during navigation to other View Controllers.
     [[self navigationController] setToolbarHidden:YES];
     [[[self navigationController] navigationBar] setTranslucent:YES];
+    
+    if ([[ETRSessionManager sharedManager] didStartSession]) {
+        [self handleJoinCompletion:@(YES)];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    [_delayTimer invalidate];
+    _isCanceled = YES;
+    
     if (!_didFinish) {
-        [_delayTimer invalidate];
-        _isCanceled = YES;
-        
         [[self navigationController] popToRootViewControllerAnimated:YES];
     }
 }
-
-//- (void)startJoinThreadforRoom:(ETRRoom *)room {
-//    _isCanceled = NO;
-//    
-//    ETRServerAPIHelper * apiHelper = [[ETRServerAPIHelper alloc] init];
-//    [apiHelper joinRoomAndShowProgressInLabel:_statusLabel
-//                            completionHandler:^(BOOL didSucceed) {
-//                                [NSThread detachNewThreadSelector:@selector(handleJoinCompletion:)
-//                                                         toTarget:self
-//                                                       withObject:@(didSucceed)];
-//                            }];
-//}
 
 - (void)handleJoinCompletion:(NSNumber *)didSucceed {
     [_delayTimer invalidate];
@@ -130,7 +125,6 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
     }
     
     if ([didSucceed boolValue]) {
-        _didFinish = YES;
         [ETRAnimator fadeView:[self activityIndicator] doAppear:NO completion:nil];
         [ETRAnimator fadeView:[self statusLabel] doAppear:NO completion:nil];
         [ETRAnimator toggleBounceInView:[self logoView]
@@ -142,6 +136,7 @@ static NSTimeInterval const ETRIntervalJoinDelayed = 15.0;
 #endif
                                      [[self navigationController] popToRootViewControllerAnimated:YES];
                                  } else {
+                                     _didFinish = YES;
                                      [super pushToPublicConversationViewController];
                                  }
                              }];
